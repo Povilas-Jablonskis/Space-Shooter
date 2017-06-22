@@ -11,7 +11,7 @@ namespace Engine
 			~TestEnemy();
 			TestEnemy(int, int, float, float, float, float, float, float, float);
 			TestEnemy();
-			void Update(int);
+			void Update();
 		private:
 			float dt;
 	};

@@ -25,7 +25,7 @@ namespace Engine
 
 	}
 
-	void BaseGameObject::Draw(int program)
+	void BaseGameObject::Draw(GLuint program)
 	{
 		float _width = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float _height = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -39,12 +39,9 @@ namespace Engine
 		glUniform3f(offsetLocation3, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f);
 	}
 
-	void BaseGameObject::Update(int program)
+	void BaseGameObject::Update()
 	{
-		Draw(program);
 
-		position[0] += velocity[0];
-		position[1] += velocity[1];
 	}
 
 	float BaseGameObject::GetPosition(int index)

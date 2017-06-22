@@ -11,7 +11,7 @@ namespace Engine
 			~Bullet();
 			Bullet(int, int, float, float, float, float, float, float, float);
 			Bullet();
-			void Update(int);
+			void Update();
 	};
 }
 #endif

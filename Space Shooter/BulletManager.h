@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-	static class BulletManager
+	class BulletManager
 	{
 		public:
 			static void AddBullet(Bullet*);

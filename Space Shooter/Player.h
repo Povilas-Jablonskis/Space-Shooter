@@ -11,7 +11,7 @@ namespace Engine
 			~Player();
 			Player(int, int, float, float, float, float, float, float, float);
 			Player();
-			void Update(int);
+			void Update();
 		private:
 			bool pressedkeys[256];
 	};

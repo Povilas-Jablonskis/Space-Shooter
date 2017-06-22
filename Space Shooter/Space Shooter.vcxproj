@@ -73,18 +73,28 @@
     <ClCompile Include="BaseGameObject.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="BulletManager.cpp" />
+    <ClCompile Include="FontLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="TestEnemy.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="UIElement.cpp" />
+    <ClCompile Include="UIElementBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGameObject.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletManager.h" />
+    <ClInclude Include="FontLoader.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="TestEnemy.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="UIElement.h" />
+    <ClInclude Include="UIElementBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

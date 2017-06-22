@@ -27,10 +27,8 @@ namespace Engine
 
 	}
 
-	void TestEnemy::Update(int program)
+	void TestEnemy::Update()
 	{
-		BaseGameObject::Draw(program);
-
 		dt += 0.1f;
 
 		position[0] += velocity[0];

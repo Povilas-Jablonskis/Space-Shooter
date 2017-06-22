@@ -17,10 +17,8 @@ namespace Engine
 
 	}
 
-	void Bullet::Update(int program)
+	void Bullet::Update()
 	{
-		BaseGameObject::Draw(program);
-
 		position[0] += velocity[0];
 		position[1] += velocity[1];
 	}

@@ -18,10 +18,8 @@ namespace Engine
 
 	}
 
-	void Player::Update(int program)
+	void Player::Update()
 	{
-		BaseGameObject::Draw(program);
-
 		GetAsyncKeyState(0x41) ? pressedkeys['a'] = true : pressedkeys['a'] = false;
 		GetAsyncKeyState(0x44) ? pressedkeys['d'] = true : pressedkeys['d'] = false;
 		GetAsyncKeyState(0x53) ? pressedkeys['s'] = true : pressedkeys['s'] = false;
