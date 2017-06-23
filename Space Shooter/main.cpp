@@ -28,8 +28,8 @@ float dt;
 
 Player player;
 
-std::vector<TestEnemy*> enemies;
-std::vector<UIElementBase*> UI;
+std::vector<BaseGameObject*> enemies;
+std::vector<UIElement*> UI;
 
 void idle(void)
 {
@@ -48,11 +48,11 @@ void resize(int width, int height)
 {
 	//const float ar = (float) width / (float) height;
 
-	glutReshapeWindow(640, 480);
-	glViewport(0, 0, 640, 480);
+	glutReshapeWindow(width, height);
+	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0f, 640.0f, 0.0f, 480.0f, 0.0f, 1.0f);
+	glOrtho(0.0f, width, 0.0f, height, 0.0f, 1.0f);
 }
 
 void timerFunc(int value)
@@ -138,20 +138,24 @@ int main(int argc, char *argv[])
 		std::cout << "config.json not found" << std::endl;
 	}*/
 
-	for (size_t i = 0; i <= 16; i++)
-		enemies.push_back(new TestEnemy(32, 32, 32.0f + (i * 34.0f), 416.0f, 0.0f, 0.0f, 255.0f, 160.0f, 122.0f));
+	FontLoader::Init();
+	Renderer::Init();
+	Renderer::AddShader("shader", new Shader("shader.vert", "shader.frag"));
+	Renderer::AddShader("textshader", new Shader("textshader.vert", "textshader.frag"));
 
-	UIElement* element = new UIElement(256, 256, 50.0f / 100.0f, 10.0f / 100.0f, 255.0f, 255.0f, 0.0f);
-	//element->AddText(new Text("The Quick Brown Fox Jumps Over The Lazy Dog2", 32, 0.0f / 100.0f, 50.0f / 100.0f, 255.0f, 160.0f, 122.0f, "AGENCYR.ttf", NULL));
-	element->AddText(new Text("The Quick Brown Fox Jumps Over The Lazy Dog", 7, 50.0f / 100.0f, 0.0f / 100.0f, 255.0f, 160.0f, 122.0f, "AGENCYR.ttf", element));
+	for (size_t i = 0; i <= 16; i++)
+	{
+		BaseGameObject* enemy = new TestEnemy(32, 32, 32.0f + (i * 34.0f), 416.0f, 0.0f, 0.0f, 255.0f, 160.0f, 122.0f);
+		enemies.push_back(enemy);
+	}
+
+	UIElement* element = new UIElement(32, 32, 50.0f / 100.0f, 50.0f / 100.0f, 255.0f, 255.0f, 0.0f, 0.0f);
+	element->AddText(new Text("The Quick Brown Fox Jumps Over The Lazy Dog2", 14, 0.0f / 100.0f, 30.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf"));
+	element->AddText(new Text("The Quick Brown Fox Jumps Over The Lazy Dog", 14, 0.0f / 100.0f, 90.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf"));
 
 	UI.push_back(element);
 
 	player = Player(32, 32, 320.0f, 0.0f, 0.0f, 0.5f, 255.0f, 255.0f, 0.0f);
-
-	Renderer::Init();
-	Renderer::AddShader("shader", new Shader("shader.vert", "shader.frag"));
-	Renderer::AddShader("textshader", new Shader("textshader.vert", "textshader.frag"));
 
 	glutTimerFunc(1000 / 60, timerFunc, 0);
 	currtime = glutGet(GLUT_ELAPSED_TIME);

@@ -2,29 +2,30 @@
 
 namespace Engine
 {
-	std::map<const char*, FT_Face> FontLoader::faces;
+	std::map<std::string, FT_Face> FontLoader::faces;
 	FT_Library FontLoader::library;
 
-	void FontLoader::LoadFont(const char* _path)
+	void FontLoader::Init()
 	{
-		if (faces.find(_path) != faces.end())
+		if (FT_Init_FreeType(&library))
+			std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+	}
+
+	void FontLoader::LoadFont(std::string _path, std::string _name)
+	{
+		if (faces.find(_name) != faces.end())
 			return;
 
 		FT_Face face;
-		if (library == NULL)
-		{
-			if (FT_Init_FreeType(&library))
-				std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-		}
-		if (FT_New_Face(library, _path, 0, &face))
+		if (FT_New_Face(library, _path.c_str(), 0, &face))
 			std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
-		faces.insert(std::pair<const char*, FT_Face>(_path, face));
+		faces.insert(std::pair<std::string, FT_Face>(_name, face));
 	}
 
-	FT_Face FontLoader::GetFont(const char* _path)
+	FT_Face FontLoader::GetFont(std::string _name)
 	{
-		if (faces.find(_path) != faces.end())
-			return faces.at(_path);
+		if (faces.find(_name) != faces.end())
+			return faces.at(_name);
 		return NULL;
 	}
 }

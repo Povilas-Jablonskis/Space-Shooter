@@ -16,19 +16,18 @@ namespace Engine
 {
 	class Renderer
 	{
-	public:
-		static void Render(Player);
-		static void Render(TestEnemy*);
-		static void Render(BaseGameObject*);
-		static void Render(Text*);
-		static void Render(UIElementBase* UIElementBase);
-		static void Init();
-		static void AddShader(const char*, Shader*);
-	private:
-		static GLuint indices[6];
-		static GLfloat vertices[16];
-		static GLuint VBO, VAO, EBO;
-		static std::map<const char*, Shader*> shaders;
+		public:
+			static void Render(Player);
+			static void Render(BaseGameObject*);
+			static void Render(UIElement*);
+			static void Render(Text*, UIElement*);
+			static void Init();
+			static void AddShader(std::string, Shader*);
+		private:
+			static GLuint indices[6];
+			static GLfloat vertices[16];
+			static GLuint VBO, VAO, EBO;
+			static std::map<std::string, Shader*> shaders;
 	};
 }
 #endif

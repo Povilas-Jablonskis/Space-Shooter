@@ -12,10 +12,9 @@ namespace Engine
 	{
 		public:
 			~UIElementBase();
-			UIElementBase(int, int, float, float, float, float, float);
+			UIElementBase(int, int, float, float, float, float, float, float);
 			UIElementBase();
 			virtual void Draw(GLuint);
-			virtual void DrawOther();
 			virtual void Update();
 			float GetPosition(int);
 			int GetSize(int);
@@ -24,7 +23,7 @@ namespace Engine
 			float position[2];
 			int width;
 			int height;
-			float color[3];
+			float color[4];
 		};
 }
 #endif

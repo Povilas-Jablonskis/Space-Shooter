@@ -11,7 +11,7 @@ namespace Engine
 			~Bullet();
 			Bullet(int, int, float, float, float, float, float, float, float);
 			Bullet();
-			void Update();
+			std::vector<std::shared_ptr<BaseGameObject>>::iterator Update(std::vector<std::shared_ptr<BaseGameObject>>&, std::vector<std::shared_ptr<BaseGameObject>>::iterator);
 	};
 }
 #endif

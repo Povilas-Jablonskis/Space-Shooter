@@ -6,7 +6,6 @@
 #include "GL/glew.h"
 #include "GL/freeglut.h"
 
-#include "UIElementBase.h"
 #include "Text.h"
 
 namespace Engine
@@ -15,13 +14,14 @@ namespace Engine
 	{
 		public:
 			~UIElement();
-			UIElement(int, int, float, float, float, float, float);
+			UIElement(int, int, float, float, float, float, float, float);
 			UIElement();
-			void AddText(const char*, int, float, float, float, float, float, const char* font, UIElementBase*);
+			void AddText(std::string, int, float, float, float, float, float, float, std::string font);
 			void AddText(Text* text);
 			void Update();
-			void DrawOther();
-			std::vector<UIElementBase*> elements;
+			void DrawOtherElements();
+		private:
+			std::vector<UIElement*> elements;
 			std::vector<Text*> texts;
 		};
 }

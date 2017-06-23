@@ -14,9 +14,9 @@ namespace Engine
 	{
 		public:
 			~Text();
-			Text(const char*, int, float, float, float, float, float, const char* font, UIElementBase*);
+			Text(std::string, int, float, float, float, float, float, float, std::string);
 			Text();
-			void Draw(GLuint);
+			void Draw(GLuint, UIElementBase*);
 		private:
 			struct point
 			{
@@ -25,12 +25,11 @@ namespace Engine
 				GLfloat s;
 				GLfloat t;
 			};
-			const char* fontpath;
-			const char* text;
+			std::string fontname;
+			std::string text;
 			int textsize;
 			GLuint texture;
 			GLuint vbo;
-			UIElementBase* parent;
 		};
 }
 #endif

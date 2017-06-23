@@ -1,6 +1,6 @@
 #version 330 core
 in vec2 TexCoord;
-in vec3 fragColor;
+in vec4 fragColor;
 uniform sampler2D ourTexture;
 void main()
 {
@@ -10,6 +10,6 @@ void main()
 	}
 	else
 	{
-		gl_FragColor = vec4(fragColor.xyz, 1.0);
+		gl_FragColor = fragColor;
 	}
 }
