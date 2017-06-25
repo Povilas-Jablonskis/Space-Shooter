@@ -22,18 +22,13 @@ namespace Engine
 
 	void Player::Update()
 	{
-		for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = objects.begin(); it != objects.end();)
-		{
-			it = (*it)->Update(objects, it);
-		}
-
 		GetAsyncKeyState(0x41) ? pressedkeys['a'] = true : pressedkeys['a'] = false;
 		GetAsyncKeyState(0x44) ? pressedkeys['d'] = true : pressedkeys['d'] = false;
 		GetAsyncKeyState(0x53) ? pressedkeys['s'] = true : pressedkeys['s'] = false;
 		GetAsyncKeyState(0x20) ? pressedkeys[32] = true : pressedkeys[32] = false;
 
 		if (pressedkeys[32])
-			objects.push_back(std::shared_ptr<Bullet>(new Bullet(10, 20, position[0], position[1] + height + 5.0f, 0.0f, 3.0f, 255.0f, 69.0f, 0.0f)));
+			BulletManager::AddBullet(std::shared_ptr<Bullet>(new Bullet(10, 20, position[0], position[1] + height + 5.0f, 0.0f, 3.0f, 255.0f, 69.0f, 0.0f, this)));
 
 		if (pressedkeys['a'])
 			position[0] -= 3.0f;

@@ -2,15 +2,15 @@
 
 namespace Engine
 {
-	std::vector<BaseGameObject*> BulletManager::bullets;
+	std::vector<std::shared_ptr<Bullet>> BulletManager::bullets;
 
-	void BulletManager::AddBullet(Bullet* bullet)
+	void BulletManager::AddBullet(std::shared_ptr<Bullet> bullet)
 	{
 		bullets.push_back(bullet);
 	}
 
-	std::vector<BaseGameObject*> BulletManager::GetBulletList()
+	std::vector<std::shared_ptr<Bullet>>* BulletManager::GetBulletList()
 	{
-		return bullets;
+		return &bullets;
 	}
 }

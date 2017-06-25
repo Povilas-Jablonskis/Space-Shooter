@@ -11,6 +11,7 @@
 #include "UIElement.h"
 #include "BaseGameObject.h"
 #include "Shader.h"
+#include "Bullet.h"
 
 namespace Engine
 {
@@ -19,6 +20,7 @@ namespace Engine
 		public:
 			static void Render(Player);
 			static void Render(BaseGameObject*);
+			static void Render(Bullet*);
 			static void Render(UIElement*);
 			static void Render(Text*, UIElement*);
 			static void Init();

@@ -8,10 +8,10 @@ namespace Engine
 	class BulletManager
 	{
 		public:
-			static void AddBullet(Bullet*);
-			static std::vector<BaseGameObject*> GetBulletList();
+			static void AddBullet(std::shared_ptr<Bullet>);
+			static std::vector<std::shared_ptr<Bullet>>* GetBulletList();
 		private:
-			static std::vector<BaseGameObject*> bullets;
+			static std::vector<std::shared_ptr<Bullet>> bullets;
 	};
 }
 #endif

@@ -69,10 +69,18 @@ void timerFunc(int value)
 
 	player.Update();
 	Renderer::Render(player);
-	for (auto bullet : BulletManager::GetBulletList())
+	auto list = BulletManager::GetBulletList();
+	for (std::vector<std::shared_ptr<Bullet>>::iterator it = list->begin(); it != list->end();)
 	{
-		bullet->Update();
-		Renderer::Render(bullet);
+		auto bullet = it->get();
+		if (bullet->UpdateBullet())
+			it = list->erase(it);
+		else
+		{
+			Renderer::Render(bullet);
+			++it;
+		}
+		
 	}
 	for (auto enemy : enemies)
 	{

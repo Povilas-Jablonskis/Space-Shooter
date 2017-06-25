@@ -45,7 +45,8 @@ namespace Engine
 		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 	}
 
-	void Renderer::AddShader(std::string name, Shader* shader){
+	void Renderer::AddShader(std::string name, Shader* shader)
+	{
 		if (shaders.find(name) != shaders.end())
 			return;
 		shaders.insert(std::pair<std::string, Shader*>(name, shader));
@@ -64,7 +65,21 @@ namespace Engine
 				glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(*indices)), GL_UNSIGNED_INT, 0);
 			glUseProgram(0);
 		glBindVertexArray(0);
-		player.DrawOtherObjects();
+	}
+
+	void Renderer::Render(Bullet* bullet)
+	{
+		if (shaders.find("shader") == shaders.end())
+			return;
+
+		Shader* shader = shaders.at("shader");
+
+		glBindVertexArray(VAO);
+		glUseProgram(shader->GetShader());
+			bullet->Draw(shader->GetShader());
+			glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(*indices)), GL_UNSIGNED_INT, 0);
+		glUseProgram(0);
+		glBindVertexArray(0);
 	}
 
 	void Renderer::Render(BaseGameObject* BaseGameObject)
