@@ -51,4 +51,28 @@ namespace Engine
 			Renderer::Render(text, this);
 		}
 	}
+
+	void UIElement::HideAllElements()
+	{
+		for (auto text : texts)
+		{
+			text->ChangeColor(0.0f, 3);
+		}
+		for (auto element : elements)
+		{
+			element->ChangeColor(0.0f, 3);
+		}
+	}
+
+	void UIElement::ShowAllElements()
+	{
+		for (auto text : texts)
+		{
+			text->ChangeColor(1.0f, 3);
+		}
+		for (auto element : elements)
+		{
+			element->ChangeColor(1.0f, 3);
+		}
+	}
 }

@@ -67,6 +67,11 @@ namespace Engine
 		}
 	}
 
+	void UIElementBase::ChangeColor(float _color, int index)
+	{
+		color[index] = _color;
+	}
+
 	float UIElementBase::GetColor(int index)
 	{
 		return color[index];

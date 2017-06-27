@@ -52,7 +52,7 @@ namespace Engine
 		shaders.insert(std::pair<std::string, Shader*>(name, shader));
 	}
 
-	void Renderer::Render(Player player)
+	void Renderer::Render(Player* player)
 	{
 		if (shaders.find("shader") == shaders.end())
 			return;
@@ -61,7 +61,7 @@ namespace Engine
 
 		glBindVertexArray(VAO);
 			glUseProgram(shader->GetShader());
-				player.Draw(shader->GetShader());
+				player->Draw(shader->GetShader());
 				glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(*indices)), GL_UNSIGNED_INT, 0);
 			glUseProgram(0);
 		glBindVertexArray(0);

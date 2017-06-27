@@ -16,7 +16,7 @@ namespace Engine
 		while (_dt < 3.14f)
 		{
 			value += sin(_dt);
-			_dt += 0.1f;
+			_dt += 0.2f;
 		}
 
 		velocity[1] = (maxpos - position[1] - height) / value;
@@ -29,7 +29,7 @@ namespace Engine
 
 	void TestEnemy::Update()
 	{
-		dt += 0.1f;
+		dt += 0.2f;
 
 		position[0] += velocity[0];
 		position[1] += velocity[1] * sin(dt);

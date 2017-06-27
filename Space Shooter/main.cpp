@@ -59,16 +59,16 @@ void timerFunc(int value)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	glutTimerFunc(1000 / 60, timerFunc, value);
+	glutTimerFunc(1000 / 30, timerFunc, value);
 	prevtime = currtime;
 	currtime = glutGet(GLUT_ELAPSED_TIME);
 	dt = (currtime - prevtime) / 1000.0f;
 
-	if (dt > 0.016f)
-		dt = 0.016f;
+	if (dt > 0.033f)
+		dt = 0.033f;
 
 	player.Update();
-	Renderer::Render(player);
+	Renderer::Render(&player);
 	auto list = BulletManager::GetBulletList();
 	for (std::vector<std::shared_ptr<Bullet>>::iterator it = list->begin(); it != list->end();)
 	{
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 	glutInitWindowSize(640, 480);
 	glutInitWindowPosition(400, 300);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-	glutCreateWindow("SideScroller");
+	glutCreateWindow("Space Shooter");
 
 	glewExperimental = true;
 
@@ -157,15 +157,45 @@ int main(int argc, char *argv[])
 		enemies.push_back(enemy);
 	}
 
-	UIElement* element = new UIElement(32, 32, 50.0f / 100.0f, 50.0f / 100.0f, 255.0f, 255.0f, 0.0f, 0.0f);
-	element->AddText(new Text("The Quick Brown Fox Jumps Over The Lazy Dog2", 14, 0.0f / 100.0f, 30.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf"));
-	element->AddText(new Text("The Quick Brown Fox Jumps Over The Lazy Dog", 14, 0.0f / 100.0f, 90.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf"));
+	UIElement* mainmenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0.0f / 100.0f, 0.0f / 100.0f, 255.0f, 255.0f, 0.0f, 0.0f);
+	UIElement* optionsUI = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0.0f / 100.0f, 0.0f / 100.0f, 255.0f, 255.0f, 0.0f, 0.0f);
+	
+	auto text = new Text("Start Game", 18, 50.0f / 100.0f, 60.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	mainmenu->AddText(text);
+	text = new Text("Options", 18, 50.0f / 100.0f, 55.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	text->OnMouseReleaseFunc = [optionsUI, mainmenu]()
+	{
+		mainmenu->HideAllElements();
+		optionsUI->ShowAllElements();
+	};
+	mainmenu->AddText(text);
+	text = new Text("End Game", 18, 50.0f / 100.0f, 50.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	text->OnMouseReleaseFunc = []()
+	{
+		std::cout << "exiting" << std::endl;
+		getchar();
+		exit(0);
+	};
+	mainmenu->AddText(text);
+	UI.push_back(mainmenu);
 
-	UI.push_back(element);
+	auto options = new Text("A", 18, 50.0f / 100.0f, 60.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	optionsUI->AddText(options);
+	options = new Text("B", 18, 50.0f / 100.0f, 55.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	optionsUI->AddText(options);
+	options = new Text("Back", 18, 50.0f / 100.0f, 50.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	options->OnMouseReleaseFunc = [optionsUI, mainmenu]()
+	{
+		optionsUI->HideAllElements();
+		mainmenu->ShowAllElements();
+	};
+	optionsUI->AddText(options);
+	optionsUI->HideAllElements();
+	UI.push_back(optionsUI);
 
 	player = Player(32, 32, 320.0f, 0.0f, 0.0f, 0.5f, 255.0f, 255.0f, 0.0f);
 
-	glutTimerFunc(1000 / 60, timerFunc, 0);
+	glutTimerFunc(1000 / 30, timerFunc, 0);
 	currtime = glutGet(GLUT_ELAPSED_TIME);
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);

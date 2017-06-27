@@ -1,5 +1,6 @@
 #include "Text.h"
 #include <cctype>
+#include <algorithm>
 
 namespace Engine
 {
@@ -7,12 +8,36 @@ namespace Engine
 	{
 		glGenBuffers(1, &vbo);
 		glGenTextures(1, &texture);
+		mouseontext = false;
+		leftbuttonclicked = 0;
+
+		OnHoverEnterFunc = []()
+		{
+
+		};
+
+		OnHoverExitFunc = []()
+		{
+
+		};
+
+		OnMouseClickFunc = []()
+		{
+
+		};
+
+		OnMouseReleaseFunc = []()
+		{
+
+		};
 	}
 
 	Text::Text(std::string _text, int _fontsize, float x, float y, float r, float g, float b, float a, std::string fontpath)
 	{
 		glGenBuffers(1, &vbo);
 		glGenTextures(1, &texture);
+		mouseontext = false;
+		leftbuttonclicked = 0;
 
 		textsize = _fontsize;
 		position[0] = x;
@@ -22,6 +47,26 @@ namespace Engine
 		color[2] = b;
 		color[3] = a;
 		text = _text;
+
+		OnHoverEnterFunc = []()
+		{
+
+		};
+
+		OnHoverExitFunc = []()
+		{
+
+		};
+
+		OnMouseClickFunc = []()
+		{
+
+		};
+
+		OnMouseReleaseFunc = []()
+		{
+
+		};
 
 		std::size_t found = fontpath.find_last_of("\\");
 		if (found == -1)
@@ -81,6 +126,11 @@ namespace Engine
 				float xdiff = endx - startx;
 				float ydiff = endy - starty;
 
+				bbox[0] = ((startx + (xdiff * position[0])));
+				bbox[1] = ((startx + (xdiff * position[0])));
+				bbox[2] = ((starty + (ydiff * position[1])));
+				bbox[3] = ((starty + (ydiff * position[1])));
+
 				if (position[0] == 0.0f)
 					x = -1 + startx * sx;
 				else
@@ -98,6 +148,8 @@ namespace Engine
 			/* Set font size */
 			FT_Set_Pixel_Sizes(face, 0, textsize);
 
+			bbox[2] += g->face->glyph->metrics.height >> 6;
+
 			/* Create a texture that will be used to hold one "glyph" */
 			int offsetLocation2 = glGetUniformLocation(program, "color");
 			glUniform4f(offsetLocation2, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, color[3]);
@@ -114,6 +166,8 @@ namespace Engine
 
 				/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+
+				bbox[1] += g->metrics.horiAdvance >> 6;
 
 				/* Calculate the vertex and texture coordinates */
 				float x2 = x + g->bitmap_left * sx;
@@ -140,5 +194,73 @@ namespace Engine
 		glDisable(GL_BLEND);
 		glDisable(GL_TEXTURE_2D);
 		glUseProgram(0);
+	}
+
+	void Text::Update()
+	{
+		if (color[3] == 0.0f) return;
+		POINT lppoint, mpoint;
+		GetCursorPos(&lppoint);
+		mpoint = lppoint;
+		ScreenToClient(GetActiveWindow(), &lppoint);
+
+		if (mpoint.x == lppoint.x && mpoint.y == lppoint.y) return;
+		lppoint.y -= glutGet(GLUT_WINDOW_HEIGHT);
+		lppoint.y *= -1;
+
+		if (lppoint.x >= bbox[0] && lppoint.x <= bbox[1] && lppoint.y <= bbox[2] && lppoint.y >= bbox[3])
+		{
+			SHORT lastleftbuttonclick = leftbuttonclicked;
+			leftbuttonclicked = GetAsyncKeyState(VK_LBUTTON);
+			if (!mouseontext)
+			{
+				OnHoverEnterFunc();
+				OnHoverEnterFuncDefaults();
+				mouseontext = true;
+			}
+			if (lastleftbuttonclick == 0 && leftbuttonclicked < 0)
+			{
+				OnMouseClickFunc();
+				OnMouseClickDefaults();
+			}
+			if (lastleftbuttonclick < 0 && leftbuttonclicked == 0)
+			{
+				OnMouseReleaseFunc();
+				OnMouseReleaseFuncDefaults();
+			}
+		}
+		else
+		{
+			if (mouseontext)
+			{
+				OnHoverExitFunc();
+				OnHoverExitFuncDefaults();
+				mouseontext = false;
+			}
+		}
+	}
+
+	void Text::OnHoverEnterFuncDefaults()
+	{
+		color[0] = 0.0f;
+		color[1] = 0.0f;
+		color[2] = 0.0f;
+	}
+
+	void Text::OnHoverExitFuncDefaults()
+	{
+		color[0] = 255.0f;
+		color[1] = 160.0f;
+		color[2] = 122.0f;
+	}
+
+	void Text::OnMouseClickDefaults()
+	{
+
+	}
+
+	void Text::OnMouseReleaseFuncDefaults()
+	{
+
 	}
 }

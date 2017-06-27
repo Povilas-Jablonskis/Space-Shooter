@@ -18,7 +18,7 @@ namespace Engine
 	class Renderer
 	{
 		public:
-			static void Render(Player);
+			static void Render(Player*);
 			static void Render(BaseGameObject*);
 			static void Render(Bullet*);
 			static void Render(UIElement*);

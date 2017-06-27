@@ -16,6 +16,7 @@ namespace Engine
 			UIElementBase();
 			virtual void Draw(GLuint);
 			virtual void Update();
+			void ChangeColor(float, int);
 			float GetPosition(int);
 			int GetSize(int);
 			float GetColor(int);

@@ -28,14 +28,14 @@ namespace Engine
 		GetAsyncKeyState(0x20) ? pressedkeys[32] = true : pressedkeys[32] = false;
 
 		if (pressedkeys[32])
-			BulletManager::AddBullet(std::shared_ptr<Bullet>(new Bullet(10, 20, position[0], position[1] + height + 5.0f, 0.0f, 3.0f, 255.0f, 69.0f, 0.0f, this)));
+			BulletManager::AddBullet(std::shared_ptr<Bullet>(new Bullet(10, 20, position[0], position[1] + height + 5.0f, 0.0f, 6.0f, 255.0f, 69.0f, 0.0f, this)));
 
 		if (pressedkeys['a'])
-			position[0] -= 3.0f;
+			position[0] -= 6.0f;
 		if (pressedkeys['d'])
-			position[0] += 3.0f;
+			position[0] += 6.0f;
 		if (pressedkeys['s'])
-			position[1] -= 1.0f;
-		position[1] += 0.5f;
+			position[1] -= 2.0f;
+		position[1] += 1.0f;
 	}
 }

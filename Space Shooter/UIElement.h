@@ -16,8 +16,10 @@ namespace Engine
 			~UIElement();
 			UIElement(int, int, float, float, float, float, float, float);
 			UIElement();
-			void AddText(std::string, int, float, float, float, float, float, float, std::string font);
+			void AddText(std::string, int, float, float, float, float, float, float, std::string);
 			void AddText(Text* text);
+			void HideAllElements();
+			void ShowAllElements();
 			void Update();
 			void DrawOtherElements();
 		private:
