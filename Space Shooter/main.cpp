@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <map>
 #include <cstdint>
 #include <algorithm>
 #include <cstdio>
@@ -15,6 +16,7 @@
 #include "UIElementBase.h"
 #include "Text.h"
 #include "Renderer.h"
+#include "GameState.h"
 
 #include "document.h"
 #include "filereadstream.h"
@@ -25,14 +27,21 @@ using namespace Engine;
 
 int prevtime, currtime;
 float dt;
+bool pressedkeys[256];
+GameState gamestate = GameState::NOTSTARTEDYET;
 
 Player player;
 
 std::vector<BaseGameObject*> enemies;
-std::vector<UIElement*> UI;
+std::map<std::string, UIElement*> UI;
 
 void idle(void)
 {
+}
+
+void ChangeState(GameState state)
+{
+	gamestate = state;
 }
 
 void display(void)
@@ -67,30 +76,52 @@ void timerFunc(int value)
 	if (dt > 0.033f)
 		dt = 0.033f;
 
-	player.Update();
-	Renderer::Render(&player);
-	auto list = BulletManager::GetBulletList();
-	for (std::vector<std::shared_ptr<Bullet>>::iterator it = list->begin(); it != list->end();)
+	SHORT escape = GetAsyncKeyState(0x1B);
+
+	if (escape < 0 && !pressedkeys[27])
 	{
-		auto bullet = it->get();
-		if (bullet->UpdateBullet())
-			it = list->erase(it);
-		else
+		pressedkeys[27] = true;
+		if (gamestate == GameState::PAUSED)
 		{
-			Renderer::Render(bullet);
-			++it;
+			UI["Pause Menu"]->HideAllElements();
+			gamestate = GameState::STARTED;
 		}
-		
+		else if (gamestate != GameState::NOTSTARTEDYET)
+		{
+			UI["Pause Menu"]->ShowAllElements();
+			gamestate = GameState::PAUSED;
+		}
 	}
-	for (auto enemy : enemies)
+	else if (escape == 0 && pressedkeys[27])
+		pressedkeys[27] = false;
+
+	if (gamestate == GameState::STARTED)
 	{
-		enemy->Update();
-		Renderer::Render(enemy);
+		player.Update();
+		Renderer::Render(&player);
+		auto list = BulletManager::GetBulletList();
+		for (std::vector<std::shared_ptr<Bullet>>::iterator it = list->begin(); it != list->end();)
+		{
+			auto bullet = it->get();
+			if (bullet->UpdateBullet())
+				it = list->erase(it);
+			else
+			{
+				Renderer::Render(bullet);
+				++it;
+			}
+
+		}
+		for (auto enemy : enemies)
+		{
+			enemy->Update();
+			Renderer::Render(enemy);
+		}
 	}
 	for (auto UIElement : UI)
 	{
-		UIElement->Update();
-		Renderer::Render(UIElement);
+		UIElement.second->Update();
+		Renderer::Render(UIElement.second);
 	}
 
 	glutSwapBuffers();
@@ -157,29 +188,59 @@ int main(int argc, char *argv[])
 		enemies.push_back(enemy);
 	}
 
+	player = Player(32, 32, 320.0f, 0.0f, 0.0f, 0.5f, 255.0f, 255.0f, 0.0f);
+
 	UIElement* mainmenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0.0f / 100.0f, 0.0f / 100.0f, 255.0f, 255.0f, 0.0f, 0.0f);
 	UIElement* optionsUI = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0.0f / 100.0f, 0.0f / 100.0f, 255.0f, 255.0f, 0.0f, 0.0f);
-	
-	auto text = new Text("Start Game", 18, 50.0f / 100.0f, 60.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
-	mainmenu->AddText(text);
-	text = new Text("Options", 18, 50.0f / 100.0f, 55.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
-	text->OnMouseReleaseFunc = [optionsUI, mainmenu]()
+	UIElement* pausemenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0.0f / 100.0f, 0.0f / 100.0f, 255.0f, 255.0f, 0.0f, 0.0f);
+
+	//Main Menu
+	auto options = new Text("Start Game", 18, 48.0f / 100.0f, 60.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	options->OnMouseReleaseFunc = [mainmenu]()
+	{
+		ChangeState(GameState::STARTED);
+		mainmenu->HideAllElements();
+	};
+	mainmenu->AddText(options);
+	options = new Text("Options", 18, 48.0f / 100.0f, 55.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	options->OnMouseReleaseFunc = [optionsUI, mainmenu]()
 	{
 		mainmenu->HideAllElements();
 		optionsUI->ShowAllElements();
 	};
-	mainmenu->AddText(text);
-	text = new Text("End Game", 18, 50.0f / 100.0f, 50.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
-	text->OnMouseReleaseFunc = []()
+	mainmenu->AddText(options);
+	options = new Text("End Game", 18, 48.0f / 100.0f, 50.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	options->OnMouseReleaseFunc = []()
 	{
 		std::cout << "exiting" << std::endl;
 		getchar();
 		exit(0);
 	};
-	mainmenu->AddText(text);
-	UI.push_back(mainmenu);
+	mainmenu->AddText(options);
+	UI.insert(std::pair<std::string, UIElement*>("Main Menu", mainmenu));
 
-	auto options = new Text("A", 18, 50.0f / 100.0f, 60.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	//Pause Menu
+	options = new Text("Go To Main Menu", 18, 45.0f / 100.0f, 60.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	options->OnMouseReleaseFunc = [mainmenu, pausemenu]()
+	{
+		ChangeState(GameState::NOTSTARTEDYET);
+		pausemenu->HideAllElements();
+		mainmenu->ShowAllElements();
+	};
+	pausemenu->AddText(options);
+	options = new Text("End Game", 18, 48.0f / 100.0f, 55.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
+	options->OnMouseReleaseFunc = []()
+	{
+		std::cout << "exiting" << std::endl;
+		getchar();
+		exit(0);
+	};
+	pausemenu->AddText(options);
+	pausemenu->HideAllElements();
+	UI.insert(std::pair<std::string, UIElement*>("Pause Menu", pausemenu));
+
+	//Options
+	options = new Text("A", 18, 50.0f / 100.0f, 60.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
 	optionsUI->AddText(options);
 	options = new Text("B", 18, 50.0f / 100.0f, 55.0f / 100.0f, 255.0f, 160.0f, 122.0f, 1.0f, "AGENCYR.ttf");
 	optionsUI->AddText(options);
@@ -191,9 +252,7 @@ int main(int argc, char *argv[])
 	};
 	optionsUI->AddText(options);
 	optionsUI->HideAllElements();
-	UI.push_back(optionsUI);
-
-	player = Player(32, 32, 320.0f, 0.0f, 0.0f, 0.5f, 255.0f, 255.0f, 0.0f);
+	UI.insert(std::pair<std::string, UIElement*>("Options", optionsUI));
 
 	glutTimerFunc(1000 / 30, timerFunc, 0);
 	currtime = glutGet(GLUT_ELAPSED_TIME);
