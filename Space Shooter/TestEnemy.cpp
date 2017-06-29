@@ -4,7 +4,7 @@ namespace Engine
 {
 	TestEnemy::TestEnemy()
 	{
-		dt = 0.0f;
+
 	}
 
 	TestEnemy::TestEnemy(int _width, int _height, float x, float y, float velx, float vely, float r, float g, float b) : BaseGameObject(_width, _height, x, y, velx, vely, r, g, b)

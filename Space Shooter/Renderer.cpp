@@ -65,6 +65,8 @@ namespace Engine
 				glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(*indices)), GL_UNSIGNED_INT, 0);
 			glUseProgram(0);
 		glBindVertexArray(0);
+
+		player->DrawUI();
 	}
 
 	void Renderer::Render(Bullet* bullet)

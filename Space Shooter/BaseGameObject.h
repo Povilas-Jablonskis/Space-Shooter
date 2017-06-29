@@ -15,7 +15,7 @@ namespace Engine
 			~BaseGameObject();
 			BaseGameObject(int, int, float, float, float, float, float, float, float);
 			BaseGameObject();
-			void Draw(GLuint);
+			virtual void Draw(GLuint);
 			virtual void Update();
 			float GetPosition(int);
 			int GetSize(int);

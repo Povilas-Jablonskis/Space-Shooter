@@ -6,30 +6,7 @@ namespace Engine
 {
 	Text::Text()
 	{
-		glGenBuffers(1, &vbo);
-		glGenTextures(1, &texture);
-		mouseontext = false;
-		leftbuttonclicked = 0;
-
-		OnHoverEnterFunc = []()
-		{
-
-		};
-
-		OnHoverExitFunc = []()
-		{
-
-		};
-
-		OnMouseClickFunc = []()
-		{
-
-		};
-
-		OnMouseReleaseFunc = []()
-		{
-
-		};
+		
 	}
 
 	Text::Text(std::string _text, int _fontsize, float x, float y, float r, float g, float b, float a, std::string fontpath)
@@ -79,7 +56,8 @@ namespace Engine
 
 	Text::~Text()
 	{
-
+		glDeleteBuffers(1, &vbo);
+		glDeleteTextures(1, &texture);
 	}
 
 	void Text::Draw(GLuint program, UIElementBase* parent)
