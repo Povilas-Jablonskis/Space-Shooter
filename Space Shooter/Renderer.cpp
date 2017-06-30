@@ -2,26 +2,24 @@
 
 namespace Engine
 {
-	std::map<std::string, Shader*> Renderer::shaders;
-	GLuint Renderer::indices[6] =
-	{   // Note that we start from 0!
-		0, 1, 3,  // First Triangle
-		1, 2, 3   // Second Triangle
-	};
-	GLfloat Renderer::vertices[16]
+	Renderer::Renderer()
 	{
-		// Positions    // Texture Coords
-		1.0f, 1.0f, 1.0f, 1.0f, // Top Right
-		1.0f, -1.0f, 1.0f, 0.0f, // Bottom Right
-		-1.0f, -1.0f, 0.0f, 0.0f, // Bottom Left
-		-1.0f, 1.0f, 0.0f, 1.0f  // Top Left
-	};
-	GLuint Renderer::VBO;
-	GLuint Renderer::EBO;
-	GLuint Renderer::VAO;
+		indices = new GLuint[6]
+		{
+			// Note that we start from 0!
+			0, 1, 3,  // First Triangle
+			1, 2, 3   // Second Triangle
+		};
 
-	void Renderer::Init()
-	{
+		vertices = new GLfloat[16]
+		{
+			// Positions    // Texture Coords
+			1.0f, 1.0f, 1.0f, 1.0f, // Top Right
+			1.0f, -1.0f, 1.0f, 0.0f, // Bottom Right
+			-1.0f, -1.0f, 0.0f, 0.0f, // Bottom Left
+			-1.0f, 1.0f, 0.0f, 1.0f  // Top Left
+		};
+
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
@@ -45,7 +43,12 @@ namespace Engine
 		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 	}
 
-	void Renderer::AddShader(std::string name, Shader* shader)
+	Renderer::~Renderer()
+	{
+
+	}
+
+	void Renderer::AddShader(const std::string& name, Shader* shader)
 	{
 		if (shaders.find(name) != shaders.end())
 			return;

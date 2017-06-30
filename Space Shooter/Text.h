@@ -9,13 +9,16 @@
 #include "UIElementBase.h"
 #include "FontLoader.h"
 
+#include <vec2.hpp>
+#include <vec4.hpp>
+
 namespace Engine
 {
 	class Text : public UIElementBase
 	{
 		public:
 			~Text();
-			Text(std::string, int, float, float, float, float, float, float, std::string);
+			Text(const std::string&, int, glm::vec2, glm::vec4, const std::string&);
 			Text();
 			void Draw(GLuint, UIElementBase*);
 			void Update();

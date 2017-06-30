@@ -12,12 +12,13 @@ namespace Engine
 	class FontLoader
 	{
 		public:
-			static void LoadFont(std::string, std::string);
-			static FT_Face GetFont(std::string);
-			static void Init();
+			FontLoader();
+			~FontLoader();
+			void LoadFont(const std::string&, const std::string&);
+			const FT_Face GetFont(const std::string&);
 		private:
-			static FT_Library library;
-			static std::map<std::string, FT_Face> faces;
+			FT_Library library;
+			std::map<std::string, FT_Face> faces;
 		};
 }
 #endif

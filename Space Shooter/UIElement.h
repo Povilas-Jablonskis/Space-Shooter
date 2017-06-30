@@ -15,16 +15,16 @@ namespace Engine
 	{
 		public:
 			~UIElement();
-			UIElement(int, int, float, float, float, float, float, float);
+			UIElement(int, int, glm::vec2, glm::vec4);
 			UIElement();
-			void AddText(std::string, int, float, float, float, float, float, float, std::string);
+			void AddText(const std::string&, int, glm::vec2, glm::vec4, const std::string&);
 			void AddText(std::shared_ptr<Text>);
-			void AddUIElement(int, int, float, float, float, float, float, float);
+			void AddUIElement(int, int, glm::vec2, glm::vec4);
 			void AddUIElement(std::shared_ptr<UIElement>);
 			void HideAllElements();
 			void ShowAllElements();
 			void Update();
-			void DrawOtherElements();
+			void DrawOtherElements(Renderer);
 		private:
 			std::vector<std::shared_ptr<UIElement>> elements;
 			std::vector<std::shared_ptr<Text>> texts;

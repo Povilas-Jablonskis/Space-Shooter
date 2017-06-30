@@ -2,16 +2,18 @@
 
 namespace Engine
 {
-	std::map<std::string, FT_Face> FontLoader::faces;
-	FT_Library FontLoader::library;
-
-	void FontLoader::Init()
+	FontLoader::FontLoader()
 	{
 		if (FT_Init_FreeType(&library))
 			std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
 	}
 
-	void FontLoader::LoadFont(std::string _path, std::string _name)
+	FontLoader::~FontLoader()
+	{
+
+	}
+
+	void FontLoader::LoadFont(const std::string& _path, const std::string& _name)
 	{
 		if (faces.find(_name) != faces.end())
 			return;
@@ -22,7 +24,7 @@ namespace Engine
 		faces.insert(std::pair<std::string, FT_Face>(_name, face));
 	}
 
-	FT_Face FontLoader::GetFont(std::string _name)
+	const FT_Face FontLoader::GetFont(const std::string& _name)
 	{
 		if (faces.find(_name) != faces.end())
 			return faces.at(_name);

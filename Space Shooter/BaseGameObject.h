@@ -7,25 +7,28 @@
 #include "GL/freeglut.h"
 #include <memory>
 
+#include <vec2.hpp>
+#include <vec3.hpp>
+
 namespace Engine
 {
 	class BaseGameObject
 	{
 		public:
 			~BaseGameObject();
-			BaseGameObject(int, int, float, float, float, float, float, float, float);
+			BaseGameObject(int, int, glm::vec2, glm::vec2, glm::vec3);
 			BaseGameObject();
 			virtual void Draw(GLuint);
-			virtual void Update();
-			float GetPosition(int);
-			int GetSize(int);
-			float GetColor(int);
+			virtual bool Update() = 0;
+			const float GetPosition(int);
+			const int GetSize(int);
+			const float GetColor(int);
 		protected:
-			float position[2];
-			float velocity[2];
 			int width;
 			int height;
-			float color[3];
+			glm::vec2 position;
+			glm::vec2 velocity;
+			glm::vec3 color;
 	};
 }
 #endif

@@ -9,7 +9,8 @@ namespace Engine
 
 	}
 
-	UIElement::UIElement(int _width, int _height, float x, float y, float r, float g, float b, float a) : UIElementBase(_width, _height, x, y, r, g, b, a)
+	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color) 
+		: UIElementBase(_width, _height, _position, _color)
 	{
 
 	}
@@ -20,14 +21,14 @@ namespace Engine
 		elements.clear();
 	}
 
-	void UIElement::AddText(std::string _text, int _fontsize, float x, float y, float r, float g, float b, float a, std::string font)
+	void UIElement::AddText(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, const std::string& font)
 	{
-		texts.push_back(std::make_shared<Text>(_text, _fontsize, x, y, r, g, b, a, font));
+		texts.push_back(std::make_shared<Text>(_text, _fontsize, _position, _color, font));
 	}
 
-	void UIElement::AddUIElement(int _width, int _height, float x, float y, float r, float g, float b, float a)
+	void UIElement::AddUIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color)
 	{
-		elements.push_back(std::make_shared<UIElement>(_width, _height, x, y, r, g, b, a));
+		elements.push_back(std::make_shared<UIElement>(_width, _height, _position, _color));
 	}
 
 	void UIElement::AddText(std::shared_ptr<Text> text)
@@ -52,15 +53,15 @@ namespace Engine
 		}
 	}
 
-	void UIElement::DrawOtherElements()
+	void UIElement::DrawOtherElements(Renderer renderer)
 	{
 		for (auto element : elements)
 		{
-			Renderer::Render(element.get());
+			renderer.Render(element.get());
 		}
 		for (auto text : texts)
 		{
-			Renderer::Render(text.get(), this);
+			renderer.Render(text.get(), this);
 		}
 	}
 

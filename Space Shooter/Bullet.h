@@ -9,9 +9,9 @@ namespace Engine
 	{
 		public:
 			~Bullet();
-			Bullet(int, int, float, float, float, float, float, float, float, BaseGameObject*);
+			Bullet(int, int, glm::vec2, glm::vec2, glm::vec3, BaseGameObject*);
 			Bullet();
-			bool UpdateBullet();
+			bool Update();
 		private:
 			BaseGameObject* parent;
 	};

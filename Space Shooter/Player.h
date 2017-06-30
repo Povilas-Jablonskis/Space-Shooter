@@ -11,9 +11,9 @@ namespace Engine
 	{
 		public:
 			~Player();
-			Player(int, int, float, float, float, float, float, float, float);
+			Player(int, int, glm::vec2, glm::vec2, glm::vec3);
 			Player();
-			void Update();
+			bool Update();
 			void DrawUI();
 		private:
 			void InitUI();

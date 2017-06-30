@@ -8,18 +8,8 @@ namespace Engine
 
 	}
 
-	BaseGameObject::BaseGameObject(int _width, int _height, float x, float y, float velx, float vely, float r, float g, float b)
-	{
-		width = _width;
-		height = _height;
-		position[0] = x;
-		position[1] = y;
-		velocity[0] = velx;
-		velocity[1] = vely;
-		color[0] = r;
-		color[1] = g;
-		color[2] = b;
-	}
+	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec3 _color)
+		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color) {}
 
 	BaseGameObject::~BaseGameObject()
 	{
@@ -40,17 +30,12 @@ namespace Engine
 		glUniform4f(offsetLocation3, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, 1.0f);
 	}
 
-	void BaseGameObject::Update()
-	{
-
-	}
-
-	float BaseGameObject::GetPosition(int index)
+	const float BaseGameObject::GetPosition(int index)
 	{
 		return position[index];
 	}
 
-	int BaseGameObject::GetSize(int index)
+	const int BaseGameObject::GetSize(int index)
 	{
 		switch (index)
 		{
@@ -69,7 +54,7 @@ namespace Engine
 		}
 	}
 
-	float BaseGameObject::GetColor(int index)
+	const float BaseGameObject::GetColor(int index)
 	{
 		return color[index];
 	}

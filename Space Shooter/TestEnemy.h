@@ -9,9 +9,9 @@ namespace Engine
 	{
 		public:
 			~TestEnemy();
-			TestEnemy(int, int, float, float, float, float, float, float, float);
+			TestEnemy(int, int, glm::vec2, glm::vec2, glm::vec3);
 			TestEnemy();
-			void Update();
+			bool Update();
 		private:
 			float dt;
 	};

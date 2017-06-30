@@ -9,21 +9,11 @@ namespace Engine
 		
 	}
 
-	Text::Text(std::string _text, int _fontsize, float x, float y, float r, float g, float b, float a, std::string fontpath)
+	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, const std::string& fontpath) :
+		UIElementBase(0, 0, _position, _color), mouseontext(false), leftbuttonclicked(0), textsize(_fontsize), text(_text)
 	{
 		glGenBuffers(1, &vbo);
 		glGenTextures(1, &texture);
-		mouseontext = false;
-		leftbuttonclicked = 0;
-
-		textsize = _fontsize;
-		position[0] = x;
-		position[1] = y;
-		color[0] = r;
-		color[1] = g;
-		color[2] = b;
-		color[3] = a;
-		text = _text;
 
 		OnHoverEnterFunc = []()
 		{

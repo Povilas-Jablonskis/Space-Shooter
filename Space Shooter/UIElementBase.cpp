@@ -7,16 +7,10 @@ namespace Engine
 
 	}
 
-	UIElementBase::UIElementBase(int _width, int _height, float x, float y, float r, float g, float b, float a)
+	UIElementBase::UIElementBase(int _width, int _height, glm::vec2 _position, glm::vec4 _color) :
+		width(_width), height(_height), position(_position), color(_color)
 	{
-		width = _width;
-		height = _height;
-		position[0] = x;
-		position[1] = y;
-		color[0] = r;
-		color[1] = g;
-		color[2] = b;
-		color[3] = a;
+
 	}
 
 	UIElementBase::~UIElementBase()
@@ -38,17 +32,12 @@ namespace Engine
 		glUniform4f(offsetLocation3, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, color[3]);
 	}
 
-	void UIElementBase::Update()
-	{
-
-	}
-
-	float UIElementBase::GetPosition(int index)
+	const float UIElementBase::GetPosition(int index)
 	{
 		return position[index];
 	}
 
-	int UIElementBase::GetSize(int index)
+	const int UIElementBase::GetSize(int index)
 	{
 		switch (index)
 		{
@@ -67,13 +56,13 @@ namespace Engine
 		}
 	}
 
+	const float UIElementBase::GetColor(int index)
+	{
+		return color[index];
+	}
+
 	void UIElementBase::ChangeColor(float _color, int index)
 	{
 		color[index] = _color;
-	}
-
-	float UIElementBase::GetColor(int index)
-	{
-		return color[index];
 	}
 }

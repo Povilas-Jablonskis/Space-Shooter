@@ -7,9 +7,9 @@ namespace Engine
 
 	}
 
-	TestEnemy::TestEnemy(int _width, int _height, float x, float y, float velx, float vely, float r, float g, float b) : BaseGameObject(_width, _height, x, y, velx, vely, r, g, b)
+	TestEnemy::TestEnemy(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec3 _color) 
+		: BaseGameObject(_width, _height, _position, _velocity, _color), dt(0.0f)
 	{
-		dt = 0.0f;
 		float _dt = 0.0f;
 		float maxpos = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 		float value = 0.0f;
@@ -27,11 +27,12 @@ namespace Engine
 
 	}
 
-	void TestEnemy::Update()
+	bool TestEnemy::Update()
 	{
 		dt += 0.2f;
 
 		position[0] += velocity[0];
 		position[1] += velocity[1] * sin(dt);
+		return true;
 	}
 }

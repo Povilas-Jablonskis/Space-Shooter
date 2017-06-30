@@ -6,25 +6,27 @@
 #include "GL/glew.h"
 #include "GL/freeglut.h"
 
+#include <vec2.hpp>
+#include <vec4.hpp>
+
 namespace Engine
 {
 	class UIElementBase
 	{
 		public:
 			~UIElementBase();
-			UIElementBase(int, int, float, float, float, float, float, float);
+			UIElementBase(int, int, glm::vec2, glm::vec4);
 			UIElementBase();
 			virtual void Draw(GLuint);
-			virtual void Update();
 			void ChangeColor(float, int);
-			float GetPosition(int);
-			int GetSize(int);
-			float GetColor(int);
+			const float GetPosition(int);
+			const int GetSize(int);
+			const float GetColor(int);
 		protected:
-			float position[2];
+			glm::vec2 position;
 			int width;
 			int height;
-			float color[4];
+			glm::vec4 color;
 		};
 }
 #endif
