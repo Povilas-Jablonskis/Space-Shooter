@@ -1,5 +1,4 @@
 #include "BulletManager.h"
-#include "Renderer.h"
 
 namespace Engine
 {
@@ -18,14 +17,14 @@ namespace Engine
 		bullets.push_back(std::make_shared<Bullet>(_width, _height, _position, _velocity, _color, _parent));
 	}
 
-	std::vector<std::shared_ptr<BaseGameObject>>& BulletManager::GetBulletsList()
+	std::vector<std::shared_ptr<Bullet>>& BulletManager::GetBulletsList()
 	{
 		return bullets;
 	}
 
 	void BulletManager::Update()
 	{
-		for (std::vector<std::shared_ptr<BaseGameObject>> ::iterator it = bullets.begin(); it != bullets.end();)
+		for (std::vector<std::shared_ptr<Bullet>> ::iterator it = bullets.begin(); it != bullets.end();)
 		{
 			if (it->get()->Update() == false)
 				it = bullets.erase(it);

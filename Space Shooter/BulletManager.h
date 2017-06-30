@@ -13,9 +13,9 @@ namespace Engine
 			void AddBullet(int, int, glm::vec2, glm::vec2, glm::vec3, BaseGameObject*);
 			void Update();
 			void Draw();
-			std::vector<std::shared_ptr<BaseGameObject>>& GetBulletsList();
+			std::vector<std::shared_ptr<Bullet>>& GetBulletsList();
 		private:
-			std::vector<std::shared_ptr<BaseGameObject>> bullets;
+			std::vector<std::shared_ptr<Bullet>> bullets;
 	};
 }
 #endif

@@ -1,5 +1,4 @@
 #include "UIElement.h"
-#include "Renderer.h"
 #include <algorithm>
 
 namespace Engine
@@ -21,7 +20,7 @@ namespace Engine
 		elements.clear();
 	}
 
-	void UIElement::AddText(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, const std::string& font)
+	void UIElement::AddText(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* font)
 	{
 		texts.push_back(std::make_shared<Text>(_text, _fontsize, _position, _color, font));
 	}
@@ -53,15 +52,16 @@ namespace Engine
 		}
 	}
 
-	void UIElement::DrawOtherElements(Renderer renderer)
+	void UIElement::Draw()
 	{
+		UIElementBase::Draw();
 		for (auto element : elements)
 		{
-			renderer.Render(element.get());
+			element.get()->Draw();
 		}
 		for (auto text : texts)
 		{
-			renderer.Render(text.get(), this);
+			text.get()->Draw(this);
 		}
 	}
 

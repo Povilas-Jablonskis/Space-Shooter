@@ -7,7 +7,6 @@
 #include <functional>
 
 #include "UIElementBase.h"
-#include "FontLoader.h"
 
 #include <vec2.hpp>
 #include <vec4.hpp>
@@ -18,9 +17,9 @@ namespace Engine
 	{
 		public:
 			~Text();
-			Text(const std::string&, int, glm::vec2, glm::vec4, const std::string&);
+			Text(const std::string&, int, glm::vec2, glm::vec4, FT_Face*);
 			Text();
-			void Draw(GLuint, UIElementBase*);
+			void Draw(UIElementBase*);
 			void Update();
 			std::function<void()> OnHoverEnterFunc;
 			std::function<void()> OnHoverExitFunc;
@@ -38,11 +37,9 @@ namespace Engine
 				GLfloat s;
 				GLfloat t;
 			};
-			std::string fontname;
 			std::string text;
-			int textsize;
-			GLuint texture;
-			GLuint vbo;
+			int fontsize;
+			FT_Face* face;
 			bool mouseontext;
 			SHORT leftbuttonclicked;
 			float bbox[4];

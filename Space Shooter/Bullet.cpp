@@ -1,6 +1,5 @@
 #include "Bullet.h"
 #include <memory>
-#include "Renderer.h"
 
 namespace Engine
 {

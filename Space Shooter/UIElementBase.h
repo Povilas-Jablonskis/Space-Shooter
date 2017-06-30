@@ -17,7 +17,7 @@ namespace Engine
 			~UIElementBase();
 			UIElementBase(int, int, glm::vec2, glm::vec4);
 			UIElementBase();
-			virtual void Draw(GLuint);
+			virtual void Draw();
 			void ChangeColor(float, int);
 			const float GetPosition(int);
 			const int GetSize(int);

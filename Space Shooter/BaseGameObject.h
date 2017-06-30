@@ -18,8 +18,8 @@ namespace Engine
 			~BaseGameObject();
 			BaseGameObject(int, int, glm::vec2, glm::vec2, glm::vec3);
 			BaseGameObject();
-			virtual void Draw(GLuint);
-			virtual bool Update() = 0;
+			virtual void Draw();
+			virtual bool Update();
 			const float GetPosition(int);
 			const int GetSize(int);
 			const float GetColor(int);

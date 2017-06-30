@@ -1,4 +1,5 @@
 #include "UIElementBase.h"
+#include "Application.h"
 
 namespace Engine
 {
@@ -18,18 +19,30 @@ namespace Engine
 
 	}
 
-	void UIElementBase::Draw(GLuint program)
+	void UIElementBase::Draw()
 	{
-		float _width = (float)(glutGet(GLUT_WINDOW_WIDTH));
-		float _height = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		auto program = Application::GetShaderProgram("shader");
 
-		int offsetLocation = glGetUniformLocation(program, "givenposition");
-		int offsetLocation2 = glGetUniformLocation(program, "size");
-		int offsetLocation3 = glGetUniformLocation(program, "color");
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glUniform2f(offsetLocation, (_width * position[0]) / _width, (_height * position[1]) / _height);
-		glUniform2f(offsetLocation2, width / _width, height / _height);
-		glUniform4f(offsetLocation3, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, color[3]);
+		glBindVertexArray(Application::GetVAO());
+			glUseProgram(program);
+				float _width = (float)(glutGet(GLUT_WINDOW_WIDTH));
+				float _height = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+
+				int offsetLocation = glGetUniformLocation(program, "givenposition");
+				int offsetLocation2 = glGetUniformLocation(program, "size");
+				int offsetLocation3 = glGetUniformLocation(program, "color");
+
+				glUniform2f(offsetLocation, (_width * position[0]) / _width, (_height * position[1]) / _height);
+				glUniform2f(offsetLocation2, width / _width, height / _height);
+				glUniform4f(offsetLocation3, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, color[3]);
+				glDrawElements(GL_TRIANGLES, (sizeof(Application::indices) / sizeof(*Application::indices)), GL_UNSIGNED_INT, 0);
+			glUseProgram(0);
+		glBindVertexArray(0);
+
+		glDisable(GL_BLEND);
 	}
 
 	const float UIElementBase::GetPosition(int index)

@@ -1,5 +1,5 @@
 #include "BaseGameObject.h"
-#include "Renderer.h"
+#include "Application.h"
 
 namespace Engine
 {
@@ -16,18 +16,31 @@ namespace Engine
 
 	}
 
-	void BaseGameObject::Draw(GLuint program)
+	void BaseGameObject::Draw()
 	{
-		float _width = (float)(glutGet(GLUT_WINDOW_WIDTH));
-		float _height = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		auto program = Application::GetShaderProgram("shader");
+		glBindVertexArray(Application::GetVAO());
+			glUseProgram(program);
+				float _width = (float)(glutGet(GLUT_WINDOW_WIDTH));
+				float _height = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
-		int offsetLocation = glGetUniformLocation(program, "givenposition");
-		int offsetLocation2 = glGetUniformLocation(program, "size");
-		int offsetLocation3 = glGetUniformLocation(program, "color");
+				int offsetLocation = glGetUniformLocation(program, "givenposition");
+				int offsetLocation2 = glGetUniformLocation(program, "size");
+				int offsetLocation3 = glGetUniformLocation(program, "color");
 
-		glUniform2f(offsetLocation, position[0] / _width, position[1] / _height);
-		glUniform2f(offsetLocation2, width / _width, height / _height);
-		glUniform4f(offsetLocation3, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, 1.0f);
+				glUniform2f(offsetLocation, position[0] / _width, position[1] / _height);
+				glUniform2f(offsetLocation2, width / _width, height / _height);
+				glUniform4f(offsetLocation3, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, 1.0f);
+				glDrawElements(GL_TRIANGLES, (sizeof(Application::indices) / sizeof(*Application::indices)), GL_UNSIGNED_INT, 0);
+			glUseProgram(0);
+		glBindVertexArray(0);
+	}
+
+	bool BaseGameObject::Update()
+	{
+		position[0] += velocity[0];
+		position[1] += velocity[1];
+		return true;
 	}
 
 	const float BaseGameObject::GetPosition(int index)

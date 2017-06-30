@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\P\Desktop\freetype-2.8\include;C:\Users\P\Desktop\rapidjson;C:\Users\P\Desktop\Simple OpenGL Image Library\src;C:\Users\P\Desktop\glew-2.0.0\include;C:\Users\P\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\include;C:\Users\povilas.jablonskis\Desktop\rapidjson;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\src;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\include;C:\Users\povilas.jablonskis\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\P\Desktop\freetype-2.8\include;C:\Users\P\Desktop\rapidjson;C:\Users\P\Desktop\Simple OpenGL Image Library\src;C:\Users\P\Desktop\glew-2.0.0\include;C:\Users\P\Desktop\freeglut\include;C:\Users\P\Desktop\glm\glm;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\include;C:\Users\povilas.jablonskis\Desktop\rapidjson;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\src;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\include;C:\Users\povilas.jablonskis\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -59,7 +59,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\P\Desktop\freetype-2.8\include;C:\Users\P\Desktop\rapidjson;C:\Users\P\Desktop\Simple OpenGL Image Library\src;C:\Users\P\Desktop\glew-2.0.0\include;C:\Users\P\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\include;C:\Users\povilas.jablonskis\Desktop\rapidjson;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\src;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\include;C:\Users\povilas.jablonskis\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\P\Desktop\freetype-2.8\include;C:\Users\P\Desktop\rapidjson;C:\Users\P\Desktop\Simple OpenGL Image Library\src;C:\Users\P\Desktop\glew-2.0.0\include;C:\Users\P\Desktop\freeglut\include;C:\Users\P\Desktop\glm\glm;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\include;C:\Users\povilas.jablonskis\Desktop\rapidjson;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\src;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\include;C:\Users\povilas.jablonskis\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -74,10 +74,8 @@
     <ClCompile Include="BaseGameObject.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="BulletManager.cpp" />
-    <ClCompile Include="FontLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="TestEnemy.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -89,10 +87,8 @@
     <ClInclude Include="BaseGameObject.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletManager.h" />
-    <ClInclude Include="FontLoader.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="Renderer.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="TestEnemy.h" />
     <ClInclude Include="Text.h" />
