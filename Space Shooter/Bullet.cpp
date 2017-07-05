@@ -16,10 +16,10 @@ namespace Engine
 
 	}
 
-	bool Bullet::Update()
+	bool Bullet::Update(float _dt)
 	{
-		position[0] += velocity[0];
-		position[1] += velocity[1];
+		position[0] += velocity[0] * _dt;
+		position[1] += velocity[1] * _dt;
 
 		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -27,5 +27,20 @@ namespace Engine
 		if (position[1] + height >= windowheigth || position[1] <= 0.0f || position[0] + width >= windowwidth || position[0] <= 0.0f)
 			return false;
 		return true;
+	}
+
+	GLboolean Bullet::CheckCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision
+	{
+		if (BaseGameObject::CheckCollision(_objecttocheck))
+		{
+			OnCollision(_objecttocheck);
+			return true;
+		}
+		return false;
+	}
+
+	void Bullet::OnCollision(std::shared_ptr<BaseGameObject> collider)
+	{
+		std::cout << "bullet hit" << std::endl;
 	}
 }

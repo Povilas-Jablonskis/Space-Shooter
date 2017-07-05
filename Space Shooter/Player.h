@@ -15,9 +15,12 @@ namespace Engine
 			~Player();
 			Player(int, int, glm::vec2, glm::vec2, glm::vec3);
 			Player();
-			bool Update(std::vector<std::shared_ptr<Bullet>>*, const Application*);
+			bool Update(Application*, float);
 			int GetHealth() const;
 			int GetScore() const;
+			GLboolean CheckCollision(std::shared_ptr<BaseGameObject>);
+			GLboolean CheckCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
+			void OnCollision(std::shared_ptr<BaseGameObject>);
 		private:
 			int score;
 			int health;

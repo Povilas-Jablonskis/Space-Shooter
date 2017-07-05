@@ -24,7 +24,7 @@ namespace Engine
 	GLuint Application::TextTexture;
 
 	Application::Application() 
-		: bulletManager(new BulletManager()), fontManager(new FontManager()), gamestate(GameState::NOTSTARTEDYET), currtime(glutGet(GLUT_ELAPSED_TIME))
+		: fontManager(new FontManager()), gamestate(GameState::NOTSTARTEDYET)
 	{
 		glGenBuffers(1, &TextVBO);
 		glGenTextures(1, &TextTexture);
@@ -53,11 +53,6 @@ namespace Engine
 		glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
 
 		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
-	}
-
-	std::vector<std::shared_ptr<Bullet>>* Application::GetBulletsList()
-	{
-		return &bulletManager->GetBulletsList();
 	}
 
 	void Application::AddShader(const std::string& name, Shader* shader)
@@ -101,16 +96,6 @@ namespace Engine
 	GameState Application::GetState() const
 	{
 		return gamestate;
-	}
-
-	void Application::UpdateDeltaTime()
-	{
-		prevtime = currtime;
-		currtime = glutGet(GLUT_ELAPSED_TIME);
-		dt = (currtime - prevtime) / 1000.0f;
-
-		if (dt > 0.033f)
-			dt = 0.033f;
 	}
 
 	bool Application::GetKey(char key) const

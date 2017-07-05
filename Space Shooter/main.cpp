@@ -11,7 +11,6 @@
 #include "Shader.h"
 #include "Player.h"
 #include "Bullet.h"
-#include "BulletManager.h"
 #include "TestEnemy.h"
 #include "UIElement.h"
 #include "UIElementBase.h"
@@ -29,37 +28,17 @@ using namespace Engine;
 Application* application;
 std::shared_ptr<Player> player;
 
+float t;
+float dt;
+float currentTime;
+float accumulator;
+
 std::vector<std::shared_ptr<BaseGameObject>> enemies;
 std::map<std::string, UIElement*> UI;
 std::map<std::string, std::shared_ptr<UIElement>> PlayerUI;
 
-void idle(void)
-{
-}
-
-void display(void)
-{
-	//glClear(GL_COLOR_BUFFER_BIT);
-
-	//DrawContent();
-
-	glutSwapBuffers();
-}
-
-void resize(int width, int height)
-{
-	//const float ar = (float) width / (float) height;
-
-	glutReshapeWindow(width, height);
-	glViewport(0, 0, width, height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0.0f, width, 0.0f, height, 0.0f, 1.0f);
-}
-
 void InitScene()
 {
-	PlayerUI.clear();
 	enemies.clear();
 	for (size_t i = 0; i <= 16; i++)
 	{
@@ -67,7 +46,7 @@ void InitScene()
 		enemies.push_back(enemy);
 	}
 
-	player = std::make_shared<Player>(32, 32, glm::vec2(320.0f, 0.0f), glm::vec2(6.0f, 2.0f), glm::vec3(255.0f, 255.0f, 0.0f));
+	player = std::make_shared<Player>(32, 32, glm::vec2(320.0f, 0.0f), glm::vec2(50.0f, 100.0f), glm::vec3(255.0f, 255.0f, 0.0f));
 }
 
 void InitGameUI()
@@ -105,7 +84,6 @@ void InitGameUI()
 	options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(45.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
 	options->OnMouseReleaseFunc = [mainmenu, pausemenu]()
 	{
-		application->GetBulletsList()->clear();
 		InitScene();
 		application->SetState(GameState::NOTSTARTEDYET);
 		pausemenu->HideAllElements();
@@ -163,13 +141,14 @@ void InitPlayerUI()
 	PlayerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", healthUI));
 }
 
-void timerFunc(int value)
+void idle(void)
+{
+	glutPostRedisplay();
+}
+
+void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-
-	glutTimerFunc(1000 / 30, timerFunc, value);
-
-	application->UpdateDeltaTime();
 
 	SHORT escape = GetAsyncKeyState(0x1B);
 
@@ -199,32 +178,59 @@ void timerFunc(int value)
 	else if (escape == 0 && application->GetKey(27))
 		application->SetKey(27, false);
 
-	if (application->GetState() == GameState::STARTED)
+	float newTime = ((float)glutGet(GLUT_ELAPSED_TIME));
+	float frameTime = (newTime - currentTime) / 1000.0f;
+	currentTime = newTime;
+
+	accumulator += frameTime;
+
+	while (accumulator >= dt)
 	{
-		auto bulletslist = application->GetBulletsList();
-		for (std::vector<std::shared_ptr<Bullet>> ::iterator it = bulletslist->begin(); it != bulletslist->end();)
+		if (application->GetState() == GameState::STARTED)
 		{
-			if (it->get()->Update() == false)
-				it = bulletslist->erase(it);
-			else
+			player->Update(application, dt);
+			if (player->CheckCollision(&enemies))
 			{
-				(it->get())->Draw();
-				++it;
+				InitScene();
+				application->SetState(GameState::NOTSTARTEDYET);
+				UI["Pause Menu"]->HideAllElements();
+				UI["Options"]->HideAllElements();
+				UI["Main Menu"]->ShowAllElements();
+			}
+			for (auto enemy : enemies)
+			{
+				enemy->Update(dt, t);
+				if (enemy->CheckCollision(player))
+				{
+					InitScene();
+					application->SetState(GameState::NOTSTARTEDYET);
+					UI["Pause Menu"]->HideAllElements();
+					UI["Options"]->HideAllElements();
+					UI["Main Menu"]->ShowAllElements();
+				}
 			}
 		}
-		player->Update(bulletslist, application);
-		InitPlayerUI();
-		for (auto UIElement : PlayerUI)
-		{
-			UIElement.second->Draw();
-		}
+		accumulator -= dt;
+		t += dt;
+	}
+
+	if (application->GetState() == GameState::STARTED)
+	{
 		player->Draw();
+		InitPlayerUI();
+
 		for (auto enemy : enemies)
 		{
-			enemy->Update();
 			enemy->Draw();
 		}
+
+		for (auto UIElement : PlayerUI)
+		{
+			UIElement.second->Update();
+			UIElement.second->Draw();
+		}
 	}
+
 	for (auto UIElement : UI)
 	{
 		UIElement.second->Update();
@@ -232,6 +238,17 @@ void timerFunc(int value)
 	}
 
 	glutSwapBuffers();
+}
+
+void resize(int width, int height)
+{
+	//const float ar = (float) width / (float) height;
+
+	glutReshapeWindow(width, height);
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0.0f, width, 0.0f, height, 0.0f, 1.0f);
 }
 
 int main(int argc, char *argv[])
@@ -255,6 +272,11 @@ int main(int argc, char *argv[])
 	glutReshapeFunc(resize);
 	glutDisplayFunc(display);
 	glutIdleFunc(idle);
+
+	currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
+	accumulator = 0.0f;
+	dt = 1.0f / 60.0f;
+	t = 0.0f;
 
 	/*char writeBuffer[65536];
 	FILE* pFile;
@@ -288,8 +310,6 @@ int main(int argc, char *argv[])
 	application->LoadFont("AGENCYR.ttf", "AGENCYR.ttf");
 
 	Start();
-
-	glutTimerFunc(1000 / 30, timerFunc, 0);
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);
 	glutMainLoop();
