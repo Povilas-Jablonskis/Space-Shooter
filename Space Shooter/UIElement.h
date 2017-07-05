@@ -1,5 +1,5 @@
-#ifndef _UIElement
-#define _UIElement
+#ifndef _uIElementH
+#define _uIElementH
 
 #include <iostream>
 #include <vector>

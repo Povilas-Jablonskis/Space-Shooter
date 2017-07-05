@@ -1,5 +1,5 @@
-#ifndef _Shader
-#define _Shader
+#ifndef _shaderH
+#define _shaderH
 
 #include <iostream>
 #include <vector>
@@ -16,7 +16,7 @@ namespace Engine
 			~Shader();
 			void LoadShader(const std::string&, const std::string&);
 			std::string ReadShaderFile(const std::string&);
-			const GLuint GetShader();
+			GLuint GetShader() const;
 		private:
 			GLuint program;
 	};

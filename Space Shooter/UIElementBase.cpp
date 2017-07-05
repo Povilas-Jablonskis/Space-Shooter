@@ -45,12 +45,12 @@ namespace Engine
 		glDisable(GL_BLEND);
 	}
 
-	const float UIElementBase::GetPosition(int index)
+	float UIElementBase::GetPosition(int index) const
 	{
 		return position[index];
 	}
 
-	const int UIElementBase::GetSize(int index)
+	int UIElementBase::GetSize(int index) const
 	{
 		switch (index)
 		{
@@ -69,7 +69,7 @@ namespace Engine
 		}
 	}
 
-	const float UIElementBase::GetColor(int index)
+	float UIElementBase::GetColor(int index) const
 	{
 		return color[index];
 	}

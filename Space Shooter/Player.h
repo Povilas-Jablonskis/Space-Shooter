@@ -1,8 +1,9 @@
-#ifndef _Player
-#define _Player
+#ifndef _playerH
+#define _playerH
 
 #include <map>
 
+#include "Application.h"
 #include "Bullet.h"
 #include "UIElement.h"
 
@@ -14,11 +15,10 @@ namespace Engine
 			~Player();
 			Player(int, int, glm::vec2, glm::vec2, glm::vec3);
 			Player();
-			bool Update(std::vector<std::shared_ptr<Bullet>>*);
-			const int GetHealth();
-			const int GetScore();
+			bool Update(std::vector<std::shared_ptr<Bullet>>*, const Application*);
+			int GetHealth() const;
+			int GetScore() const;
 		private:
-			bool pressedkeys[256];
 			int score;
 			int health;
 	};

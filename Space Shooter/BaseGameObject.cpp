@@ -43,12 +43,12 @@ namespace Engine
 		return true;
 	}
 
-	const float BaseGameObject::GetPosition(int index)
+	float BaseGameObject::GetPosition(int index) const
 	{
 		return position[index];
 	}
 
-	const int BaseGameObject::GetSize(int index)
+	int BaseGameObject::GetSize(int index) const
 	{
 		switch (index)
 		{
@@ -67,7 +67,7 @@ namespace Engine
 		}
 	}
 
-	const float BaseGameObject::GetColor(int index)
+	float BaseGameObject::GetColor(int index) const
 	{
 		return color[index];
 	}

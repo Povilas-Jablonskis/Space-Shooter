@@ -27,27 +27,14 @@
 using namespace Engine;
 
 Application* application;
+std::shared_ptr<Player> player;
 
-int prevtime, currtime;
-float dt;
-bool pressedkeys[256];
-GameState gamestate = GameState::NOTSTARTEDYET;
-
-FT_Library library;
-Player* player;
-
-std::vector<BaseGameObject*> enemies;
+std::vector<std::shared_ptr<BaseGameObject>> enemies;
 std::map<std::string, UIElement*> UI;
 std::map<std::string, std::shared_ptr<UIElement>> PlayerUI;
-std::map<std::string, FT_Face> fonts;
 
 void idle(void)
 {
-}
-
-void ChangeState(GameState state)
-{
-	gamestate = state;
 }
 
 void display(void)
@@ -70,26 +57,102 @@ void resize(int width, int height)
 	glOrtho(0.0f, width, 0.0f, height, 0.0f, 1.0f);
 }
 
-FT_Face LoadFont(const std::string& _path, const std::string& _name)
+void InitScene()
 {
-	if (fonts.find(_name) != fonts.end())
-		return fonts.at(_name);
+	PlayerUI.clear();
+	enemies.clear();
+	for (size_t i = 0; i <= 16; i++)
+	{
+		auto enemy = std::make_shared<TestEnemy>(32, 32, glm::vec2(32.0f + (i * 34.0f), 416.0f), glm::vec2(0.0f, 0.0f), glm::vec3(255.0f, 160.0f, 122.0f));
+		enemies.push_back(enemy);
+	}
 
-	FT_Face face;
-	if (FT_New_Face(library, _path.c_str(), 0, &face))
-		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
-	fonts.insert(std::pair<std::string, FT_Face>(_name, face));
-	return face;
+	player = std::make_shared<Player>(32, 32, glm::vec2(320.0f, 0.0f), glm::vec2(6.0f, 2.0f), glm::vec3(255.0f, 255.0f, 0.0f));
 }
 
-void InitUI()
+void InitGameUI()
+{
+	UIElement* mainmenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
+	UIElement* optionsUI = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
+	UIElement* pausemenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
+
+	//Main Menu
+	auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(48.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = [mainmenu]()
+	{
+		application->SetState(GameState::STARTED);
+		mainmenu->HideAllElements();
+	};
+	mainmenu->AddText(options);
+	options = std::make_shared<Text>("Options", 18, glm::vec2(48.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = [optionsUI, mainmenu]()
+	{
+		mainmenu->HideAllElements();
+		optionsUI->ShowAllElements();
+	};
+	mainmenu->AddText(options);
+	options = std::make_shared<Text>("End Game", 18, glm::vec2(48.0f / 100.0f, 50.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = []()
+	{
+		std::cout << "exiting" << std::endl;
+		getchar();
+		exit(0);
+	};
+	mainmenu->AddText(options);
+	UI.insert(std::pair<std::string, UIElement*>("Main Menu", mainmenu));
+
+	//Pause Menu
+	options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(45.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = [mainmenu, pausemenu]()
+	{
+		application->GetBulletsList()->clear();
+		InitScene();
+		application->SetState(GameState::NOTSTARTEDYET);
+		pausemenu->HideAllElements();
+		mainmenu->ShowAllElements();
+	};
+	pausemenu->AddText(options);
+	options = std::make_shared<Text>("End Game", 18, glm::vec2(48.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = []()
+	{
+		std::cout << "exiting" << std::endl;
+		getchar();
+		exit(0);
+	};
+	pausemenu->AddText(options);
+	pausemenu->HideAllElements();
+	UI.insert(std::pair<std::string, UIElement*>("Pause Menu", pausemenu));
+
+	//Options
+	options = std::make_shared<Text>("A", 18, glm::vec2(50.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	optionsUI->AddText(options);
+	options = std::make_shared<Text>("B", 18, glm::vec2(50.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	optionsUI->AddText(options);
+	options = std::make_shared<Text>("Back", 18, glm::vec2(50.0f / 100.0f, 50.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = [optionsUI, mainmenu]()
+	{
+		optionsUI->HideAllElements();
+		mainmenu->ShowAllElements();
+	};
+	optionsUI->AddText(options);
+	optionsUI->HideAllElements();
+	UI.insert(std::pair<std::string, UIElement*>("Options", optionsUI));
+}
+
+void Start()
+{
+	InitScene();
+	InitGameUI();
+}
+
+void InitPlayerUI()
 {
 	PlayerUI.clear();
 	auto scoreUI = std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
 	auto healthUI = std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
 
 	//scoreUI
-	scoreUI->AddText(std::to_string(player->GetScore()), 18, glm::vec2(6.0f / 100.0f, 92.0f / 100.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), &fonts["AGENCYR.ttf"]);
+	scoreUI->AddText(std::to_string(player->GetScore()), 18, glm::vec2(6.0f / 100.0f, 92.0f / 100.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
 	PlayerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", scoreUI));
 
 	//healthUI
@@ -105,12 +168,8 @@ void timerFunc(int value)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glutTimerFunc(1000 / 30, timerFunc, value);
-	prevtime = currtime;
-	currtime = glutGet(GLUT_ELAPSED_TIME);
-	dt = (currtime - prevtime) / 1000.0f;
 
-	if (dt > 0.033f)
-		dt = 0.033f;
+	application->UpdateDeltaTime();
 
 	SHORT escape = GetAsyncKeyState(0x1B);
 
@@ -118,24 +177,29 @@ void timerFunc(int value)
 	auto shader = application->GetShaderProgram("shader");
 	auto textshader = application->GetShaderProgram("textshader");
 
-	if (escape < 0 && !pressedkeys[27])
+	GetAsyncKeyState(0x41) ? application->SetKey('a', true) : application->SetKey('a', false);
+	GetAsyncKeyState(0x44) ? application->SetKey('d', true) : application->SetKey('d', false);
+	GetAsyncKeyState(0x53) ? application->SetKey('s', true) : application->SetKey('s', false);
+	GetAsyncKeyState(0x20) ? application->SetKey( 32, true) : application->SetKey( 32, false);
+
+	if (escape < 0 && !application->GetKey(27))
 	{
-		pressedkeys[27] = true;
-		if (gamestate == GameState::PAUSED)
+		application->SetKey(27, true);
+		if (application->GetState() == GameState::PAUSED)
 		{
 			UI["Pause Menu"]->HideAllElements();
-			gamestate = GameState::STARTED;
+			application->SetState(GameState::STARTED);
 		}
-		else if (gamestate != GameState::NOTSTARTEDYET)
+		else if (application->GetState() != GameState::NOTSTARTEDYET)
 		{
 			UI["Pause Menu"]->ShowAllElements();
-			gamestate = GameState::PAUSED;
+			application->SetState(GameState::PAUSED);
 		}
 	}
-	else if (escape == 0 && pressedkeys[27])
-		pressedkeys[27] = false;
+	else if (escape == 0 && application->GetKey(27))
+		application->SetKey(27, false);
 
-	if (gamestate == GameState::STARTED)
+	if (application->GetState() == GameState::STARTED)
 	{
 		auto bulletslist = application->GetBulletsList();
 		for (std::vector<std::shared_ptr<Bullet>> ::iterator it = bulletslist->begin(); it != bulletslist->end();)
@@ -148,8 +212,8 @@ void timerFunc(int value)
 				++it;
 			}
 		}
-		player->Update(bulletslist);
-		InitUI();
+		player->Update(bulletslist, application);
+		InitPlayerUI();
 		for (auto UIElement : PlayerUI)
 		{
 			UIElement.second->Draw();
@@ -220,86 +284,12 @@ int main(int argc, char *argv[])
 		std::cout << "config.json not found" << std::endl;
 	}*/
 
-	if (FT_Init_FreeType(&library))
-		std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-
 	application = new Application();
-	auto font = LoadFont("AGENCYR.ttf", "AGENCYR.ttf");
+	application->LoadFont("AGENCYR.ttf", "AGENCYR.ttf");
 
-	for (size_t i = 0; i <= 16; i++)
-	{
-		BaseGameObject* enemy = new TestEnemy(32, 32, glm::vec2(32.0f + (i * 34.0f), 416.0f), glm::vec2(0.0f, 0.0f), glm::vec3(255.0f, 160.0f, 122.0f));
-		enemies.push_back(enemy);
-	}
-
-	player = new Player(32, 32, glm::vec2(320.0f, 0.0f), glm::vec2(6.0f, 2.0f), glm::vec3(255.0f, 255.0f, 0.0f));
-
-	UIElement* mainmenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
-	UIElement* optionsUI = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
-	UIElement* pausemenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
-
-	//Main Menu
-	auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(48.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), &font);
-	options->OnMouseReleaseFunc = [mainmenu]()
-	{
-		ChangeState(GameState::STARTED);
-		mainmenu->HideAllElements();
-	};
-	mainmenu->AddText(options);
-	options = std::make_shared<Text>("Options", 18, glm::vec2(48.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), &font);
-	options->OnMouseReleaseFunc = [optionsUI, mainmenu]()
-	{
-		mainmenu->HideAllElements();
-		optionsUI->ShowAllElements();
-	};
-	mainmenu->AddText(options);
-	options = std::make_shared<Text>("End Game", 18, glm::vec2(48.0f / 100.0f, 50.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), &font);
-	options->OnMouseReleaseFunc = []()
-	{
-		std::cout << "exiting" << std::endl;
-		getchar();
-		exit(0);
-	};
-	mainmenu->AddText(options);
-	UI.insert(std::pair<std::string, UIElement*>("Main Menu", mainmenu));
-
-	//Pause Menu
-	options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(45.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), &font);
-	options->OnMouseReleaseFunc = [mainmenu, pausemenu]()
-	{
-		ChangeState(GameState::NOTSTARTEDYET);
-		pausemenu->HideAllElements();
-		mainmenu->ShowAllElements();
-	};
-	pausemenu->AddText(options);
-	options = std::make_shared<Text>("End Game", 18, glm::vec2(48.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), &font);
-	options->OnMouseReleaseFunc = []()
-	{
-		std::cout << "exiting" << std::endl;
-		getchar();
-		exit(0);
-	};
-	pausemenu->AddText(options);
-	pausemenu->HideAllElements();
-	UI.insert(std::pair<std::string, UIElement*>("Pause Menu", pausemenu));
-
-	//Options
-	options = std::make_shared<Text>("A", 18, glm::vec2(50.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), &font);
-	optionsUI->AddText(options);
-	options = std::make_shared<Text>("B", 18, glm::vec2(50.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), &font);
-	optionsUI->AddText(options);
-	options = std::make_shared<Text>("Back", 18, glm::vec2(50.0f / 100.0f, 50.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), &font);
-	options->OnMouseReleaseFunc = [optionsUI, mainmenu]()
-	{
-		optionsUI->HideAllElements();
-		mainmenu->ShowAllElements();
-	};
-	optionsUI->AddText(options);
-	optionsUI->HideAllElements();
-	UI.insert(std::pair<std::string, UIElement*>("Options", optionsUI));
+	Start();
 
 	glutTimerFunc(1000 / 30, timerFunc, 0);
-	currtime = glutGet(GLUT_ELAPSED_TIME);
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);
 	glutMainLoop();

@@ -1,5 +1,5 @@
-#ifndef _BaseGameObject
-#define _BaseGameObject
+#ifndef _baseGameObjectH
+#define _baseGameObjectH
 
 #include <iostream>
 #include <vector>
@@ -20,9 +20,9 @@ namespace Engine
 			BaseGameObject();
 			virtual void Draw();
 			virtual bool Update();
-			const float GetPosition(int);
-			const int GetSize(int);
-			const float GetColor(int);
+			float GetPosition(int) const;
+			int GetSize(int) const;
+			float GetColor(int) const;
 		protected:
 			int width;
 			int height;

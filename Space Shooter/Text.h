@@ -1,5 +1,5 @@
-#ifndef _Text
-#define _Text
+#ifndef _textH
+#define _textH
 
 #include <ft2build.h>
 #include <freetype/ftglyph.h>

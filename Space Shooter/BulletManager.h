@@ -1,5 +1,5 @@
-#ifndef _BulletManager
-#define _BulletManager
+#ifndef _bulletManagerH
+#define _bulletManagerH
 
 #include "Bullet.h"
 

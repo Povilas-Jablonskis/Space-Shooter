@@ -1,5 +1,5 @@
-#ifndef _TestEnemy
-#define _TestEnemy
+#ifndef _testEnemyH
+#define _testEnemyH
 
 #include "BaseGameObject.h"
 

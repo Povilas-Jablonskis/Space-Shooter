@@ -17,7 +17,7 @@ namespace Engine
 
 	}
 
-	const GLuint Shader::GetShader()
+	GLuint Shader::GetShader() const
 	{
 		return program;
 	}

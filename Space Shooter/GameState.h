@@ -1,5 +1,5 @@
-#ifndef _GameState
-#define _GameState
+#ifndef _gameStateH
+#define _gameStateH
 
 namespace Engine
 {

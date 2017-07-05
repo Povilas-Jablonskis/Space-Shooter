@@ -1,5 +1,5 @@
-#ifndef _UIElementBase
-#define _UIElementBase
+#ifndef _uIElementBaseH
+#define _uIElementBaseH
 
 #include <iostream>
 #include <vector>
@@ -19,9 +19,9 @@ namespace Engine
 			UIElementBase();
 			virtual void Draw();
 			void ChangeColor(float, int);
-			const float GetPosition(int);
-			const int GetSize(int);
-			const float GetColor(int);
+			float GetPosition(int) const;
+			int GetSize(int) const;
+			float GetColor(int) const;
 		protected:
 			glm::vec2 position;
 			int width;

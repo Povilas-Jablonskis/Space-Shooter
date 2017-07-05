@@ -1,5 +1,5 @@
-#ifndef _Bullet
-#define _Bullet
+#ifndef _bulletH
+#define _bulletH
 
 #include "BaseGameObject.h"
 

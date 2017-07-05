@@ -23,10 +23,9 @@ namespace Engine
 	GLuint Application::TextVBO;
 	GLuint Application::TextTexture;
 
-	Application::Application()
+	Application::Application() 
+		: bulletManager(new BulletManager()), fontManager(new FontManager()), gamestate(GameState::NOTSTARTEDYET), currtime(glutGet(GLUT_ELAPSED_TIME))
 	{
-		bulletManager = new BulletManager();
-
 		glGenBuffers(1, &TextVBO);
 		glGenTextures(1, &TextTexture);
 
@@ -68,6 +67,17 @@ namespace Engine
 		shaders.insert(std::pair<std::string, Shader*>(name, shader));
 	}
 
+	FT_Face* Application::LoadFont(const std::string& _path, const std::string& _name)
+	{
+		fontManager->LoadFont(_path, _name);
+		return fontManager->GetFont(_name);
+	}
+
+	FT_Face* Application::GetFont(const std::string& _name)
+	{
+		return fontManager->GetFont(_name);
+	}
+
 	const GLuint Application::GetVAO()
 	{
 		return VAO;
@@ -86,6 +96,41 @@ namespace Engine
 	const GLuint Application::GetTextTexture()
 	{
 		return TextTexture;
+	}
+
+	GameState Application::GetState() const
+	{
+		return gamestate;
+	}
+
+	void Application::UpdateDeltaTime()
+	{
+		prevtime = currtime;
+		currtime = glutGet(GLUT_ELAPSED_TIME);
+		dt = (currtime - prevtime) / 1000.0f;
+
+		if (dt > 0.033f)
+			dt = 0.033f;
+	}
+
+	bool Application::GetKey(char key) const
+	{
+		return pressedkeys[key];
+	}
+
+	void Application::SetKey(char key, bool boolean)
+	{
+		pressedkeys[key] = boolean;
+	}
+
+	void Application::SetKey(int key, bool boolean)
+	{
+		pressedkeys[key] = boolean;
+	}
+
+	void Application::SetState(GameState _state)
+	{
+		gamestate = _state;
 	}
 
 	Application::~Application()
