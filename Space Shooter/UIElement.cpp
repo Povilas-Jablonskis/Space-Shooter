@@ -8,7 +8,13 @@ namespace Engine
 
 	}
 
-	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color) 
+	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, UIElementBase* _parent)
+		: UIElementBase(_width, _height, _position, _color, _parent)
+	{
+
+	}
+
+	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color)
 		: UIElementBase(_width, _height, _position, _color)
 	{
 
@@ -20,48 +26,40 @@ namespace Engine
 		elements.clear();
 	}
 
-	void UIElement::AddText(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* font)
-	{
-		texts.push_back(std::make_shared<Text>(_text, _fontsize, _position, _color, font));
-	}
-
-	void UIElement::AddUIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color)
-	{
-		elements.push_back(std::make_shared<UIElement>(_width, _height, _position, _color));
-	}
-
 	void UIElement::AddText(std::shared_ptr<Text> text)
 	{
+		text->ChangeParent(this);
 		texts.push_back(text);
 	}
 
 	void UIElement::AddUIElement(std::shared_ptr<UIElement> UIElement)
 	{
+		UIElement->ChangeParent(this);
 		elements.push_back(UIElement);
 	}
 
-	void UIElement::Update()
+	void UIElement::Update(InputManager* inputManager)
 	{
 		for (auto text : texts)
 		{
-			text->Update();
+			text->Update(inputManager);
 		}
 		for (auto element : elements)
 		{
-			element->Update();
+			element->Update(inputManager);
 		}
 	}
 
-	void UIElement::Draw()
+	void UIElement::Draw(InputManager* inputManager)
 	{
-		UIElementBase::Draw();
+		UIElementBase::Draw(inputManager);
 		for (auto element : elements)
 		{
-			element.get()->Draw();
+			element.get()->Draw(inputManager);
 		}
 		for (auto text : texts)
 		{
-			text.get()->Draw(this);
+			text.get()->Draw();
 		}
 	}
 
@@ -87,5 +85,43 @@ namespace Engine
 		{
 			element->ChangeColor(1.0f, 3);
 		}
+	}
+
+	void UIElement::OnMouseClickDefaults(InputManager* inputManager)
+	{
+		for (auto text : texts)
+		{
+			text->OnMouseClickDefaults(inputManager);
+		}
+		for (auto element : elements)
+		{
+			element->OnMouseClickDefaults(inputManager);
+		}
+
+		UIElementBase::OnMouseClickDefaults(inputManager);
+	}
+
+	void UIElement::OnMouseReleaseFuncDefaults(InputManager* inputManager)
+	{
+		for (auto text : texts)
+		{
+			text->OnMouseReleaseFuncDefaults(inputManager);
+		}
+		for (auto element : elements)
+		{
+			element->OnMouseReleaseFuncDefaults(inputManager);
+		}
+
+		UIElementBase::OnMouseReleaseFuncDefaults(inputManager);
+	}
+
+	void UIElement::OnHoverEnterFuncDefaults()
+	{
+
+	}
+
+	void UIElement::OnHoverExitFuncDefaults()
+	{
+
 	}
 }

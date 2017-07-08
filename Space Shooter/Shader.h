@@ -11,7 +11,7 @@ namespace Engine
 	class Shader
 	{
 		public:
-			Shader(const std::string&, const std::string&g);
+			Shader(const std::string&, const std::string&);
 			Shader();
 			~Shader();
 			void LoadShader(const std::string&, const std::string&);

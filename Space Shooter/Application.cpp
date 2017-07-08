@@ -24,13 +24,10 @@ namespace Engine
 	GLuint Application::TextTexture;
 
 	Application::Application() 
-		: fontManager(new FontManager()), gamestate(GameState::NOTSTARTEDYET)
+		: fontManager(new FontManager()), gamestate(GameState::NOTSTARTEDYET), inputManager(new InputManager())
 	{
 		glGenBuffers(1, &TextVBO);
 		glGenTextures(1, &TextTexture);
-
-		AddShader("shader", new Shader("shader.vert", "shader.frag"));
-		AddShader("textshader", new Shader("textshader.vert", "textshader.frag"));
 
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
@@ -98,24 +95,14 @@ namespace Engine
 		return gamestate;
 	}
 
-	bool Application::GetKey(char key) const
-	{
-		return pressedkeys[key];
-	}
-
-	void Application::SetKey(char key, bool boolean)
-	{
-		pressedkeys[key] = boolean;
-	}
-
-	void Application::SetKey(int key, bool boolean)
-	{
-		pressedkeys[key] = boolean;
-	}
-
 	void Application::SetState(GameState _state)
 	{
 		gamestate = _state;
+	}
+
+	InputManager& Application::GetInputManager()
+	{
+		return *inputManager;
 	}
 
 	Application::~Application()

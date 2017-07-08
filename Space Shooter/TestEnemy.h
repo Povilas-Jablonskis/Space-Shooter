@@ -9,7 +9,7 @@ namespace Engine
 	{
 		public:
 			~TestEnemy();
-			TestEnemy(int, int, glm::vec2, glm::vec2, glm::vec3);
+			TestEnemy(int, int, glm::vec2, glm::vec2, glm::vec4);
 			TestEnemy();
 			bool Update(float, float);
 			GLboolean CheckCollision(std::shared_ptr<BaseGameObject>);

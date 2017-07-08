@@ -5,9 +5,14 @@
 #include <vector>
 #include "GL/glew.h"
 #include "GL/freeglut.h"
+#include <functional>
+#include <memory>
+#include <map>
 
 #include <vec2.hpp>
 #include <vec4.hpp>
+
+#include "InputManager.h"
 
 namespace Engine
 {
@@ -15,14 +20,27 @@ namespace Engine
 	{
 		public:
 			~UIElementBase();
+			UIElementBase(int, int, glm::vec2, glm::vec4, UIElementBase*);
 			UIElementBase(int, int, glm::vec2, glm::vec4);
 			UIElementBase();
-			virtual void Draw();
+			virtual void Draw(InputManager*);
 			void ChangeColor(float, int);
 			float GetPosition(int) const;
 			int GetSize(int) const;
 			float GetColor(int) const;
+			UIElementBase* GetParent() const;
+			void ChangeParent(UIElementBase*);
+			bool CheckForMouseCollision(InputManager*);
+			std::function<void()> OnHoverEnterFunc;
+			std::function<void()> OnHoverExitFunc;
+			std::function<void()> OnMouseClickFunc;
+			std::function<void()> OnMouseReleaseFunc;
+			virtual void OnHoverEnterFuncDefaults() = 0;
+			virtual void OnHoverExitFuncDefaults() = 0;
+			void OnMouseClickDefaults(InputManager*);
+			void OnMouseReleaseFuncDefaults(InputManager*);
 		protected:
+			UIElementBase* parent;
 			glm::vec2 position;
 			int width;
 			int height;

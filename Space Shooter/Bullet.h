@@ -9,7 +9,7 @@ namespace Engine
 	{
 		public:
 			~Bullet();
-			Bullet(int, int, glm::vec2, glm::vec2, glm::vec3, BaseGameObject*);
+			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4, BaseGameObject*);
 			Bullet();
 			bool Update(float);
 			GLboolean CheckCollision(std::shared_ptr<BaseGameObject>);

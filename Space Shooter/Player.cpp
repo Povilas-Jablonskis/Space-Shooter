@@ -10,7 +10,7 @@ namespace Engine
 
 	}
 
-	Player::Player(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec3 _color)
+	Player::Player(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: BaseGameObject(_width, _height, _position, _velocity, _color), health(3), score(0)
 	{
 
@@ -21,22 +21,20 @@ namespace Engine
 
 	}
 
-	bool Player::Update(Application* app, float _dt)
+	bool Player::Update(InputManager* app, float _dt)
 	{
-		score += 1;
-
 		if (app->GetKey(32))
-			(&(bullets))->push_back(std::make_shared<Bullet>(10, 20, glm::vec2(position[0], position[1] + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec3(255.0f, 69.0f, 0.0f), this));
+			(&(bullets))->push_back(std::make_shared<Bullet>(10, 20, glm::vec2(position.x, position.y + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f), this));
 
 		BaseGameObject::UpdateBulletList(_dt);
 
 		if (app->GetKey('a'))
-			position[0] -= velocity[0] * _dt;
+			position.x -= velocity.x * _dt;
 		if (app->GetKey('d'))
-			position[0] += velocity[0] * _dt;
+			position.x += velocity.y * _dt;
 		if (app->GetKey('s'))
-			position[1] -= velocity[1] * _dt;
-		position[1] += (velocity[1] * _dt) / 2.0f;
+			position.y -= velocity.y * _dt;
+		position.y += (velocity.y * _dt) / 2.0f;
 		return true;
 	}
 
@@ -60,7 +58,10 @@ namespace Engine
 		for (auto bullet : bullets)
 		{
 			if (bullet->CheckCollision(_objecttocheck))
+			{
+				score += 100;
 				return false;
+			}
 		}
 		return false;
 	}
@@ -83,6 +84,7 @@ namespace Engine
 				{
 					_objectstocheck->erase(it2);
 					bullets.erase(it);
+					score += 100;
 					return false;
 				}
 				else

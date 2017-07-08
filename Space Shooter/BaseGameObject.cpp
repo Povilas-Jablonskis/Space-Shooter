@@ -7,7 +7,7 @@ namespace Engine
 
 	}
 
-	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec3 _color)
+	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color) {}
 
 	BaseGameObject::~BaseGameObject()
@@ -27,9 +27,9 @@ namespace Engine
 				int offsetLocation2 = glGetUniformLocation(program, "size");
 				int offsetLocation3 = glGetUniformLocation(program, "color");
 
-				glUniform2f(offsetLocation, position[0] / _width, position[1] / _height);
+				glUniform2f(offsetLocation, position.x / _width, position.y / _height);
 				glUniform2f(offsetLocation2, width / _width, height / _height);
-				glUniform4f(offsetLocation3, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, 1.0f);
+				glUniform4f(offsetLocation3, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
 				glDrawElements(GL_TRIANGLES, (sizeof(Application::indices) / sizeof(*Application::indices)), GL_UNSIGNED_INT, 0);
 			glUseProgram(0);
 		glBindVertexArray(0);
@@ -65,15 +65,15 @@ namespace Engine
 
 	bool BaseGameObject::Update(float _dt)
 	{
-		position[0] += velocity[0] * _dt;
-		position[1] += velocity[1] * _dt;
+		position.x += velocity.x * _dt;
+		position.y += velocity.y * _dt;
 		return true;
 	}
 
 	bool BaseGameObject::Update(float _dt, float _t)
 	{
-		position[0] += velocity[0] * _dt;
-		position[1] += velocity[1] * _dt;
+		position.x += velocity.x * _dt;
+		position.y += velocity.y * _dt;
 		return true;
 	}
 

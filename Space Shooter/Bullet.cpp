@@ -8,7 +8,7 @@ namespace Engine
 
 	}
 
-	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec3 _color, BaseGameObject* _parent) 
+	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, BaseGameObject* _parent) 
 		: BaseGameObject(_width, _height, _position, _velocity, _color), parent(_parent) {}
 
 	Bullet::~Bullet()
@@ -18,13 +18,13 @@ namespace Engine
 
 	bool Bullet::Update(float _dt)
 	{
-		position[0] += velocity[0] * _dt;
-		position[1] += velocity[1] * _dt;
+		position.x += velocity.x * _dt;
+		position.y += velocity.y * _dt;
 
 		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 		 
-		if (position[1] + height >= windowheigth || position[1] <= 0.0f || position[0] + width >= windowwidth || position[0] <= 0.0f)
+		if (position.y + height >= windowheigth || position.y <= 0.0f || position.x + width >= windowwidth || position.x <= 0.0f)
 			return false;
 		return true;
 	}

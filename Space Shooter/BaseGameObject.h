@@ -10,7 +10,7 @@
 #include "Application.h"
 
 #include <vec2.hpp>
-#include <vec3.hpp>
+#include <vec4.hpp>
 
 namespace Engine
 {
@@ -18,7 +18,7 @@ namespace Engine
 	{
 		public:
 			~BaseGameObject();
-			BaseGameObject(int, int, glm::vec2, glm::vec2, glm::vec3);
+			BaseGameObject(int, int, glm::vec2, glm::vec2, glm::vec4);
 			BaseGameObject();
 			virtual void Draw();
 			virtual bool Update(float);
@@ -37,7 +37,7 @@ namespace Engine
 			int height;
 			glm::vec2 position;
 			glm::vec2 velocity;
-			glm::vec3 color;
+			glm::vec4 color;
 			std::vector<std::shared_ptr<BaseGameObject>> bullets;
 	};
 }

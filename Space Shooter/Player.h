@@ -13,9 +13,9 @@ namespace Engine
 	{
 		public:
 			~Player();
-			Player(int, int, glm::vec2, glm::vec2, glm::vec3);
+			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
 			Player();
-			bool Update(Application*, float);
+			bool Update(InputManager*, float);
 			int GetHealth() const;
 			int GetScore() const;
 			GLboolean CheckCollision(std::shared_ptr<BaseGameObject>);

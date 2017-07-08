@@ -34,7 +34,7 @@ float currentTime;
 float accumulator;
 
 std::vector<std::shared_ptr<BaseGameObject>> enemies;
-std::map<std::string, UIElement*> UI;
+std::map<std::string, std::shared_ptr<UIElement>> UI;
 std::map<std::string, std::shared_ptr<UIElement>> PlayerUI;
 
 void InitScene()
@@ -42,141 +42,197 @@ void InitScene()
 	enemies.clear();
 	for (size_t i = 0; i <= 16; i++)
 	{
-		auto enemy = std::make_shared<TestEnemy>(32, 32, glm::vec2(32.0f + (i * 34.0f), 416.0f), glm::vec2(0.0f, 0.0f), glm::vec3(255.0f, 160.0f, 122.0f));
+		auto enemy = std::make_shared<TestEnemy>(32, 32, glm::vec2(32.0f + (i * 34.0f), 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
 		enemies.push_back(enemy);
 	}
 
-	player = std::make_shared<Player>(32, 32, glm::vec2(320.0f, 0.0f), glm::vec2(50.0f, 100.0f), glm::vec3(255.0f, 255.0f, 0.0f));
+	player = std::make_shared<Player>(32, 32, glm::vec2(320.0f, 0.0f), glm::vec2(50.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
+
+	accumulator = 0.0f;
+	t = 0.0f;
 }
 
 void InitGameUI()
 {
-	UIElement* mainmenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
-	UIElement* optionsUI = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
-	UIElement* pausemenu = new UIElement(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
+	glm::vec2 tempos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+	UI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Main Menu", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
+	UI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Pause Menu", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
+	UI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Options", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
+	UI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Game Over", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
 
 	//Main Menu
-	auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(48.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
-	options->OnMouseReleaseFunc = [mainmenu]()
+	auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(tempos.x * (48.0f / 100.0f), tempos.y * (60.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = []()
 	{
 		application->SetState(GameState::STARTED);
-		mainmenu->HideAllElements();
+		UI["Main Menu"]->HideAllElements();
+		InitScene();
 	};
-	mainmenu->AddText(options);
-	options = std::make_shared<Text>("Options", 18, glm::vec2(48.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
-	options->OnMouseReleaseFunc = [optionsUI, mainmenu]()
+	UI["Main Menu"]->AddText(options);
+	options = std::make_shared<Text>("Options", 18, glm::vec2(tempos.x * (48.0f / 100.0f), tempos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = []()
 	{
-		mainmenu->HideAllElements();
-		optionsUI->ShowAllElements();
+		UI["Main Menu"]->HideAllElements();
+		UI["Options"]->ShowAllElements();
 	};
-	mainmenu->AddText(options);
-	options = std::make_shared<Text>("End Game", 18, glm::vec2(48.0f / 100.0f, 50.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	UI["Main Menu"]->AddText(options);
+	options = std::make_shared<Text>("End Game", 18, glm::vec2(tempos.x * (48.0f / 100.0f), tempos.y * (50.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
 	options->OnMouseReleaseFunc = []()
 	{
 		std::cout << "exiting" << std::endl;
 		getchar();
 		exit(0);
 	};
-	mainmenu->AddText(options);
-	UI.insert(std::pair<std::string, UIElement*>("Main Menu", mainmenu));
+	UI["Main Menu"]->AddText(options);
 
 	//Pause Menu
-	options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(45.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
-	options->OnMouseReleaseFunc = [mainmenu, pausemenu]()
+	options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(tempos.x * (45.0f / 100.0f), tempos.y * (60.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = []()
 	{
 		InitScene();
 		application->SetState(GameState::NOTSTARTEDYET);
-		pausemenu->HideAllElements();
-		mainmenu->ShowAllElements();
+		UI["Pause Menu"]->HideAllElements();
+		UI["Main Menu"]->ShowAllElements();
 	};
-	pausemenu->AddText(options);
-	options = std::make_shared<Text>("End Game", 18, glm::vec2(48.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	UI["Pause Menu"]->AddText(options);
+	options = std::make_shared<Text>("End Game", 18, glm::vec2(tempos.x * (48.0f / 100.0f), tempos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
 	options->OnMouseReleaseFunc = []()
 	{
 		std::cout << "exiting" << std::endl;
 		getchar();
 		exit(0);
 	};
-	pausemenu->AddText(options);
-	pausemenu->HideAllElements();
-	UI.insert(std::pair<std::string, UIElement*>("Pause Menu", pausemenu));
+	UI["Pause Menu"]->AddText(options);
+	UI["Pause Menu"]->HideAllElements();
 
 	//Options
-	options = std::make_shared<Text>("A", 18, glm::vec2(50.0f / 100.0f, 60.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
-	optionsUI->AddText(options);
-	options = std::make_shared<Text>("B", 18, glm::vec2(50.0f / 100.0f, 55.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
-	optionsUI->AddText(options);
-	options = std::make_shared<Text>("Back", 18, glm::vec2(50.0f / 100.0f, 50.0f / 100.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
-	options->OnMouseReleaseFunc = [optionsUI, mainmenu]()
+	options = std::make_shared<Text>("A", 18, glm::vec2(tempos.x * (50.0f / 100.0f), tempos.y * (60.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	UI["Options"]->AddText(options);
+	options = std::make_shared<Text>("B", 18, glm::vec2(tempos.x * (50.0f / 100.0f), tempos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	UI["Options"]->AddText(options);
+	options = std::make_shared<Text>("Back", 18, glm::vec2(tempos.x * (50.0f / 100.0f), tempos.y * (50.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	options->OnMouseReleaseFunc = []()
 	{
-		optionsUI->HideAllElements();
-		mainmenu->ShowAllElements();
+		UI["Options"]->HideAllElements();
+		UI["Main Menu"]->ShowAllElements();
 	};
-	optionsUI->AddText(options);
-	optionsUI->HideAllElements();
-	UI.insert(std::pair<std::string, UIElement*>("Options", optionsUI));
-}
+	UI["Options"]->AddText(options);
+	UI["Options"]->HideAllElements();
 
-void Start()
-{
-	InitScene();
-	InitGameUI();
+	//Game Over
+	options = std::make_shared<Text>("Game Over", 32, glm::vec2(tempos.x * (45.0f / 100.0f), tempos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")), true);
+	UI["Game Over"]->AddText(options);
+	UI["Game Over"]->HideAllElements();
 }
 
 void InitPlayerUI()
 {
 	PlayerUI.clear();
-	auto scoreUI = std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
-	auto healthUI = std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f));
+
+	glm::vec2 tempos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+
+	PlayerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
+	PlayerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
 
 	//scoreUI
-	scoreUI->AddText(std::to_string(player->GetScore()), 18, glm::vec2(6.0f / 100.0f, 92.0f / 100.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
-	PlayerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", scoreUI));
+	auto option = std::make_shared<Text>(std::to_string(player->GetScore()), 18, glm::vec2(tempos.x * (6.0f / 100.0f), tempos.y * (92.0f / 100.0f)), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+	PlayerUI["Score"]->AddText(option);
 
 	//healthUI
 	for (int i = 0; i < player->GetHealth(); i++)
 	{
-		healthUI->AddUIElement(32, 32, glm::vec2((80 + (i * 6)) / 100.0f, 90.0f / 100.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f));
+		auto option2 = std::make_shared<UIElement>(32, 32, glm::vec2(tempos.x * ((80 + (i * 6)) / 100.0f), tempos.y * (90.0f / 100.0f)), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f));
+		PlayerUI["Health"]->AddUIElement(option2);
+
+		option = std::make_shared<Text>(std::to_string(i), 18, glm::vec2(option2.get()->GetPosition(0) + (option2.get()->GetSize(0) * (40.0f / 100.0f)), option2.get()->GetPosition(1) + (option2.get()->GetSize(1) * (37.0f / 100.0f))), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), ((FT_Face*)application->GetFont("AGENCYR.ttf")));
+		option2->AddText(option);
 	}
-	PlayerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", healthUI));
 }
 
-void idle(void)
+void motionFunc(int x, int y)
 {
-	glutPostRedisplay();
+	auto inputManager = &application->GetInputManager();
+	inputManager->SetLastMousePosition(glm::vec2(x, y));
+}
+
+void processMouseClick(int button, int state, int x, int y)
+{
+	auto inputManager = &application->GetInputManager();
+	if (button == GLUT_LEFT_BUTTON)
+	{
+		if (state == GLUT_DOWN)
+		{
+			inputManager->SetLeftMouseState(true);
+			inputManager->SetLastLeftMouseState(false);
+			for (auto UIElement : UI)
+			{
+				UIElement.second->OnMouseClickDefaults(inputManager);
+			}
+		}
+		else
+		{
+			inputManager->SetLeftMouseState(false);
+			inputManager->SetLastLeftMouseState(true);
+			for (auto UIElement : UI)
+			{
+				UIElement.second->OnMouseReleaseFuncDefaults(inputManager);
+			}
+		}
+	}
+	/*if (button == GLUT_RIGHT_BUTTON)
+		state == GLUT_UP ? inputManager->SetRightMouseState(true), inputManager->SetLastRightMouseState(false) : inputManager->SetRightMouseState(false), inputManager->SetLastRightMouseState(true);*/
+}
+
+void keyboardInput(unsigned char c, int x, int y)
+{
+	auto inputManager = &application->GetInputManager();
+	if (!inputManager->GetKey(c))
+	{
+		switch (c)
+		{
+			case 27:
+			{
+				if (application->GetState() == GameState::ENDED)
+				{
+					UI["Game Over"]->HideAllElements();
+					UI["Main Menu"]->ShowAllElements();
+					application->SetState(GameState::NOTSTARTEDYET);
+				}
+				else if (application->GetState() == GameState::PAUSED)
+				{
+					UI["Pause Menu"]->HideAllElements();
+					application->SetState(GameState::STARTED);
+				}
+				else if (application->GetState() == GameState::STARTED)
+				{
+					UI["Pause Menu"]->ShowAllElements();
+					application->SetState(GameState::PAUSED);
+				}
+				break;
+			}
+		}
+		inputManager->SetKey(c, true);
+	}
+	else
+		inputManager->SetKey(c, false);
+}
+
+void keyboardInputUp(unsigned char c, int x, int y)
+{
+	auto inputManager = &application->GetInputManager();
+	if (inputManager->GetKey(c))
+		inputManager->SetKey(c, false);
 }
 
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	SHORT escape = GetAsyncKeyState(0x1B);
-
 	auto VAO = application->GetVAO();
 	auto shader = application->GetShaderProgram("shader");
 	auto textshader = application->GetShaderProgram("textshader");
 
-	GetAsyncKeyState(0x41) ? application->SetKey('a', true) : application->SetKey('a', false);
-	GetAsyncKeyState(0x44) ? application->SetKey('d', true) : application->SetKey('d', false);
-	GetAsyncKeyState(0x53) ? application->SetKey('s', true) : application->SetKey('s', false);
-	GetAsyncKeyState(0x20) ? application->SetKey( 32, true) : application->SetKey( 32, false);
-
-	if (escape < 0 && !application->GetKey(27))
-	{
-		application->SetKey(27, true);
-		if (application->GetState() == GameState::PAUSED)
-		{
-			UI["Pause Menu"]->HideAllElements();
-			application->SetState(GameState::STARTED);
-		}
-		else if (application->GetState() != GameState::NOTSTARTEDYET)
-		{
-			UI["Pause Menu"]->ShowAllElements();
-			application->SetState(GameState::PAUSED);
-		}
-	}
-	else if (escape == 0 && application->GetKey(27))
-		application->SetKey(27, false);
+	auto inputManager = &application->GetInputManager();
 
 	float newTime = ((float)glutGet(GLUT_ELAPSED_TIME));
 	float frameTime = (newTime - currentTime) / 1000.0f;
@@ -188,26 +244,10 @@ void display(void)
 	{
 		if (application->GetState() == GameState::STARTED)
 		{
-			player->Update(application, dt);
-			if (player->CheckCollision(&enemies))
-			{
-				InitScene();
-				application->SetState(GameState::NOTSTARTEDYET);
-				UI["Pause Menu"]->HideAllElements();
-				UI["Options"]->HideAllElements();
-				UI["Main Menu"]->ShowAllElements();
-			}
+			player->Update(inputManager, dt);
 			for (auto enemy : enemies)
 			{
 				enemy->Update(dt, t);
-				if (enemy->CheckCollision(player))
-				{
-					InitScene();
-					application->SetState(GameState::NOTSTARTEDYET);
-					UI["Pause Menu"]->HideAllElements();
-					UI["Options"]->HideAllElements();
-					UI["Main Menu"]->ShowAllElements();
-				}
 			}
 		}
 		accumulator -= dt;
@@ -216,6 +256,12 @@ void display(void)
 
 	if (application->GetState() == GameState::STARTED)
 	{
+		if (player->CheckCollision(&enemies))
+		{
+			application->SetState(GameState::ENDED);
+			UI["Game Over"]->ShowAllElements();
+		}
+
 		player->Draw();
 		InitPlayerUI();
 
@@ -226,15 +272,14 @@ void display(void)
 
 		for (auto UIElement : PlayerUI)
 		{
-			UIElement.second->Update();
-			UIElement.second->Draw();
+			UIElement.second->Draw(inputManager);
 		}
 	}
 
 	for (auto UIElement : UI)
 	{
-		UIElement.second->Update();
-		UIElement.second->Draw();
+		UIElement.second->Update(inputManager);
+		UIElement.second->Draw(inputManager);
 	}
 
 	glutSwapBuffers();
@@ -269,9 +314,15 @@ int main(int argc, char *argv[])
 		#endif
 	}
 
+	glutIgnoreKeyRepeat(1);
+
 	glutReshapeFunc(resize);
 	glutDisplayFunc(display);
-	glutIdleFunc(idle);
+	glutIdleFunc(display);
+	glutKeyboardFunc(keyboardInput);
+	glutKeyboardUpFunc(keyboardInput);
+	glutMouseFunc(processMouseClick);
+	glutPassiveMotionFunc(motionFunc);
 
 	currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
 	accumulator = 0.0f;
@@ -307,9 +358,11 @@ int main(int argc, char *argv[])
 	}*/
 
 	application = new Application();
+	application->AddShader("shader", new Shader("shader.vert", "shader.frag"));
+	application->AddShader("textshader", new Shader("textshader.vert", "textshader.frag"));
 	application->LoadFont("AGENCYR.ttf", "AGENCYR.ttf");
 
-	Start();
+	InitGameUI();
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);
 	glutMainLoop();

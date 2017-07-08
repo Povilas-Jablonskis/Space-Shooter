@@ -11,27 +11,15 @@ namespace Engine
 	}
 		
 	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* _face) :
-		UIElementBase(0, 0, _position, _color), mouseontext(false), leftbuttonclicked(0), fontsize(_fontsize), text(_text), face(_face)
+		UIElementBase(0, 0, _position, _color), mouseontext(false), leftbuttonclicked(0), fontsize(_fontsize), text(_text), face(_face), isStatic(false)
 	{
-		OnHoverEnterFunc = []()
-		{
 
-		};
+	}
 
-		OnHoverExitFunc = []()
-		{
+	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* _face, bool _isStatic) :
+		UIElementBase(0, 0, _position, _color), mouseontext(false), leftbuttonclicked(0), fontsize(_fontsize), text(_text), face(_face), isStatic(_isStatic)
+	{
 
-		};
-
-		OnMouseClickFunc = []()
-		{
-
-		};
-
-		OnMouseReleaseFunc = []()
-		{
-
-		};
 	}
 
 	Text::~Text()
@@ -39,7 +27,7 @@ namespace Engine
 
 	}
 
-	void Text::Draw(UIElementBase* parent)
+	void Text::Draw()
 	{
 		auto program = Application::GetShaderProgram("textshader");
 		glUseProgram(program);
@@ -67,10 +55,16 @@ namespace Engine
 
 				float sx = 2.0f / windowwidth;
 				float sy = 2.0f / windowheigth;
-				float x = -1 + (windowwidth * position[0]) * sx;
-				float y = -1 + (windowheigth * position[1]) * sy;
+				/*float x = -1 + (windowwidth * position.x) * sx;
+				float y = -1 + (windowheigth * position.y) * sy;*/
+				float x = -1 + position.x * sx;
+				float y = -1 + position.y * sy;
 
-				if (parent != NULL)
+				bbox[0] = position.x;
+				bbox[1] = position.x;
+				bbox[2] = position.y;
+				bbox[3] = position.y;
+				/*if (parent != nullptr)
 				{
 					float startx = parent->GetPosition(0) * windowwidth;
 					float endx = startx + parent->GetSize(0);
@@ -80,21 +74,21 @@ namespace Engine
 					float xdiff = endx - startx;
 					float ydiff = endy - starty;
 
-					bbox[0] = ((startx + (xdiff * position[0])));
-					bbox[1] = ((startx + (xdiff * position[0])));
-					bbox[2] = ((starty + (ydiff * position[1])));
-					bbox[3] = ((starty + (ydiff * position[1])));
+					bbox[0] = ((startx + (xdiff * position.x)));
+					bbox[1] = ((startx + (xdiff * position.x)));
+					bbox[2] = ((starty + (ydiff * position.y)));
+					bbox[3] = ((starty + (ydiff * position.y)));
 
-					if (position[0] == 0.0f)
+					if (position.x == 0.0f)
 						x = -1 + startx * sx;
 					else
-						x = -1 + ((startx + (xdiff * position[0]))) * sx;
+						x = -1 + ((startx + (xdiff * position.x))) * sx;
 
-					if (position[1] == 0.0f)
+					if (position.y == 0.0f)
 						y = -1 + starty * sy;
 					else
-						y = -1 + ((starty + (ydiff * position[1]))) * sy;
-				}
+						y = -1 + ((starty + (ydiff * position.y))) * sy;
+				}*/
 
 				const char *p;
 				FT_GlyphSlot g = (*face)->glyph;
@@ -106,7 +100,7 @@ namespace Engine
 
 				/* Create a texture that will be used to hold one "glyph" */
 				int offsetLocation2 = glGetUniformLocation(program, "color");
-				glUniform4f(offsetLocation2, color[0] / 255.0f, color[1] / 255.0f, color[2] / 255.0f, color[3]);
+				glUniform4f(offsetLocation2, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
 
 				glEnableVertexAttribArray(0);
 				glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
@@ -129,7 +123,7 @@ namespace Engine
 					float w = g->bitmap.width * sx;
 					float h = g->bitmap.rows * sy;
 
-					point box[4] = {
+					glm::vec4 box[4] = {
 						{ x2     , -y2    , 0, 0 },
 						{ x2 +  w, -y2    , 1, 0 },
 						{ x2     , -y2 - h, 0, 1 },
@@ -150,37 +144,21 @@ namespace Engine
 		glUseProgram(0);
 	}
 
-	void Text::Update()
+	void Text::Update(InputManager* inputManager)
 	{
-		if (color[3] == 0.0f) return;
-		POINT lppoint, mpoint;
-		GetCursorPos(&lppoint);
-		mpoint = lppoint;
-		ScreenToClient(GetActiveWindow(), &lppoint);
+		if (color.a == 0.0f || isStatic) return;
 
-		if (mpoint.x == lppoint.x && mpoint.y == lppoint.y) return;
-		lppoint.y -= glutGet(GLUT_WINDOW_HEIGHT);
-		lppoint.y *= -1;
+		glm::vec2 lastMousePosition = inputManager->GetLastMousePosition();
+		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+		lastMousePosition.y *= -1;
 
-		if (lppoint.x >= bbox[0] && lppoint.x <= bbox[1] && lppoint.y <= bbox[2] && lppoint.y >= bbox[3])
+		if (lastMousePosition.x >= bbox[0] && lastMousePosition.x <= bbox[1] && lastMousePosition.y <= bbox[2] && lastMousePosition.y >= bbox[3])
 		{
-			SHORT lastleftbuttonclick = leftbuttonclicked;
-			leftbuttonclicked = GetAsyncKeyState(VK_LBUTTON);
 			if (!mouseontext)
 			{
 				OnHoverEnterFunc();
 				OnHoverEnterFuncDefaults();
 				mouseontext = true;
-			}
-			if (lastleftbuttonclick == 0 && leftbuttonclicked < 0)
-			{
-				OnMouseClickFunc();
-				OnMouseClickDefaults();
-			}
-			if (lastleftbuttonclick < 0 && leftbuttonclicked == 0)
-			{
-				OnMouseReleaseFunc();
-				OnMouseReleaseFuncDefaults();
 			}
 		}
 		else
@@ -196,25 +174,39 @@ namespace Engine
 
 	void Text::OnHoverEnterFuncDefaults()
 	{
-		color[0] = 0.0f;
-		color[1] = 0.0f;
-		color[2] = 0.0f;
+		color.r = 0.0f;
+		color.g = 0.0f;
+		color.b = 0.0f;
 	}
 
 	void Text::OnHoverExitFuncDefaults()
 	{
-		color[0] = 255.0f;
-		color[1] = 160.0f;
-		color[2] = 122.0f;
+		color.r = 255.0f;
+		color.g = 160.0f;
+		color.b = 122.0f;
 	}
 
-	void Text::OnMouseClickDefaults()
+	void Text::OnMouseClickDefaults(InputManager* inputManager)
 	{
+		if (color.a == 0.0f || isStatic) return;
 
+		glm::vec2 lastMousePosition = inputManager->GetLastMousePosition();
+		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+		lastMousePosition.y *= -1;
+
+		if (lastMousePosition.x >= bbox[0] && lastMousePosition.x <= bbox[1] && lastMousePosition.y <= bbox[2] && lastMousePosition.y >= bbox[3])
+			OnMouseClickFunc();
 	}
 
-	void Text::OnMouseReleaseFuncDefaults()
+	void Text::OnMouseReleaseFuncDefaults(InputManager* inputManager)
 	{
+		if (color.a == 0.0f || isStatic) return;
 
+		glm::vec2 lastMousePosition = inputManager->GetLastMousePosition();
+		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+		lastMousePosition.y *= -1;
+
+		if (lastMousePosition.x >= bbox[0] && lastMousePosition.x <= bbox[1] && lastMousePosition.y <= bbox[2] && lastMousePosition.y >= bbox[3])
+			OnMouseReleaseFunc();
 	}
 }

@@ -7,7 +7,7 @@ namespace Engine
 
 	}
 
-	TestEnemy::TestEnemy(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec3 _color) 
+	TestEnemy::TestEnemy(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color) 
 		: BaseGameObject(_width, _height, _position, _velocity, _color)
 	{
 		float _dt = 0.0f;
@@ -19,7 +19,7 @@ namespace Engine
 			_dt += (1.0f / 60.0f);
 		}
 
-		velocity[1] = (maxpos - position[1] - height) / value;
+		velocity.y = (maxpos - position.y - height) / value;
 	}
 
 	TestEnemy::~TestEnemy()
@@ -29,8 +29,8 @@ namespace Engine
 
 	bool TestEnemy::Update(float _dt, float _t)
 	{
-		position[0] += velocity[0] * _dt;
-		position[1] += velocity[1] * sin(_t);
+		position.x += velocity.x * _dt;
+		position.y += velocity.y * sin(_t);
 		return true;
 	}
 
