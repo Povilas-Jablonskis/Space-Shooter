@@ -15,7 +15,6 @@ namespace Engine
 	{
 		public:
 			~UIElement();
-			UIElement(int, int, glm::vec2, glm::vec4, UIElementBase*);
 			UIElement(int, int, glm::vec2, glm::vec4);
 			UIElement();
 			void AddText(std::shared_ptr<Text>);

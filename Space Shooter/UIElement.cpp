@@ -8,12 +8,6 @@ namespace Engine
 
 	}
 
-	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, UIElementBase* _parent)
-		: UIElementBase(_width, _height, _position, _color, _parent)
-	{
-
-	}
-
 	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color)
 		: UIElementBase(_width, _height, _position, _color)
 	{
@@ -28,13 +22,11 @@ namespace Engine
 
 	void UIElement::AddText(std::shared_ptr<Text> text)
 	{
-		text->ChangeParent(this);
 		texts.push_back(text);
 	}
 
 	void UIElement::AddUIElement(std::shared_ptr<UIElement> UIElement)
 	{
-		UIElement->ChangeParent(this);
 		elements.push_back(UIElement);
 	}
 

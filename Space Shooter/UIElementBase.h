@@ -20,16 +20,14 @@ namespace Engine
 	{
 		public:
 			~UIElementBase();
-			UIElementBase(int, int, glm::vec2, glm::vec4, UIElementBase*);
 			UIElementBase(int, int, glm::vec2, glm::vec4);
 			UIElementBase();
+			void InitFuncs();
 			virtual void Draw(InputManager*);
 			void ChangeColor(float, int);
 			float GetPosition(int) const;
 			int GetSize(int) const;
 			float GetColor(int) const;
-			UIElementBase* GetParent() const;
-			void ChangeParent(UIElementBase*);
 			bool CheckForMouseCollision(InputManager*);
 			std::function<void()> OnHoverEnterFunc;
 			std::function<void()> OnHoverExitFunc;
@@ -40,7 +38,6 @@ namespace Engine
 			void OnMouseClickDefaults(InputManager*);
 			void OnMouseReleaseFuncDefaults(InputManager*);
 		protected:
-			UIElementBase* parent;
 			glm::vec2 position;
 			int width;
 			int height;

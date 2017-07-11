@@ -18,8 +18,7 @@ namespace Engine
 	{
 		public:
 			~Text();
-			Text(const std::string&, int, glm::vec2, glm::vec4, FT_Face*);
-			Text(const std::string&, int, glm::vec2, glm::vec4, FT_Face*, bool);
+			Text(const std::string&, int, glm::vec2, glm::vec4, FT_Face*, bool = false);
 			Text();
 			void Draw();
 			void Update(InputManager*);

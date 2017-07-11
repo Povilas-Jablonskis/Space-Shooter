@@ -20,15 +20,15 @@ namespace Engine
 		auto program = Application::GetShaderProgram("shader");
 		glBindVertexArray(Application::GetVAO());
 			glUseProgram(program);
-				float _width = (float)(glutGet(GLUT_WINDOW_WIDTH));
-				float _height = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+				float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+				float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
 				int offsetLocation = glGetUniformLocation(program, "givenposition");
 				int offsetLocation2 = glGetUniformLocation(program, "size");
 				int offsetLocation3 = glGetUniformLocation(program, "color");
 
-				glUniform2f(offsetLocation, position.x / _width, position.y / _height);
-				glUniform2f(offsetLocation2, width / _width, height / _height);
+				glUniform2f(offsetLocation, position.x / windowwidth, position.y / windowheigth);
+				glUniform2f(offsetLocation2, width / windowwidth, height / windowheigth);
 				glUniform4f(offsetLocation3, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
 				glDrawElements(GL_TRIANGLES, (sizeof(Application::indices) / sizeof(*Application::indices)), GL_UNSIGNED_INT, 0);
 			glUseProgram(0);

@@ -9,12 +9,6 @@ namespace Engine
 	{
 		
 	}
-		
-	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* _face) :
-		UIElementBase(0, 0, _position, _color), mouseontext(false), leftbuttonclicked(0), fontsize(_fontsize), text(_text), face(_face), isStatic(false)
-	{
-
-	}
 
 	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* _face, bool _isStatic) :
 		UIElementBase(0, 0, _position, _color), mouseontext(false), leftbuttonclicked(0), fontsize(_fontsize), text(_text), face(_face), isStatic(_isStatic)
@@ -55,8 +49,6 @@ namespace Engine
 
 				float sx = 2.0f / windowwidth;
 				float sy = 2.0f / windowheigth;
-				/*float x = -1 + (windowwidth * position.x) * sx;
-				float y = -1 + (windowheigth * position.y) * sy;*/
 				float x = -1 + position.x * sx;
 				float y = -1 + position.y * sy;
 
@@ -64,31 +56,6 @@ namespace Engine
 				bbox[1] = position.x;
 				bbox[2] = position.y;
 				bbox[3] = position.y;
-				/*if (parent != nullptr)
-				{
-					float startx = parent->GetPosition(0) * windowwidth;
-					float endx = startx + parent->GetSize(0);
-					float starty = parent->GetPosition(1) * windowheigth;
-					float endy = starty + parent->GetSize(1);
-
-					float xdiff = endx - startx;
-					float ydiff = endy - starty;
-
-					bbox[0] = ((startx + (xdiff * position.x)));
-					bbox[1] = ((startx + (xdiff * position.x)));
-					bbox[2] = ((starty + (ydiff * position.y)));
-					bbox[3] = ((starty + (ydiff * position.y)));
-
-					if (position.x == 0.0f)
-						x = -1 + startx * sx;
-					else
-						x = -1 + ((startx + (xdiff * position.x))) * sx;
-
-					if (position.y == 0.0f)
-						y = -1 + starty * sy;
-					else
-						y = -1 + ((starty + (ydiff * position.y))) * sy;
-				}*/
 
 				const char *p;
 				FT_GlyphSlot g = (*face)->glyph;
