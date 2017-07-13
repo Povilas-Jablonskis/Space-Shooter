@@ -3,44 +3,32 @@
 
 namespace Engine
 {
-	Bullet::Bullet()
-	{
-
-	}
-
 	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, BaseGameObject* _parent) 
-		: BaseGameObject(_width, _height, _position, _velocity, _color), parent(_parent) {}
-
-	Bullet::~Bullet()
+		: BaseGameObject(_width, _height, _position, _velocity, _color), parent(_parent)
 	{
-
+	
 	}
 
-	bool Bullet::Update(float _dt)
+	bool Bullet::update(float _dt)
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
 
-		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 		 
-		if (position.y + height >= windowheigth || position.y <= 0.0f || position.x + width >= windowwidth || position.x <= 0.0f)
+		if (position.y + height >= windowHeigth || position.y <= 0.0f || position.x + width >= windowWidth || position.x <= 0.0f)
 			return false;
 		return true;
 	}
 
-	GLboolean Bullet::CheckCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision
-	{
-		if (BaseGameObject::CheckCollision(_objecttocheck))
-		{
-			OnCollision(_objecttocheck);
-			return true;
-		}
-		return false;
-	}
-
-	void Bullet::OnCollision(std::shared_ptr<BaseGameObject> collider)
+	void Bullet::onCollision(std::shared_ptr<BaseGameObject> collider)
 	{
 		std::cout << "bullet hit" << std::endl;
+	}
+
+	BaseGameObject* Bullet::getParent()
+	{
+		return parent;
 	}
 }

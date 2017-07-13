@@ -8,12 +8,10 @@ namespace Engine
 	class Bullet : public BaseGameObject
 	{
 		public:
-			~Bullet();
 			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4, BaseGameObject*);
-			Bullet();
-			bool Update(float);
-			GLboolean CheckCollision(std::shared_ptr<BaseGameObject>);
-			void OnCollision(std::shared_ptr<BaseGameObject> collider);
+			bool update(float);
+			BaseGameObject* getParent();
+			void onCollision(std::shared_ptr<BaseGameObject>);
 		private:
 			BaseGameObject* parent;
 	};

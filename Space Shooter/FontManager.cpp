@@ -13,7 +13,7 @@ namespace Engine
 
 	}
 
-	void FontManager::LoadFont(const std::string& _path, const std::string& _name)
+	void FontManager::loadFont(const std::string& _path, const std::string& _name)
 	{
 		if (faces.find(_name) != faces.end())
 			return;
@@ -24,7 +24,7 @@ namespace Engine
 		faces.insert(std::pair<std::string, FT_Face>(_name, face));
 	}
 
-	FT_Face* FontManager::GetFont(const std::string& _name)
+	FT_Face* FontManager::getFont(const std::string& _name)
 	{
 		if (faces.find(_name) != faces.end())
 			return &faces.at(_name);

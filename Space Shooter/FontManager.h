@@ -14,8 +14,8 @@ namespace Engine
 		public:
 			FontManager();
 			~FontManager();
-			void LoadFont(const std::string&, const std::string&);
-			FT_Face* GetFont(const std::string&);
+			void loadFont(const std::string&, const std::string&);
+			FT_Face* getFont(const std::string&);
 		private:
 			FT_Library library;
 			std::map<std::string, FT_Face> faces;

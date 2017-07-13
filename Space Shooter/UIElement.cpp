@@ -3,11 +3,6 @@
 
 namespace Engine
 {
-	UIElement::UIElement()
-	{
-
-	}
-
 	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color)
 		: UIElementBase(_width, _height, _position, _color)
 	{
@@ -20,99 +15,100 @@ namespace Engine
 		elements.clear();
 	}
 
-	void UIElement::AddText(std::shared_ptr<Text> text)
+	void UIElement::addText(std::shared_ptr<Text> text)
 	{
 		texts.push_back(text);
 	}
 
-	void UIElement::AddUIElement(std::shared_ptr<UIElement> UIElement)
+	void UIElement::addUIElement(std::shared_ptr<UIElement> UIElement)
 	{
 		elements.push_back(UIElement);
 	}
 
-	void UIElement::Update(InputManager* inputManager)
+	void UIElement::update(InputManager* inputManager, float dt)
 	{
+		UIElementBase::update(inputManager, dt);
 		for (auto text : texts)
 		{
-			text->Update(inputManager);
+			text->update(inputManager);
 		}
 		for (auto element : elements)
 		{
-			element->Update(inputManager);
+			element->update(inputManager, dt);
 		}
 	}
 
-	void UIElement::Draw(InputManager* inputManager)
+	void UIElement::draw()
 	{
-		UIElementBase::Draw(inputManager);
+		UIElementBase::draw();
 		for (auto element : elements)
 		{
-			element.get()->Draw(inputManager);
+			element.get()->draw();
 		}
 		for (auto text : texts)
 		{
-			text.get()->Draw();
+			text.get()->draw();
 		}
 	}
 
-	void UIElement::HideAllElements()
+	void UIElement::hideAllElements()
 	{
 		for (auto text : texts)
 		{
-			text->ChangeColor(0.0f, 3);
+			text->changeColor(0.0f, 3);
 		}
 		for (auto element : elements)
 		{
-			element->ChangeColor(0.0f, 3);
+			element->changeColor(0.0f, 3);
 		}
 	}
 
-	void UIElement::ShowAllElements()
+	void UIElement::showAllElements()
 	{
 		for (auto text : texts)
 		{
-			text->ChangeColor(1.0f, 3);
+			text->changeColor(1.0f, 3);
 		}
 		for (auto element : elements)
 		{
-			element->ChangeColor(1.0f, 3);
+			element->changeColor(1.0f, 3);
 		}
 	}
 
-	void UIElement::OnMouseClickDefaults(InputManager* inputManager)
+	void UIElement::onMouseClickDefaults(InputManager* inputManager)
 	{
 		for (auto text : texts)
 		{
-			text->OnMouseClickDefaults(inputManager);
+			text->onMouseClickDefaults(inputManager);
 		}
 		for (auto element : elements)
 		{
-			element->OnMouseClickDefaults(inputManager);
+			element->onMouseClickDefaults(inputManager);
 		}
 
-		UIElementBase::OnMouseClickDefaults(inputManager);
+		UIElementBase::onMouseClickDefaults(inputManager);
 	}
 
-	void UIElement::OnMouseReleaseFuncDefaults(InputManager* inputManager)
+	void UIElement::onMouseReleaseFuncDefaults(InputManager* inputManager)
 	{
 		for (auto text : texts)
 		{
-			text->OnMouseReleaseFuncDefaults(inputManager);
+			text->onMouseReleaseFuncDefaults(inputManager);
 		}
 		for (auto element : elements)
 		{
-			element->OnMouseReleaseFuncDefaults(inputManager);
+			element->onMouseReleaseFuncDefaults(inputManager);
 		}
 
-		UIElementBase::OnMouseReleaseFuncDefaults(inputManager);
+		UIElementBase::onMouseReleaseFuncDefaults(inputManager);
 	}
 
-	void UIElement::OnHoverEnterFuncDefaults()
+	void UIElement::onHoverEnterFuncDefaults()
 	{
 
 	}
 
-	void UIElement::OnHoverExitFuncDefaults()
+	void UIElement::onHoverExitFuncDefaults()
 	{
 
 	}

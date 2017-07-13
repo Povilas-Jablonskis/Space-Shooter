@@ -12,15 +12,13 @@ namespace Engine
 	class Player : public BaseGameObject
 	{
 		public:
-			~Player();
 			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
-			Player();
-			bool Update(InputManager*, float);
-			int GetHealth() const;
-			int GetScore() const;
-			GLboolean CheckCollision(std::shared_ptr<BaseGameObject>);
-			GLboolean CheckCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
-			void OnCollision(std::shared_ptr<BaseGameObject>);
+			~Player();
+			bool update(InputManager*, float, std::vector<std::shared_ptr<Bullet>>*);
+			int getHealth() const;
+			void setHealth(int);
+			int getScore() const;
+			void onCollision(std::shared_ptr<BaseGameObject>);
 		private:
 			int score;
 			int health;

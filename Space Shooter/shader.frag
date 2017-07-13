@@ -1,10 +1,11 @@
 #version 330 core
 in vec2 TexCoord;
 in vec4 fragColor;
+in float outMode;
 uniform sampler2D ourTexture;
 void main()
 {
-	if( fragColor.x == 0 && fragColor.y == 0 && fragColor.z == 0 )
+	if( outMode == 1.0f )
 	{
 		gl_FragColor = texture(ourTexture, TexCoord);
 	}

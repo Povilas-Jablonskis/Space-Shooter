@@ -16,17 +16,16 @@ namespace Engine
 		public:
 			~UIElement();
 			UIElement(int, int, glm::vec2, glm::vec4);
-			UIElement();
-			void AddText(std::shared_ptr<Text>);
-			void AddUIElement(std::shared_ptr<UIElement>);
-			void HideAllElements();
-			void ShowAllElements();
-			void Update(InputManager*);
-			void Draw(InputManager*);
-			void OnHoverEnterFuncDefaults();
-			void OnHoverExitFuncDefaults();
-			void OnMouseClickDefaults(InputManager*);
-			void OnMouseReleaseFuncDefaults(InputManager*);
+			void addText(std::shared_ptr<Text>);
+			void addUIElement(std::shared_ptr<UIElement>);
+			void hideAllElements();
+			void showAllElements();
+			void update(InputManager*, float);
+			void draw();
+			void onHoverEnterFuncDefaults();
+			void onHoverExitFuncDefaults();
+			void onMouseClickDefaults(InputManager*);
+			void onMouseReleaseFuncDefaults(InputManager*);
 		private:
 			std::vector<std::shared_ptr<UIElement>> elements;
 			std::vector<std::shared_ptr<Text>> texts;

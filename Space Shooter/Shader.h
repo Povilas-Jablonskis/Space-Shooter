@@ -12,11 +12,10 @@ namespace Engine
 	{
 		public:
 			Shader(const std::string&, const std::string&);
-			Shader();
 			~Shader();
-			void LoadShader(const std::string&, const std::string&);
-			std::string ReadShaderFile(const std::string&);
-			GLuint GetShader() const;
+			void loadShader(const std::string&, const std::string&);
+			std::string readShaderFile(const std::string&);
+			GLuint getShader() const;
 		private:
 			GLuint program;
 	};

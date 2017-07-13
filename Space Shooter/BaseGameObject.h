@@ -19,26 +19,26 @@ namespace Engine
 		public:
 			~BaseGameObject();
 			BaseGameObject(int, int, glm::vec2, glm::vec2, glm::vec4);
-			BaseGameObject();
-			virtual void Draw();
-			virtual bool Update(float);
-			virtual bool Update(float, float);
-			virtual GLboolean CheckCollision(std::shared_ptr<BaseGameObject>);
-			virtual GLboolean CheckCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
-			void UpdateBulletList(float);
-			void DrawBulletList();
-			virtual void OnCollision(std::shared_ptr<BaseGameObject>);
-			float GetPosition(int) const;
-			glm::vec2 GetPosition() const;
-			int GetSize(int) const;
-			float GetColor(int) const;
+			virtual void draw();
+			virtual bool update(float);
+			virtual bool update(float, float);
+			virtual GLboolean checkCollision(std::shared_ptr<BaseGameObject>);
+			virtual GLboolean checkCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
+			void setCurrentTextureCurrentFrame(int);
+			void applyTexture(Texture*);
+			virtual void onCollision(std::shared_ptr<BaseGameObject>);
+			float getPosition(int) const;
+			void setPosition(glm::vec2);
+			glm::vec2 getPosition() const;
+			int getSize(int) const;
+			float getColor(int) const;
 		protected:
+			Texture* texture;
 			int width;
 			int height;
 			glm::vec2 position;
 			glm::vec2 velocity;
 			glm::vec4 color;
-			std::vector<std::shared_ptr<BaseGameObject>> bullets;
 	};
 }
 #endif

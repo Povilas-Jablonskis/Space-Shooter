@@ -4,12 +4,15 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 texCoord;
 out vec2 TexCoord;
 out vec4 fragColor;
+out float outMode;
 uniform vec2 size;
 uniform float angle;
 uniform vec2 givenposition;
-uniform vec2 animsc;
-uniform vec2 curranim;
+uniform float animscX;
+uniform float animscY;
+uniform float curranim;
 uniform vec4 color;
+uniform float renderMode;
 void main()
 {
 	mat4 scale = 
@@ -52,12 +55,13 @@ void main()
 		vec4( 0.0,       0.0,        1.0,  0.0 ),
 		vec4( 0.0,       0.0,        0.0,  1.0 )
 	);
+	outMode = renderMode;
 	fragColor = color;
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
-	TexCoord.x /= animsc.x;
-	TexCoord.x -= (curranim.x/animsc.x);
-	TexCoord.y /= animsc.y;
-	TexCoord.y += (curranim.y/animsc.y);
+	TexCoord.x /= animscX;
+	TexCoord.x -= (curranim / animscX);
+	TexCoord.y /= animscY;
+	TexCoord.y -= (curranim / animscY);
 	gl_Position = vec4(position, 1.0f);
 	gl_Position *= scale;
 	gl_Position *= trans;

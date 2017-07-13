@@ -73,6 +73,7 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BaseGameObject.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="BulletManager.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -80,6 +81,8 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="TestEnemy.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIElementBase.cpp" />
   </ItemGroup>
@@ -87,6 +90,7 @@
     <ClInclude Include="Application.h" />
     <ClInclude Include="BaseGameObject.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="BulletManager.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="InputManager.h" />
@@ -94,6 +98,8 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="TestEnemy.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIElementBase.h" />
   </ItemGroup>

@@ -10,11 +10,10 @@ namespace Engine
 		public:
 			~TestEnemy();
 			TestEnemy(int, int, glm::vec2, glm::vec2, glm::vec4);
-			TestEnemy();
-			bool Update(float, float);
-			GLboolean CheckCollision(std::shared_ptr<BaseGameObject>);
-			GLboolean CheckCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
-			void OnCollision(std::shared_ptr<BaseGameObject>);
+			bool update(float, float);
+			GLboolean checkCollision(std::shared_ptr<BaseGameObject>);
+			GLboolean checkCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
+			void onCollision(std::shared_ptr<BaseGameObject>);
 	};
 }
 #endif

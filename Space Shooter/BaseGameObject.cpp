@@ -2,23 +2,29 @@
 
 namespace Engine
 {
-	BaseGameObject::BaseGameObject()
+	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color), texture(nullptr)
 	{
 
 	}
-
-	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color) {}
 
 	BaseGameObject::~BaseGameObject()
 	{
-
+		if (texture != nullptr)
+		{
+			auto _texture = texture->getTexture();
+			glDeleteTextures(0, &_texture);
+		}
 	}
 
-	void BaseGameObject::Draw()
+	void BaseGameObject::draw()
 	{
-		auto program = Application::GetShaderProgram("shader");
-		glBindVertexArray(Application::GetVAO());
+		auto program = Application::getShaderProgram("shader");
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glBindVertexArray(Application::getVAO());
 			glUseProgram(program);
 				float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 				float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -26,6 +32,23 @@ namespace Engine
 				int offsetLocation = glGetUniformLocation(program, "givenposition");
 				int offsetLocation2 = glGetUniformLocation(program, "size");
 				int offsetLocation3 = glGetUniformLocation(program, "color");
+				int offsetLocation4 = glGetUniformLocation(program, "renderMode");
+				int offsetLocation5 = glGetUniformLocation(program, "animscX");
+				int offsetLocation6 = glGetUniformLocation(program, "animscY");
+				int offsetLocation7 = glGetUniformLocation(program, "curranim");
+
+				if (texture != nullptr)
+				{
+					glEnable(GL_TEXTURE_2D);
+					glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+
+					glUniform1f(offsetLocation4, 1.0f);
+					glUniform1f(offsetLocation5, texture->getCount().x);
+					glUniform1f(offsetLocation6, texture->getCount().y);
+					glUniform1f(offsetLocation7, (float)texture->getCurrentFrame());
+				}
+				else
+					glUniform1f(offsetLocation4, 0.0f);
 
 				glUniform2f(offsetLocation, position.x / windowwidth, position.y / windowheigth);
 				glUniform2f(offsetLocation2, width / windowwidth, height / windowheigth);
@@ -33,81 +56,77 @@ namespace Engine
 				glDrawElements(GL_TRIANGLES, (sizeof(Application::indices) / sizeof(*Application::indices)), GL_UNSIGNED_INT, 0);
 			glUseProgram(0);
 		glBindVertexArray(0);
-
-		DrawBulletList();
+		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_BLEND);
 	}
 
-	GLboolean BaseGameObject::CheckCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision
+	GLboolean BaseGameObject::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision
 	{
-		auto oneposition = _objecttocheck->GetPosition();
-		auto onewidth = _objecttocheck->GetSize(0);
-		auto oneheight = _objecttocheck->GetSize(1);
+		auto onePosition = _objecttocheck->getPosition();
+		auto oneWidth = _objecttocheck->getSize(0);
+		auto oneHeight = _objecttocheck->getSize(1);
 
 		// Collision x-axis?
-		bool collisionX = oneposition.x + onewidth >= position.x &&
-			position.x + width >= oneposition.x;
+		bool collisionX = onePosition.x + oneWidth >= position.x &&
+			position.x + width >= onePosition.x;
 		// Collision y-axis?
-		bool collisionY = oneposition.y + oneheight >= position.y &&
-			position.y + height >= oneposition.y;
+		bool collisionY = onePosition.y + oneHeight >= position.y &&
+			position.y + height >= onePosition.y;
 		// Collision only if on both axes
-		return collisionX && collisionY;
+		if (collisionX && collisionY)
+		{
+			onCollision(_objecttocheck);
+			return true;
+		}
+		return false;
 	}
 
-	GLboolean BaseGameObject::CheckCollision(std::vector<std::shared_ptr<BaseGameObject>>* _objectstocheck) // AABB - AABB collision
+	GLboolean BaseGameObject::checkCollision(std::vector<std::shared_ptr<BaseGameObject>>* _objectstocheck) // AABB - AABB collision
 	{
 		for (auto object : *_objectstocheck)
 		{
-			if (CheckCollision(object))
+			if (checkCollision(object))
 				return true;
 		}
 		return false;
 	}
 
-	bool BaseGameObject::Update(float _dt)
+	bool BaseGameObject::update(float _dt)
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
+
+		if (texture != nullptr)
+			texture->update(_dt);
 		return true;
 	}
 
-	bool BaseGameObject::Update(float _dt, float _t)
+	bool BaseGameObject::update(float _dt, float _t)
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
+
+		if (texture != nullptr)
+			texture->update(_dt);
 		return true;
 	}
 
-	void BaseGameObject::DrawBulletList()
-	{
-		for (auto bullet : bullets)
-		{
-			bullet->Draw();
-		}
-	}
-
-	void BaseGameObject::UpdateBulletList(float _dt)
-	{
-		auto bulletslist = &bullets;
-		for (std::vector<std::shared_ptr<BaseGameObject>> ::iterator it = bulletslist->begin(); it != bulletslist->end();)
-		{
-			if (it->get()->Update(_dt) == false)
-				it = bulletslist->erase(it);
-			else
-				++it;
-		}
-	}
-
-	float BaseGameObject::GetPosition(int index) const
+	float BaseGameObject::getPosition(int index) const
 	{
 		return position[index];
 	}
 
-	glm::vec2 BaseGameObject::GetPosition() const
+	void BaseGameObject::setPosition(glm::vec2 _position)
+	{
+		position = _position;
+	}
+
+	glm::vec2 BaseGameObject::getPosition() const
 	{
 		return position;
 	}
 
-	int BaseGameObject::GetSize(int index) const
+	int BaseGameObject::getSize(int index) const
 	{
 		switch (index)
 		{
@@ -126,13 +145,25 @@ namespace Engine
 		}
 	}
 
-	float BaseGameObject::GetColor(int index) const
+	float BaseGameObject::getColor(int index) const
 	{
 		return color[index];
 	}
 
-	void BaseGameObject::OnCollision(std::shared_ptr<BaseGameObject> collider)
+	void BaseGameObject::onCollision(std::shared_ptr<BaseGameObject> collider)
 	{
 		std::cout << "some gameobject hit" << std::endl;
+	}
+
+	void BaseGameObject::applyTexture(Texture* _texture)
+	{
+		auto tempTexture = new Texture();
+		*tempTexture = *_texture;
+		texture = tempTexture;
+	}
+
+	void BaseGameObject::setCurrentTextureCurrentFrame(int frame)
+	{
+		texture->setCurrentFrame(frame);
 	}
 }

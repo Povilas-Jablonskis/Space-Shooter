@@ -4,13 +4,13 @@ namespace Engine
 {
 	InputManager::InputManager()
 	{
-		SetLeftMouseState(false);
-		SetLastLeftMouseState(false);
-		SetRightMouseState(false);
-		SetLastRightMouseState(false);
+		setLeftMouseState(false);
+		setLastLeftMouseState(false);
+		setRightMouseState(false);
+		setLastRightMouseState(false);
 		for (int i = 0; i < 255; i++)
 		{
-			SetKey(i, false);
+			setKey(i, false);
 		}
 	}
 
@@ -19,72 +19,72 @@ namespace Engine
 
 	}
 
-	bool InputManager::GetLeftMouseState() const
+	bool InputManager::getLeftMouseState() const
 	{
 		return leftMouseClick;
 	}
 
-	bool InputManager::GetRightMouseState() const
+	bool InputManager::getRightMouseState() const
 	{
 		return rightMouseClick;
 	}
 
-	void InputManager::SetLeftMouseState(bool boolean)
+	void InputManager::setLeftMouseState(bool boolean)
 	{
 		leftMouseClick = boolean;
 	}
 
-	void InputManager::SetRightMouseState(bool boolean)
+	void InputManager::setRightMouseState(bool boolean)
 	{
 		rightMouseClick = boolean;
 	}
 
-	bool InputManager::GetKey(char key) const
+	bool InputManager::getKey(char key) const
 	{
 		return pressedkeys[key];
 	}
 
-	bool InputManager::GetKey(int key) const
+	bool InputManager::getKey(int key) const
 	{
 		return pressedkeys[key];
 	}
 
-	void InputManager::SetKey(char key, bool boolean)
+	void InputManager::setKey(char key, bool boolean)
 	{
 		pressedkeys[key] = boolean;
 	}
 
-	void InputManager::SetKey(int key, bool boolean)
+	void InputManager::setKey(int key, bool boolean)
 	{
 		pressedkeys[key] = boolean;
 	}
 
-	bool InputManager::GetLastLeftMouseState() const
+	bool InputManager::getLastLeftMouseState() const
 	{
 		return lastLeftMouseClick;
 	}
 
-	bool InputManager::GetLastRightMouseState() const
+	bool InputManager::getLastRightMouseState() const
 	{
 		return lastRightMouseClick;
 	}
 
-	void InputManager::SetLastLeftMouseState(bool boolean)
+	void InputManager::setLastLeftMouseState(bool boolean)
 	{
 		lastLeftMouseClick = boolean;
 	}
 
-	void InputManager::SetLastRightMouseState(bool boolean)
+	void InputManager::setLastRightMouseState(bool boolean)
 	{
 		lastRightMouseClick = boolean;
 	}
 
-	void InputManager::SetLastMousePosition(glm::vec2 position)
+	void InputManager::setLastMousePosition(glm::vec2 position)
 	{
 		lastMousePosition = position;
 	}
 
-	glm::vec2 InputManager::GetLastMousePosition() const
+	glm::vec2 InputManager::getLastMousePosition() const
 	{
 		return lastMousePosition;
 	}

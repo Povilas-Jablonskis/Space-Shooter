@@ -10,20 +10,20 @@ namespace Engine
 		public:
 			~InputManager();
 			InputManager();
-			bool GetLeftMouseState() const;
-			bool GetRightMouseState() const;
-			void SetLeftMouseState(bool);
-			void SetRightMouseState(bool);
-			bool GetLastLeftMouseState() const;
-			bool GetLastRightMouseState() const;
-			void SetLastLeftMouseState(bool);
-			void SetLastRightMouseState(bool);
-			bool GetKey(char) const;
-			bool GetKey(int) const;
-			void SetKey(char, bool);
-			void SetKey(int, bool);
-			void SetLastMousePosition(glm::vec2);
-			glm::vec2 GetLastMousePosition() const;
+			bool getLeftMouseState() const;
+			bool getRightMouseState() const;
+			void setLeftMouseState(bool);
+			void setRightMouseState(bool);
+			bool getLastLeftMouseState() const;
+			bool getLastRightMouseState() const;
+			void setLastLeftMouseState(bool);
+			void setLastRightMouseState(bool);
+			bool getKey(char) const;
+			bool getKey(int) const;
+			void setKey(char, bool);
+			void setKey(int, bool);
+			void setLastMousePosition(glm::vec2);
+			glm::vec2 getLastMousePosition() const;
 		private:
 			glm::vec2 lastMousePosition;
 			bool lastLeftMouseClick;

@@ -2,16 +2,11 @@
 
 namespace Engine
 {
-	TestEnemy::TestEnemy()
-	{
-
-	}
-
 	TestEnemy::TestEnemy(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color) 
 		: BaseGameObject(_width, _height, _position, _velocity, _color)
 	{
 		float _dt = 0.0f;
-		float maxpos = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		float maxPos = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 		float value = 0.0f;
 		while (_dt < 3.14f)
 		{
@@ -19,7 +14,7 @@ namespace Engine
 			_dt += (1.0f / 60.0f);
 		}
 
-		velocity.y = (maxpos - position.y - height) / value;
+		velocity.y = (maxPos - position.y - height) / value;
 	}
 
 	TestEnemy::~TestEnemy()
@@ -27,50 +22,40 @@ namespace Engine
 
 	}
 
-	bool TestEnemy::Update(float _dt, float _t)
+	bool TestEnemy::update(float _dt, float _t)
 	{
+		if (texture != nullptr)
+			texture->update(_dt);
+
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * sin(_t);
 		return true;
 	}
 
-	GLboolean TestEnemy::CheckCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision
+	GLboolean TestEnemy::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision
 	{
-		if (BaseGameObject::CheckCollision(_objecttocheck))
+		if (BaseGameObject::checkCollision(_objecttocheck))
 		{
-			OnCollision(_objecttocheck);
+			onCollision(_objecttocheck);
 			return true;
-		}
-		for (auto bullet : bullets)
-		{
-			if (bullet->CheckCollision(_objecttocheck))
-				return true;
 		}
 		return false;
 	}
 
-	GLboolean TestEnemy::CheckCollision(std::vector<std::shared_ptr<BaseGameObject>>* _objectstocheck) // AABB - AABB collision
+	GLboolean TestEnemy::checkCollision(std::vector<std::shared_ptr<BaseGameObject>>* _objectstocheck) // AABB - AABB collision
 	{
 		for (auto object : *_objectstocheck)
 		{
-			if (BaseGameObject::CheckCollision(object))
+			if (BaseGameObject::checkCollision(object))
 			{
-				OnCollision(object);
+				onCollision(object);
 				return true;
-			}
-		}
-		for (auto bullet : bullets)
-		{
-			for (auto object : *_objectstocheck)
-			{
-				if (bullet->CheckCollision(object))
-					return true;
 			}
 		}
 		return false;
 	}
 
-	void TestEnemy::OnCollision(std::shared_ptr<BaseGameObject> collider)
+	void TestEnemy::onCollision(std::shared_ptr<BaseGameObject> collider)
 	{
 		std::cout << "enemy hit" << std::endl;
 	}

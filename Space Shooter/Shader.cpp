@@ -4,12 +4,7 @@ namespace Engine
 {
 	Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
 	{
-		LoadShader(vertex_path, fragment_path);
-	}
-
-	Shader::Shader()
-	{
-
+		loadShader(vertex_path, fragment_path);
 	}
 
 	Shader::~Shader()
@@ -17,12 +12,12 @@ namespace Engine
 
 	}
 
-	GLuint Shader::GetShader() const
+	GLuint Shader::getShader() const
 	{
 		return program;
 	}
 
-	std::string Shader::ReadShaderFile(const std::string& path)
+	std::string Shader::readShaderFile(const std::string& path)
 	{
 		std::string content;
 		FILE * pFile;
@@ -50,10 +45,10 @@ namespace Engine
 		return content;
 	}
 
-	void Shader::LoadShader(const std::string& vertex_path, const std::string& fragment_path)
+	void Shader::loadShader(const std::string& vertex_path, const std::string& fragment_path)
 	{
-		std::string vertShaderStr = ReadShaderFile(vertex_path);
-		std::string fragShaderStr = ReadShaderFile(fragment_path);
+		std::string vertShaderStr = readShaderFile(vertex_path);
+		std::string fragShaderStr = readShaderFile(fragment_path);
 		const char *vertexShaderSource = vertShaderStr.c_str();
 		const char *fragmentShaderSource = fragShaderStr.c_str();
 		GLint isCompiled = 0;

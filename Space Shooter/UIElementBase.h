@@ -13,6 +13,7 @@
 #include <vec4.hpp>
 
 #include "InputManager.h"
+#include "Texture.h"
 
 namespace Engine
 {
@@ -21,23 +22,26 @@ namespace Engine
 		public:
 			~UIElementBase();
 			UIElementBase(int, int, glm::vec2, glm::vec4);
-			UIElementBase();
-			void InitFuncs();
-			virtual void Draw(InputManager*);
-			void ChangeColor(float, int);
-			float GetPosition(int) const;
-			int GetSize(int) const;
-			float GetColor(int) const;
-			bool CheckForMouseCollision(InputManager*);
-			std::function<void()> OnHoverEnterFunc;
-			std::function<void()> OnHoverExitFunc;
-			std::function<void()> OnMouseClickFunc;
-			std::function<void()> OnMouseReleaseFunc;
-			virtual void OnHoverEnterFuncDefaults() = 0;
-			virtual void OnHoverExitFuncDefaults() = 0;
-			void OnMouseClickDefaults(InputManager*);
-			void OnMouseReleaseFuncDefaults(InputManager*);
+			void initFuncs();
+			virtual void draw();
+			virtual void update(InputManager*, float);
+			void changeColor(float, int);
+			float getPosition(int) const;
+			int getSize(int) const;
+			float getColor(int) const;
+			void applyTexture(Texture*);
+			void setCurrentTextureCurrentFrame(int);
+			bool checkForMouseCollision(InputManager*);
+			std::function<void()> onHoverEnterFunc;
+			std::function<void()> onHoverExitFunc;
+			std::function<void()> onMouseClickFunc;
+			std::function<void()> onMouseReleaseFunc;
+			virtual void onHoverEnterFuncDefaults() = 0;
+			virtual void onHoverExitFuncDefaults() = 0;
+			void onMouseClickDefaults(InputManager*);
+			void onMouseReleaseFuncDefaults(InputManager*);
 		protected:
+			Texture* texture;
 			glm::vec2 position;
 			int width;
 			int height;

@@ -17,21 +17,20 @@ namespace Engine
 	class Text : public UIElementBase
 	{
 		public:
-			~Text();
 			Text(const std::string&, int, glm::vec2, glm::vec4, FT_Face*, bool = false);
-			Text();
-			void Draw();
-			void Update(InputManager*);
-			void OnHoverEnterFuncDefaults();
-			void OnHoverExitFuncDefaults();
-			void OnMouseClickDefaults(InputManager*);
-			void OnMouseReleaseFuncDefaults(InputManager*);
+			~Text();
+			void draw();
+			void update(InputManager*);
+			void onHoverEnterFuncDefaults();
+			void onHoverExitFuncDefaults();
+			void onMouseClickDefaults(InputManager*);
+			void onMouseReleaseFuncDefaults(InputManager*);
 		private:
 			std::string text;
-			int fontsize;
+			int fontSize;
 			FT_Face* face;
-			bool mouseontext;
-			SHORT leftbuttonclicked;
+			bool mouseOnText;
+			SHORT leftButtonClicked;
 			float bbox[4];
 			bool isStatic;
 		};

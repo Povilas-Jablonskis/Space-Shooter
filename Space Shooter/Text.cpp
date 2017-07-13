@@ -5,13 +5,8 @@
 
 namespace Engine
 {
-	Text::Text()
-	{
-		
-	}
-
 	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* _face, bool _isStatic) :
-		UIElementBase(0, 0, _position, _color), mouseontext(false), leftbuttonclicked(0), fontsize(_fontsize), text(_text), face(_face), isStatic(_isStatic)
+		UIElementBase(0, 0, _position, _color), mouseOnText(false), leftButtonClicked(0), fontSize(_fontsize), text(_text), face(_face), isStatic(_isStatic)
 	{
 
 	}
@@ -21,13 +16,13 @@ namespace Engine
 
 	}
 
-	void Text::Draw()
+	void Text::draw()
 	{
-		auto program = Application::GetShaderProgram("textshader");
+		auto program = Application::getShaderProgram("textshader");
 		glUseProgram(program);
 			glActiveTexture(GL_TEXTURE0);
 			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, Application::GetTextTexture());
+			glBindTexture(GL_TEXTURE_2D, Application::getTextTexture());
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -43,12 +38,12 @@ namespace Engine
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-			glBindBuffer(GL_ARRAY_BUFFER, Application::GetTextVBO());
-				float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-				float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+			glBindBuffer(GL_ARRAY_BUFFER, Application::getTextVBO());
+				float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+				float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
-				float sx = 2.0f / windowwidth;
-				float sy = 2.0f / windowheigth;
+				float sx = 2.0f / windowWidth;
+				float sy = 2.0f / windowHeigth;
 				float x = -1 + position.x * sx;
 				float y = -1 + position.y * sy;
 
@@ -61,7 +56,7 @@ namespace Engine
 				FT_GlyphSlot g = (*face)->glyph;
 
 				/* Set font size */
-				FT_Set_Pixel_Sizes(*face, 0, fontsize);
+				FT_Set_Pixel_Sizes(*face, 0, fontSize);
 
 				bbox[2] += g->face->glyph->metrics.height >> 6;
 
@@ -111,69 +106,69 @@ namespace Engine
 		glUseProgram(0);
 	}
 
-	void Text::Update(InputManager* inputManager)
+	void Text::update(InputManager* inputManager)
 	{
 		if (color.a == 0.0f || isStatic) return;
 
-		glm::vec2 lastMousePosition = inputManager->GetLastMousePosition();
+		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
 		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
 		lastMousePosition.y *= -1;
 
 		if (lastMousePosition.x >= bbox[0] && lastMousePosition.x <= bbox[1] && lastMousePosition.y <= bbox[2] && lastMousePosition.y >= bbox[3])
 		{
-			if (!mouseontext)
+			if (!mouseOnText)
 			{
-				OnHoverEnterFunc();
-				OnHoverEnterFuncDefaults();
-				mouseontext = true;
+				onHoverEnterFunc();
+				onHoverEnterFuncDefaults();
+				mouseOnText = true;
 			}
 		}
 		else
 		{
-			if (mouseontext)
+			if (mouseOnText)
 			{
-				OnHoverExitFunc();
-				OnHoverExitFuncDefaults();
-				mouseontext = false;
+				onHoverExitFunc();
+				onHoverExitFuncDefaults();
+				mouseOnText = false;
 			}
 		}
 	}
 
-	void Text::OnHoverEnterFuncDefaults()
+	void Text::onHoverEnterFuncDefaults()
 	{
 		color.r = 0.0f;
 		color.g = 0.0f;
 		color.b = 0.0f;
 	}
 
-	void Text::OnHoverExitFuncDefaults()
+	void Text::onHoverExitFuncDefaults()
 	{
 		color.r = 255.0f;
 		color.g = 160.0f;
 		color.b = 122.0f;
 	}
 
-	void Text::OnMouseClickDefaults(InputManager* inputManager)
+	void Text::onMouseClickDefaults(InputManager* inputManager)
 	{
 		if (color.a == 0.0f || isStatic) return;
 
-		glm::vec2 lastMousePosition = inputManager->GetLastMousePosition();
+		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
 		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
 		lastMousePosition.y *= -1;
 
 		if (lastMousePosition.x >= bbox[0] && lastMousePosition.x <= bbox[1] && lastMousePosition.y <= bbox[2] && lastMousePosition.y >= bbox[3])
-			OnMouseClickFunc();
+			onMouseClickFunc();
 	}
 
-	void Text::OnMouseReleaseFuncDefaults(InputManager* inputManager)
+	void Text::onMouseReleaseFuncDefaults(InputManager* inputManager)
 	{
 		if (color.a == 0.0f || isStatic) return;
 
-		glm::vec2 lastMousePosition = inputManager->GetLastMousePosition();
+		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
 		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
 		lastMousePosition.y *= -1;
 
 		if (lastMousePosition.x >= bbox[0] && lastMousePosition.x <= bbox[1] && lastMousePosition.y <= bbox[2] && lastMousePosition.y >= bbox[3])
-			OnMouseReleaseFunc();
+			onMouseReleaseFunc();
 	}
 }
