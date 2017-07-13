@@ -32,30 +32,7 @@ namespace Engine
 		return true;
 	}
 
-	GLboolean TestEnemy::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision
-	{
-		if (BaseGameObject::checkCollision(_objecttocheck))
-		{
-			onCollision(_objecttocheck);
-			return true;
-		}
-		return false;
-	}
-
-	GLboolean TestEnemy::checkCollision(std::vector<std::shared_ptr<BaseGameObject>>* _objectstocheck) // AABB - AABB collision
-	{
-		for (auto object : *_objectstocheck)
-		{
-			if (BaseGameObject::checkCollision(object))
-			{
-				onCollision(object);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	void TestEnemy::onCollision(std::shared_ptr<BaseGameObject> collider)
+	void TestEnemy::onCollision(BaseGameObject* collider)
 	{
 		std::cout << "enemy hit" << std::endl;
 	}

@@ -18,7 +18,8 @@ namespace Engine
 			int getHealth() const;
 			void setHealth(int);
 			int getScore() const;
-			void onCollision(std::shared_ptr<BaseGameObject>);
+			void setScore(int);
+			void onCollision(BaseGameObject*);
 		private:
 			int score;
 			int health;

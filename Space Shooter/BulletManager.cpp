@@ -69,6 +69,7 @@ namespace Engine
 				if (bullet->checkCollision(*it2))
 				{
 					bullets.erase(it);
+					_objectstocheck->erase(it2);
 					return;
 				}
 			}

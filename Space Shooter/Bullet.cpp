@@ -1,5 +1,6 @@
 #include "Bullet.h"
 #include <memory>
+#include "Player.h"
 
 namespace Engine
 {
@@ -22,8 +23,15 @@ namespace Engine
 		return true;
 	}
 
-	void Bullet::onCollision(std::shared_ptr<BaseGameObject> collider)
+	void Bullet::onCollision(BaseGameObject* collider)
 	{
+		if (parent != nullptr)
+		{
+			Player* tempPlayer = dynamic_cast<Player*>(parent);
+			if (tempPlayer != nullptr)
+				tempPlayer->setScore(tempPlayer->getScore() + 100);
+		}
+
 		std::cout << "bullet hit" << std::endl;
 	}
 

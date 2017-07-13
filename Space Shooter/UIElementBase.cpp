@@ -11,11 +11,7 @@ namespace Engine
 
 	UIElementBase::~UIElementBase()
 	{
-		if (texture != nullptr)
-		{
-			auto _texture = texture->getTexture();
-			glDeleteTextures(0, &_texture);
-		}
+
 	}
 
 	void UIElementBase::initFuncs()

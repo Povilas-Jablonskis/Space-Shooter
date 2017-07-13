@@ -11,7 +11,7 @@ namespace Engine
 			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4, BaseGameObject*);
 			bool update(float);
 			BaseGameObject* getParent();
-			void onCollision(std::shared_ptr<BaseGameObject>);
+			void onCollision(BaseGameObject*);
 		private:
 			BaseGameObject* parent;
 	};

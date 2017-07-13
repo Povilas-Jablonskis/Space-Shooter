@@ -10,11 +10,7 @@ namespace Engine
 
 	BaseGameObject::~BaseGameObject()
 	{
-		if (texture != nullptr)
-		{
-			auto _texture = texture->getTexture();
-			glDeleteTextures(0, &_texture);
-		}
+
 	}
 
 	void BaseGameObject::draw()
@@ -75,7 +71,8 @@ namespace Engine
 		// Collision only if on both axes
 		if (collisionX && collisionY)
 		{
-			onCollision(_objecttocheck);
+			onCollision(_objecttocheck.get());
+			_objecttocheck->onCollision(this);
 			return true;
 		}
 		return false;
@@ -150,7 +147,7 @@ namespace Engine
 		return color[index];
 	}
 
-	void BaseGameObject::onCollision(std::shared_ptr<BaseGameObject> collider)
+	void BaseGameObject::onCollision(BaseGameObject* collider)
 	{
 		std::cout << "some gameobject hit" << std::endl;
 	}

@@ -49,7 +49,12 @@ namespace Engine
 		return score;
 	}
 
-	void Player::onCollision(std::shared_ptr<BaseGameObject> collider)
+	void Player::setScore(int _score)
+	{
+		score = _score;
+	}
+
+	void Player::onCollision(BaseGameObject* collider)
 	{
 		std::cout << "player hit" << std::endl;
 	}
