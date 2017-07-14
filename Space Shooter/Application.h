@@ -18,7 +18,7 @@ namespace Engine
 			Application();
 			void addShader(const std::string&, Shader*);
 			void loadTexture(const std::string&, const std::string&, glm::vec2);
-			Texture getTexture(const std::string&);
+			Texture* getTexture(const std::string&);
 			FT_Face* getFont(const std::string&);
 			FT_Face* loadFont(const std::string&, const std::string&);
 			GameState getState()  const;

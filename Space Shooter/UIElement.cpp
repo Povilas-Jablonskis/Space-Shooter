@@ -3,8 +3,8 @@
 
 namespace Engine
 {
-	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color)
-		: UIElementBase(_width, _height, _position, _color)
+	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, UIElement* _parent)
+		: UIElementBase(_width, _height, _position, _color), parent(_parent)
 	{
 
 	}
@@ -59,7 +59,7 @@ namespace Engine
 		}
 		for (auto element : elements)
 		{
-			element->changeColor(0.0f, 3);
+			element->hideAllElements();
 		}
 	}
 
@@ -71,7 +71,7 @@ namespace Engine
 		}
 		for (auto element : elements)
 		{
-			element->changeColor(1.0f, 3);
+			element->showAllElements();
 		}
 	}
 
@@ -111,5 +111,15 @@ namespace Engine
 	void UIElement::onHoverExitFuncDefaults()
 	{
 
+	}
+
+	void UIElement::setParent(UIElement* _parent)
+	{
+		parent = _parent;
+	}
+
+	UIElement* UIElement::getParent()
+	{
+		return parent;
 	}
 }

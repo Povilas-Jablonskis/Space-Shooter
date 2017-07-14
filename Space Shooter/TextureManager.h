@@ -15,8 +15,7 @@ namespace Engine
 			TextureManager();
 			~TextureManager();
 			void loadTexture(const std::string&, const std::string&, glm::vec2);
-			Texture getTexture(const std::string&);
-			void setAnimationCount(const std::string&, glm::vec2);
+			Texture* getTexture(const std::string&);
 		private:
 			std::map<std::string, Texture> textures;
 	};

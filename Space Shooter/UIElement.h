@@ -15,18 +15,21 @@ namespace Engine
 	{
 		public:
 			~UIElement();
-			UIElement(int, int, glm::vec2, glm::vec4);
+			UIElement(int, int, glm::vec2, glm::vec4, UIElement* = nullptr);
 			void addText(std::shared_ptr<Text>);
 			void addUIElement(std::shared_ptr<UIElement>);
 			void hideAllElements();
 			void showAllElements();
 			void update(InputManager*, float);
 			void draw();
+			void setParent(UIElement*);
+			UIElement* getParent();
 			void onHoverEnterFuncDefaults();
 			void onHoverExitFuncDefaults();
 			void onMouseClickDefaults(InputManager*);
 			void onMouseReleaseFuncDefaults(InputManager*);
 		private:
+			UIElement* parent;
 			std::vector<std::shared_ptr<UIElement>> elements;
 			std::vector<std::shared_ptr<Text>> texts;
 		};

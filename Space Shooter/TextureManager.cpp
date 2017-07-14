@@ -23,16 +23,10 @@ namespace Engine
 		}
 	}
 
-	Texture TextureManager::getTexture(const std::string& _name)
+	Texture* TextureManager::getTexture(const std::string& _name)
 	{
 		if (textures.find(_name) != textures.end())
-			return textures.find(_name)->second;
-		return Texture();
-	}
-
-	void TextureManager::setAnimationCount(const std::string& _name, glm::vec2 count)
-	{
-		if (textures.find(_name) != textures.end())
-			textures.find(_name)->second.setCount(count);
+			return &textures.find(_name)->second;
+		return nullptr;
 	}
 }

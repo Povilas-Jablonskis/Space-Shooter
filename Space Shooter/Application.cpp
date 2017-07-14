@@ -110,7 +110,7 @@ namespace Engine
 		textureManager->loadTexture(_path, _name, _animsc);
 	}
 
-	Texture Application::getTexture(const std::string& _name)
+	Texture* Application::getTexture(const std::string& _name)
 	{
 		return textureManager->getTexture(_name);
 	}
