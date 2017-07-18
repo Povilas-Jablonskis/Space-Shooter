@@ -1,4 +1,5 @@
 #include "TestEnemy.h"
+#include "Player.h"
 
 namespace Engine
 {
@@ -25,7 +26,7 @@ namespace Engine
 	bool TestEnemy::update(float _dt, float _t)
 	{
 		if (texture != nullptr)
-			texture->update(_dt);
+			BaseGameObject::updateTexture(_dt);
 
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * sin(_t);
@@ -34,6 +35,13 @@ namespace Engine
 
 	void TestEnemy::onCollision(BaseGameObject* collider)
 	{
+		Player* tempPlayer = dynamic_cast<Player*>(collider);
+		if (tempPlayer != nullptr)
+		{
+			tempPlayer->reset();
+			tempPlayer->setHealth(tempPlayer->getHealth() - 1);
+		}
+
 		std::cout << "enemy hit" << std::endl;
 	}
 }

@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	Texture::Texture() : startFrame(0), endFrame(0), currentFrame(0), animComplete(false), animTimer(0.0f), loop(false), animationDone(false), delay(1.0f), animsc(0), width(0), height(0), texture(0)
+	Texture::Texture(int _startFame, int _endFrame, glm::vec2 _animsc) : startFrame(_startFame), endFrame(_endFrame), animsc(_animsc), width(0), height(0), texture(0)
 	{
 
 	}
@@ -64,57 +64,19 @@ namespace Engine
 		return animsc;
 	}
 
-	void Texture::setCurrentFrame(int frame)
+	int Texture::getStartFrame() const
 	{
-		currentFrame = frame;
+		return startFrame;
 	}
 
-	int Texture::getCurrentFrame() const
+	int Texture::getEndFrame() const
 	{
-		return currentFrame;
+		return endFrame;
 	}
 
 	void Texture::setFrames(int _startFrame, int _endFrame)
 	{
 		startFrame = _startFrame;
 		endFrame = _endFrame;
-	}
-
-	void Texture::setDelay(float _delay)
-	{
-		delay = _delay;
-	}
-
-	void Texture::setAnimationStatus(bool _status)
-	{
-		animationDone = _status;
-	}
-
-	void Texture::setLoopStatus(bool _status)
-	{
-		loop = _status;
-	}
-
-	void Texture::update(float dt)
-	{
-		if (endFrame - startFrame > 0)
-		{
-			animTimer += dt;
-			if (animTimer > delay)
-			{
-				animTimer -= delay;
-				currentFrame++;
-				if (currentFrame < startFrame || currentFrame > endFrame)
-				{
-					if (loop == true)
-						currentFrame = startFrame;
-					else
-					{
-						currentFrame = endFrame;
-						animComplete = true;
-					}
-				}
-			}
-		}
 	}
 }

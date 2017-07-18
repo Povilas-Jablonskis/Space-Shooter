@@ -4,7 +4,7 @@
 #include <map>
 
 #include "Application.h"
-#include "Bullet.h"
+#include "BaseGameObject.h"
 #include "UIElement.h"
 
 namespace Engine
@@ -14,8 +14,9 @@ namespace Engine
 		public:
 			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
 			~Player();
-			bool update(InputManager*, float, std::vector<std::shared_ptr<Bullet>>*);
+			bool update(InputManager*, float);
 			int getHealth() const;
+			void reset();
 			void setHealth(int);
 			int getScore() const;
 			void setScore(int);

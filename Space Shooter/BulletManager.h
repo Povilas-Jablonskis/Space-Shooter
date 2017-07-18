@@ -13,7 +13,6 @@ namespace Engine
 			void addBullet(std::shared_ptr<Bullet>);
 			void updateBulletList(float);
 			void drawBulletList();
-			std::vector<std::shared_ptr<Bullet>>* GetBulletList();
 			void checkCollision(std::shared_ptr<BaseGameObject>);
 			void checkCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
 		private:

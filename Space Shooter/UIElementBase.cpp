@@ -4,7 +4,7 @@
 namespace Engine
 {
 	UIElementBase::UIElementBase(int _width, int _height, glm::vec2 _position, glm::vec4 _color, glm::vec2 _positionPerc) :
-		width(_width), height(_height), position(_position), color(_color), texture(nullptr), positionPercents(_positionPerc)
+		width(_width), height(_height), position(_position), color(_color), texture(nullptr), positionPercents(_positionPerc), animComplete(false), animTimer(0.0f), loop(false), delay(1.0f), currentFrame(0)
 	{
 		initFuncs();
 	}
@@ -39,6 +39,7 @@ namespace Engine
 
 	void UIElementBase::draw()
 	{
+		if (color.a == 0.0f) return;
 		auto program = Application::getShaderProgram("shader");
 
 		glEnable(GL_BLEND);
@@ -65,7 +66,7 @@ namespace Engine
 					glUniform1f(offsetLocation4, 1.0f);
 					glUniform1f(offsetLocation5, texture->getCount().x);
 					glUniform1f(offsetLocation6, texture->getCount().y);
-					glUniform1f(offsetLocation7, (float)texture->getCurrentFrame());
+					glUniform1f(offsetLocation7, (float)getCurrentFrame());
 				}
 				else
 					glUniform1f(offsetLocation4, 0.0f);
@@ -136,24 +137,66 @@ namespace Engine
 			onMouseReleaseFunc();
 	}
 
-	void UIElementBase::applyTexture(Texture* _texture)
+	void UIElementBase::applyTexture(std::shared_ptr<Texture> _texture)
 	{
 		if (_texture == nullptr || _texture == texture) return;
-		auto tempTexture = new Texture();
-		*tempTexture = *_texture;
-		texture = tempTexture;
+		texture = _texture;
 	}
 
-	void UIElementBase::setCurrentTextureCurrentFrame(int frame)
+	void UIElementBase::setCurrentFrame(int frame)
 	{
-		if (texture != nullptr)
-			texture->setCurrentFrame(frame);
+		currentFrame = frame;
+	}
+
+	int UIElementBase::getCurrentFrame() const
+	{
+		return currentFrame;
+	}
+
+	void UIElementBase::setDelay(float _delay)
+	{
+		delay = _delay;
+	}
+
+	void UIElementBase::setAnimationStatus(bool _status)
+	{
+		animComplete = _status;
+	}
+
+	void UIElementBase::setLoopStatus(bool _status)
+	{
+		loop = _status;
+	}
+
+	void UIElementBase::updateTexture(float dt)
+	{
+		if (texture == nullptr) return;
+		if (texture->getEndFrame() - texture->getStartFrame() > 0)
+		{
+			animTimer += dt;
+			if (animTimer > delay)
+			{
+				animTimer -= delay;
+				currentFrame++;
+				if (currentFrame < texture->getStartFrame() || currentFrame > texture->getEndFrame())
+				{
+					if (loop == true)
+						currentFrame = texture->getStartFrame();
+					else
+					{
+						currentFrame = texture->getEndFrame();
+						animComplete = true;
+					}
+				}
+			}
+		}
 	}
 
 	void UIElementBase::update(InputManager* inputManager, float dt)
 	{
+		if (color.a == 0.0f) return;
 		if (texture != nullptr)
-			texture->update(dt);
+			updateTexture(dt);
 	}
 
 	void UIElementBase::fixPosition(UIElementBase* parent)
@@ -176,8 +219,8 @@ namespace Engine
 		{
 			if (positionPercents == glm::vec2(0.0f, 0.0f))
 			{
-				width = temPos.x;
-				height = temPos.y;
+				width = (int)temPos.x;
+				height = (int)temPos.y;
 				return;
 			}
 			position.x = temPos.x * (positionPercents.x / 100.0f);

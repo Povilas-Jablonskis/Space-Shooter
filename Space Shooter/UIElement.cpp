@@ -3,8 +3,8 @@
 
 namespace Engine
 {
-	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, UIElement* _parent, glm::vec2 _positionPerc)
-		: UIElementBase(_width, _height, _position, _color, _positionPerc), parent(_parent)
+	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, std::string _parent, glm::vec2 _positionPerc)
+		: UIElementBase(_width, _height, _position, _color, _positionPerc), parentMenu(_parent)
 	{
 
 	}
@@ -113,14 +113,14 @@ namespace Engine
 
 	}
 
-	void UIElement::setParent(UIElement* _parent)
+	void UIElement::setParent(std::string _parent)
 	{
-		parent = _parent;
+		parentMenu = _parent;
 	}
 
-	UIElement* UIElement::getParent()
+	std::string UIElement::getParent()
 	{
-		return parent;
+		return parentMenu;
 	}
 
 	void UIElement::fixPosition(UIElementBase* _parent)

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <map>
+#include <memory>
 #include <vec2.hpp>
 
 #include "Texture.h"
@@ -14,10 +15,10 @@ namespace Engine
 		public:
 			TextureManager();
 			~TextureManager();
-			void loadTexture(const std::string&, const std::string&, glm::vec2);
-			Texture* getTexture(const std::string&);
+			void loadTexture(const std::string&, const std::string&, int, int, glm::vec2);
+			std::shared_ptr<Texture> getTexture(const std::string&);
 		private:
-			std::map<std::string, Texture> textures;
+			std::map<std::string, std::shared_ptr<Texture>> textures;
 	};
 }
 #endif

@@ -12,30 +12,20 @@ namespace Engine
 	class Texture
 	{
 		public:
-			Texture();
+			Texture(int, int, glm::vec2);
 			~Texture();
 			void readTextureFile(const std::string&);
 			GLuint getTexture() const;
 			int getSize(int) const;
 			void setCount(glm::vec2);
+			int getStartFrame() const;
+			int getEndFrame() const;
 			glm::vec2 getCount() const;
-			void setCurrentFrame(int);
-			int getCurrentFrame() const;
 			void setFrames(int, int);
-			void setDelay(float);
-			void setAnimationStatus(bool);
-			void setLoopStatus(bool);
-			void update(float);
 		private:
-			bool animComplete;
-			float animTimer;
-			bool loop;
-			bool animationDone;
-			float delay;
 			int endFrame;
 			int startFrame;
 			glm::vec2 animsc;
-			int currentFrame;
 			int width;
 			int height;
 			GLuint texture;

@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* _face, bool _isStatic, glm::vec2 _positionPerc) :
+	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_FaceRec_* _face, bool _isStatic, glm::vec2 _positionPerc) :
 		UIElementBase(0, 0, _position, _color, _positionPerc), mouseOnText(false), leftButtonClicked(0), fontSize(_fontsize), text(_text), face(_face), isStatic(_isStatic)
 	{
 
@@ -18,6 +18,7 @@ namespace Engine
 
 	void Text::draw()
 	{
+		if (color.a == 0.0f) return;
 		auto program = Application::getShaderProgram("textshader");
 		glUseProgram(program);
 			glActiveTexture(GL_TEXTURE0);
@@ -53,10 +54,11 @@ namespace Engine
 				bbox[3] = position.y;
 
 				const char *p;
-				FT_GlyphSlot g = (*face)->glyph;
+				FT_FaceRec_ tempFace = *face;
+				FT_GlyphSlot g = tempFace.glyph;
 
 				/* Set font size */
-				FT_Set_Pixel_Sizes(*face, 0, fontSize);
+				FT_Set_Pixel_Sizes(&tempFace, 0, fontSize);
 
 				bbox[2] += g->face->glyph->metrics.height >> 6;
 
@@ -71,7 +73,7 @@ namespace Engine
 				for (p = text.c_str(); *p; p++)
 				{
 					/* Try to load and render the character */
-					if (FT_Load_Char(*face, *p, FT_LOAD_RENDER))
+					if (FT_Load_Char(&tempFace, *p, FT_LOAD_RENDER))
 						continue;
 
 					/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */

@@ -37,11 +37,6 @@ namespace Engine
 		}
 	}
 
-	std::vector<std::shared_ptr<Bullet>>* BulletManager::GetBulletList()
-	{
-		return &bullets;
-	}
-
 	void BulletManager::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck)
 	{
 		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end(); ++it)

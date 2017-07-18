@@ -16,13 +16,13 @@ namespace Engine
 
 	}
 
-	bool Player::update(InputManager* app, float _dt, std::vector<std::shared_ptr<Bullet>>* bulletList)
+	bool Player::update(InputManager* app, float _dt)
 	{
 		if (texture != nullptr)
-			texture->update(_dt);
+			BaseGameObject::updateTexture(_dt);
 
-		if (app->getKey(32))
-			bulletList->push_back(std::make_shared<Bullet>(10, 20, glm::vec2(position.x, position.y + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f), this));
+		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
 		if (app->getKey('a'))
 			position.x -= velocity.x * _dt;
@@ -30,8 +30,24 @@ namespace Engine
 			position.x += velocity.y * _dt;
 		if (app->getKey('s'))
 			position.y -= velocity.y * _dt;
+
 		position.y += (velocity.y * _dt) / 2.0f;
+
+		if (position.x + width >= windowWidth)
+			position.x = windowWidth - width;
+		else if (position.x <= 0.0f)
+			position.x = 0.0f;
+
+		if (position.y + width >= windowHeigth)
+			position.y = windowHeigth - height;
+		else if (position.y <= 0.0f)
+			position.y = 0.0f;
 		return true;
+	}
+
+	void Player::reset()
+	{
+		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
 	}
 
 	int Player::getHealth() const

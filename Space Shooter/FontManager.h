@@ -15,10 +15,10 @@ namespace Engine
 			FontManager();
 			~FontManager();
 			void loadFont(const std::string&, const std::string&);
-			FT_Face* getFont(const std::string&);
+			FT_FaceRec_* getFont(const std::string&);
 		private:
 			FT_Library library;
-			std::map<std::string, FT_Face> faces;
+			std::map<std::string, FT_FaceRec_> faces;
 	};
 }
 #endif

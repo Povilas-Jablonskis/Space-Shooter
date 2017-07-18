@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-	std::map<std::string, Shader*> Application::shaders;
+	std::map<std::string, std::shared_ptr<Shader>> Application::shaders;
 	GLuint Application::indices[6] =
 	{   // Note that we start from 0!
 		0, 1, 3,  // First Triangle
@@ -24,7 +24,7 @@ namespace Engine
 	GLuint Application::textTexture;
 
 	Application::Application() 
-		: fontManager(new FontManager()), inputManager(new InputManager()), textureManager(new TextureManager()), gameState(GameState::NOTSTARTEDYET)
+		: fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), textureManager(std::make_shared<TextureManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
 		glGenBuffers(1, &textVBO);
 		glGenTextures(1, &textTexture);
@@ -52,20 +52,20 @@ namespace Engine
 		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 	}
 
-	void Application::addShader(const std::string& name, Shader* shader)
+	void Application::addShader(const std::string& name, std::shared_ptr<Shader> shader)
 	{
 		if (shaders.find(name) != shaders.end())
 			return;
-		shaders.insert(std::pair<std::string, Shader*>(name, shader));
+		shaders.insert(std::pair<std::string, std::shared_ptr<Shader>>(name, shader));
 	}
 
-	FT_Face* Application::loadFont(const std::string& _path, const std::string& _name)
+	FT_FaceRec_* Application::loadFont(const std::string& _path, const std::string& _name)
 	{
 		fontManager->loadFont(_path, _name);
 		return fontManager->getFont(_name);
 	}
 
-	FT_Face* Application::getFont(const std::string& _name)
+	FT_FaceRec_* Application::getFont(const std::string& _name)
 	{
 		return fontManager->getFont(_name);
 	}
@@ -100,17 +100,17 @@ namespace Engine
 		gameState = _state;
 	}
 
-	InputManager& Application::getInputManager()
+	InputManager* Application::getInputManager()
 	{
-		return *inputManager;
+		return inputManager.get();
 	}
 
-	void Application::loadTexture(const std::string& _path, const std::string& _name, glm::vec2 _animsc)
+	void Application::loadTexture(const std::string& _path, const std::string& _name, int _startFame, int _endFrame, glm::vec2 _animsc)
 	{
-		textureManager->loadTexture(_path, _name, _animsc);
+		textureManager->loadTexture(_path, _name, _startFame, _endFrame, _animsc);
 	}
 
-	Texture* Application::getTexture(const std::string& _name)
+	std::shared_ptr<Texture> Application::getTexture(const std::string& _name)
 	{
 		return textureManager->getTexture(_name);
 	}

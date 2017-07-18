@@ -29,8 +29,14 @@ namespace Engine
 			float getPosition(int) const;
 			int getSize(int) const;
 			float getColor(int) const;
+			void setCurrentFrame(int frame);
+			int getCurrentFrame() const;
+			void setDelay(float);
+			void setAnimationStatus(bool);
+			void setLoopStatus(bool);
+			void updateTexture(float);
 			virtual void fixPosition(UIElementBase*);
-			void applyTexture(Texture*);
+			void applyTexture(std::shared_ptr<Texture>);
 			void setCurrentTextureCurrentFrame(int);
 			bool checkForMouseCollision(InputManager*);
 			std::function<void()> onHoverEnterFunc;
@@ -42,7 +48,12 @@ namespace Engine
 			void onMouseClickDefaults(InputManager*);
 			void onMouseReleaseFuncDefaults(InputManager*);
 		protected:
-			Texture* texture;
+			bool animComplete;
+			float animTimer;
+			bool loop;
+			float delay;
+			int currentFrame;
+			std::shared_ptr<Texture> texture;
 			glm::vec2 position;
 			int width;
 			int height;

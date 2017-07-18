@@ -12,21 +12,20 @@ namespace Engine
 
 	}
 
-	void TextureManager::loadTexture(const std::string& _path, const std::string& _name, glm::vec2 _animsc )
+	void TextureManager::loadTexture(const std::string& _path, const std::string& _name, int _startFame, int _endFrame, glm::vec2 _animsc)
 	{
 		if (textures.find(_name) == textures.end())
 		{
-			auto tempTexture = Texture();
-			tempTexture.readTextureFile(_path);
-			tempTexture.setCount(_animsc);
-			textures.insert(std::pair<std::string, Texture>(_name, tempTexture));
+			auto tempTexture = std::make_shared<Texture>(_startFame, _endFrame, _animsc);
+			tempTexture->readTextureFile(_path);
+			textures.insert(std::pair<std::string, std::shared_ptr<Texture>>(_name, tempTexture));
 		}
 	}
 
-	Texture* TextureManager::getTexture(const std::string& _name)
+	std::shared_ptr<Texture> TextureManager::getTexture(const std::string& _name)
 	{
 		if (textures.find(_name) != textures.end())
-			return &textures.find(_name)->second;
+			return textures.find(_name)->second;
 		return nullptr;
 	}
 }

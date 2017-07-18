@@ -3,7 +3,7 @@
 namespace Engine
 {
 	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color), texture(nullptr)
+		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color), texture(nullptr), animComplete(false), animTimer(0.0f), loop(false), delay(1.0f), currentFrame(0)
 	{
 
 	}
@@ -41,7 +41,7 @@ namespace Engine
 					glUniform1f(offsetLocation4, 1.0f);
 					glUniform1f(offsetLocation5, texture->getCount().x);
 					glUniform1f(offsetLocation6, texture->getCount().y);
-					glUniform1f(offsetLocation7, (float)texture->getCurrentFrame());
+					glUniform1f(offsetLocation7, (float)getCurrentFrame());
 				}
 				else
 					glUniform1f(offsetLocation4, 0.0f);
@@ -94,7 +94,7 @@ namespace Engine
 		position.y += velocity.y * _dt;
 
 		if (texture != nullptr)
-			texture->update(_dt);
+			updateTexture(_dt);
 		return true;
 	}
 
@@ -104,7 +104,7 @@ namespace Engine
 		position.y += velocity.y * _dt;
 
 		if (texture != nullptr)
-			texture->update(_dt);
+			updateTexture(_dt);
 		return true;
 	}
 
@@ -152,16 +152,58 @@ namespace Engine
 		std::cout << "some gameobject hit" << std::endl;
 	}
 
-	void BaseGameObject::applyTexture(Texture* _texture)
+	void BaseGameObject::applyTexture(std::shared_ptr<Texture> _texture)
 	{
 		if (_texture == nullptr || _texture == texture) return;
-		auto tempTexture = new Texture();
-		*tempTexture = *_texture;
-		texture = tempTexture;
+		texture = _texture;
 	}
 
-	void BaseGameObject::setCurrentTextureCurrentFrame(int frame)
+	void BaseGameObject::setCurrentFrame(int frame)
 	{
-		texture->setCurrentFrame(frame);
+		currentFrame = frame;
+	}
+
+	int BaseGameObject::getCurrentFrame() const
+	{
+		return currentFrame;
+	}
+
+	void BaseGameObject::setDelay(float _delay)
+	{
+		delay = _delay;
+	}
+
+	void BaseGameObject::setAnimationStatus(bool _status)
+	{
+		animComplete = _status;
+	}
+
+	void BaseGameObject::setLoopStatus(bool _status)
+	{
+		loop = _status;
+	}
+
+	void BaseGameObject::updateTexture(float dt)
+	{
+		if (texture == nullptr) return;
+		if (texture->getEndFrame() - texture->getStartFrame() > 0)
+		{
+			animTimer += dt;
+			if (animTimer > delay)
+			{
+				animTimer -= delay;
+				currentFrame++;
+				if (currentFrame < texture->getStartFrame()|| currentFrame > texture->getEndFrame())
+				{
+					if (loop == true)
+						currentFrame = texture->getStartFrame();
+					else
+					{
+						currentFrame = texture->getEndFrame();
+						animComplete = true;
+					}
+				}
+			}
+		}
 	}
 }

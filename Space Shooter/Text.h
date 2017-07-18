@@ -17,7 +17,7 @@ namespace Engine
 	class Text : public UIElementBase
 	{
 		public:
-			Text(const std::string&, int, glm::vec2, glm::vec4, FT_Face*, bool, glm::vec2);
+			Text(const std::string&, int, glm::vec2, glm::vec4, FT_FaceRec_*, bool, glm::vec2);
 			~Text();
 			void draw();
 			void update(InputManager*);
@@ -28,7 +28,7 @@ namespace Engine
 		private:
 			std::string text;
 			int fontSize;
-			FT_Face* face;
+			FT_FaceRec_* face;
 			bool mouseOnText;
 			SHORT leftButtonClicked;
 			float bbox[4];

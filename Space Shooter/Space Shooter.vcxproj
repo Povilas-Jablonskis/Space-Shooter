@@ -50,6 +50,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Users\P\Desktop\freetype-2.8\objs\vc2010\Win32;C:\Users\P\Desktop\Simple OpenGL Image Library\projects\VC9\Release;C:\Users\P\Desktop\glew-2.0.0\lib\Release\Win32;C:\Users\P\Desktop\freeglut\lib;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\objs\vc2010\Win32;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\projects\VC9\Release;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\lib\Release\Win32;C:\Users\povilas.jablonskis\Desktop\freeglut\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SOIL.lib;glew32.lib;freeglut.lib;freetype28.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
