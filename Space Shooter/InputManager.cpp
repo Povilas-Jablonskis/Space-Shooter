@@ -4,6 +4,16 @@ namespace Engine
 {
 	InputManager::InputManager()
 	{
+		resetInput();
+	}
+
+	InputManager::~InputManager()
+	{
+
+	}
+
+	void InputManager::resetInput()
+	{
 		setLeftMouseState(false);
 		setLastLeftMouseState(false);
 		setRightMouseState(false);
@@ -12,11 +22,6 @@ namespace Engine
 		{
 			setKey(i, false);
 		}
-	}
-
-	InputManager::~InputManager()
-	{
-
 	}
 
 	bool InputManager::getLeftMouseState() const

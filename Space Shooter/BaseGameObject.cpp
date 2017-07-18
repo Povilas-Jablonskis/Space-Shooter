@@ -154,6 +154,7 @@ namespace Engine
 
 	void BaseGameObject::applyTexture(Texture* _texture)
 	{
+		if (_texture == nullptr || _texture == texture) return;
 		auto tempTexture = new Texture();
 		*tempTexture = *_texture;
 		texture = tempTexture;

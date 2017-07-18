@@ -3,8 +3,8 @@
 
 namespace Engine
 {
-	UIElementBase::UIElementBase(int _width, int _height, glm::vec2 _position, glm::vec4 _color) :
-		width(_width), height(_height), position(_position), color(_color), texture(nullptr)
+	UIElementBase::UIElementBase(int _width, int _height, glm::vec2 _position, glm::vec4 _color, glm::vec2 _positionPerc) :
+		width(_width), height(_height), position(_position), color(_color), texture(nullptr), positionPercents(_positionPerc)
 	{
 		initFuncs();
 	}
@@ -138,6 +138,7 @@ namespace Engine
 
 	void UIElementBase::applyTexture(Texture* _texture)
 	{
+		if (_texture == nullptr || _texture == texture) return;
 		auto tempTexture = new Texture();
 		*tempTexture = *_texture;
 		texture = tempTexture;
@@ -153,5 +154,34 @@ namespace Engine
 	{
 		if (texture != nullptr)
 			texture->update(dt);
+	}
+
+	void UIElementBase::fixPosition(UIElementBase* parent)
+	{
+		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+		if (parent != nullptr)
+		{
+			if (positionPercents == glm::vec2(0.0f, 0.0f))
+			{
+				position.x = parent->getPosition(0);
+				position.y = parent->getPosition(1);
+			}
+			else
+			{
+				position.x = parent->getPosition(0) + (parent->getSize(0) * (positionPercents.x / 100.0f));
+				position.y = parent->getPosition(1) + (parent->getSize(1) * (positionPercents.y / 100.0f));
+			}
+		}
+		else
+		{
+			if (positionPercents == glm::vec2(0.0f, 0.0f))
+			{
+				width = temPos.x;
+				height = temPos.y;
+				return;
+			}
+			position.x = temPos.x * (positionPercents.x / 100.0f);
+			position.y = temPos.y * (positionPercents.y / 100.0f);
+		}
 	}
 }

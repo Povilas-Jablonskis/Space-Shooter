@@ -11,7 +11,7 @@ namespace Engine
 	}
 
 	Player::Player(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color), health(6), score(0)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), health(3), score(0)
 	{
 
 	}

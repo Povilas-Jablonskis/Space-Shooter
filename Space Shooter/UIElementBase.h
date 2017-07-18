@@ -21,7 +21,7 @@ namespace Engine
 	{
 		public:
 			~UIElementBase();
-			UIElementBase(int, int, glm::vec2, glm::vec4);
+			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2);
 			void initFuncs();
 			virtual void draw();
 			virtual void update(InputManager*, float);
@@ -29,6 +29,7 @@ namespace Engine
 			float getPosition(int) const;
 			int getSize(int) const;
 			float getColor(int) const;
+			virtual void fixPosition(UIElementBase*);
 			void applyTexture(Texture*);
 			void setCurrentTextureCurrentFrame(int);
 			bool checkForMouseCollision(InputManager*);
@@ -45,6 +46,7 @@ namespace Engine
 			glm::vec2 position;
 			int width;
 			int height;
+			glm::vec2 positionPercents;
 			glm::vec4 color;
 		};
 }

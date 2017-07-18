@@ -5,8 +5,8 @@
 
 namespace Engine
 {
-	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* _face, bool _isStatic) :
-		UIElementBase(0, 0, _position, _color), mouseOnText(false), leftButtonClicked(0), fontSize(_fontsize), text(_text), face(_face), isStatic(_isStatic)
+	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_Face* _face, bool _isStatic, glm::vec2 _positionPerc) :
+		UIElementBase(0, 0, _position, _color, _positionPerc), mouseOnText(false), leftButtonClicked(0), fontSize(_fontsize), text(_text), face(_face), isStatic(_isStatic)
 	{
 
 	}

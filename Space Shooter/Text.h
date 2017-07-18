@@ -17,7 +17,7 @@ namespace Engine
 	class Text : public UIElementBase
 	{
 		public:
-			Text(const std::string&, int, glm::vec2, glm::vec4, FT_Face*, bool = false);
+			Text(const std::string&, int, glm::vec2, glm::vec4, FT_Face*, bool, glm::vec2);
 			~Text();
 			void draw();
 			void update(InputManager*);

@@ -32,6 +32,8 @@ BulletManager* bulletManager;
 
 UIElement* currentMenu;
 
+glm::vec2 lastWindowPosition;
+
 float t;
 float dt;
 float currentTime;
@@ -46,12 +48,17 @@ void initScene()
 	enemies.clear();
 	for (size_t i = 0; i <= 16; i++)
 	{
-		auto enemy = std::make_shared<TestEnemy>(32, 32, glm::vec2(32.0f + (i * 34.0f), 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
+		auto enemy = std::make_shared<TestEnemy>(32, 32, glm::vec2(i * 40.0f, 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
+		enemy->applyTexture(application->getTexture("enemy1"));
+		enemy->setCurrentTextureCurrentFrame(2);
 		enemies.push_back(enemy);
 	}
 
 	if (player == nullptr)
+	{
 		player = std::make_shared<Player>(32, 32, glm::vec2(320.0f, 0.0f), glm::vec2(50.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
+		player->applyTexture(application->getTexture("player1"));
+	}
 	else
 	{
 		player->setPosition(glm::vec2(320.0f, 0.0f));
@@ -65,14 +72,14 @@ void initScene()
 void initGameUI()
 {
 	glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
-	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Main Menu", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
-	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Pause Menu", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
-	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Game Over", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
-	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Options", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), ui["Main Menu"].get())));
-	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("A", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f / 100.0f, 0.0f / 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), ui["Options"].get())));
+	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Main Menu", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Pause Menu", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Game Over", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Options", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), ui["Main Menu"].get(), glm::vec2(0.0f, 0.0f))));
+	ui.insert(std::pair<std::string, std::shared_ptr<UIElement>>("A", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), ui["Options"].get(), glm::vec2(0.0f, 0.0f))));
 
 	//Main Menu
-	auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(temPos.x * (48.0f / 100.0f), temPos.y * (60.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(48.0f, 60.0f));
 	options->onMouseReleaseFunc = []()
 	{
 		application->setState(GameState::STARTED);
@@ -81,7 +88,7 @@ void initGameUI()
 		initScene();
 	};
 	ui["Main Menu"]->addText(options);
-	options = std::make_shared<Text>("Options", 18, glm::vec2(temPos.x * (48.0f / 100.0f), temPos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("Options", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(48.0f, 55.0f));
 	options->onMouseReleaseFunc = []()
 	{
 		currentMenu = ui["Options"].get();
@@ -89,7 +96,7 @@ void initGameUI()
 		ui["Options"]->showAllElements();
 	};
 	ui["Main Menu"]->addText(options);
-	options = std::make_shared<Text>("End Game", 18, glm::vec2(temPos.x * (48.0f / 100.0f), temPos.y * (50.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(48.0f, 50.0f));
 	options->onMouseReleaseFunc = []()
 	{
 		currentMenu = nullptr;
@@ -98,9 +105,10 @@ void initGameUI()
 		exit(0);
 	};
 	ui["Main Menu"]->addText(options);
+	ui["Main Menu"]->showAllElements();
 
 	//Pause Menu
-	options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(temPos.x * (45.0f / 100.0f), temPos.y * (60.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(45.0f, 60.0f));
 	options->onMouseReleaseFunc = []()
 	{
 		currentMenu = ui["Main Menu"].get();
@@ -109,7 +117,7 @@ void initGameUI()
 		ui["Main Menu"]->showAllElements();
 	};
 	ui["Pause Menu"]->addText(options);
-	options = std::make_shared<Text>("End Game", 18, glm::vec2(temPos.x * (48.0f / 100.0f), temPos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(48.0f, 55.0f));
 	options->onMouseReleaseFunc = []()
 	{
 		currentMenu = nullptr;
@@ -118,10 +126,9 @@ void initGameUI()
 		exit(0);
 	};
 	ui["Pause Menu"]->addText(options);
-	ui["Pause Menu"]->hideAllElements();
 
 	//Options
-	options = std::make_shared<Text>("A", 18, glm::vec2(temPos.x * (50.0f / 100.0f), temPos.y * (60.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("A", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(50.0f, 60.0f));
 	options->onMouseReleaseFunc = []()
 	{
 		currentMenu = ui["A"].get();
@@ -129,9 +136,9 @@ void initGameUI()
 		ui["A"]->showAllElements();
 	};
 	ui["Options"]->addText(options);
-	options = std::make_shared<Text>("B", 18, glm::vec2(temPos.x * (50.0f / 100.0f), temPos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("B", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(50.0f, 55.0f));
 	ui["Options"]->addText(options);
-	options = std::make_shared<Text>("Back", 18, glm::vec2(temPos.x * (50.0f / 100.0f), temPos.y * (50.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(50.0f, 50.0f));
 	options->onMouseReleaseFunc = []()
 	{
 		currentMenu = ui["Main Menu"].get();
@@ -139,12 +146,11 @@ void initGameUI()
 		ui["Main Menu"]->showAllElements();
 	};
 	ui["Options"]->addText(options);
-	ui["Options"]->hideAllElements();
 
 	//A
-	options = std::make_shared<Text>("A", 18, glm::vec2(temPos.x * (50.0f / 100.0f), temPos.y * (60.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("A", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(50.0f, 60.0f));
 	ui["A"]->addText(options);
-	options = std::make_shared<Text>("Back", 18, glm::vec2(temPos.x * (50.0f / 100.0f), temPos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), false, glm::vec2(50.0f, 55.0f));
 	options->onMouseReleaseFunc = []()
 	{
 		currentMenu = ui["Options"].get();
@@ -152,32 +158,36 @@ void initGameUI()
 		ui["Options"]->showAllElements();
 	};
 	ui["A"]->addText(options);
-	ui["A"]->hideAllElements();
 
 	//Game Over
-	options = std::make_shared<Text>("Game Over", 32, glm::vec2(temPos.x * (45.0f / 100.0f), temPos.y * (55.0f / 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")), true);
+	options = std::make_shared<Text>("Game Over", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), ((FT_Face*)application->getFont("kenvector_future_thin.ttf")), true, glm::vec2(40.0f, 55.0f));
 	ui["Game Over"]->addText(options);
-	ui["Game Over"]->hideAllElements();
 }
 
 void redrawPlayerUI()
-{
+{	
 	playerUI.clear();
 
 	glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
-	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
-	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f))));
+	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
-	//scoreUI
-	auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(temPos.x * (6.0f / 100.0f), temPos.y * (92.0f / 100.0f)), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), ((FT_Face*)application->getFont("AGENCYR.ttf")));
+	//Score
+	auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), ((FT_Face*)application->getFont("kenvector_future.ttf")), true, glm::vec2(90.0f, 93.0f));
 	playerUI["Score"]->addText(option);
+	playerUI["Score"]->fixPosition(nullptr);
 
-	//healthUI
-	auto option2 = std::make_shared<UIElement>(196, 32, glm::vec2(temPos.x * (50.0f / 100.0f), temPos.y * (90.0f / 100.0f)), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f));
-	option2->applyTexture(application->getTexture("healthBar"));
-	option2->setCurrentTextureCurrentFrame(player->getHealth());
-	playerUI["Health"]->addUIElement(option2);
+	//Health
+	for (int i = 0; i < player->getHealth(); i++)
+	{
+		auto option2 = std::make_shared<UIElement>(33, 26, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
+		option2->applyTexture(application->getTexture("health"));
+		playerUI["Health"]->addUIElement(option2);
+		auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), ((FT_Face*)application->getFont("kenvector_future.ttf")), true, glm::vec2(12.0f, 92.0f));
+		playerUI["Health"]->addText(option);
+	}
+	playerUI["Health"]->fixPosition(nullptr);
 }
 
 void motionFunc(int x, int y)
@@ -256,8 +266,6 @@ void keyboardInput(unsigned char c, int x, int y)
 		}
 		inputManager->setKey(c, true);
 	}
-	else
-		inputManager->setKey(c, false);
 }
 
 void keyboardInputUp(unsigned char c, int x, int y)
@@ -272,6 +280,17 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	auto inputManager = &application->getInputManager();
+
+	glm::vec2 windowPosition = glm::vec2(glutGet(GLUT_WINDOW_X), glutGet(GLUT_WINDOW_Y));
+
+	if (lastWindowPosition != windowPosition)
+	{
+		inputManager->resetInput();
+		currentTime = ((float)glutGet(GLUT_ELAPSED_TIME));
+		accumulator = 0.0f;
+	}
+
+	lastWindowPosition = windowPosition;
 
 	float newTime = ((float)glutGet(GLUT_ELAPSED_TIME));
 	float frameTime = (newTime - currentTime) / 1000.0f;
@@ -334,6 +353,9 @@ void resize(int width, int height)
 {
 	//const float ar = (float) width / (float) height;
 
+	for (auto uiElement : ui)
+		uiElement.second->fixPosition(nullptr);
+
 	glutReshapeWindow(width, height);
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
@@ -359,15 +381,17 @@ int main(int argc, char *argv[])
 		#endif
 	}
 
-	glutIgnoreKeyRepeat(1);
+	glutIgnoreKeyRepeat(GL_TRUE);
 
 	glutReshapeFunc(resize);
 	glutDisplayFunc(display);
 	glutIdleFunc(display);
 	glutKeyboardFunc(keyboardInput);
-	glutKeyboardUpFunc(keyboardInput);
+	glutKeyboardUpFunc(keyboardInputUp);
 	glutMouseFunc(processMouseClick);
 	glutPassiveMotionFunc(motionFunc);
+
+	lastWindowPosition = glm::vec2(glutGet(GLUT_WINDOW_X), glutGet(GLUT_WINDOW_Y));
 
 	currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
 	accumulator = 0.0f;
@@ -407,9 +431,12 @@ int main(int argc, char *argv[])
 	application->addShader("shader", new Shader("shader.vert", "shader.frag"));
 	application->addShader("textshader", new Shader("textshader.vert", "textshader.frag"));
 
-	application->loadFont("AGENCYR.ttf", "AGENCYR.ttf");
+	application->loadFont("kenvector_future.ttf", "kenvector_future.ttf");
+	application->loadFont("kenvector_future_thin.ttf", "kenvector_future_thin.ttf");
 
-	application->loadTexture("GUI/healthBar.png", "healthBar", glm::vec2(1,6));
+	application->loadTexture("PNG/UI/playerLife1_blue.png", "health", glm::vec2(1,1));
+	application->loadTexture("PNG/playerShip1_blue.png", "player1", glm::vec2(1, 1));
+	application->loadTexture("PNG/Enemies/enemyBlack1.png", "enemy1", glm::vec2(1, 1));
 
 	initGameUI();
 	currentMenu = ui["Main Menu"].get();

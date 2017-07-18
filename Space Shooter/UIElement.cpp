@@ -3,8 +3,8 @@
 
 namespace Engine
 {
-	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, UIElement* _parent)
-		: UIElementBase(_width, _height, _position, _color), parent(_parent)
+	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, UIElement* _parent, glm::vec2 _positionPerc)
+		: UIElementBase(_width, _height, _position, _color, _positionPerc), parent(_parent)
 	{
 
 	}
@@ -121,5 +121,19 @@ namespace Engine
 	UIElement* UIElement::getParent()
 	{
 		return parent;
+	}
+
+	void UIElement::fixPosition(UIElementBase* _parent)
+	{
+		UIElementBase::fixPosition(_parent);
+
+		for (auto text : texts)
+		{
+			text->fixPosition(this);
+		}
+		for (auto element : elements)
+		{
+			element->fixPosition(this);
+		}
 	}
 }

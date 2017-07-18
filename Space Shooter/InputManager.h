@@ -10,6 +10,7 @@ namespace Engine
 		public:
 			~InputManager();
 			InputManager();
+			void resetInput();
 			bool getLeftMouseState() const;
 			bool getRightMouseState() const;
 			void setLeftMouseState(bool);
