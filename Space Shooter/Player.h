@@ -22,6 +22,7 @@ namespace Engine
 			void setScore(int);
 			void onCollision(BaseGameObject*);
 		private:
+			glm::vec2 startVelocity;
 			int score;
 			int health;
 	};

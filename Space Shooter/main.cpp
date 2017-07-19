@@ -31,7 +31,6 @@ std::shared_ptr<Player> player;
 std::shared_ptr<BulletManager> bulletManager;
 
 std::string currentMenu;
-glm::vec2 lastWindowPosition;
 
 float t;
 float dt;
@@ -274,20 +273,11 @@ void display(void)
 
 	auto inputManager = application->getInputManager();
 
-	glm::vec2 windowPosition = glm::vec2(glutGet(GLUT_WINDOW_X), glutGet(GLUT_WINDOW_Y));
-
-	if (lastWindowPosition != windowPosition)
-	{
-		inputManager->resetInput();
-		currentTime = ((float)glutGet(GLUT_ELAPSED_TIME));
-		accumulator = 0.0f;
-	}
-
-	lastWindowPosition = windowPosition;
-
 	float newTime = ((float)glutGet(GLUT_ELAPSED_TIME));
 	float frameTime = (newTime - currentTime) / 1000.0f;
 	currentTime = newTime;
+
+	std::cout << frameTime << std::endl;
 
 	accumulator += frameTime;
 
@@ -301,9 +291,9 @@ void display(void)
 				enemy->update(dt, t);
 			}
 			bulletManager->updateBulletList(dt);
-		}
+			t += dt;
+		} 
 		accumulator -= dt;
-		t += dt;
 	}
 
 	if (application->getState() == GameState::STARTED)
@@ -384,8 +374,6 @@ int main(int argc, char *argv[])
 	glutMouseFunc(processMouseClick);
 	glutPassiveMotionFunc(motionFunc);
 
-	lastWindowPosition = glm::vec2(glutGet(GLUT_WINDOW_X), glutGet(GLUT_WINDOW_Y));
-
 	currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
 	accumulator = 0.0f;
 	dt = 1.0f / 60.0f;
@@ -434,7 +422,7 @@ int main(int argc, char *argv[])
 	initGameUI();
 	currentMenu = "Main Menu";
 
-	player = std::make_shared<Player>(32, 32, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(50.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
+	player = std::make_shared<Player>(32, 32, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
 	player->applyTexture(application->getTexture("playerShip1_blue"));
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);

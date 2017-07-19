@@ -108,6 +108,11 @@ namespace Engine
 		return true;
 	}
 
+	void BaseGameObject::setVelocity(glm::vec2 _velocity)
+	{
+		velocity = _velocity;
+	}
+
 	float BaseGameObject::getPosition(int index) const
 	{
 		return position[index];

@@ -25,6 +25,7 @@ namespace Engine
 			virtual GLboolean checkCollision(std::shared_ptr<BaseGameObject>);
 			virtual GLboolean checkCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
 			void applyTexture(std::shared_ptr<Texture>);
+			void setVelocity(glm::vec2);
 			virtual void onCollision(BaseGameObject*);
 			float getPosition(int) const;
 			void setPosition(glm::vec2);

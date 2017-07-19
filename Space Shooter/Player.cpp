@@ -11,7 +11,7 @@ namespace Engine
 	}
 
 	Player::Player(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color), health(3), score(0)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), health(3), score(0), startVelocity(_velocity)
 	{
 
 	}
@@ -27,7 +27,7 @@ namespace Engine
 		if (app->getKey('a'))
 			position.x -= velocity.x * _dt;
 		if (app->getKey('d'))
-			position.x += velocity.y * _dt;
+			position.x += velocity.x * _dt;
 		if (app->getKey('s'))
 			position.y -= velocity.y * _dt;
 
@@ -47,7 +47,9 @@ namespace Engine
 
 	void Player::reset()
 	{
-		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
+		velocity = startVelocity;
+		position.x = (float)glutGet(GLUT_WINDOW_X) / 2.0f;
+		position.y = 0.0f;
 	}
 
 	int Player::getHealth() const
