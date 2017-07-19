@@ -52,26 +52,6 @@ namespace Engine
 		position.y = 0.0f;
 	}
 
-	int Player::getHealth() const
-	{
-		return health;
-	}
-
-	void Player::setHealth(int _health)
-	{
-		health = _health;
-	}
-
-	int Player::getScore() const
-	{
-		return score;
-	}
-
-	void Player::setScore(int _score)
-	{
-		score = _score;
-	}
-
 	void Player::onCollision(BaseGameObject* collider)
 	{
 		std::cout << "player hit" << std::endl;

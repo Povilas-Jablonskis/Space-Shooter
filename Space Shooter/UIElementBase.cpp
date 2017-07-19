@@ -37,15 +37,20 @@ namespace Engine
 		};
 	}
 
-	void UIElementBase::draw()
+	void UIElementBase::draw(GLuint program, GLuint vao)
 	{
 		if (color.a == 0.0f) return;
-		auto program = Application::getShaderProgram("shader");
+
+		GLuint indices[6] =
+		{   // Note that we start from 0!
+			0, 1, 3,  // First Triangle
+			1, 2, 3   // Second Triangle
+		};
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glBindVertexArray(Application::getVAO());
+		glBindVertexArray(vao);
 			glUseProgram(program);
 				float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 				float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -74,16 +79,11 @@ namespace Engine
 				glUniform2f(offsetLocation, position.x / windowwidth, position.y / windowheigth);
 				glUniform2f(offsetLocation2, width / windowwidth, height / windowheigth);
 				glUniform4f(offsetLocation3, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
-				glDrawElements(GL_TRIANGLES, (sizeof(Application::indices) / sizeof(*Application::indices)), GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(GLuint)), GL_UNSIGNED_INT, 0);
 			glUseProgram(0);
 		glBindVertexArray(0);
 		glDisable(GL_TEXTURE_2D);
 		glDisable(GL_BLEND);
-	}
-
-	float UIElementBase::getPosition(int index) const
-	{
-		return position[index];
 	}
 
 	int UIElementBase::getSize(int index) const
@@ -103,16 +103,6 @@ namespace Engine
 				return NULL;
 			}
 		}
-	}
-
-	float UIElementBase::getColor(int index) const
-	{
-		return color[index];
-	}
-
-	void UIElementBase::changeColor(float _color, int index)
-	{
-		color[index] = _color;
 	}
 
 	void UIElementBase::onMouseClickDefaults(InputManager* inputManager)
@@ -141,31 +131,6 @@ namespace Engine
 	{
 		if (_texture == nullptr || _texture == texture) return;
 		texture = _texture;
-	}
-
-	void UIElementBase::setCurrentFrame(int frame)
-	{
-		currentFrame = frame;
-	}
-
-	int UIElementBase::getCurrentFrame() const
-	{
-		return currentFrame;
-	}
-
-	void UIElementBase::setDelay(float _delay)
-	{
-		delay = _delay;
-	}
-
-	void UIElementBase::setAnimationStatus(bool _status)
-	{
-		animComplete = _status;
-	}
-
-	void UIElementBase::setLoopStatus(bool _status)
-	{
-		loop = _status;
 	}
 
 	void UIElementBase::updateTexture(float dt)

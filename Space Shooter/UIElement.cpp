@@ -15,16 +15,6 @@ namespace Engine
 		elements.clear();
 	}
 
-	void UIElement::addText(std::shared_ptr<Text> text)
-	{
-		texts.push_back(text);
-	}
-
-	void UIElement::addUIElement(std::shared_ptr<UIElement> UIElement)
-	{
-		elements.push_back(UIElement);
-	}
-
 	void UIElement::update(InputManager* inputManager, float dt)
 	{
 		UIElementBase::update(inputManager, dt);
@@ -38,16 +28,16 @@ namespace Engine
 		}
 	}
 
-	void UIElement::draw()
+	void UIElement::draw(GLuint program, GLuint program2, GLuint vao, GLuint vbo, GLuint _texture)
 	{
-		UIElementBase::draw();
+		UIElementBase::draw(program, vao);
 		for (auto element : elements)
 		{
-			element.get()->draw();
+			element.get()->draw(program, program2, vao, vbo, _texture);
 		}
 		for (auto text : texts)
 		{
-			text.get()->draw();
+			text.get()->draw(program2, vbo, _texture);
 		}
 	}
 
@@ -111,16 +101,6 @@ namespace Engine
 	void UIElement::onHoverExitFuncDefaults()
 	{
 
-	}
-
-	void UIElement::setParent(std::string _parent)
-	{
-		parentMenu = _parent;
-	}
-
-	std::string UIElement::getParent()
-	{
-		return parentMenu;
 	}
 
 	void UIElement::fixPosition(UIElementBase* _parent)

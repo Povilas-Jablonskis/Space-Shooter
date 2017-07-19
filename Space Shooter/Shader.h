@@ -15,7 +15,7 @@ namespace Engine
 			~Shader();
 			void loadShader(const std::string&, const std::string&);
 			std::string readShaderFile(const std::string&);
-			GLuint getShader() const;
+			inline GLuint getShader() const { return program; }
 		private:
 			GLuint program;
 	};

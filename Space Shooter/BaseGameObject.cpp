@@ -13,14 +13,18 @@ namespace Engine
 
 	}
 
-	void BaseGameObject::draw()
+	void BaseGameObject::draw(GLuint program, GLuint vao)
 	{
-		auto program = Application::getShaderProgram("shader");
+		GLuint indices[6] =
+		{   // Note that we start from 0!
+			0, 1, 3,  // First Triangle
+			1, 2, 3   // Second Triangle
+		};
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		glBindVertexArray(Application::getVAO());
+		glBindVertexArray(vao);
 			glUseProgram(program);
 				float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 				float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -49,7 +53,7 @@ namespace Engine
 				glUniform2f(offsetLocation, position.x / windowwidth, position.y / windowheigth);
 				glUniform2f(offsetLocation2, width / windowwidth, height / windowheigth);
 				glUniform4f(offsetLocation3, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
-				glDrawElements(GL_TRIANGLES, (sizeof(Application::indices) / sizeof(*Application::indices)), GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(GLuint)), GL_UNSIGNED_INT, 0);
 			glUseProgram(0);
 		glBindVertexArray(0);
 		glDisable(GL_TEXTURE_2D);
@@ -108,26 +112,6 @@ namespace Engine
 		return true;
 	}
 
-	void BaseGameObject::setVelocity(glm::vec2 _velocity)
-	{
-		velocity = _velocity;
-	}
-
-	float BaseGameObject::getPosition(int index) const
-	{
-		return position[index];
-	}
-
-	void BaseGameObject::setPosition(glm::vec2 _position)
-	{
-		position = _position;
-	}
-
-	glm::vec2 BaseGameObject::getPosition() const
-	{
-		return position;
-	}
-
 	int BaseGameObject::getSize(int index) const
 	{
 		switch (index)
@@ -147,11 +131,6 @@ namespace Engine
 		}
 	}
 
-	float BaseGameObject::getColor(int index) const
-	{
-		return color[index];
-	}
-
 	void BaseGameObject::onCollision(BaseGameObject* collider)
 	{
 		std::cout << "some gameobject hit" << std::endl;
@@ -161,31 +140,6 @@ namespace Engine
 	{
 		if (_texture == nullptr || _texture == texture) return;
 		texture = _texture;
-	}
-
-	void BaseGameObject::setCurrentFrame(int frame)
-	{
-		currentFrame = frame;
-	}
-
-	int BaseGameObject::getCurrentFrame() const
-	{
-		return currentFrame;
-	}
-
-	void BaseGameObject::setDelay(float _delay)
-	{
-		delay = _delay;
-	}
-
-	void BaseGameObject::setAnimationStatus(bool _status)
-	{
-		animComplete = _status;
-	}
-
-	void BaseGameObject::setLoopStatus(bool _status)
-	{
-		loop = _status;
 	}
 
 	void BaseGameObject::updateTexture(float dt)

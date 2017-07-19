@@ -24,10 +24,11 @@ namespace Engine
 		faces.insert(std::pair<std::string, FT_FaceRec_>(_name, *face));
 	}
 
-	FT_FaceRec_* FontManager::getFont(const std::string& _name)
+	FT_FaceRec_* FontManager::getFont(const std::string& name)
 	{
-		if (faces.find(_name) != faces.end())
-			return &faces.at(_name);
-		return NULL;
+		auto tempFace = faces.find(name);
+		if (tempFace != faces.end())
+			return &tempFace->second;
+		return nullptr;
 	}
 }

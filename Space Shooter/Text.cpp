@@ -1,7 +1,6 @@
 #include "Text.h"
 #include <cctype>
 #include <algorithm>
-#include "Application.h"
 
 namespace Engine
 {
@@ -16,14 +15,12 @@ namespace Engine
 
 	}
 
-	void Text::draw()
+	void Text::draw(GLuint program, GLuint textTexture, GLuint vbo)
 	{
 		if (color.a == 0.0f) return;
-		auto program = Application::getShaderProgram("textshader");
 		glUseProgram(program);
-			glActiveTexture(GL_TEXTURE0);
 			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, Application::getTextTexture());
+			glBindTexture(GL_TEXTURE_2D, textTexture);
 
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -39,7 +36,7 @@ namespace Engine
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-			glBindBuffer(GL_ARRAY_BUFFER, Application::getTextVBO());
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
 				float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 				float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 

@@ -12,16 +12,11 @@ namespace Engine
 
 	}
 
-	void BulletManager::addBullet(std::shared_ptr<Bullet> bullet)
-	{
-		bullets.push_back(bullet);
-	}
-
-	void BulletManager::drawBulletList()
+	void BulletManager::drawBulletList(GLuint program, GLuint vao)
 	{
 		for (auto bullet : bullets)
 		{
-			bullet->draw();
+			bullet->draw(program, vao);
 		}
 	}
 

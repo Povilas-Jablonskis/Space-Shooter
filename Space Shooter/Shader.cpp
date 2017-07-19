@@ -12,11 +12,6 @@ namespace Engine
 
 	}
 
-	GLuint Shader::getShader() const
-	{
-		return program;
-	}
-
 	std::string Shader::readShaderFile(const std::string& path)
 	{
 		std::string content;

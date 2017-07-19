@@ -5,7 +5,7 @@
 #include <freetype/ftglyph.h>
 #include FT_FREETYPE_H
 #include <iostream>
-#include <map>
+#include <unordered_map>
 
 namespace Engine
 {
@@ -18,7 +18,7 @@ namespace Engine
 			FT_FaceRec_* getFont(const std::string&);
 		private:
 			FT_Library library;
-			std::map<std::string, FT_FaceRec_> faces;
+			std::unordered_map<std::string, FT_FaceRec_> faces;
 	};
 }
 #endif

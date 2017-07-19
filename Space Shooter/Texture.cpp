@@ -30,11 +30,6 @@ namespace Engine
 		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 	}
 
-	GLuint Texture::getTexture() const
-	{
-		return texture;
-	}
-
 	int Texture::getSize(int index) const
 	{
 		switch (index)
@@ -52,31 +47,5 @@ namespace Engine
 				return NULL;
 			}
 		}
-	}
-
-	void Texture::setCount(glm::vec2 count)
-	{
-		animsc = count;
-	}
-
-	glm::vec2 Texture::getCount() const
-	{
-		return animsc;
-	}
-
-	int Texture::getStartFrame() const
-	{
-		return startFrame;
-	}
-
-	int Texture::getEndFrame() const
-	{
-		return endFrame;
-	}
-
-	void Texture::setFrames(int _startFrame, int _endFrame)
-	{
-		startFrame = _startFrame;
-		endFrame = _endFrame;
 	}
 }

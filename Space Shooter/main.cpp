@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <map>
+#include <unordered_map>
 #include <cstdint>
 #include <algorithm>
 #include <cstdio>
@@ -38,8 +38,8 @@ float currentTime;
 float accumulator;
 
 std::vector<std::shared_ptr<BaseGameObject>> enemies;
-std::map<std::string, std::shared_ptr<UIElement>> ui;
-std::map<std::string, std::shared_ptr<UIElement>> playerUI;
+std::unordered_map<std::string, std::shared_ptr<UIElement>> ui;
+std::unordered_map<std::string, std::shared_ptr<UIElement>> playerUI;
 
 void initScene()
 {
@@ -241,10 +241,11 @@ void keyboardInput(unsigned char c, int x, int y)
 				}
 				else if (application->getState() == GameState::NOTSTARTEDYET)
 				{
-					if (ui.find(currentMenu) != ui.end() && ui.find(currentMenu)->second->getParent() != "")
+					auto tempCurrentMenu = ui.find(currentMenu);
+					if (tempCurrentMenu != ui.end() && tempCurrentMenu->second->getParent() != "")
 					{
-						ui.find(currentMenu)->second->hideAllElements();
-						currentMenu = ui.find(currentMenu)->second->getParent();
+						tempCurrentMenu->second->hideAllElements();
+						currentMenu = tempCurrentMenu->second->getParent();
 						ui.find(currentMenu)->second->showAllElements();
 					}
 				}
@@ -272,12 +273,17 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	auto inputManager = application->getInputManager();
+	auto renderer = application->getRender();
+	
+	auto tempShader = renderer->getShaderProgram("shader");
+	auto tempTextShader = renderer->getShaderProgram("textshader");
+	auto tempTextTexture = renderer->getTextTexture();
+	auto tempTextVBO = renderer->getTextVBO();
+	auto tempVAO = renderer->getVAO();
 
 	float newTime = ((float)glutGet(GLUT_ELAPSED_TIME));
 	float frameTime = (newTime - currentTime) / 1000.0f;
 	currentTime = newTime;
-
-	std::cout << frameTime << std::endl;
 
 	accumulator += frameTime;
 
@@ -298,7 +304,6 @@ void display(void)
 
 	if (application->getState() == GameState::STARTED)
 	{
-		bulletManager->drawBulletList();
 		if (player->checkCollision(&enemies))
 		{
 			application->setState(GameState::ENDED);
@@ -308,25 +313,25 @@ void display(void)
 		bulletManager->checkCollision(player);
 		bulletManager->checkCollision(&enemies);
 
-		player->draw();
+		bulletManager->drawBulletList(tempShader, tempVAO);
+		player->draw(tempShader, tempVAO);
 		redrawPlayerUI();
-
 		for (auto enemy : enemies)
 		{
-			enemy->draw();
+			enemy->draw(tempShader, tempVAO);
 		}
 
 		for (auto uiElement : playerUI)
 		{
 			uiElement.second->update(inputManager, dt);
-			uiElement.second->draw();
+			uiElement.second->draw(tempShader, tempTextShader, tempVAO, tempTextVBO, tempTextTexture);
 		}
 	}
 
 	for (auto uiElement : ui)
 	{
 		uiElement.second->update(inputManager, dt);
-		uiElement.second->draw();
+		uiElement.second->draw(tempShader, tempTextShader, tempVAO, tempTextVBO, tempTextTexture);
 	}
 
 	glutSwapBuffers();

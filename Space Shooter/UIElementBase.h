@@ -23,17 +23,17 @@ namespace Engine
 			~UIElementBase();
 			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2);
 			void initFuncs();
-			virtual void draw();
+			virtual void draw(GLuint, GLuint);
 			virtual void update(InputManager*, float);
-			void changeColor(float, int);
-			float getPosition(int) const;
+			inline void changeColor(float _color, int index) { color[index] = _color; }
+			inline float getPosition(int index) const{ return position[index]; }
 			int getSize(int) const;
-			float getColor(int) const;
-			void setCurrentFrame(int frame);
-			int getCurrentFrame() const;
-			void setDelay(float);
-			void setAnimationStatus(bool);
-			void setLoopStatus(bool);
+			inline float getColor(int index) const{ return color[index]; }
+			inline void setCurrentFrame(int frame) { currentFrame = frame; }
+			inline int getCurrentFrame() const { return currentFrame; }
+			inline void setDelay(float _delay) { delay = _delay; }
+			inline void setAnimationStatus(bool _status) { animComplete = _status; }
+			inline void setLoopStatus(bool _status) { loop = _status; }
 			void updateTexture(float);
 			virtual void fixPosition(UIElementBase*);
 			void applyTexture(std::shared_ptr<Texture>);

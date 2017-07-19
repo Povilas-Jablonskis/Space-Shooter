@@ -7,7 +7,7 @@
 #include <functional>
 
 #include "UIElementBase.h"
-#include "Application.h"
+#include "InputManager.h"
 
 #include <vec2.hpp>
 #include <vec4.hpp>
@@ -19,7 +19,7 @@ namespace Engine
 		public:
 			Text(const std::string&, int, glm::vec2, glm::vec4, FT_FaceRec_*, bool, glm::vec2);
 			~Text();
-			void draw();
+			void draw(GLuint, GLuint, GLuint);
 			void update(InputManager*);
 			void onHoverEnterFuncDefaults();
 			void onHoverExitFuncDefaults();
