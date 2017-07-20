@@ -35,10 +35,30 @@ namespace Engine
 		{
 			element.get()->draw(program, program2, vao, vbo, _texture);
 		}
-		for (auto text : texts)
-		{
-			text.get()->draw(program2, vbo, _texture);
-		}
+
+		glUseProgram(program2);
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, _texture);
+
+			/* We require 1 byte alignment when uploading texture data */
+			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+			/* Clamping to edges is important to prevent artifacts when scaling */
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+			/* Linear filtering usually looks best for text */
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+				for (auto text : texts)
+				{
+					text.get()->draw(program2, vbo, _texture);
+				}
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glDisable(GL_TEXTURE_2D);
+		glUseProgram(0);
 	}
 
 	void UIElement::hideAllElements()

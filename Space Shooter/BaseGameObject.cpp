@@ -15,49 +15,34 @@ namespace Engine
 
 	void BaseGameObject::draw(GLuint program, GLuint vao)
 	{
-		GLuint indices[6] =
-		{   // Note that we start from 0!
-			0, 1, 3,  // First Triangle
-			1, 2, 3   // Second Triangle
-		};
+		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		int offsetLocation = glGetUniformLocation(program, "givenposition");
+		int offsetLocation2 = glGetUniformLocation(program, "size");
+		int offsetLocation3 = glGetUniformLocation(program, "color");
+		int offsetLocation4 = glGetUniformLocation(program, "renderMode");
+		int offsetLocation5 = glGetUniformLocation(program, "animscX");
+		int offsetLocation6 = glGetUniformLocation(program, "animscY");
+		int offsetLocation7 = glGetUniformLocation(program, "curranim");
 
-		glBindVertexArray(vao);
-			glUseProgram(program);
-				float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-				float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		if (texture != nullptr)
+		{
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, texture->getTexture());
 
-				int offsetLocation = glGetUniformLocation(program, "givenposition");
-				int offsetLocation2 = glGetUniformLocation(program, "size");
-				int offsetLocation3 = glGetUniformLocation(program, "color");
-				int offsetLocation4 = glGetUniformLocation(program, "renderMode");
-				int offsetLocation5 = glGetUniformLocation(program, "animscX");
-				int offsetLocation6 = glGetUniformLocation(program, "animscY");
-				int offsetLocation7 = glGetUniformLocation(program, "curranim");
+			glUniform1f(offsetLocation4, 1.0f);
+			glUniform1f(offsetLocation5, texture->getCount().x);
+			glUniform1f(offsetLocation6, texture->getCount().y);
+			glUniform1f(offsetLocation7, (float)getCurrentFrame());
+		}
+		else
+			glUniform1f(offsetLocation4, 0.0f);
 
-				if (texture != nullptr)
-				{
-					glEnable(GL_TEXTURE_2D);
-					glBindTexture(GL_TEXTURE_2D, texture->getTexture());
-
-					glUniform1f(offsetLocation4, 1.0f);
-					glUniform1f(offsetLocation5, texture->getCount().x);
-					glUniform1f(offsetLocation6, texture->getCount().y);
-					glUniform1f(offsetLocation7, (float)getCurrentFrame());
-				}
-				else
-					glUniform1f(offsetLocation4, 0.0f);
-
-				glUniform2f(offsetLocation, position.x / windowwidth, position.y / windowheigth);
-				glUniform2f(offsetLocation2, width / windowwidth, height / windowheigth);
-				glUniform4f(offsetLocation3, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
-				glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(GLuint)), GL_UNSIGNED_INT, 0);
-			glUseProgram(0);
-		glBindVertexArray(0);
-		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
+		glUniform2f(offsetLocation, position.x / windowwidth, position.y / windowheigth);
+		glUniform2f(offsetLocation2, width / windowwidth, height / windowheigth);
+		glUniform4f(offsetLocation3, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
 	GLboolean BaseGameObject::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision

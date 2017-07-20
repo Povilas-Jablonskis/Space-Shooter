@@ -18,91 +18,68 @@ namespace Engine
 	void Text::draw(GLuint program, GLuint textTexture, GLuint vbo)
 	{
 		if (color.a == 0.0f) return;
-		glUseProgram(program);
-			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, textTexture);
+			
+		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		float sx = 2.0f / windowWidth;
+		float sy = 2.0f / windowHeigth;
+		float x = -1 + position.x * sx;
+		float y = -1 + position.y * sy;
 
-			/* We require 1 byte alignment when uploading texture data */
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		bbox[0] = position.x;
+		bbox[1] = position.x;
+		bbox[2] = position.y;
+		bbox[3] = position.y;
 
-			/* Clamping to edges is important to prevent artifacts when scaling */
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		const char *p;
+		FT_FaceRec_ tempFace = *face;
+		FT_GlyphSlot g = tempFace.glyph;
 
-			/* Linear filtering usually looks best for text */
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		/* Set font size */
+		FT_Set_Pixel_Sizes(&tempFace, 0, fontSize);
 
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
-				float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-				float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		bbox[2] += g->face->glyph->metrics.height >> 6;
 
-				float sx = 2.0f / windowWidth;
-				float sy = 2.0f / windowHeigth;
-				float x = -1 + position.x * sx;
-				float y = -1 + position.y * sy;
+		/* Create a texture that will be used to hold one "glyph" */
+		int offsetLocation2 = glGetUniformLocation(program, "color");
+		glUniform4f(offsetLocation2, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
 
-				bbox[0] = position.x;
-				bbox[1] = position.x;
-				bbox[2] = position.y;
-				bbox[3] = position.y;
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-				const char *p;
-				FT_FaceRec_ tempFace = *face;
-				FT_GlyphSlot g = tempFace.glyph;
+		/* Loop through all characters */
+		for (p = text.c_str(); *p; p++)
+		{
+			/* Try to load and render the character */
+			if (FT_Load_Char(&tempFace, *p, FT_LOAD_RENDER))
+				continue;
 
-				/* Set font size */
-				FT_Set_Pixel_Sizes(&tempFace, 0, fontSize);
+			/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
 
-				bbox[2] += g->face->glyph->metrics.height >> 6;
+			bbox[1] += g->metrics.horiAdvance >> 6;
 
-				/* Create a texture that will be used to hold one "glyph" */
-				int offsetLocation2 = glGetUniformLocation(program, "color");
-				glUniform4f(offsetLocation2, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
+			/* Calculate the vertex and texture coordinates */
+			float x2 = x + g->bitmap_left * sx;
+			float y2 = -y - g->bitmap_top * sy;
+			float w = g->bitmap.width * sx;
+			float h = g->bitmap.rows * sy;
 
-				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+			glm::vec4 box[4] = {
+				{ x2     , -y2    , 0, 0 },
+				{ x2 +  w, -y2    , 1, 0 },
+				{ x2     , -y2 - h, 0, 1 },
+				{ x2 + w , -y2 - h, 1, 1 },
+			};
 
-				/* Loop through all characters */
-				for (p = text.c_str(); *p; p++)
-				{
-					/* Try to load and render the character */
-					if (FT_Load_Char(&tempFace, *p, FT_LOAD_RENDER))
-						continue;
+			glBufferData(GL_ARRAY_BUFFER, sizeof(box), box, GL_DYNAMIC_DRAW);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-					/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
-
-					bbox[1] += g->metrics.horiAdvance >> 6;
-
-					/* Calculate the vertex and texture coordinates */
-					float x2 = x + g->bitmap_left * sx;
-					float y2 = -y - g->bitmap_top * sy;
-					float w = g->bitmap.width * sx;
-					float h = g->bitmap.rows * sy;
-
-					glm::vec4 box[4] = {
-						{ x2     , -y2    , 0, 0 },
-						{ x2 +  w, -y2    , 1, 0 },
-						{ x2     , -y2 - h, 0, 1 },
-						{ x2 + w , -y2 - h, 1, 1 },
-					};
-
-					glBufferData(GL_ARRAY_BUFFER, sizeof(box), box, GL_DYNAMIC_DRAW);
-					glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-					/* Advance the cursor to the start of the next character */
-					x += (g->advance.x >> 6) * sx;
-					y += (g->advance.y >> 6) * sy;
-				}
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-			glDisable(GL_BLEND);
-			glDisable(GL_TEXTURE_2D);
-		glUseProgram(0);
+			/* Advance the cursor to the start of the next character */
+			x += (g->advance.x >> 6) * sx;
+			y += (g->advance.y >> 6) * sy;
+		}
 	}
 
 	void Text::update(InputManager* inputManager)

@@ -41,15 +41,6 @@ namespace Engine
 	{
 		if (color.a == 0.0f) return;
 
-		GLuint indices[6] =
-		{   // Note that we start from 0!
-			0, 1, 3,  // First Triangle
-			1, 2, 3   // Second Triangle
-		};
-
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 		glBindVertexArray(vao);
 			glUseProgram(program);
 				float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
@@ -79,11 +70,10 @@ namespace Engine
 				glUniform2f(offsetLocation, position.x / windowwidth, position.y / windowheigth);
 				glUniform2f(offsetLocation2, width / windowwidth, height / windowheigth);
 				glUniform4f(offsetLocation3, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
-				glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(GLuint)), GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 			glUseProgram(0);
 		glBindVertexArray(0);
 		glDisable(GL_TEXTURE_2D);
-		glDisable(GL_BLEND);
 	}
 
 	int UIElementBase::getSize(int index) const
