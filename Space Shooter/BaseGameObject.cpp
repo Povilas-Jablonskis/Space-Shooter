@@ -43,6 +43,7 @@ namespace Engine
 		glUniform2f(offsetLocation2, width / windowwidth, height / windowheigth);
 		glUniform4f(offsetLocation3, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDisable(GL_TEXTURE_2D);
 	}
 
 	GLboolean BaseGameObject::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision

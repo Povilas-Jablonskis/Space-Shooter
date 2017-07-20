@@ -307,31 +307,30 @@ void display(void)
 
 	if (application->getState() == GameState::STARTED)
 	{
+		background->draw(tempShader, tempTextShader, tempVAO, tempTextVBO, tempTextTexture);
+
+		player->checkCollision(&enemies);
+		bulletManager->checkCollision(player);
+		if (player->getHealth() < 1)
+		{
+			player->setScore(0);
+			player->setHealth(3);
+			application->setState(GameState::ENDED);
+			currentMenu = "Game Over";
+			ui["Game Over"]->showAllElements();
+		}
+		bulletManager->checkCollision(&enemies);
+
 		glBindVertexArray(tempVAO);
 			glUseProgram(tempShader);
-
-			background->draw(tempShader, tempTextShader, tempVAO, tempTextVBO, tempTextTexture);
-
-			player->checkCollision(&enemies);
-			bulletManager->checkCollision(player);
-			if (player->getHealth() < 1)
-			{
-				player->setScore(0);
-				player->setHealth(3);
-				application->setState(GameState::ENDED);
-				currentMenu = "Game Over";
-				ui["Game Over"]->showAllElements();
-			}
-			bulletManager->checkCollision(&enemies);
-
-			bulletManager->drawBulletList(tempShader, tempVAO);
-			player->draw(tempShader, tempVAO);
-			for (auto enemy : enemies)
-				enemy->draw(tempShader, tempVAO);
-
+				bulletManager->drawBulletList(tempShader, tempVAO);
+				player->draw(tempShader, tempVAO);
+				for (auto enemy : enemies)
+				{
+					enemy->draw(tempShader, tempVAO);
+				}
 			glUseProgram(0);
 		glBindVertexArray(0);
-		glDisable(GL_TEXTURE_2D);
 
 		redrawPlayerUI();
 
@@ -349,7 +348,6 @@ void display(void)
 	}
 
 	glDisable(GL_BLEND);
-
 	glutSwapBuffers();
 }
 
@@ -442,6 +440,7 @@ int main(int argc, char *argv[])
 	application->loadTexture("PNG/playerShip1_blue.png", "playerShip1_blue", 0, 0, glm::vec2(1, 1));
 	application->loadTexture("PNG/Enemies/enemyBlack1.png", "enemyBlack1", 0, 0, glm::vec2(1, 1));
 	application->loadTexture("Backgrounds/blue.png", "blueBackground", 0, 0, glm::vec2(1, 1));
+	application->loadTexture("GUI/healthBar.png", "healthBar", 0, 0, glm::vec2(5, 6));
 
 	initGameUI();
 	currentMenu = "Main Menu";
