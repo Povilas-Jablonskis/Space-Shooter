@@ -23,7 +23,7 @@ namespace Engine
 			~UIElementBase();
 			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2);
 			void initFuncs();
-			virtual void draw(GLuint, GLuint);
+			virtual void draw(GLuint);
 			virtual void update(InputManager*, float);
 			inline void changeColor(float _color, int index) { color[index] = _color; }
 			inline float getPosition(int index) const{ return position[index]; }

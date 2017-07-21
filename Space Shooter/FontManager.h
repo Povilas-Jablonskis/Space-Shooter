@@ -7,6 +7,8 @@
 #include <iostream>
 #include <unordered_map>
 
+#include "Font.h"
+
 namespace Engine
 {
 	class FontManager
@@ -15,10 +17,10 @@ namespace Engine
 			FontManager();
 			~FontManager();
 			void loadFont(const std::string&, const std::string&);
-			FT_FaceRec_* getFont(const std::string&);
+			std::shared_ptr<Font> getFont(const std::string&);
 		private:
 			FT_Library library;
-			std::unordered_map<std::string, FT_FaceRec_> faces;
+			std::unordered_map<std::string, std::shared_ptr<Font>> faces;
 	};
 }
 #endif

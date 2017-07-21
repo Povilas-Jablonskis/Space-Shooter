@@ -26,7 +26,7 @@ namespace Engine
 		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 		 
-		if (position.y + height >= windowHeigth || position.y <= 0.0f || position.x + width >= windowWidth || position.x <= 0.0f)
+		if (position.y >= windowHeigth || position.y <= 0.0f || position.x >= windowWidth || position.x <= 0.0f)
 			return false;
 		return true;
 	}

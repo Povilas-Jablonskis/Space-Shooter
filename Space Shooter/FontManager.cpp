@@ -21,14 +21,15 @@ namespace Engine
 		FT_Face face;
 		if (FT_New_Face(library, _path.c_str(), 0, &face))
 			std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
-		faces.insert(std::pair<std::string, FT_FaceRec_>(_name, *face));
+		auto tempFont = std::make_shared<Font>(face);
+		faces.insert(std::pair<std::string, std::shared_ptr<Font>>(_name, tempFont));
 	}
 
-	FT_FaceRec_* FontManager::getFont(const std::string& name)
+	std::shared_ptr<Font> FontManager::getFont(const std::string& name)
 	{
 		auto tempFace = faces.find(name);
 		if (tempFace != faces.end())
-			return &tempFace->second;
+			return tempFace->second;
 		return nullptr;
 	}
 }

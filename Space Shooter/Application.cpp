@@ -13,10 +13,9 @@ namespace Engine
 		renderer->addShader(name, shader);
 	}
 
-	FT_FaceRec_* Application::loadFont(const std::string& _path, const std::string& _name)
+	void Application::loadFont(const std::string& _path, const std::string& _name)
 	{
 		fontManager->loadFont(_path, _name);
-		return fontManager->getFont(_name);
 	}
 
 	void Application::loadTexture(const std::string& _path, const std::string& _name, int _startFame, int _endFrame, glm::vec2 _animsc)

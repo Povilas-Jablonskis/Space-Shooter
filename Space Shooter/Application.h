@@ -20,8 +20,8 @@ namespace Engine
 			void addShader(const std::string&, std::shared_ptr<Shader>);
 			void loadTexture(const std::string&, const std::string&, int, int, glm::vec2);
 			std::shared_ptr<Texture> getTexture(const std::string&);
-			inline FT_FaceRec_* getFont(const std::string& name) { return fontManager->getFont(name); }
-			FT_FaceRec_* loadFont(const std::string&, const std::string&);
+			inline std::shared_ptr<Font> getFont(const std::string& name) { return fontManager->getFont(name); }
+			void loadFont(const std::string&, const std::string&);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
 			inline InputManager* getInputManager() { return inputManager.get(); }

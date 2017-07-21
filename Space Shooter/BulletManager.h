@@ -11,6 +11,7 @@ namespace Engine
 			BulletManager();
 			~BulletManager();
 			inline void addBullet(std::shared_ptr<Bullet> bullet) { bullets.push_back(bullet); }
+			inline void clearBullets() { bullets.clear(); }
 			void updateBulletList(float);
 			void drawBulletList(GLuint, GLuint);
 			void checkCollision(std::shared_ptr<BaseGameObject>);

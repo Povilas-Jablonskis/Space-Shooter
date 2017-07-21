@@ -28,37 +28,26 @@ namespace Engine
 		}
 	}
 
-	void UIElement::draw(GLuint program, GLuint program2, GLuint vao, GLuint vbo, GLuint _texture)
+	void UIElement::draw(GLuint program, GLuint program2, GLuint vao, GLuint vao2, GLuint vbo2)
 	{
-		UIElementBase::draw(program, vao);
-		for (auto element : elements)
-		{
-			element.get()->draw(program, program2, vao, vbo, _texture);
-		}
-
+		glUseProgram(program);
+			glBindVertexArray(vao);
+				UIElementBase::draw(program);
+			glBindVertexArray(0);
+		glUseProgram(0);
 		glUseProgram(program2);
-			glEnable(GL_TEXTURE_2D);
-			glBindTexture(GL_TEXTURE_2D, _texture);
-
-			/* We require 1 byte alignment when uploading texture data */
-			glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-			/* Clamping to edges is important to prevent artifacts when scaling */
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-			/* Linear filtering usually looks best for text */
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+			glBindVertexArray(vao2);
 				for (auto text : texts)
 				{
-					text.get()->draw(program2, vbo, _texture);
+					text.get()->draw(program2, vbo2);
 				}
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glDisable(GL_TEXTURE_2D);
+			glBindVertexArray(0);
 		glUseProgram(0);
+
+		for (auto element : elements)
+		{
+			element.get()->draw(program, program2, vao, vao2, vbo2);
+		}
 	}
 
 	void UIElement::hideAllElements()

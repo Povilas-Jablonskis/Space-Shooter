@@ -93,7 +93,12 @@ void initGameUI()
 	{
 		initScene();
 		if (player != nullptr)
+		{
 			player->reset();
+			player->setHealth(3);
+			player->setScore(0);
+		}
+		bulletManager->clearBullets();
 		application->setState(GameState::STARTED);
 		currentMenu = "";
 		ui["Main Menu"]->hideAllElements();
@@ -312,7 +317,7 @@ void display(void)
 	
 	auto tempShader = renderer->getShaderProgram("shader");
 	auto tempTextShader = renderer->getShaderProgram("textshader");
-	auto tempTextTexture = renderer->getTextTexture();
+	auto tempTextVAO = renderer->getTextVAO();
 	auto tempTextVBO = renderer->getTextVBO();
 	auto tempVAO = renderer->getVAO();
 
@@ -337,24 +342,21 @@ void display(void)
 		accumulator -= dt;
 	}
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	if (application->getState() == GameState::STARTED)
 	{
-		background->draw(tempShader, tempTextShader, tempVAO, tempTextVBO, tempTextTexture);
+		background->draw(tempShader, tempTextShader, tempVAO, tempTextVAO, tempTextVBO);
 
 		player->checkCollision(&enemies);
 		bulletManager->checkCollision(player);
 		if (player->getHealth() < 1)
 		{
-			player->setScore(0);
-			player->setHealth(3);
 			application->setState(GameState::ENDED);
 			currentMenu = "Game Over";
 			ui["Game Over"]->showAllElements();
 		}
 		bulletManager->checkCollision(&enemies);
+
+		redrawPlayerUI();
 
 		glBindVertexArray(tempVAO);
 			glUseProgram(tempShader);
@@ -367,22 +369,18 @@ void display(void)
 			glUseProgram(0);
 		glBindVertexArray(0);
 
-		redrawPlayerUI();
-
 		for (auto uiElement : playerUI)
 		{
 			uiElement.second->update(inputManager, dt);
-			uiElement.second->draw(tempShader, tempTextShader, tempVAO, tempTextVBO, tempTextTexture);
+			uiElement.second->draw(tempShader, tempTextShader, tempVAO, tempTextVAO, tempTextVBO);
 		}
 	}
 
 	for (auto uiElement : ui)
 	{
 		uiElement.second->update(inputManager, dt);
-		uiElement.second->draw(tempShader, tempTextShader, tempVAO, tempTextVBO, tempTextTexture);
+		uiElement.second->draw(tempShader, tempTextShader, tempVAO, tempTextVAO, tempTextVBO);
 	}
-
-	glDisable(GL_BLEND);
 	glutSwapBuffers();
 }
 
@@ -419,6 +417,9 @@ int main(int argc, char *argv[])
 			std::cout << "Error: " << glewGetErrorString(err) << std::endl;
 		#endif
 	}
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glutIgnoreKeyRepeat(GL_TRUE);
 
@@ -475,15 +476,12 @@ int main(int argc, char *argv[])
 	application->loadTexture("PNG/playerShip1_blue.png", "playerShip1_blue", 0, 0, glm::vec2(1, 1));
 	application->loadTexture("PNG/Enemies/enemyBlack1.png", "enemyBlack1", 0, 0, glm::vec2(1, 1));
 	application->loadTexture("Backgrounds/blue.png", "blueBackground", 0, 0, glm::vec2(1, 1));
-	application->loadTexture("GUI/healthBar.png", "healthBar", 0, 0, glm::vec2(5, 6));
-	application->loadTexture("kenvector_future.png", "atlas", 0, 0, glm::vec2(10, 10));
 
 	initGameUI();
 	currentMenu = "Main Menu";
 
 	background = std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), "", glm::vec2(0.0f, 0.0f));
-	background->applyTexture(application->getTexture("atlas"));
-	background->setCurrentFrame(91);
+	background->applyTexture(application->getTexture("blueBackground"));
 	player = std::make_shared<Player>(32, 32, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
 	player->applyTexture(application->getTexture("playerShip1_blue"));
 

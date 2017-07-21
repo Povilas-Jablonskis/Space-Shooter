@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include "GL/glew.h"
 #include "GL/freeglut.h"
 #include "vec2.hpp"

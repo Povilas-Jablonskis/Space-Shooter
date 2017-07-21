@@ -1,16 +1,22 @@
 #version 330 core
-in vec2 TexCoord;
-in vec4 fragColor;
-in float outMode;
+in vec2 texCoord;
+
 uniform sampler2D ourTexture;
+uniform vec4 color;
+uniform float renderMode;
+
 void main()
 {
-	if( outMode == 1.0f )
+	if( renderMode == 0.0 )
 	{
-		gl_FragColor = texture(ourTexture, TexCoord);
+		gl_FragColor = color;
 	}
-	else
+	else if( renderMode == 1.0 )
 	{
-		gl_FragColor = fragColor;
+		gl_FragColor = texture(ourTexture, texCoord);
+	}
+	else if( renderMode == 2.0 )
+	{
+		gl_FragColor = texture(ourTexture, texCoord) * color;
 	}
 }

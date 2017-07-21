@@ -9,21 +9,35 @@ namespace Engine
 			0, 1, 3,  // First Triangle
 			1, 2, 3   // Second Triangle
 		};
-		GLfloat vertices[16]
-		{
-			// Positions    // Texture Coords
-			1.0f, 1.0f, 1.0f, 1.0f, // Top Right
-			1.0f, -1.0f, 1.0f, 0.0f, // Bottom Right
-			-1.0f, -1.0f, 0.0f, 0.0f, // Bottom Left
-			-1.0f, 1.0f, 0.0f, 1.0f  // Top Left
+		GLfloat vertices[] = {
+			// Pos      // Tex
+			0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 0.0f,
+
+			0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 1.0f, 1.0f,
+			1.0f, 0.0f, 1.0f, 0.0f
 		};
 
 		glGenBuffers(1, &textVBO);
-		glGenTextures(1, &textTexture);
-
+		glGenVertexArrays(1, &textVAO);
 		glGenVertexArrays(1, &vao);
 		glGenBuffers(1, &vbo);
 		glGenBuffers(1, &ebo);
+
+		glBindVertexArray(textVAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glBindVertexArray(0);
+
 		// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
 		glBindVertexArray(vao);
 
@@ -34,10 +48,10 @@ namespace Engine
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
+		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)0);
 
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+		/*glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));*/
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0); // Note that this is allowed, the call to glVertexAttribPointer registered VBO as the currently bound vertex buffer object so afterwards we can safely unbind
 

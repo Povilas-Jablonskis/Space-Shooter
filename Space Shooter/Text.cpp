@@ -4,8 +4,8 @@
 
 namespace Engine
 {
-	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, FT_FaceRec_* _face, bool _isStatic, glm::vec2 _positionPerc) :
-		UIElementBase(0, 0, _position, _color, _positionPerc), mouseOnText(false), leftButtonClicked(0), fontSize(_fontsize), text(_text), face(_face), isStatic(_isStatic)
+	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, bool _isStatic, glm::vec2 _positionPerc) :
+		UIElementBase(0, 0, _position, _color, _positionPerc), mouseOnText(false), leftButtonClicked(0), fontSize(_fontsize), text(_text), font(_font), isStatic(_isStatic)
 	{
 
 	}
@@ -15,71 +15,65 @@ namespace Engine
 
 	}
 
-	void Text::draw(GLuint program, GLuint textTexture, GLuint vbo)
+	void Text::draw(GLuint program, GLuint vbo)
 	{
-		if (color.a == 0.0f) return;
-			
-		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
-
-		float sx = 2.0f / windowWidth;
-		float sy = 2.0f / windowHeigth;
-		float x = -1 + position.x * sx;
-		float y = -1 + position.y * sy;
+		if (color.a == 0.0f || font == nullptr) return;
 
 		bbox[0] = position.x;
 		bbox[1] = position.x;
 		bbox[2] = position.y;
 		bbox[3] = position.y;
 
-		const char *p;
-		FT_FaceRec_ tempFace = *face;
-		FT_GlyphSlot g = tempFace.glyph;
+		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
 
-		/* Set font size */
-		FT_Set_Pixel_Sizes(&tempFace, 0, fontSize);
+		int offsetLocation = glGetUniformLocation(program, "color");
+		int offsetLocation2 = glGetUniformLocation(program, "projection");
+		glUniform4f(offsetLocation, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
+		glUniformMatrix4fv(offsetLocation2, 1, GL_FALSE, glm::value_ptr(projection));
 
-		bbox[2] += g->face->glyph->metrics.height >> 6;
+		auto lastPosition = position;
 
-		/* Create a texture that will be used to hold one "glyph" */
-		int offsetLocation2 = glGetUniformLocation(program, "color");
-		glUniform4f(offsetLocation2, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-		/* Loop through all characters */
-		for (p = text.c_str(); *p; p++)
+		// Iterate through all characters
+		std::string::const_iterator c;
+		const std::map<GLchar, Character>* tempCharacterList = font->GetCharacterList();
+		std::vector<int> tempVector;
+		for (auto character : *tempCharacterList)
+			tempVector.push_back(character.second.Size.y);
+		bbox[2] = position.y +(float)*std::max_element(std::begin(tempVector), std::end(tempVector));
+		for (c = text.begin(); c != text.end(); c++)
 		{
-			/* Try to load and render the character */
-			if (FT_Load_Char(&tempFace, *p, FT_LOAD_RENDER))
-				continue;
+			Character ch = tempCharacterList->at(*c);
 
-			/* Upload the "bitmap", which contains an 8-bit grayscale image, as an alpha texture */
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA, g->bitmap.width, g->bitmap.rows, 0, GL_ALPHA, GL_UNSIGNED_BYTE, g->bitmap.buffer);
+			GLfloat xpos = position.x + ch.Bearing.x;
+			GLfloat ypos = position.y - (ch.Size.y - ch.Bearing.y);
 
-			bbox[1] += g->metrics.horiAdvance >> 6;
+			GLfloat w = (GLfloat)ch.Size.x;
+			GLfloat h = (GLfloat)ch.Size.y;
+			// Update VBO for each character
+			GLfloat vertices[6][4] = {
+				{ xpos, ypos + h, 0.0, 0.0 },
+				{ xpos, ypos, 0.0, 1.0 },
+				{ xpos + w, ypos, 1.0, 1.0 },
 
-			/* Calculate the vertex and texture coordinates */
-			float x2 = x + g->bitmap_left * sx;
-			float y2 = -y - g->bitmap_top * sy;
-			float w = g->bitmap.width * sx;
-			float h = g->bitmap.rows * sy;
-
-			glm::vec4 box[4] = {
-				{ x2     , -y2    , 0, 0 },
-				{ x2 +  w, -y2    , 1, 0 },
-				{ x2     , -y2 - h, 0, 1 },
-				{ x2 + w , -y2 - h, 1, 1 },
+				{ xpos, ypos + h, 0.0, 0.0 },
+				{ xpos + w, ypos, 1.0, 1.0 },
+				{ xpos + w, ypos + h, 1.0, 0.0 }
 			};
+			// Render glyph texture over quad
+			glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+			// Update content of VBO memory
+			glBindBuffer(GL_ARRAY_BUFFER, vbo);
+				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			// Render quad
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+			position.x += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64)
 
-			glBufferData(GL_ARRAY_BUFFER, sizeof(box), box, GL_DYNAMIC_DRAW);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-			/* Advance the cursor to the start of the next character */
-			x += (g->advance.x >> 6) * sx;
-			y += (g->advance.y >> 6) * sy;
 		}
+
+		bbox[1] = position.x;
+		position = lastPosition;
 	}
 
 	void Text::update(InputManager* inputManager)

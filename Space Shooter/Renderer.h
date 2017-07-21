@@ -20,11 +20,11 @@ namespace Engine
 			inline GLuint getVAO() const { return vao; }
 			GLuint getShaderProgram(const std::string&) const;
 			inline GLuint getTextVBO() const { return textVBO; }
-			inline GLuint getTextTexture() const { return textTexture; }
+			inline GLuint getTextVAO() const { return textVAO; }
 		private:
 			GLuint vbo, vao, ebo;
 			GLuint textVBO;
-			GLuint textTexture;
+			GLuint textVAO;
 			std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
 	};
 }
