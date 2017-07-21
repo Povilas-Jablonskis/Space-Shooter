@@ -58,17 +58,17 @@ void main()
 	outMode = renderMode;
 	fragColor = color;
 
-	int modulus = int(curranim) % int(animscX);
-	int fullinteger = int(curranim) / int(animscX);
-
-	if(modulus > 0)
-		modulus--;
-
 	TexCoord = vec2(texCoord.x, 1.0 - texCoord.y);
-	TexCoord.x /= animscX;
-	TexCoord.x -= (float(modulus) / animscX);
-	TexCoord.y /= animscY;
-	TexCoord.y -= (float(fullinteger) / animscY);
+	if(curranim > 0.0f)
+	{
+		int modulus = int(curranim - 1) % int(animscX);
+		int fullinteger = int(curranim - 1) / int(animscX);
+
+		TexCoord.x /= animscX;
+		TexCoord.x += (float(modulus) / animscX);
+		TexCoord.y /= animscY;
+		TexCoord.y += (float(fullinteger) / animscY);
+	}
 	gl_Position = vec4(position, 1.0f);
 	gl_Position *= scale;
 	gl_Position *= trans;

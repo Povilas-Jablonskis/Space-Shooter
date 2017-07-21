@@ -33,6 +33,9 @@ std::shared_ptr<UIElement> background;
 
 std::string currentMenu;
 
+int lastPlayerHealth = 3;
+int lastPlayerScore = 0;
+
 float t;
 float dt;
 float currentTime;
@@ -41,6 +44,25 @@ float accumulator;
 std::vector<std::shared_ptr<BaseGameObject>> enemies;
 std::unordered_map<std::string, std::shared_ptr<UIElement>> ui;
 std::unordered_map<std::string, std::shared_ptr<UIElement>> playerUI;
+
+void initPlayerUI()
+{
+	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), "", glm::vec2(0.0f, 0.0f))));
+
+	auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future"), true, glm::vec2(90.0f, 93.0f));
+	playerUI["Score"]->addText(option);
+
+	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), "", glm::vec2(0.0f, 0.0f))));
+
+	auto option2 = std::make_shared<UIElement>(33, 26, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), "", glm::vec2(6.0f, 91.0f));
+	option2->applyTexture(application->getTexture("playerLife1_blue"));
+	playerUI["Health"]->addUIElement(option2);
+	option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future"), true, glm::vec2(12.0f, 92.0f));
+	playerUI["Health"]->addText(option);
+
+	playerUI["Score"]->fixPosition(nullptr);
+	playerUI["Health"]->fixPosition(nullptr);
+}
 
 void initScene()
 {
@@ -70,6 +92,8 @@ void initGameUI()
 	options->onMouseReleaseFunc = []()
 	{
 		initScene();
+		if (player != nullptr)
+			player->reset();
 		application->setState(GameState::STARTED);
 		currentMenu = "";
 		ui["Main Menu"]->hideAllElements();
@@ -153,28 +177,39 @@ void initGameUI()
 
 void redrawPlayerUI()
 {	
-	playerUI.clear();
-
 	glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
-	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), "", glm::vec2(0.0f, 0.0f))));
-	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), "", glm::vec2(0.0f, 0.0f))));
-
-	//Score
-	auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future"), true, glm::vec2(90.0f, 93.0f));
-	playerUI["Score"]->addText(option);
-	playerUI["Score"]->fixPosition(nullptr);
-
-	//Health
-	for (int i = 0; i < player->getHealth(); i++)
+	for (std::unordered_map<std::string, std::shared_ptr<UIElement>>::iterator it = playerUI.begin(); it != playerUI.end();)
 	{
-		auto option2 = std::make_shared<UIElement>(33, 26, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), "", glm::vec2(6.0f, 91.0f));
-		option2->applyTexture(application->getTexture("playerLife1_blue"));
-		playerUI["Health"]->addUIElement(option2);
-		auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future"), true, glm::vec2(12.0f, 92.0f));
-		playerUI["Health"]->addText(option);
+		if (it->first == "Score" && lastPlayerScore != player->getScore())
+		{
+			it = playerUI.erase(it);
+			playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), "", glm::vec2(0.0f, 0.0f))));
+			
+			//Score
+			auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future"), true, glm::vec2(90.0f, 93.0f));
+			playerUI["Score"]->addText(option);
+			playerUI["Score"]->fixPosition(nullptr);
+		}
+		else if (it->first == "Health" && lastPlayerHealth != player->getHealth())
+		{
+			it = playerUI.erase(it);
+			playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), "", glm::vec2(0.0f, 0.0f))));
+
+			//Health
+			auto option2 = std::make_shared<UIElement>(33, 26, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), "", glm::vec2(6.0f, 91.0f));
+			option2->applyTexture(application->getTexture("playerLife1_blue"));
+			playerUI["Health"]->addUIElement(option2);
+			auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future"), true, glm::vec2(12.0f, 92.0f));
+			playerUI["Health"]->addText(option);
+			playerUI["Health"]->fixPosition(nullptr);
+		}
+		else
+			++it;
 	}
-	playerUI["Health"]->fixPosition(nullptr);
+
+	lastPlayerHealth = player->getHealth();
+	lastPlayerScore = player->getScore();
 }
 
 void motionFunc(int x, int y)
@@ -441,14 +476,18 @@ int main(int argc, char *argv[])
 	application->loadTexture("PNG/Enemies/enemyBlack1.png", "enemyBlack1", 0, 0, glm::vec2(1, 1));
 	application->loadTexture("Backgrounds/blue.png", "blueBackground", 0, 0, glm::vec2(1, 1));
 	application->loadTexture("GUI/healthBar.png", "healthBar", 0, 0, glm::vec2(5, 6));
+	application->loadTexture("kenvector_future.png", "atlas", 0, 0, glm::vec2(10, 10));
 
 	initGameUI();
 	currentMenu = "Main Menu";
 
-	background = std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f), "", glm::vec2(0.0f, 0.0f));
-	background->applyTexture(application->getTexture("blueBackground"));
+	background = std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), "", glm::vec2(0.0f, 0.0f));
+	background->applyTexture(application->getTexture("atlas"));
+	background->setCurrentFrame(91);
 	player = std::make_shared<Player>(32, 32, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
 	player->applyTexture(application->getTexture("playerShip1_blue"));
+
+	initPlayerUI();
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);
 	glutMainLoop();
