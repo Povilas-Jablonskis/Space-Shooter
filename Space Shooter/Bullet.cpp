@@ -43,9 +43,9 @@ namespace Engine
 		std::cout << "bullet hit" << std::endl;
 	}
 
-	BaseGameObject* Bullet::getParent()
+	std::shared_ptr<BaseGameObject> Bullet::getParent()
 	{
 		if (parent == nullptr) return nullptr;
-		return parent.get();
+		return parent;
 	}
 }

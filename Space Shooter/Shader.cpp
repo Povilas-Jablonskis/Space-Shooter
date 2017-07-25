@@ -1,4 +1,7 @@
 #include "Shader.h"
+#include <fstream>
+#include <string>
+
 
 namespace Engine
 {
@@ -15,27 +18,22 @@ namespace Engine
 	std::string Shader::readShaderFile(const std::string& path)
 	{
 		std::string content;
-		FILE * pFile;
+		std::ifstream fs(path);
 		char buffer;
 
-		fopen_s(&pFile, path.c_str(), "rb");
-		if (pFile == NULL) {
+		if (fs.is_open())
+		{
+			while (fs.get(buffer))
+				content.push_back(buffer);
+			fs.close();
+		}
+		else
+		{
 			#if _DEBUG
 				std::cout << "File " << path.c_str() << " not found" << std::endl;
 				getchar();
 			#endif
 			exit(0);
-		} 
-		else
-		{
-			while (true)
-			{
-				buffer = fgetc(pFile);
-				if (buffer == EOF)
-					break;
-				content.push_back(buffer);
-			}
-			fclose(pFile);
 		}
 		return content;
 	}
@@ -62,6 +60,7 @@ namespace Engine
 			std::vector<GLchar> errorLog(maxLength);
 			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &errorLog[0]);
 
+			std::cout << "Errors in vertex shader ( " << vertex_path << " ) :" << std::endl;
 			for (size_t i = 0; i < errorLog.size(); i++)
 				std::cout << errorLog[i];
 		}
@@ -80,6 +79,7 @@ namespace Engine
 			std::vector<GLchar> errorLog(maxLength);
 			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &errorLog[0]);
 
+			std::cout << "Errors in fragment shader ( " << fragment_path << " ) :" << std::endl;
 			for (size_t i = 0; i < errorLog.size(); i++)
 				std::cout << errorLog[i];
 		}

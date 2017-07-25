@@ -21,7 +21,7 @@ namespace Engine
 			void hideAllElements();
 			void showAllElements();
 			void draw(GLuint, GLuint, GLuint, GLuint, GLuint);
-			void update(InputManager*, float);
+			void update(std::shared_ptr<InputManager>, float);
 			void fixPosition(UIElementBase*);
 			inline std::vector<std::shared_ptr<UIElement>>* getElements() { return &elements; }
 			inline std::vector<std::shared_ptr<Text>>* getTexts() { return &texts; }
@@ -29,8 +29,8 @@ namespace Engine
 			inline std::string getParent() const { return parentMenu; }
 			void onHoverEnterFuncDefaults();
 			void onHoverExitFuncDefaults();
-			void onMouseClickDefaults(InputManager*);
-			void onMouseReleaseFuncDefaults(InputManager*);
+			void onMouseClickDefaults(std::shared_ptr<InputManager>);
+			void onMouseReleaseFuncDefaults(std::shared_ptr<InputManager>);
 		private:
 			std::string parentMenu;
 			std::vector<std::shared_ptr<UIElement>> elements;

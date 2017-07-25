@@ -79,7 +79,7 @@ namespace Engine
 
 		glUniformMatrix4fv(offsetLocation6, 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(offsetLocation7, 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
 	int UIElementBase::getSize(int index) const
@@ -101,7 +101,7 @@ namespace Engine
 		}
 	}
 
-	void UIElementBase::onMouseClickDefaults(InputManager* inputManager)
+	void UIElementBase::onMouseClickDefaults(std::shared_ptr<InputManager> inputManager)
 	{
 		if (color.a == 0.0f) return;
 		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
@@ -112,7 +112,7 @@ namespace Engine
 			onMouseClickFunc();
 	}
 
-	void UIElementBase::onMouseReleaseFuncDefaults(InputManager* inputManager)
+	void UIElementBase::onMouseReleaseFuncDefaults(std::shared_ptr<InputManager> inputManager)
 	{
 		if (color.a == 0.0f) return;
 		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
@@ -153,7 +153,7 @@ namespace Engine
 		}
 	}
 
-	void UIElementBase::update(InputManager* inputManager, float dt)
+	void UIElementBase::update(std::shared_ptr<InputManager> inputManager, float dt)
 	{
 		if (color.a == 0.0f) return;
 		if (texture != nullptr)

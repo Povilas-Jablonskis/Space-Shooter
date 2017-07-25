@@ -24,7 +24,7 @@ namespace Engine
 			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2);
 			void initFuncs();
 			virtual void draw(GLuint);
-			virtual void update(InputManager*, float);
+			virtual void update(std::shared_ptr<InputManager>, float);
 			inline void changeColor(float _color, int index) { color[index] = _color; }
 			inline float getPosition(int index) const{ return position[index]; }
 			int getSize(int) const;
@@ -38,15 +38,15 @@ namespace Engine
 			virtual void fixPosition(UIElementBase*);
 			void applyTexture(std::shared_ptr<Texture>);
 			void setCurrentTextureCurrentFrame(int);
-			bool checkForMouseCollision(InputManager*);
+			bool checkForMouseCollision(std::shared_ptr<InputManager>);
 			std::function<void()> onHoverEnterFunc;
 			std::function<void()> onHoverExitFunc;
 			std::function<void()> onMouseClickFunc;
 			std::function<void()> onMouseReleaseFunc;
 			virtual void onHoverEnterFuncDefaults() = 0;
 			virtual void onHoverExitFuncDefaults() = 0;
-			void onMouseClickDefaults(InputManager*);
-			void onMouseReleaseFuncDefaults(InputManager*);
+			void onMouseClickDefaults(std::shared_ptr<InputManager>);
+			void onMouseReleaseFuncDefaults(std::shared_ptr<InputManager>);
 		protected:
 			bool animComplete;
 			float animTimer;

@@ -15,7 +15,7 @@ namespace Engine
 		elements.clear();
 	}
 
-	void UIElement::update(InputManager* inputManager, float dt)
+	void UIElement::update(std::shared_ptr<InputManager> inputManager, float dt)
 	{
 		UIElementBase::update(inputManager, dt);
 		for (auto text : texts)
@@ -74,7 +74,7 @@ namespace Engine
 		}
 	}
 
-	void UIElement::onMouseClickDefaults(InputManager* inputManager)
+	void UIElement::onMouseClickDefaults(std::shared_ptr<InputManager> inputManager)
 	{
 		for (auto text : texts)
 		{
@@ -88,7 +88,7 @@ namespace Engine
 		UIElementBase::onMouseClickDefaults(inputManager);
 	}
 
-	void UIElement::onMouseReleaseFuncDefaults(InputManager* inputManager)
+	void UIElement::onMouseReleaseFuncDefaults(std::shared_ptr<InputManager> inputManager)
 	{
 		for (auto text : texts)
 		{

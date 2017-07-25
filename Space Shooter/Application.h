@@ -24,8 +24,8 @@ namespace Engine
 			void loadFont(const std::string&, const std::string&);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
-			inline InputManager* getInputManager() { return inputManager.get(); }
-			inline Renderer* getRender() { return renderer.get(); }
+			inline std::shared_ptr<InputManager> getInputManager() const { return inputManager; }
+			inline std::shared_ptr<Renderer> getRender() const { return renderer; }
 		private:
 			std::shared_ptr<Renderer> renderer;
 			std::shared_ptr<TextureManager> textureManager;

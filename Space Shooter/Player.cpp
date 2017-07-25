@@ -16,7 +16,7 @@ namespace Engine
 
 	}
 
-	bool Player::update(InputManager* app, float _dt)
+	bool Player::update(std::shared_ptr<InputManager> app, float _dt)
 	{
 		if (texture != nullptr)
 			BaseGameObject::updateTexture(_dt);
@@ -38,7 +38,7 @@ namespace Engine
 		else if (position.x <= 0.0f)
 			position.x = 0.0f;
 
-		if (position.y + width >= windowHeigth)
+		if (position.y + height >= windowHeigth)
 			position.y = windowHeigth - height;
 		else if (position.y <= 0.0f)
 			position.y = 0.0f;

@@ -195,6 +195,7 @@ void redrawPlayerUI()
 			auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future"), true, glm::vec2(90.0f, 93.0f));
 			playerUI["Score"]->addText(option);
 			playerUI["Score"]->fixPosition(nullptr);
+			break;
 		}
 		else if (it->first == "Health" && lastPlayerHealth != player->getHealth())
 		{
@@ -208,6 +209,7 @@ void redrawPlayerUI()
 			auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future"), true, glm::vec2(12.0f, 92.0f));
 			playerUI["Health"]->addText(option);
 			playerUI["Health"]->fixPosition(nullptr);
+			break;
 		}
 		else
 			++it;
@@ -389,6 +391,9 @@ void resize(int width, int height)
 	//const float ar = (float) width / (float) height;
 
 	for (auto uiElement : ui)
+		uiElement.second->fixPosition(nullptr);
+
+	for (auto uiElement : playerUI)
 		uiElement.second->fixPosition(nullptr);
 
 	background->fixPosition(nullptr);

@@ -24,11 +24,11 @@ namespace Engine
 			Text(const std::string&, int, glm::vec2, glm::vec4, std::shared_ptr<Font>, bool, glm::vec2);
 			~Text();
 			void draw(GLuint, GLuint);
-			void update(InputManager*);
+			void update(std::shared_ptr<InputManager>);
 			void onHoverEnterFuncDefaults();
 			void onHoverExitFuncDefaults();
-			void onMouseClickDefaults(InputManager*);
-			void onMouseReleaseFuncDefaults(InputManager*);
+			void onMouseClickDefaults(std::shared_ptr<InputManager>);
+			void onMouseReleaseFuncDefaults(std::shared_ptr<InputManager>);
 		private:
 			std::string text;
 			int fontSize;

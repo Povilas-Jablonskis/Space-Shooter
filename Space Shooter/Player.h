@@ -13,7 +13,7 @@ namespace Engine
 		public:
 			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
 			~Player();
-			bool update(InputManager*, float);
+			bool update(std::shared_ptr<InputManager>, float);
 			inline int getHealth() const { return health; }
 			void reset();
 			inline void setHealth(int _health) { health = _health; }

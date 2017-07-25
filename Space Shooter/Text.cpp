@@ -76,7 +76,7 @@ namespace Engine
 		position = lastPosition;
 	}
 
-	void Text::update(InputManager* inputManager)
+	void Text::update(std::shared_ptr<InputManager> inputManager)
 	{
 		if (color.a == 0.0f || isStatic) return;
 
@@ -118,7 +118,7 @@ namespace Engine
 		color.b = 122.0f;
 	}
 
-	void Text::onMouseClickDefaults(InputManager* inputManager)
+	void Text::onMouseClickDefaults(std::shared_ptr<InputManager> inputManager)
 	{
 		if (color.a == 0.0f || isStatic) return;
 
@@ -130,7 +130,7 @@ namespace Engine
 			onMouseClickFunc();
 	}
 
-	void Text::onMouseReleaseFuncDefaults(InputManager* inputManager)
+	void Text::onMouseReleaseFuncDefaults(std::shared_ptr<InputManager> inputManager)
 	{
 		if (color.a == 0.0f || isStatic) return;
 

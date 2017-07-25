@@ -37,7 +37,7 @@ namespace Engine
 		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end(); ++it)
 		{
 			auto parent = it->get()->getParent();
-			if (parent != nullptr && parent == _objecttocheck.get()) continue;
+			if (parent != nullptr && parent == _objecttocheck) continue;
 			auto bullet = it->get();
 			if (bullet->checkCollision(_objecttocheck))
 			{
@@ -54,7 +54,7 @@ namespace Engine
 			for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it2 = _objectstocheck->begin(); it2 != _objectstocheck->end(); ++it2)
 			{
 				auto parent = it->get()->getParent();
-				if (parent != nullptr && parent == it2->get()) continue;
+				if (parent != nullptr && parent == *it2) continue;
 				auto bullet = it->get();
 				if (bullet->checkCollision(*it2))
 				{
