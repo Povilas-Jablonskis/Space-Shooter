@@ -33,9 +33,6 @@ std::shared_ptr<UIElement> background;
 
 std::string currentMenu;
 
-int lastPlayerHealth = 3;
-int lastPlayerScore = 0;
-
 float t;
 float dt;
 float currentTime;
@@ -186,7 +183,7 @@ void redrawPlayerUI()
 
 	for (std::unordered_map<std::string, std::shared_ptr<UIElement>>::iterator it = playerUI.begin(); it != playerUI.end();)
 	{
-		if (it->first == "Score" && lastPlayerScore != player->getScore())
+		if (it->first == "Score" && player->getLastScore() != player->getScore())
 		{
 			it = playerUI.erase(it);
 			playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), "", glm::vec2(0.0f, 0.0f))));
@@ -197,7 +194,7 @@ void redrawPlayerUI()
 			playerUI["Score"]->fixPosition(nullptr);
 			break;
 		}
-		else if (it->first == "Health" && lastPlayerHealth != player->getHealth())
+		else if (it->first == "Health" && player->getLastHealth() != player->getHealth())
 		{
 			it = playerUI.erase(it);
 			playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), "", glm::vec2(0.0f, 0.0f))));
@@ -215,8 +212,8 @@ void redrawPlayerUI()
 			++it;
 	}
 
-	lastPlayerHealth = player->getHealth();
-	lastPlayerScore = player->getScore();
+	player->setLastHealth(player->getHealth());
+	player->setLastScore(player->getScore());
 }
 
 void motionFunc(int x, int y)

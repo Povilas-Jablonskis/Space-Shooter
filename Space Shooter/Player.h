@@ -14,15 +14,21 @@ namespace Engine
 			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
 			~Player();
 			bool update(std::shared_ptr<InputManager>, float);
-			inline int getHealth() const { return health; }
 			void reset();
+			inline int getHealth() const { return health; }
 			inline void setHealth(int _health) { health = _health; }
+			inline int getLastHealth() const { return lastHealth; }
+			inline void setLastHealth(int _health) { lastHealth = _health; }
 			inline int getScore() const { return score; }
 			inline void setScore(int _score) { score = _score; }
+			inline int getLastScore() const { return lastScore; }
+			inline void setLastScore(int _score) { lastScore = _score; }
 			void onCollision(BaseGameObject*);
 		private:
 			glm::vec2 startVelocity;
+			int lastScore;
 			int score;
+			int lastHealth;
 			int health;
 	};
 }
