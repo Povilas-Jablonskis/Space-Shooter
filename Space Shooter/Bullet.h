@@ -8,7 +8,7 @@ namespace Engine
 	class Bullet : public BaseGameObject
 	{
 		public:
-			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4, std::shared_ptr<BaseGameObject>);
+			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4, std::shared_ptr<BaseGameObject>, std::shared_ptr<Application>);
 			~Bullet();
 			bool update(float);
 			std::shared_ptr<BaseGameObject> getParent();

@@ -12,11 +12,11 @@ namespace Engine
 
 	}
 
-	void BulletManager::drawBulletList(GLuint program, GLuint vao)
+	void BulletManager::drawBulletList()
 	{
 		for (auto bullet : bullets)
 		{
-			bullet->draw(program, vao);
+			bullet->draw();
 		}
 	}
 
@@ -64,5 +64,11 @@ namespace Engine
 				}
 			}
 		}
+	}
+
+	void BulletManager::addBullet(std::shared_ptr<Bullet> bullet, const std::string& texture)
+	{
+		bullet->applyTexture(texture);
+		bullets.push_back(bullet);
 	}
 }

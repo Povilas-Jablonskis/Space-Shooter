@@ -9,11 +9,13 @@
 #include <memory>
 #include <map>
 
+#include "Application.h"
+
+#include "gtc/matrix_transform.hpp"
+#include "gtc/type_ptr.hpp"
+#include "gtx/rotate_vector.hpp"
 #include <vec2.hpp>
 #include <vec4.hpp>
-
-#include "InputManager.h"
-#include "Texture.h"
 
 namespace Engine
 {
@@ -21,10 +23,10 @@ namespace Engine
 	{
 		public:
 			~UIElementBase();
-			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2);
+			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2, std::shared_ptr<Application>);
 			void initFuncs();
-			virtual void draw(GLuint);
-			virtual void update(std::shared_ptr<InputManager>, float);
+			virtual void draw();
+			virtual void update(float);
 			inline void changeColor(float _color, int index) { color[index] = _color; }
 			inline float getPosition(int index) const{ return position[index]; }
 			int getSize(int) const;
@@ -36,29 +38,30 @@ namespace Engine
 			inline void setLoopStatus(bool _status) { loop = _status; }
 			void updateTexture(float);
 			virtual void fixPosition(UIElementBase*);
-			void applyTexture(std::shared_ptr<Texture>);
+			void applyTexture(const std::string&);
 			void setCurrentTextureCurrentFrame(int);
-			bool checkForMouseCollision(std::shared_ptr<InputManager>);
+			bool checkForMouseCollision();
 			std::function<void()> onHoverEnterFunc;
 			std::function<void()> onHoverExitFunc;
 			std::function<void()> onMouseClickFunc;
 			std::function<void()> onMouseReleaseFunc;
 			virtual void onHoverEnterFuncDefaults() = 0;
 			virtual void onHoverExitFuncDefaults() = 0;
-			void onMouseClickDefaults(std::shared_ptr<InputManager>);
-			void onMouseReleaseFuncDefaults(std::shared_ptr<InputManager>);
+			void onMouseClickDefaults();
+			void onMouseReleaseFuncDefaults();
 		protected:
+			std::shared_ptr<Application> application;
 			bool animComplete;
 			float animTimer;
 			bool loop;
 			float delay;
 			int currentFrame;
-			std::shared_ptr<Texture> texture;
+			std::string texture;
 			glm::vec2 position;
 			int width;
 			int height;
 			glm::vec2 positionPercents;
 			glm::vec4 color;
-		};
+	};
 }
 #endif

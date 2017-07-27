@@ -7,7 +7,7 @@
 #include "GL/freeglut.h"
 #include <memory>
 
-#include "Texture.h"
+#include "Application.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -21,13 +21,13 @@ namespace Engine
 	{
 		public:
 			~BaseGameObject();
-			BaseGameObject(int, int, glm::vec2, glm::vec2, glm::vec4);
-			virtual void draw(GLuint, GLuint);
+			BaseGameObject(int, int, glm::vec2, glm::vec2, glm::vec4, std::shared_ptr<Application>);
+			virtual void draw();
 			virtual bool update(float);
 			virtual bool update(float, float);
 			virtual GLboolean checkCollision(std::shared_ptr<BaseGameObject>);
 			virtual GLboolean checkCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
-			void applyTexture(std::shared_ptr<Texture>);
+			void applyTexture(const std::string&);
 			inline void setVelocity(glm::vec2 _velocity) { velocity = _velocity; };
 			virtual void onCollision(BaseGameObject*);
 			inline float getPosition(int index) const { return position[index]; }
@@ -42,12 +42,13 @@ namespace Engine
 			inline void setLoopStatus(bool _status) { loop = _status; }
 			void updateTexture(float);
 		protected:
+			std::shared_ptr<Application> application;
 			bool animComplete;
 			float animTimer;
 			bool loop;
 			float delay;
 			int currentFrame;
-			std::shared_ptr<Texture> texture;
+			std::string texture;
 			int width;
 			int height;
 			glm::vec2 position;

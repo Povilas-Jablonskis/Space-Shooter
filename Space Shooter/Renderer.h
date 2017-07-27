@@ -5,9 +5,6 @@
 #include <memory>
 
 #include "Shader.h"
-#include "BaseGameObject.h"
-#include "Text.h"
-#include "UIElement.h"
 
 namespace Engine
 {

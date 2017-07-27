@@ -15,13 +15,13 @@ namespace Engine
 	{
 		public:
 			~UIElement();
-			UIElement(int, int, glm::vec2, glm::vec4, std::string, glm::vec2);
+			UIElement(int, int, glm::vec2, glm::vec4, std::string, glm::vec2, std::shared_ptr<Application>);
 			inline void addText(std::shared_ptr<Text> text) { texts.push_back(text); }
 			inline void addUIElement(std::shared_ptr<UIElement> uiElement) { elements.push_back(uiElement); }
 			void hideAllElements();
 			void showAllElements();
-			void draw(GLuint, GLuint, GLuint, GLuint, GLuint);
-			void update(std::shared_ptr<InputManager>, float);
+			void draw();
+			void update(float);
 			void fixPosition(UIElementBase*);
 			inline std::vector<std::shared_ptr<UIElement>>* getElements() { return &elements; }
 			inline std::vector<std::shared_ptr<Text>>* getTexts() { return &texts; }
@@ -29,12 +29,12 @@ namespace Engine
 			inline std::string getParent() const { return parentMenu; }
 			void onHoverEnterFuncDefaults();
 			void onHoverExitFuncDefaults();
-			void onMouseClickDefaults(std::shared_ptr<InputManager>);
-			void onMouseReleaseFuncDefaults(std::shared_ptr<InputManager>);
+			void onMouseClickDefaults();
+			void onMouseReleaseFuncDefaults();
 		private:
 			std::string parentMenu;
 			std::vector<std::shared_ptr<UIElement>> elements;
 			std::vector<std::shared_ptr<Text>> texts;
-		};
+	};
 }
 #endif

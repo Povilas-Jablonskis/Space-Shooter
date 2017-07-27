@@ -2,8 +2,8 @@
 
 namespace Engine
 {
-	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color), texture(nullptr), animComplete(false), animTimer(0.0f), loop(false), delay(1.0f), currentFrame(0)
+	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, std::shared_ptr<Application> _application)
+		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color), texture(""), animComplete(false), animTimer(0.0f), loop(false), delay(1.0f), currentFrame(0), application(_application)
 	{
 
 	}
@@ -13,8 +13,12 @@ namespace Engine
 
 	}
 
-	void BaseGameObject::draw(GLuint program, GLuint vao)
+	void BaseGameObject::draw()
 	{
+		auto tempTexture = application->getTexture(texture);
+		auto renderer = application->getRender();
+		auto program = renderer->getShaderProgram("shader");
+
 		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
@@ -39,13 +43,13 @@ namespace Engine
 
 		glUniform4f(offsetLocation, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
 
-		if (texture != nullptr)
+		if (tempTexture != nullptr)
 		{
-			glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+			glBindTexture(GL_TEXTURE_2D, tempTexture->getTexture());
 
 			glUniform1f(offsetLocation2, 1.0f);
-			glUniform1f(offsetLocation3, texture->getCount().x);
-			glUniform1f(offsetLocation4, texture->getCount().y);
+			glUniform1f(offsetLocation3, tempTexture->getCount().x);
+			glUniform1f(offsetLocation4, tempTexture->getCount().y);
 			glUniform1f(offsetLocation5, (float)getCurrentFrame());
 		}
 		else
@@ -92,9 +96,7 @@ namespace Engine
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
-
-		if (texture != nullptr)
-			updateTexture(_dt);
+		updateTexture(_dt);
 		return true;
 	}
 
@@ -102,9 +104,7 @@ namespace Engine
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
-
-		if (texture != nullptr)
-			updateTexture(_dt);
+		updateTexture(_dt);
 		return true;
 	}
 
@@ -132,29 +132,29 @@ namespace Engine
 		std::cout << "some gameobject hit" << std::endl;
 	}
 
-	void BaseGameObject::applyTexture(std::shared_ptr<Texture> _texture)
+	void BaseGameObject::applyTexture(const std::string& _texture)
 	{
-		if (_texture == nullptr || _texture == texture) return;
 		texture = _texture;
 	}
 
 	void BaseGameObject::updateTexture(float dt)
 	{
-		if (texture == nullptr) return;
-		if (texture->getEndFrame() - texture->getStartFrame() > 0)
+		auto tempTexture = application->getTexture(texture);
+		if (tempTexture == nullptr) return;
+		if (tempTexture->getEndFrame() - tempTexture->getStartFrame() > 0)
 		{
 			animTimer += dt;
 			if (animTimer > delay)
 			{
 				animTimer -= delay;
 				currentFrame++;
-				if (currentFrame < texture->getStartFrame()|| currentFrame > texture->getEndFrame())
+				if (currentFrame < tempTexture->getStartFrame() || currentFrame > tempTexture->getEndFrame())
 				{
 					if (loop == true)
-						currentFrame = texture->getStartFrame();
+						currentFrame = tempTexture->getStartFrame();
 					else
 					{
-						currentFrame = texture->getEndFrame();
+						currentFrame = tempTexture->getEndFrame();
 						animComplete = true;
 					}
 				}

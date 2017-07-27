@@ -21,22 +21,22 @@ namespace Engine
 	class Text : public UIElementBase
 	{
 		public:
-			Text(const std::string&, int, glm::vec2, glm::vec4, std::shared_ptr<Font>, bool, glm::vec2);
+			Text(const std::string&, int, glm::vec2, glm::vec4, const std::string&, bool, glm::vec2, std::shared_ptr<Application>);
 			~Text();
-			void draw(GLuint, GLuint);
-			void update(std::shared_ptr<InputManager>);
+			void draw();
+			void update();
 			void onHoverEnterFuncDefaults();
 			void onHoverExitFuncDefaults();
-			void onMouseClickDefaults(std::shared_ptr<InputManager>);
-			void onMouseReleaseFuncDefaults(std::shared_ptr<InputManager>);
+			void onMouseClickDefaults();
+			void onMouseReleaseFuncDefaults();
 		private:
 			std::string text;
 			int fontSize;
-			std::shared_ptr<Font> font;
+			std::string font;
 			bool mouseOnText;
 			SHORT leftButtonClicked;
 			float bbox[4];
 			bool isStatic;
-		};
+	};
 }
 #endif

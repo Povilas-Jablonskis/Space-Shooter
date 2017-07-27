@@ -32,6 +32,6 @@ namespace Engine
 			std::shared_ptr<InputManager> inputManager;
 			GameState gameState;
 			std::shared_ptr<FontManager> fontManager;
-		};
+	};
 }
 #endif

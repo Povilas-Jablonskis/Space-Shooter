@@ -4,8 +4,8 @@
 
 namespace Engine
 {
-	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, bool _isStatic, glm::vec2 _positionPerc) :
-		UIElementBase(0, 0, _position, _color, _positionPerc), mouseOnText(false), leftButtonClicked(0), fontSize(_fontsize), text(_text), font(_font), isStatic(_isStatic)
+	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, const std::string& _font, bool _isStatic, glm::vec2 _positionPerc, std::shared_ptr<Application> _application) :
+		UIElementBase(0, 0, _position, _color, _positionPerc, _application), mouseOnText(false), leftButtonClicked(0), fontSize(_fontsize), text(_text), font(_font), isStatic(_isStatic)
 	{
 
 	}
@@ -15,9 +15,17 @@ namespace Engine
 
 	}
 
-	void Text::draw(GLuint program, GLuint vbo)
+	void Text::draw()
 	{
-		if (color.a == 0.0f || font == nullptr) return;
+		if (color.a == 0.0f) return;
+
+		auto tempFont = application->getFont(font);
+
+		if (tempFont == nullptr) return;
+
+		auto renderer = application->getRender();
+		auto program = renderer->getShaderProgram("textshader");
+		auto vbo = renderer->getTextVBO();
 
 		bbox[0] = position.x;
 		bbox[1] = position.x;
@@ -35,7 +43,7 @@ namespace Engine
 
 		// Iterate through all characters
 		std::string::const_iterator c;
-		const std::map<GLchar, Character>* tempCharacterList = font->GetCharacterList();
+		const std::map<GLchar, Character>* tempCharacterList = tempFont->GetCharacterList();
 		std::vector<int> tempVector;
 		for (auto character : *tempCharacterList)
 			tempVector.push_back(character.second.Size.y);
@@ -76,9 +84,11 @@ namespace Engine
 		position = lastPosition;
 	}
 
-	void Text::update(std::shared_ptr<InputManager> inputManager)
+	void Text::update()
 	{
 		if (color.a == 0.0f || isStatic) return;
+
+		auto inputManager = application->getInputManager();
 
 		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
 		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
@@ -118,9 +128,11 @@ namespace Engine
 		color.b = 122.0f;
 	}
 
-	void Text::onMouseClickDefaults(std::shared_ptr<InputManager> inputManager)
+	void Text::onMouseClickDefaults()
 	{
 		if (color.a == 0.0f || isStatic) return;
+
+		auto inputManager = application->getInputManager();
 
 		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
 		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
@@ -130,9 +142,11 @@ namespace Engine
 			onMouseClickFunc();
 	}
 
-	void Text::onMouseReleaseFuncDefaults(std::shared_ptr<InputManager> inputManager)
+	void Text::onMouseReleaseFuncDefaults()
 	{
 		if (color.a == 0.0f || isStatic) return;
+
+		auto inputManager = application->getInputManager();
 
 		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
 		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
