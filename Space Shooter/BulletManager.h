@@ -14,8 +14,8 @@ namespace Engine
 			inline void clearBullets() { bullets.clear(); }
 			void updateBulletList(float);
 			void drawBulletList();
-			void checkCollision(std::shared_ptr<BaseGameObject>);
-			void checkCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
+			glm::vec2 checkCollision(std::shared_ptr<BaseGameObject>);
+			glm::vec2 checkCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
 		private:
 			std::vector<std::shared_ptr<Bullet>> bullets;
 	};

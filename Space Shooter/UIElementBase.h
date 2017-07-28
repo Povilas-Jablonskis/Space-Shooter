@@ -25,8 +25,8 @@ namespace Engine
 			~UIElementBase();
 			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2, std::shared_ptr<Application>);
 			void initFuncs();
-			virtual void draw();
-			virtual void update(float);
+			void draw();
+			void update(float);
 			inline void changeColor(float _color, int index) { color[index] = _color; }
 			inline float getPosition(int index) const{ return position[index]; }
 			int getSize(int) const;

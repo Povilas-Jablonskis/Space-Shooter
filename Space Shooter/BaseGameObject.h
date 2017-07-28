@@ -40,7 +40,7 @@ namespace Engine
 			inline void setDelay(float _delay) { delay = _delay; }
 			inline void setAnimationStatus(bool _status) { animComplete = _status; }
 			inline void setLoopStatus(bool _status) { loop = _status; }
-			void updateTexture(float);
+			virtual void updateTexture(float);
 		protected:
 			std::shared_ptr<Application> application;
 			bool animComplete;

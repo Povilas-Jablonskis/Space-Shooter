@@ -32,7 +32,7 @@ namespace Engine
 		}
 	}
 
-	void BulletManager::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck)
+	glm::vec2 BulletManager::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck)
 	{
 		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end(); ++it)
 		{
@@ -42,12 +42,13 @@ namespace Engine
 			if (bullet->checkCollision(_objecttocheck))
 			{
 				bullets.erase(it);
-				return;
+				return _objecttocheck->getPosition();
 			}
 		}
+		return glm::vec2(0.0f,0.0f);
 	}
 
-	void BulletManager::checkCollision(std::vector<std::shared_ptr<BaseGameObject>>* _objectstocheck)
+	glm::vec2 BulletManager::checkCollision(std::vector<std::shared_ptr<BaseGameObject>>* _objectstocheck)
 	{
  		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end(); ++it)
 		{
@@ -59,11 +60,11 @@ namespace Engine
 				if (bullet->checkCollision(*it2))
 				{
 					bullets.erase(it);
-					_objectstocheck->erase(it2);
-					return;
+					return (*it2)->getPosition();
 				}
 			}
 		}
+		return glm::vec2(0.0f, 0.0f);
 	}
 
 	void BulletManager::addBullet(std::shared_ptr<Bullet> bullet, const std::string& texture)

@@ -18,6 +18,7 @@
 #include "GameState.h"
 #include "Application.h"
 #include "BulletManager.h"
+#include "Explosion.h"
 
 #include "document.h"
 #include "filereadstream.h"
@@ -39,6 +40,7 @@ float currentTime;
 float accumulator;
 
 std::vector<std::shared_ptr<BaseGameObject>> enemies;
+std::vector<std::shared_ptr<BaseGameObject>> misc;
 std::unordered_map<std::string, std::shared_ptr<UIElement>> ui;
 std::unordered_map<std::string, std::shared_ptr<UIElement>> playerUI;
 
@@ -234,9 +236,23 @@ void processMouseClick(int button, int state, int x, int y)
 		{
 			inputManager->setLeftMouseState(true);
 			inputManager->setLastLeftMouseState(false);
+
 			for (auto uiElement : ui)
 			{
-				uiElement.second->onMouseClickDefaults();
+				auto listOfAllElements = std::vector<std::shared_ptr<UIElement>>();
+				auto listOfAllTexts = std::vector<std::shared_ptr<Text>>();
+				listOfAllElements.push_back(uiElement.second);
+				uiElement.second->GetAllChildrenElements(&listOfAllElements);
+				uiElement.second->GetAllChildrenTexts(&listOfAllTexts);
+
+				for (auto element : listOfAllElements)
+				{
+					element->onMouseClickDefaults();
+				}
+				for (auto text : listOfAllTexts)
+				{
+					text->onMouseClickDefaults();
+				}
 			}
 		}
 		else
@@ -245,7 +261,20 @@ void processMouseClick(int button, int state, int x, int y)
 			inputManager->setLastLeftMouseState(true);
 			for (auto uiElement : ui)
 			{
-				uiElement.second->onMouseReleaseFuncDefaults();
+				auto listOfAllElements = std::vector<std::shared_ptr<UIElement>>();
+				auto listOfAllTexts = std::vector<std::shared_ptr<Text>>();
+				listOfAllElements.push_back(uiElement.second);
+				uiElement.second->GetAllChildrenElements(&listOfAllElements);
+				uiElement.second->GetAllChildrenTexts(&listOfAllTexts);
+
+				for (auto element : listOfAllElements)
+				{
+					element->onMouseReleaseFuncDefaults();
+				}
+				for (auto text : listOfAllTexts)
+				{
+					text->onMouseReleaseFuncDefaults();
+				}
 			}
 		}
 	}
@@ -316,6 +345,11 @@ void display(void)
 	auto renderer = application->getRender();
 	auto tempShader = renderer->getShaderProgram("shader");
 	auto tempVAO = renderer->getVAO();
+	auto tempTextShader = renderer->getShaderProgram("textshader");
+	auto tempTextVAO = renderer->getTextVAO();
+
+	auto listOfAllElements = std::vector<std::shared_ptr<UIElement>>();
+	auto listOfAllTexts = std::vector<std::shared_ptr<Text>>();
 
 	float newTime = ((float)glutGet(GLUT_ELAPSED_TIME));
 	float frameTime = (newTime - currentTime) / 1000.0f;
@@ -332,6 +366,10 @@ void display(void)
 			{
 				enemy->update(dt, t);
 			}
+			for (auto miscObj : misc)
+			{
+				miscObj->update(dt, t);
+			}
 			bulletManager->updateBulletList(dt);
 			t += dt;
 		} 
@@ -340,48 +378,112 @@ void display(void)
 
 	if (application->getState() == GameState::STARTED)
 	{
-		background->draw();
-
 		player->checkCollision(&enemies);
-		bulletManager->checkCollision(player);
+		
+		glm::vec2 collisionPoint = glm::vec2(0.0f, 0.0f);
+		collisionPoint = bulletManager->checkCollision(player);
+
 		if (player->getHealth() < 1)
 		{
 			application->setState(GameState::ENDED);
 			currentMenu = ui["Game Over"];
 			ui["Game Over"]->showMain();
 		}
-		bulletManager->checkCollision(&enemies);
+
+		collisionPoint = bulletManager->checkCollision(&enemies);
+		if (collisionPoint != glm::vec2(0.0f, 0.0f))
+			misc.push_back(std::make_shared<Explosion>(32, 32, collisionPoint, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), application));
 
 		redrawPlayerUI();
 
 		glBindVertexArray(tempVAO);
 			glUseProgram(tempShader);
+				background->draw();
 				bulletManager->drawBulletList();
 				player->draw();
 				for (auto enemy : enemies)
 				{
 					enemy->draw();
 				}
+				for (auto miscObj : misc)
+				{
+					miscObj->draw();
+				}
 			glUseProgram(0);
 		glBindVertexArray(0);
 
 		for (auto uiElement : playerUI)
 		{
-			uiElement.second->update(dt);
-			uiElement.second->draw();
+			uiElement.second->GetAllChildrenElements(&listOfAllElements);
+			uiElement.second->GetAllChildrenTexts(&listOfAllTexts);
 		}
-	}
 
-	//std::vector<std::shared_ptr<Text>> tempVector;
-	//auto tempTextList = ui["Options"]->getTexts();
-	//tempVector.insert(tempVector.end(), tempTextList->begin(), tempTextList->end());
-	//UIElement::GetAllChildrenTexts(&tempVector, ui["Options"]);
+		for (auto element : listOfAllElements)
+		{
+			element->update(dt);
+		}
+
+		glBindVertexArray(tempVAO);
+			glUseProgram(tempShader);
+				for (auto element : listOfAllElements)
+				{
+					element->draw();
+				}
+			glUseProgram(0);
+		glBindVertexArray(0);
+
+		for (auto text : listOfAllTexts)
+		{
+			text->update();
+		}
+
+		glBindVertexArray(tempTextVAO);
+			glUseProgram(tempTextShader);
+				for (auto text : listOfAllTexts)
+				{
+					text->draw();
+				}
+			glUseProgram(0);
+		glBindVertexArray(0);
+
+		listOfAllElements.clear();
+		listOfAllTexts.clear();
+	}
 
 	for (auto uiElement : ui)
 	{
-		uiElement.second->update(dt);
-		uiElement.second->draw();
+		listOfAllElements.push_back(uiElement.second);
+		uiElement.second->GetAllChildrenElements(&listOfAllElements);
+		uiElement.second->GetAllChildrenTexts(&listOfAllTexts);
 	}
+
+	for (auto element : listOfAllElements)
+	{
+		element->update(dt);
+	}
+
+	glBindVertexArray(tempVAO);
+		glUseProgram(tempShader);
+			for (auto element : listOfAllElements)
+			{
+				element->draw();
+			}
+		glUseProgram(0);
+	glBindVertexArray(0);
+
+	for (auto text : listOfAllTexts)
+	{
+		text->update();
+	}
+
+	glBindVertexArray(tempTextVAO);
+		glUseProgram(tempTextShader);
+			for (auto text : listOfAllTexts)
+			{
+				text->draw();
+			}
+		glUseProgram(0);
+	glBindVertexArray(0);
 	glutSwapBuffers();
 }
 

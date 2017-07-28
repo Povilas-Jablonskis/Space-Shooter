@@ -15,48 +15,6 @@ namespace Engine
 		elements.clear();
 	}
 
-	void UIElement::update(float dt)
-	{
-		auto inputManager = application->getInputManager();
-		UIElementBase::update(dt);
-		for (auto text : texts)
-		{
-			text->update();
-		}
-		for (auto element : elements)
-		{
-			element->update(dt);
-		}
-	}
-
-	void UIElement::draw()
-	{
-		auto renderer = application->getRender();
-		auto program = renderer->getShaderProgram("shader");
-		auto program2 = renderer->getShaderProgram("textshader");
-		auto vao = renderer->getVAO();
-		auto vao2 = renderer->getTextVAO();
-
-		glUseProgram(program);
-			glBindVertexArray(vao);
-				UIElementBase::draw();
-			glBindVertexArray(0);
-		glUseProgram(0);
-		glUseProgram(program2);
-			glBindVertexArray(vao2);
-				for (auto text : texts)
-				{
-					text->draw();
-				}
-			glBindVertexArray(0);
-		glUseProgram(0);
-
-		for (auto element : elements)
-		{
-			element->draw();
-		}
-	}
-
 	void UIElement::hideMain(bool showEverything)
 	{
 		if (showEverything)
@@ -95,34 +53,6 @@ namespace Engine
 		elements[index]->showMain(showEverything);
 	}
 
-	void UIElement::onMouseClickDefaults()
-	{
-		for (auto text : texts)
-		{
-			text->onMouseClickDefaults();
-		}
-		for (auto element : elements)
-		{
-			element->onMouseClickDefaults();
-		}
-
-		UIElementBase::onMouseClickDefaults();
-	}
-
-	void UIElement::onMouseReleaseFuncDefaults()
-	{
-		for (auto text : texts)
-		{
-			text->onMouseReleaseFuncDefaults();
-		}
-		for (auto element : elements)
-		{
-			element->onMouseReleaseFuncDefaults();
-		}
-
-		UIElementBase::onMouseReleaseFuncDefaults();
-	}
-
 	void UIElement::onHoverEnterFuncDefaults()
 	{
 
@@ -147,24 +77,25 @@ namespace Engine
 		}
 	}
 
-	void UIElement::GetAllChildrenElements(std::vector<std::shared_ptr<UIElement>>* out, std::shared_ptr<UIElement> _parent)
+	void UIElement::GetAllChildrenElements(std::vector<std::shared_ptr<UIElement>>* out)
 	{
-		auto tempList = _parent->getElements();
-		out->insert(out->end(), tempList->begin(), tempList->end());
+		auto tempList = getElements();
+
 		for (std::vector<std::shared_ptr<UIElement>>::iterator it = tempList->begin(); it != tempList->end(); ++it)
 		{
-			GetAllChildrenElements(out, *it);
+			out->push_back(*it);
+			(*it)->GetAllChildrenElements(out);
 		}
 	}
 
-	void UIElement::GetAllChildrenTexts(std::vector<std::shared_ptr<Text>>* out, std::shared_ptr<UIElement> _parent)
+	void UIElement::GetAllChildrenTexts(std::vector<std::shared_ptr<Text>>* out)
 	{
-		auto tempList = _parent->getElements();
+		auto tempList = getElements();
+		auto tempTextList = getTexts();
+
+		out->insert(out->end(), tempTextList->begin(), tempTextList->end());
+
 		for (std::vector<std::shared_ptr<UIElement>>::iterator it = tempList->begin(); it != tempList->end(); ++it)
-		{
-			auto tempTextList = (*it)->getTexts();
-			out->insert(out->end(), tempTextList->begin(), tempTextList->end());
-			GetAllChildrenTexts(out, *it);
-		}
+			(*it)->GetAllChildrenTexts(out);
 	}
 }
