@@ -11,23 +11,23 @@ namespace Engine
 	class Player : public BaseGameObject
 	{
 		public:
-			Player(int, int, glm::vec2, glm::vec2, glm::vec4, std::shared_ptr<Application>);
+			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
 			~Player();
-			bool update(float);
-			void reset();
+			bool update(float, std::shared_ptr<InputManager>);
+			void respawn();
+			void restart();
 			inline int getHealth() const { return health; }
-			inline void setHealth(int _health) { health = _health; }
-			inline int getLastHealth() const { return lastHealth; }
-			inline void setLastHealth(int _health) { lastHealth = _health; }
+			inline void setHealth(int _health) { lastHealth = health; health = _health; }
 			inline int getScore() const { return score; }
-			inline void setScore(int _score) { score = _score; }
+			inline void setScore(int _score) { lastScore = score; score = _score; }
 			inline int getLastScore() const { return lastScore; }
-			inline void setLastScore(int _score) { lastScore = _score; }
+			inline int getLastHealth() const { return lastHealth; }
 			void onCollision(BaseGameObject*);
 		private:
 			glm::vec2 startVelocity;
 			int lastScore;
 			int score;
+			int startHealth;
 			int lastHealth;
 			int health;
 	};

@@ -2,10 +2,10 @@
 
 namespace Engine
 {
-	Explosion::Explosion(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, std::shared_ptr<Application> _application)
-		: BaseGameObject(_width, _height, _position, _velocity, _color, _application)
+	Explosion::Explosion(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+		: BaseGameObject(_width, _height, _position, _velocity, _color)
 	{
-
+		
 	}
 
 	Explosion::~Explosion()
@@ -13,16 +13,20 @@ namespace Engine
 
 	}
 
-	void Explosion::updateTexture(float dt)
+	bool Explosion::update(float dt)
 	{
-		auto tempTexture = application->getTexture(texture);
-		if (tempTexture == nullptr) return;
+		BaseGameObject::update(dt);
 
-		BaseGameObject::updateTexture(dt);
+		if (texture != nullptr && texture->getCurrentFrame() >= texture->getEndFrame() && texture->getAnimationStatus())
+			return true;
+		return false;
+	}
 
-		if (currentFrame == tempTexture->getEndFrame() && animComplete)
-		{
+	void Explosion::applyTexture(std::shared_ptr<Texture> _texture)
+	{
+		BaseGameObject::applyTexture(_texture);
 
-		}
+		if (texture != nullptr)
+			texture->setDelay(0.1f);
 	}
 }

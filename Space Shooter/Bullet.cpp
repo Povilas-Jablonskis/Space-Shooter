@@ -4,8 +4,8 @@
 
 namespace Engine
 {
-	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, std::shared_ptr<BaseGameObject> _parent, std::shared_ptr<Application> _application)
-		: BaseGameObject(_width, _height, _position, _velocity, _color, _application), parent(_parent)
+	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, BaseGameObject* _parent)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), parent(_parent)
 	{
 
 	}
@@ -19,7 +19,7 @@ namespace Engine
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
-		BaseGameObject::updateTexture(_dt);
+		updateTexture(_dt);
 
 		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -29,21 +29,32 @@ namespace Engine
 		return true;
 	}
 
-	void Bullet::onCollision(BaseGameObject* collider)
+	void Bullet::updateTexture(float dt)
 	{
-		if (parent != nullptr)
+		if (texture == nullptr) return;
+		if (texture->getEndFrame() - texture->getStartFrame() > 0)
 		{
-			Player* tempPlayer = dynamic_cast<Player*>(parent.get());
-			if (tempPlayer != nullptr)
-				tempPlayer->setScore(tempPlayer->getScore() + 100);
+			animTimer += dt;
+			if (animTimer > delay)
+			{
+				animTimer -= delay;
+				currentFrame++;
+				if (currentFrame < texture->getStartFrame() || currentFrame > texture->getEndFrame())
+				{
+					if (loop == true)
+						currentFrame = texture->getStartFrame();
+					else
+					{
+						currentFrame = texture->getEndFrame();
+						animComplete = true;
+					}
+				}
+			}
 		}
-
-		std::cout << "bullet hit" << std::endl;
 	}
 
-	std::shared_ptr<BaseGameObject> Bullet::getParent()
+	void Bullet::onCollision(BaseGameObject* collider)
 	{
-		if (parent == nullptr) return nullptr;
-		return parent;
+		std::cout << "bullet hit" << std::endl;
 	}
 }

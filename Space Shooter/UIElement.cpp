@@ -3,8 +3,8 @@
 
 namespace Engine
 {
-	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<UIElement> _parent, glm::vec2 _positionPerc, std::shared_ptr<Application> _application)
-		: UIElementBase(_width, _height, _position, _color, _positionPerc, _application), parentMenu(_parent)
+	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<UIElement> _parent, glm::vec2 _positionPerc)
+		: UIElementBase(_width, _height, _position, _color, _positionPerc), parentMenu(_parent)
 	{
 
 	}
@@ -37,17 +37,17 @@ namespace Engine
 		}
 	}
 
-	void UIElement::hideElement(int index, bool showEverything)
+	void UIElement::hideElement(size_t index, bool showEverything)
 	{
-		if ((elements.size() - 1) < index)
+		if (index < 0 || index >= elements.size())
 			return;
 
 		elements[index]->hideMain(showEverything);
 	}
 
-	void UIElement::showElement(int index, bool showEverything)
+	void UIElement::showElement(size_t index, bool showEverything)
 	{
-		if ((elements.size() - 1) < index)
+		if (index < 0 || index >= elements.size())
 			return;
 
 		elements[index]->showMain(showEverything);
@@ -71,6 +71,7 @@ namespace Engine
 		{
 			text->fixPosition(this);
 		}
+
 		for (auto element : elements)
 		{
 			element->fixPosition(this);
@@ -97,5 +98,35 @@ namespace Engine
 
 		for (std::vector<std::shared_ptr<UIElement>>::iterator it = tempList->begin(); it != tempList->end(); ++it)
 			(*it)->GetAllChildrenTexts(out);
+	}
+
+	void UIElement::checkIfMouseHoverThis(glm::vec2 lastMousePosition)
+	{
+		UIElementBase::checkIfMouseHoverThis(lastMousePosition);
+
+		for (auto text : texts)
+		{
+			text->checkIfMouseHoverThis(lastMousePosition);
+		}
+
+		for (auto element : elements)
+		{
+			element->checkIfMouseHoverThis(lastMousePosition);
+		}
+	}
+
+	void UIElement::checkForMouseClickOnThis(std::shared_ptr<InputManager> inputManager, glm::vec2 lastMousePosition)
+	{
+		UIElementBase::checkForMouseClickOnThis(inputManager, lastMousePosition);
+
+		for (auto text : texts)
+		{
+			text->checkForMouseClickOnThis(inputManager, lastMousePosition);
+		}
+
+		for (auto element : elements)
+		{
+			element->checkForMouseClickOnThis(inputManager, lastMousePosition);
+		}
 	}
 }

@@ -5,6 +5,10 @@
 #include <memory>
 
 #include "Shader.h"
+#include "Player.h"
+#include "Text.h"
+#include "UIElementBase.h"
+#include "BaseGameObject.h"
 
 namespace Engine
 {
@@ -18,6 +22,12 @@ namespace Engine
 			GLuint getShaderProgram(const std::string&) const;
 			inline GLuint getTextVBO() const { return textVBO; }
 			inline GLuint getTextVAO() const { return textVAO; }
+			void draw(std::vector<std::shared_ptr<UIElementBase>>);
+			void draw(std::shared_ptr<UIElementBase>);
+			void draw(std::vector<std::shared_ptr<BaseGameObject>>);
+			void draw(std::shared_ptr<BaseGameObject>);
+			void draw(std::vector<std::shared_ptr<Text>>);
+			void draw(std::shared_ptr<Text>);
 		private:
 			GLuint vbo, vao, ebo;
 			GLuint textVBO;

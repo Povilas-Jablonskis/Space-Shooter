@@ -71,4 +71,77 @@ namespace Engine
 			return;
 		shaders.insert(std::pair<std::string, std::shared_ptr<Shader>>(name, shader));
 	}
+
+	void Renderer::draw(std::vector<std::shared_ptr<UIElementBase>> vector)
+	{
+		glBindVertexArray(vao);
+			glUseProgram(getShaderProgram("shader"));
+				for (auto element : vector)
+				{
+					element->draw(getShaderProgram("shader"));
+				}
+			glUseProgram(0);
+		glBindVertexArray(0);
+	}
+
+	void Renderer::draw(std::shared_ptr<UIElementBase> element)
+	{
+		glBindVertexArray(vao);
+			glUseProgram(getShaderProgram("shader"));
+				element->draw(getShaderProgram("shader"));
+			glUseProgram(0);
+		glBindVertexArray(0);
+	}
+
+	void Renderer::draw(std::vector<std::shared_ptr<BaseGameObject>> vector)
+	{
+		glBindVertexArray(vao);
+			glUseProgram(getShaderProgram("shader"));
+				for (auto gameobject : vector)
+				{
+					auto tempBaseGameObjectList = gameobject->getBulletsList();
+					for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = tempBaseGameObjectList->begin(); it != tempBaseGameObjectList->end(); it++)
+					{
+						(*it)->draw(getShaderProgram("shader"));
+					}
+					gameobject->draw(getShaderProgram("shader"));
+				}
+			glUseProgram(0);
+		glBindVertexArray(0);
+	}
+
+	void Renderer::draw(std::shared_ptr<BaseGameObject> gameobject)
+	{
+		glBindVertexArray(vao);
+			glUseProgram(getShaderProgram("shader"));
+				auto tempBaseGameObjectList = gameobject->getBulletsList();
+				for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = tempBaseGameObjectList->begin(); it != tempBaseGameObjectList->end(); it++)
+				{
+					(*it)->draw(getShaderProgram("shader"));
+				}
+				gameobject->draw(getShaderProgram("shader"));
+			glUseProgram(0);
+		glBindVertexArray(0);
+	}
+
+	void Renderer::draw(std::vector<std::shared_ptr<Text>> vector)
+	{
+		glBindVertexArray(textVAO);
+			glUseProgram(getShaderProgram("textshader"));
+				for (auto text : vector)
+				{
+					text->draw(getShaderProgram("textshader"), textVBO);
+				}
+			glUseProgram(0);
+		glBindVertexArray(0);
+	}
+
+	void Renderer::draw(std::shared_ptr<Text> text)
+	{
+		glBindVertexArray(textVAO);
+			glUseProgram(getShaderProgram("textshader"));
+				text->draw(getShaderProgram("textshader"), textVBO);
+			glUseProgram(0);
+		glBindVertexArray(0);
+	}
 }

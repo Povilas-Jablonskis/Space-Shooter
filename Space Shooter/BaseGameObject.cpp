@@ -2,8 +2,8 @@
 
 namespace Engine
 {
-	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, std::shared_ptr<Application> _application)
-		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color), texture(""), animComplete(false), animTimer(0.0f), loop(false), delay(1.0f), currentFrame(0), application(_application)
+	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+		: width(_width), height(_height), position(_position), velocity(_velocity), color(_color), texture(nullptr)
 	{
 
 	}
@@ -13,12 +13,8 @@ namespace Engine
 
 	}
 
-	void BaseGameObject::draw()
+	void BaseGameObject::draw(GLuint program)
 	{
-		auto tempTexture = application->getTexture(texture);
-		auto renderer = application->getRender();
-		auto program = renderer->getShaderProgram("shader");
-
 		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
@@ -43,14 +39,14 @@ namespace Engine
 
 		glUniform4f(offsetLocation, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
 
-		if (tempTexture != nullptr)
+		if (texture != nullptr)
 		{
-			glBindTexture(GL_TEXTURE_2D, tempTexture->getTexture());
+			glBindTexture(GL_TEXTURE_2D, texture->getTexture());
 
 			glUniform1f(offsetLocation2, 1.0f);
-			glUniform1f(offsetLocation3, tempTexture->getCount().x);
-			glUniform1f(offsetLocation4, tempTexture->getCount().y);
-			glUniform1f(offsetLocation5, (float)getCurrentFrame());
+			glUniform1f(offsetLocation3, texture->getCount().x);
+			glUniform1f(offsetLocation4, texture->getCount().y);
+			glUniform1f(offsetLocation5, (float)texture->getCurrentFrame());
 		}
 		else
 			glUniform1f(offsetLocation2, 0.0f);
@@ -60,47 +56,7 @@ namespace Engine
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
-	GLboolean BaseGameObject::checkCollision(std::shared_ptr<BaseGameObject> _objecttocheck) // AABB - AABB collision
-	{
-		auto onePosition = _objecttocheck->getPosition();
-		auto oneWidth = _objecttocheck->getSize(0);
-		auto oneHeight = _objecttocheck->getSize(1);
-
-		// Collision x-axis?
-		bool collisionX = onePosition.x + oneWidth >= position.x &&
-			position.x + width >= onePosition.x;
-		// Collision y-axis?
-		bool collisionY = onePosition.y + oneHeight >= position.y &&
-			position.y + height >= onePosition.y;
-		// Collision only if on both axes
-		if (collisionX && collisionY)
-		{
-			onCollision(_objecttocheck.get());
-			_objecttocheck->onCollision(this);
-			return true;
-		}
-		return false;
-	}
-
-	GLboolean BaseGameObject::checkCollision(std::vector<std::shared_ptr<BaseGameObject>>* _objectstocheck) // AABB - AABB collision
-	{
-		for (auto object : *_objectstocheck)
-		{
-			if (checkCollision(object))
-				return true;
-		}
-		return false;
-	}
-
 	bool BaseGameObject::update(float _dt)
-	{
-		position.x += velocity.x * _dt;
-		position.y += velocity.y * _dt;
-		updateTexture(_dt);
-		return true;
-	}
-
-	bool BaseGameObject::update(float _dt, float _t)
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
@@ -132,33 +88,40 @@ namespace Engine
 		std::cout << "some gameobject hit" << std::endl;
 	}
 
-	void BaseGameObject::applyTexture(const std::string& _texture)
+	void BaseGameObject::applyTexture(std::shared_ptr<Texture> _texture)
 	{
+		if (_texture == nullptr) return;
+		_texture->setAnimTimer(0.0f);
 		texture = _texture;
 	}
 
 	void BaseGameObject::updateTexture(float dt)
 	{
-		auto tempTexture = application->getTexture(texture);
-		if (tempTexture == nullptr) return;
-		if (tempTexture->getEndFrame() - tempTexture->getStartFrame() > 0)
+		if (texture == nullptr) return;
+		if (texture->getEndFrame() - texture->getStartFrame() > 0)
 		{
-			animTimer += dt;
-			if (animTimer > delay)
+			texture->setAnimTimer(texture->getAnimTimer() + dt);
+			if (texture->getAnimTimer() > texture->getDelay())
 			{
-				animTimer -= delay;
-				currentFrame++;
-				if (currentFrame < tempTexture->getStartFrame() || currentFrame > tempTexture->getEndFrame())
+				texture->setAnimTimer(texture->getAnimTimer() - texture->getDelay());
+				texture->setCurrentFrame(texture->getCurrentFrame() + 1);
+				if (texture->getCurrentFrame() < texture->getStartFrame() || texture->getCurrentFrame() > texture->getEndFrame())
 				{
-					if (loop == true)
-						currentFrame = tempTexture->getStartFrame();
+					if (texture->getLoopStatus())
+						texture->setCurrentFrame(texture->getStartFrame());
 					else
 					{
-						currentFrame = tempTexture->getEndFrame();
-						animComplete = true;
+						texture->setCurrentFrame(texture->getEndFrame());
+						texture->setAnimationStatus(true);
 					}
 				}
 			}
 		}
+	}
+
+	void BaseGameObject::addBullet(std::shared_ptr<BaseGameObject> bullet, std::shared_ptr<Texture> texture)
+	{
+		bullet->applyTexture(texture);
+		bullets.push_back(bullet);
 	}
 }

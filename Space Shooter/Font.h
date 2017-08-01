@@ -16,7 +16,7 @@ namespace Engine
 		public:
 			Font(FT_Face);
 			~Font();
-			std::map<GLchar, Character>* GetCharacterList() { return &characters; }
+			std::map<GLchar, Character> getCharacterList() { return characters; }
 			FT_Face face;
 		private:
 			void LoadCharacters();

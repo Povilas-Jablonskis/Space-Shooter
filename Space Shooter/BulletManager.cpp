@@ -12,12 +12,12 @@ namespace Engine
 
 	}
 
-	void BulletManager::drawBulletList()
+	void BulletManager::drawBulletList(std::shared_ptr<Renderer> renderer)
 	{
+		std::vector<std::shared_ptr<BaseGameObject>> tempList;
 		for (auto bullet : bullets)
-		{
-			bullet->draw();
-		}
+			tempList.push_back(bullet);
+		renderer->draw(tempList);
 	}
 
 	void BulletManager::updateBulletList(float dt)
@@ -67,7 +67,7 @@ namespace Engine
 		return glm::vec2(0.0f, 0.0f);
 	}
 
-	void BulletManager::addBullet(std::shared_ptr<Bullet> bullet, const std::string& texture)
+	void BulletManager::addBullet(std::shared_ptr<Bullet> bullet, std::shared_ptr<Texture> texture)
 	{
 		bullet->applyTexture(texture);
 		bullets.push_back(bullet);

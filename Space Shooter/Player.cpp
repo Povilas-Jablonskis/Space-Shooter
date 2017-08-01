@@ -10,29 +10,32 @@ namespace Engine
 
 	}
 
-	Player::Player(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, std::shared_ptr<Application> _application)
-		: BaseGameObject(_width, _height, _position, _velocity, _color, _application), health(3), score(0), startVelocity(_velocity), lastHealth(3), lastScore(0)
+	Player::Player(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity), lastHealth(0), lastScore(0)
 	{
 
 	}
 
-	bool Player::update(float _dt)
+	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager)
 	{
-		BaseGameObject::updateTexture(_dt);
-
-		auto inputManager = application->getInputManager();
+		BaseGameObject::updateTexture(dt);
 
 		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		
+		for (auto BaseGameObject : bullets)
+		{
+			BaseGameObject->update(dt);
+		}
 
 		if (inputManager->getKey('a'))
-			position.x -= velocity.x * _dt;
+			position.x -= velocity.x * dt;
 		if (inputManager->getKey('d'))
-			position.x += velocity.x * _dt;
+ 			position.x += velocity.x * dt;
 		if (inputManager->getKey('s'))
-			position.y -= velocity.y * _dt;
+			position.y -= velocity.y * dt;
 
-		position.y += (velocity.y * _dt) / 2.0f;
+		position.y += (velocity.y * dt) / 2.0f;
 
 		if (position.x + width >= windowWidth)
 			position.x = windowWidth - width;
@@ -46,11 +49,21 @@ namespace Engine
 		return true;
 	}
 
-	void Player::reset()
+	void Player::respawn()
 	{
-		velocity = startVelocity;
-		position.x = (float)glutGet(GLUT_WINDOW_X) / 2.0f;
-		position.y = 0.0f;
+		bullets.clear();
+		setHealth(getHealth()-1);
+		setVelocity(startVelocity);
+		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
+	}
+
+	void Player::restart()
+	{
+		bullets.clear();
+		setScore(0);
+		setHealth(startHealth);
+		setVelocity(startVelocity);
+		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
 	}
 
 	void Player::onCollision(BaseGameObject* collider)

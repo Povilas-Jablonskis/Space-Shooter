@@ -2,6 +2,7 @@
 #define _bulletManagerH
 
 #include "Bullet.h"
+#include "Renderer.h"
 
 namespace Engine
 {
@@ -10,10 +11,10 @@ namespace Engine
 		public:
 			BulletManager();
 			~BulletManager();
-			void addBullet(std::shared_ptr<Bullet>, const std::string& = "");
+			void addBullet(std::shared_ptr<Bullet>, std::shared_ptr<Texture> = nullptr);
 			inline void clearBullets() { bullets.clear(); }
 			void updateBulletList(float);
-			void drawBulletList();
+			void drawBulletList(std::shared_ptr<Renderer>);
 			glm::vec2 checkCollision(std::shared_ptr<BaseGameObject>);
 			glm::vec2 checkCollision(std::vector<std::shared_ptr<BaseGameObject>>*);
 		private:

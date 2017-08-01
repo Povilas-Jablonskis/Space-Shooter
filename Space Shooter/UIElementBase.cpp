@@ -1,10 +1,9 @@
 #include "UIElementBase.h"
-#include "Application.h"
 
 namespace Engine
 {
-	UIElementBase::UIElementBase(int _width, int _height, glm::vec2 _position, glm::vec4 _color, glm::vec2 _positionPerc, std::shared_ptr<Application> _application) :
-		width(_width), height(_height), position(_position), color(_color), texture(""), positionPercents(_positionPerc), animComplete(false), animTimer(0.0f), loop(false), delay(1.0f), currentFrame(0), application(_application)
+	UIElementBase::UIElementBase(int _width, int _height, glm::vec2 _position, glm::vec4 _color, glm::vec2 _positionPerc) :
+		width(_width), height(_height), position(_position), color(_color), gotMousedHovered(false), texture(nullptr), isStatic(false), positionPercents(_positionPerc)
 	{
 		initFuncs();
 	}
@@ -37,13 +36,9 @@ namespace Engine
 		};
 	}
 
-	void UIElementBase::draw()
+	void UIElementBase::draw(GLuint program)
 	{
 		if (color.a == 0.0f) return;
-
-		auto tempTexture = application->getTexture(texture);
-		auto renderer = application->getRender();
-		auto program = renderer->getShaderProgram("shader");
 
 		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -69,14 +64,14 @@ namespace Engine
 
 		glUniform4f(offsetLocation, color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a);
 
-		if (tempTexture != nullptr)
+		if (texture != nullptr)
 		{
-			glBindTexture(GL_TEXTURE_2D, tempTexture->getTexture());
+			glBindTexture(GL_TEXTURE_2D, texture->getTexture());
 
 			glUniform1f(offsetLocation2, 1.0f);
-			glUniform1f(offsetLocation3, tempTexture->getCount().x);
-			glUniform1f(offsetLocation4, tempTexture->getCount().y);
-			glUniform1f(offsetLocation5, (float)getCurrentFrame());
+			glUniform1f(offsetLocation3, texture->getCount().x);
+			glUniform1f(offsetLocation4, texture->getCount().y);
+			glUniform1f(offsetLocation5, (float)texture->getCurrentFrame());
 		}
 		else
 			glUniform1f(offsetLocation2, 0.0f);
@@ -105,54 +100,31 @@ namespace Engine
 		}
 	}
 
-	void UIElementBase::onMouseClickDefaults()
+	void UIElementBase::applyTexture(std::shared_ptr<Texture> _texture)
 	{
-		if (color.a == 0.0f) return;
-		auto inputManager = application->getInputManager();
-		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
-		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
-		lastMousePosition.y *= -1;
-
-		if (lastMousePosition.x >= position.x && lastMousePosition.x <= (position.x + width) && lastMousePosition.y <= position.y && lastMousePosition.y >= (position.y + height))
-			onMouseClickFunc();
-	}
-
-	void UIElementBase::onMouseReleaseFuncDefaults()
-	{
-		if (color.a == 0.0f) return;
-		auto inputManager = application->getInputManager();
-		glm::vec2 lastMousePosition = inputManager->getLastMousePosition();
-		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
-		lastMousePosition.y *= -1;
-
-		if (lastMousePosition.x >= position.x && lastMousePosition.x <= (position.x + width) && lastMousePosition.y <= position.y && lastMousePosition.y >= (position.y + height))
-			onMouseReleaseFunc();
-	}
-
-	void UIElementBase::applyTexture(const std::string& _texture)
-	{
+		if (_texture == nullptr) return;
+		_texture->setAnimTimer(0.0f);
 		texture = _texture;
 	}
 
 	void UIElementBase::updateTexture(float dt)
 	{
-		auto tempTexture = application->getTexture(texture);
-		if (tempTexture == nullptr) return;
-		if (tempTexture->getEndFrame() - tempTexture->getStartFrame() > 0)
+		if (texture == nullptr) return;
+		if (texture->getEndFrame() - texture->getStartFrame() > 0)
 		{
-			animTimer += dt;
-			if (animTimer > delay)
+			texture->setAnimTimer(texture->getAnimTimer() + dt);
+			if (texture->getAnimTimer() > texture->getDelay())
 			{
-				animTimer -= delay;
-				currentFrame++;
-				if (currentFrame < tempTexture->getStartFrame() || currentFrame > tempTexture->getEndFrame())
+				texture->setAnimTimer(texture->getAnimTimer() - texture->getDelay());
+				texture->setCurrentFrame(texture->getCurrentFrame() + 1);
+				if (texture->getCurrentFrame() < texture->getStartFrame() || texture->getCurrentFrame() > texture->getEndFrame())
 				{
-					if (loop == true)
-						currentFrame = tempTexture->getStartFrame();
+					if (texture->getLoopStatus())
+						texture->setCurrentFrame(texture->getStartFrame());
 					else
 					{
-						currentFrame = tempTexture->getEndFrame();
-						animComplete = true;
+						texture->setCurrentFrame(texture->getEndFrame());
+						texture->setAnimationStatus(true);
 					}
 				}
 			}
@@ -192,5 +164,55 @@ namespace Engine
 			position.x = temPos.x * (positionPercents.x / 100.0f);
 			position.y = temPos.y * (positionPercents.y / 100.0f);
 		}
+	}
+
+	bool UIElementBase::checkIfCollides(glm::vec2 colCoordinates)
+	{
+		if (colCoordinates.x >= position.x && colCoordinates.x <= (position.x + width) && colCoordinates.y <= position.y && colCoordinates.y >= (position.y + height))
+			return true;
+		return false;
+	}
+
+	void UIElementBase::onHoverEnterFuncDefaults()
+	{
+
+	}
+
+	void UIElementBase::onHoverExitFuncDefaults()
+	{
+
+	}
+
+	void UIElementBase::checkIfMouseHoverThis(glm::vec2 lastMousePosition)
+	{
+		if (color.a == 0.0f || isStatic) return;
+		if (checkIfCollides(lastMousePosition))
+		{
+			if (!gotMousedHovered)
+			{
+				onHoverEnterFunc();
+				onHoverEnterFuncDefaults();
+				gotMousedHovered = true;
+			}
+		}
+		else
+		{
+			if (gotMousedHovered)
+			{
+				onHoverExitFunc();
+				onHoverExitFuncDefaults();
+				gotMousedHovered = false;
+			}
+		}
+	}
+
+	void UIElementBase::checkForMouseClickOnThis(std::shared_ptr<InputManager> inputManager, glm::vec2 lastMousePosition)
+	{
+		if (color.a == 0.0f || isStatic || !checkIfCollides(lastMousePosition)) return;
+
+		if (!inputManager->getLastLeftMouseState() && inputManager->getLeftMouseState())
+			onMouseClickFunc();
+		else if (inputManager->getLastLeftMouseState() && !inputManager->getLeftMouseState())
+			onMouseReleaseFunc();
 	}
 }
