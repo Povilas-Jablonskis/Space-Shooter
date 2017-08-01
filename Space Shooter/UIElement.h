@@ -18,6 +18,7 @@ namespace Engine
 			UIElement(int, int, glm::vec2, glm::vec4, std::shared_ptr<UIElement>, glm::vec2);
 			inline void addText(std::shared_ptr<Text> text) { texts.push_back(text); }
 			inline void addUIElement(std::shared_ptr<UIElement> uiElement) { elements.push_back(uiElement); }
+			void update(float);
 			void hideMain(bool = false);
 			void showMain(bool = false);
 			void hideElement(size_t, bool = false);

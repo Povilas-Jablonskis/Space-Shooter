@@ -29,6 +29,7 @@ namespace Engine
 			inline std::shared_ptr<TextureManager> getTextureManager() const { return textureManager; }
 			inline std::shared_ptr<Renderer> getRender() const { return renderer; }
 			inline std::shared_ptr<CollisionManager> getCollisionManager() const { return collisionManager; }
+			inline std::shared_ptr<FontManager> getFontManager() const { return fontManager; }
 		private:
 			std::shared_ptr<CollisionManager> collisionManager;
 			std::shared_ptr<Renderer> renderer;

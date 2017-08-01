@@ -129,4 +129,19 @@ namespace Engine
 			element->checkForMouseClickOnThis(inputManager, lastMousePosition);
 		}
 	}
+
+	void UIElement::update(float dt)
+	{
+		UIElementBase::update(dt);
+
+		for (auto text : texts)
+		{
+			text->update(dt);
+		}
+
+		for (auto element : elements)
+		{
+			element->update(dt);
+		}
+	}
 }
