@@ -29,8 +29,8 @@ namespace Engine
 			inline float getPosition(int index) const { return position[index]; }
 			inline glm::vec2 getPosition() const { return position; }
 			inline std::shared_ptr<Texture> getTexture() { return texture; }
-			inline void setPosition(glm::vec2 _position) { position = _position; }
-			inline void setPosition(int index, float _position) { position[index] = _position; }
+			virtual inline void setPosition(glm::vec2 _position) { position = _position; }
+			virtual inline void setPosition(int index, float _position) { position[index] = _position; }
 			int getSize(int) const;
 			virtual void updateTexture(float);
 			void applyTexture(std::shared_ptr<Texture>);
@@ -40,6 +40,7 @@ namespace Engine
 			int width;
 			int height;
 			glm::vec4 color;
+			float bbox[4];
 		};
 }
 #endif

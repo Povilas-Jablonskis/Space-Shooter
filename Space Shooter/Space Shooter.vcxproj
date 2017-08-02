@@ -104,6 +104,7 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="StructForTextCache.h" />
     <ClInclude Include="TestEnemy.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
