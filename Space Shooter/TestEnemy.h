@@ -11,7 +11,7 @@ namespace Engine
 			~TestEnemy();
 			TestEnemy(int, int, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float, float);
-			void onCollision(BaseGameObject*);
+			void onCollision(BaseGameObject*, BaseGameObject*, CollisionType);
 	};
 }
 #endif

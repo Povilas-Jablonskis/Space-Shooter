@@ -4,15 +4,15 @@
 
 namespace Engine
 {
-	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, BaseGameObject* _parent)
-		: BaseGameObject(_width, _height, _position, _velocity, _color), parent(_parent)
+	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, RenderObject* _parent)
+		: RenderObject(_width, _height, _position, _velocity, _color), parent(_parent)
 	{
 
 	}
 
 	Bullet::~Bullet()
 	{
-
+		delete parent;
 	}
 
 	bool Bullet::update(float _dt)
@@ -29,31 +29,7 @@ namespace Engine
 		return true;
 	}
 
-	void Bullet::updateTexture(float dt)
-	{
-		if (texture == nullptr) return;
-		if (texture->getEndFrame() - texture->getStartFrame() > 0)
-		{
-			animTimer += dt;
-			if (animTimer > delay)
-			{
-				animTimer -= delay;
-				currentFrame++;
-				if (currentFrame < texture->getStartFrame() || currentFrame > texture->getEndFrame())
-				{
-					if (loop == true)
-						currentFrame = texture->getStartFrame();
-					else
-					{
-						currentFrame = texture->getEndFrame();
-						animComplete = true;
-					}
-				}
-			}
-		}
-	}
-
-	void Bullet::onCollision(BaseGameObject* collider)
+	void Bullet::onCollision(RenderObject* object, RenderObject* collider, CollisionType type)
 	{
 		std::cout << "bullet hit" << std::endl;
 	}

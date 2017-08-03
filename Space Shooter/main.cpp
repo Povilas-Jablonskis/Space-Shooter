@@ -62,13 +62,51 @@ void initPlayerUI()
 
 	playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Level completed", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
-	auto option3 = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), application->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
+	auto option3 = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), application->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
 	option3->setIsStatic(true);
 	playerUI["Level completed"]->addText(option3);
 
 	playerUI["Score"]->fixPosition();
 	playerUI["Health"]->fixPosition();
 	playerUI["Level completed"]->fixPosition();
+}
+
+void updatePlayerUI()
+{
+	glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+
+	for (std::unordered_map<std::string, std::shared_ptr<UIElement>>::iterator it = playerUI.begin(); it != playerUI.end();)
+	{
+		if (it->first == "Score" && player->getLastScore() != player->getScore())
+		{
+			it = playerUI.erase(it);
+			playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+
+			//Score
+			auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
+			option->setIsStatic(true);
+			playerUI["Score"]->addText(option);
+			playerUI["Score"]->fixPosition();
+			break;
+		}
+		else if (it->first == "Health" && player->getLastHealth() != player->getHealth())
+		{
+			it = playerUI.erase(it);
+			playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+
+			//Health
+			auto option2 = std::make_shared<UIElement>(33, 26, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
+			option2->applyTexture(std::make_shared<Texture>(*application->getTexture("playerLife1_blue")));
+			playerUI["Health"]->addUIElement(option2);
+			auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
+			option->setIsStatic(true);
+			playerUI["Health"]->addText(option);
+			playerUI["Health"]->fixPosition();
+			break;
+		}
+		else
+			++it;
+	}
 }
 
 void initScene()
@@ -106,6 +144,7 @@ void initGameUI()
 		explosions.clear();
 		application->setState(GameState::STARTED);
 		currentMenu = nullptr;
+		updatePlayerUI();
 		ui["Main Menu"]->hideMain();
 	};
 	ui["Main Menu"]->addText(options);
@@ -186,44 +225,6 @@ void initGameUI()
 	options = std::make_shared<Text>("Game Over", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), application->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
 	options->setIsStatic(true);
 	ui["Game Over"]->addText(options);
-}
-
-void updatePlayerUI()
-{	
-	glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
-
-	for (std::unordered_map<std::string, std::shared_ptr<UIElement>>::iterator it = playerUI.begin(); it != playerUI.end();)
-	{
-		if (it->first == "Score" && player->getLastScore() != player->getScore())
-		{
-			it = playerUI.erase(it);
-			playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-			
-			//Score
-			auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
-			option->setIsStatic(true);
-			playerUI["Score"]->addText(option);
-			playerUI["Score"]->fixPosition();
-			break;
-		}
-		else if (it->first == "Health" && player->getLastHealth() != player->getHealth())
-		{
-			it = playerUI.erase(it);
-			playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-
-			//Health
-			auto option2 = std::make_shared<UIElement>(33, 26, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-			option2->applyTexture(std::make_shared<Texture>(*application->getTexture("playerLife1_blue")));
-			playerUI["Health"]->addUIElement(option2);
-			auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), application->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
-			option->setIsStatic(true);
-			playerUI["Health"]->addText(option);
-			playerUI["Health"]->fixPosition();
-			break;
-		}
-		else
-			++it;
-	}
 }
 
 void motionFunc(int x, int y)
@@ -309,10 +310,6 @@ void keyboardInput(unsigned char c, int x, int y)
 				}
 				break;
 			}
-			case 32:
-			{
-				player->addBullet(std::make_shared<BaseGameObject>(9, 20, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f)), std::make_shared<Texture>(*application->getTexture("laserBlue01")));
-			}
 		}
 		inputManager->setKey(c, true);
 	}
@@ -355,7 +352,7 @@ void display(void)
 	{
 		if (application->getState() == GameState::STARTED)
 		{
-			player->update(dt, application->getInputManager());
+			player->update(dt, application->getInputManager(), std::make_shared<Texture>(*application->getTexture("laserBlue01")));
 			for (auto enemy : enemies)
 			{
 				enemy->update(dt, t);
@@ -382,8 +379,9 @@ void display(void)
 				explosion->applyTexture(std::make_shared<Texture>(*application->getTexture("blueExplosionSpriteSheet")));
 				explosions.push_back(explosion);
 
+				updatePlayerUI();
+				collision->get()->onCollision(collision->get(), player.get(), CollisionType::BULLET);
 				enemyBulletList->erase(collision);
-				std::cout << "enemy bullet hit player" << std::endl;
 			}
 
 			collision = collisionManager->checkCollision(*it, playerBulletList);
@@ -397,8 +395,10 @@ void display(void)
 				explosions.push_back(explosion);
 
 				player->setScore(player->getScore() + 100);
+				collision->get()->onCollision(collision->get(), it->get(), CollisionType::BULLET);
 				playerBulletList->erase(collision);
 				it = enemies.erase(it);
+				updatePlayerUI();
 
 				if (enemies.size() == 0)
 				{
@@ -406,12 +406,14 @@ void display(void)
 					playerUI["Level completed"]->showMain();
 				}
 
-				std::cout << "player bullet hit enemy; " << enemies.size() << " enemies left" << std::endl;
+				//std::cout << "player bullet hit enemy; " << enemies.size() << " enemies left" << std::endl;
 			}
 
 			if (it != enemies.end() && collisionManager->checkCollision(player, *it))
 			{
+				player->onCollision(player.get(), it->get(), CollisionType::OBJECT);
 				player->respawn();
+				updatePlayerUI();
 				std::cout << "player hit enemy" << std::endl;
 			}
 
@@ -425,8 +427,6 @@ void display(void)
 			currentMenu = ui["Game Over"];
 			ui["Game Over"]->showMain();
 		}
-
-		updatePlayerUI();
 
 		//Render background
 		renderer->draw(background);

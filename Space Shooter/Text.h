@@ -31,7 +31,6 @@ namespace Engine
 			inline void setText(std::string newtext) { needUpdate = true; text = newtext; }
 			inline void setLastText(std::string newtext) { lastText = newtext; }
 			inline std::string getLastText() const { return lastText; }
-			inline void setBBOXVar(int index, float value) { bbox[index] = value; }
 			inline void setPosition(glm::vec2 _position) { needUpdate = true; position = _position; }
 			inline void setPosition(int index, float _position) { needUpdate = true; position[index] = _position; }
 			bool checkIfCollides(glm::vec2);

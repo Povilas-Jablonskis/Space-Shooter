@@ -16,7 +16,7 @@ namespace Engine
 
 	}
 
-	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager)
+	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager, std::shared_ptr<Texture> bulletTexture)
 	{
 		BaseGameObject::updateTexture(dt);
 
@@ -26,6 +26,18 @@ namespace Engine
 		for (auto BaseGameObject : bullets)
 		{
 			BaseGameObject->update(dt);
+		}
+
+		delayBetweenShootsTimer += dt;
+		if (delayBetweenShootsTimer > delayBetweenShoots)
+		{
+			delayBetweenShootsTimer = 0.0f;
+			if (inputManager->getKey(32))
+			{
+				auto bullet = std::make_shared<BaseGameObject>(9, 20, glm::vec2(position.x + (width / 2.0f), position.y + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+				bullet->applyTexture(bulletTexture);
+				bullets.push_back(bullet);
+			}
 		}
 
 		if (inputManager->getKey('a'))
@@ -66,7 +78,7 @@ namespace Engine
 		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
 	}
 
-	void Player::onCollision(BaseGameObject* collider)
+	void Player::onCollision(BaseGameObject* object, BaseGameObject* collider, CollisionType type)
 	{
 		std::cout << "player hit" << std::endl;
 	}

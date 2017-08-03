@@ -8,6 +8,8 @@
 #include <memory>
 
 #include "Texture.h"
+#include "RenderObject.h"
+#include "CollisionType.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -17,44 +19,15 @@
 
 namespace Engine
 {
-	class BaseGameObject;
-	class Bullet
+	class Bullet : public RenderObject
 	{
 		public:
-			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4);
+			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4, RenderObject*);
 			~Bullet();
-			void draw(GLuint);
 			bool update(float);
-			void applyTexture(std::shared_ptr<Texture>);
-			inline void setVelocity(glm::vec2 _velocity) { velocity = _velocity; };
-			inline void setVelocity(int index, float _velocity) { velocity[index] = _velocity; };
-			inline glm::vec2 getVelocity() { return velocity; };
-			inline float getVelocity(int index) { return velocity[index]; };
-			void onCollision(BaseGameObject*);
-			inline float getPosition(int index) const { return position[index]; }
-			inline void setPosition(glm::vec2 _position) { position = _position; }
-			inline void setPosition(int index, float _position) { position[index] = _position; }
-			inline glm::vec2 getPosition() const { return position; }
-			int getSize(int) const;
-			inline float getColor(int index) const { return color[index]; }
-			inline void setCurrentFrame(int frame) { currentFrame = frame; }
-			inline int getCurrentFrame() const { return currentFrame; }
-			inline void setDelay(float _delay) { delay = _delay; }
-			inline void setAnimationStatus(bool _status) { animComplete = _status; }
-			inline void setLoopStatus(bool _status) { loop = _status; }
-			void updateTexture(float);
+			void onCollision(RenderObject*, RenderObject*, CollisionType);
 		private:
-			bool animComplete;
-			float animTimer;
-			bool loop;
-			float delay;
-			int currentFrame;
-			std::shared_ptr<Texture> texture;
-			int width;
-			int height;
-			glm::vec2 position;
-			glm::vec2 velocity;
-			glm::vec4 color;
+			RenderObject* parent;
 	};
 }
 #endif

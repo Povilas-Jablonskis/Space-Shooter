@@ -13,7 +13,7 @@ namespace Engine
 		public:
 			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
 			~Player();
-			bool update(float, std::shared_ptr<InputManager>);
+			bool update(float, std::shared_ptr<InputManager>, std::shared_ptr<Texture>);
 			void respawn();
 			void restart();
 			inline int getHealth() const { return health; }
@@ -22,7 +22,7 @@ namespace Engine
 			inline void setScore(int _score) { lastScore = score; score = _score; }
 			inline int getLastScore() const { return lastScore; }
 			inline int getLastHealth() const { return lastHealth; }
-			void onCollision(BaseGameObject*);
+			void onCollision(BaseGameObject*, BaseGameObject*, CollisionType);
 		private:
 			glm::vec2 startVelocity;
 			int lastScore;

@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "RenderObject.h"
+#include "CollisionType.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -27,12 +28,13 @@ namespace Engine
 			inline void setVelocity(int index, float _velocity) { velocity[index] = _velocity; };
 			inline float getVelocity(int index) { return velocity[index]; };
 			inline glm::vec2 getVelocity() { return velocity; };
-			void addBullet(std::shared_ptr<BaseGameObject>, std::shared_ptr<Texture> = nullptr);
 			inline std::vector<std::shared_ptr<BaseGameObject>>* getBulletsList() { return &bullets; }
-			virtual void onCollision(BaseGameObject*);
+			virtual void onCollision(BaseGameObject*, BaseGameObject*, CollisionType);
 		protected:
-			std::vector<std::shared_ptr<BaseGameObject>> bullets;
 			glm::vec2 velocity;
+			float delayBetweenShootsTimer;
+			float delayBetweenShoots;
+			std::vector<std::shared_ptr<BaseGameObject>> bullets;
 	};
 }
 #endif

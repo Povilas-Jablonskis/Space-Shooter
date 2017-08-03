@@ -95,6 +95,7 @@
     <ClInclude Include="BaseGameObject.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="CollisionType.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />
