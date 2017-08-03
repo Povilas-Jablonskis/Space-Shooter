@@ -69,6 +69,9 @@
     <ClCompile Include="BaseGameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseGameObject.h">
@@ -131,7 +134,7 @@
     <ClInclude Include="StructForTextCache.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionType.h">
+    <ClInclude Include="Bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

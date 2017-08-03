@@ -3,7 +3,7 @@
 namespace Engine
 {
 	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: RenderObject(_width, _height, _position, _color), velocity(_velocity), delayBetweenShoots(0.1f), delayBetweenShootsTimer(0.0f)
+		: RenderObject(_width, _height, _position, _color), velocity(_velocity), needsToBeDeleted(false)
 	{
 
 	}
@@ -21,8 +21,16 @@ namespace Engine
 		return true;
 	}
 
-	void BaseGameObject::onCollision(BaseGameObject* object, BaseGameObject* collider, CollisionType type)
+	void BaseGameObject::onCollision(BaseGameObject* collider)
 	{
 		std::cout << "some gameobject hit" << std::endl;
+	}
+
+	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Texture> animation)
+	{
+		if (animations.find(index) != animations.end())
+			return;
+
+		animations.insert(std::pair<std::string, std::shared_ptr<Texture>>(index, animation));
 	}
 }

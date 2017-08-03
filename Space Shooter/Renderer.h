@@ -24,7 +24,7 @@ namespace Engine
 			inline GLuint getTextVAO() const { return textVAO; }
 			void draw(std::vector<std::shared_ptr<RenderObject>>);
 			void draw(std::shared_ptr<RenderObject>);
-			void draw(std::vector<std::shared_ptr<Text>>, std::shared_ptr<Font>);
+			void draw(std::vector<std::shared_ptr<Text>>);
 			void draw(std::shared_ptr<Text>);
 		private:
 			GLuint vbo, vao, ebo;

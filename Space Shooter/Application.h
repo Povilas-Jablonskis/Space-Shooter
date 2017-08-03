@@ -3,6 +3,16 @@
 
 #include <unordered_map>
 #include <memory>
+#include <string>
+
+#include <iostream>
+#include <agents.h>
+#include <ppltasks.h>
+
+#include "document.h"
+#include "filereadstream.h"
+#include "filewritestream.h"
+#include "writer.h"
 
 #include "Renderer.h"
 #include "FontManager.h"
@@ -11,6 +21,11 @@
 #include "TextureManager.h"
 #include "CollisionManager.h"
 
+#include "UIElement.h"
+#include "Player.h"
+#include "TestEnemy.h"
+#include "Explosion.h"
+
 namespace Engine
 {
 	class Application
@@ -18,19 +33,41 @@ namespace Engine
 		public:
 			~Application();
 			Application();
-			void addShader(const std::string&, std::shared_ptr<Shader>);
-			void loadTexture(const std::string&, const std::string&, int, int, glm::vec2);
-			std::shared_ptr<Texture> getTexture(const std::string&);
 			inline std::shared_ptr<Font> getFont(const std::string& name) { return fontManager->getFont(name); }
-			void loadFont(const std::string&, const std::string&);
+			void checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<BaseGameObject>>*);
+			void checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<Bullet>>*, std::shared_ptr<BaseGameObject>);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
-			inline std::shared_ptr<InputManager> getInputManager() const { return inputManager; }
-			inline std::shared_ptr<TextureManager> getTextureManager() const { return textureManager; }
-			inline std::shared_ptr<Renderer> getRender() const { return renderer; }
-			inline std::shared_ptr<CollisionManager> getCollisionManager() const { return collisionManager; }
-			inline std::shared_ptr<FontManager> getFontManager() const { return fontManager; }
+
+			template <class T>
+			void timer(const T& callback, unsigned int timeInMs);
+
+			void startNewLevel();
+			void initPlayerUI();
+			void updatePlayerUI();
+			void initScene();
+			void initGameUI();
+			void render();
+			void keyboardInputUp(unsigned char, int, int);
+			void resize(int, int);
+			void keyboardInput(unsigned char, int, int);
+			void motionFunc(int, int);
+			void processMouseClick(int, int, int, int);
 		private:
+			std::shared_ptr<Player> player;
+			std::shared_ptr<UIElement> background;
+			std::shared_ptr<UIElement> currentMenu;
+
+			float t;
+			float dt;
+			float currentTime;
+			float accumulator;
+
+			std::vector<std::shared_ptr<TestEnemy>> enemies;
+			std::vector<std::shared_ptr<Explosion>> explosions;
+			std::unordered_map<std::string, std::shared_ptr<UIElement>> ui;
+			std::unordered_map<std::string, std::shared_ptr<UIElement>> playerUI;
+
 			std::shared_ptr<CollisionManager> collisionManager;
 			std::shared_ptr<Renderer> renderer;
 			std::shared_ptr<TextureManager> textureManager;

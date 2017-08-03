@@ -8,8 +8,7 @@
 #include <memory>
 
 #include "Texture.h"
-#include "RenderObject.h"
-#include "CollisionType.h"
+#include "BaseGameObject.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -19,15 +18,13 @@
 
 namespace Engine
 {
-	class Bullet : public RenderObject
+	class Bullet : public BaseGameObject
 	{
 		public:
-			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4, RenderObject*);
+			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4);
 			~Bullet();
 			bool update(float);
-			void onCollision(RenderObject*, RenderObject*, CollisionType);
-		private:
-			RenderObject* parent;
+			void onCollision(BaseGameObject*, BaseGameObject*);
 	};
 }
 #endif

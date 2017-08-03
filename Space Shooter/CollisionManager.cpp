@@ -35,4 +35,14 @@ namespace Engine
 		}
 		return colliderlist->end();
 	}
+
+	std::vector<std::shared_ptr<Bullet>>::iterator CollisionManager::checkCollision(std::shared_ptr<BaseGameObject> object, std::vector<std::shared_ptr<Bullet>>* bulletlist) // AABB - AABB collision
+	{
+		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bulletlist->begin(); it != bulletlist->end(); ++it)
+		{
+			if (checkCollision(*it, object))
+				return it;
+		}
+		return bulletlist->end();
+	}
 }

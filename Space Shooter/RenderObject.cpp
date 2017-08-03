@@ -4,7 +4,7 @@
 namespace Engine
 {
 	RenderObject::RenderObject(int _width, int _height, glm::vec2 _position, glm::vec4 _color)
-		: width(_width), height(_height), position(_position), color(_color), texture(nullptr)
+		: width(_width), height(_height), position(_position), color(_color), texture(nullptr), rotationAngle(0.0f), rotationAxis(glm::vec3(0.0,0.0,1.0))
 	{
 
 	}

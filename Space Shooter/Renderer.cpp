@@ -98,9 +98,9 @@ namespace Engine
 					glm::mat4 model;
 					model = glm::translate(model, glm::vec3(element->getPosition(), 0.0f));
 
-					/*model = glm::translate(model, glm::vec3(0.5f * width, 0.5f * height, 0.0f));
-					model = glm::rotate(model, 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-					model = glm::translate(model, glm::vec3(-0.5f * width, -0.5f * height, 0.0f));*/
+					model = glm::translate(model, glm::vec3(0.5f * element->getSize(0), 0.5f * element->getSize(1), 0.0f));
+					model = glm::rotate(model, element->getRotationAngle(), element->getRotationAxis());
+					model = glm::translate(model, glm::vec3(-0.5f * element->getSize(0), -0.5f * element->getSize(1), 0.0f));
 
 					model = glm::scale(model, glm::vec3(element->getSize(0), element->getSize(1), 1.0f));
 
@@ -149,9 +149,9 @@ namespace Engine
 				glm::mat4 model;
 				model = glm::translate(model, glm::vec3(element->getPosition(), 0.0f));
 
-				/*model = glm::translate(model, glm::vec3(0.5f * width, 0.5f * height, 0.0f));
-				model = glm::rotate(model, 0.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-				model = glm::translate(model, glm::vec3(-0.5f * width, -0.5f * height, 0.0f));*/
+				model = glm::translate(model, glm::vec3(0.5f * element->getSize(0), 0.5f * element->getSize(1), 0.0f));
+				model = glm::rotate(model, element->getRotationAngle(), element->getRotationAxis());
+				model = glm::translate(model, glm::vec3(-0.5f * element->getSize(0), -0.5f * element->getSize(1), 0.0f));
 
 				model = glm::scale(model, glm::vec3(element->getSize(0), element->getSize(1), 1.0f));
 
@@ -176,7 +176,7 @@ namespace Engine
 		glBindVertexArray(0);
 	}
 
-	void Renderer::draw(std::vector<std::shared_ptr<Text>> vector, std::shared_ptr<Font> font)
+	void Renderer::draw(std::vector<std::shared_ptr<Text>> vector)
 	{
 		auto program = getShaderProgram("textshader");
 		int offsetLocation = glGetUniformLocation(program, "color");

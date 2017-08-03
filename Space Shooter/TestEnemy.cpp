@@ -4,7 +4,7 @@
 namespace Engine
 {
 	TestEnemy::TestEnemy(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), delayBetweenShoots(1.5f), delayBetweenShootsTimer(0.0f)
 	{
 		float _dt = 0.0f;
 		float maxPos = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -29,18 +29,41 @@ namespace Engine
 		position.y += velocity.y * sin(t);
 		BaseGameObject::updateTexture(dt);
 
-		for (auto BaseGameObject : bullets)
+		for (auto bullet : bullets)
 		{
-			BaseGameObject->update(dt);
+			bullet->update(dt);
 		}
-		return true;
+
+		delayBetweenShootsTimer += dt;
+		if (delayBetweenShootsTimer > delayBetweenShoots)
+		{
+			delayBetweenShootsTimer = 0.0f;
+			auto bullet = std::make_shared<Bullet>(9, 20, glm::vec2(position.x + (width / 2.0f), position.y - 5.0f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+			bullet->applyTexture(animations["shoot"]);
+			bullet->setRotationAngle(3.141592f);
+			bullet->setRotationAxis(glm::vec3(0.0,0.0,1.0));
+			bullets.push_back(bullet);
+		}
+		return needsToBeDeleted;
 	}
 
-	void TestEnemy::onCollision(BaseGameObject* object, BaseGameObject* collider, CollisionType type)
+	void TestEnemy::deleteBullet(Bullet* bullet)
 	{
-		Player* tempPlayer = dynamic_cast<Player*>(collider);
-		if (tempPlayer != nullptr)
-			tempPlayer->respawn();
+		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end(); it++)
+		{
+			if (it->get() == bullet)
+			{
+				bullets.erase(it);
+				return;
+			}
+		}
+	}
+
+	void TestEnemy::onCollision(BaseGameObject* collider)
+	{
+		Player* player = dynamic_cast<Player*>(collider);
+		if (player != nullptr)
+			player->respawn();
 
 		std::cout << "enemy hit" << std::endl;
 	}

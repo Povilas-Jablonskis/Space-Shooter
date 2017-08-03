@@ -11,12 +11,12 @@ namespace Engine
 	}
 
 	Player::Player(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity), lastHealth(0), lastScore(0)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity), lastHealth(0), lastScore(0), delayBetweenShoots(0.2f), delayBetweenShootsTimer(0.0f)
 	{
 
 	}
 
-	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager, std::shared_ptr<Texture> bulletTexture)
+	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager)
 	{
 		BaseGameObject::updateTexture(dt);
 
@@ -34,8 +34,8 @@ namespace Engine
 			delayBetweenShootsTimer = 0.0f;
 			if (inputManager->getKey(32))
 			{
-				auto bullet = std::make_shared<BaseGameObject>(9, 20, glm::vec2(position.x + (width / 2.0f), position.y + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-				bullet->applyTexture(bulletTexture);
+				auto bullet = std::make_shared<Bullet>(9, 20, glm::vec2(position.x + (width / 2.0f), position.y + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+				bullet->applyTexture(animations["shoot"]);
 				bullets.push_back(bullet);
 			}
 		}
@@ -78,7 +78,19 @@ namespace Engine
 		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
 	}
 
-	void Player::onCollision(BaseGameObject* object, BaseGameObject* collider, CollisionType type)
+	void Player::deleteBullet(Bullet* bullet)
+	{
+		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end(); it++)
+		{
+			if (it->get() == bullet)
+			{
+				bullets.erase(it);
+				return;
+			}
+		}
+	}
+
+	void Player::onCollision(BaseGameObject* collider)
 	{
 		std::cout << "player hit" << std::endl;
 	}

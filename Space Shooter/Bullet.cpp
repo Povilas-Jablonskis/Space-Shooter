@@ -1,18 +1,18 @@
 #include "Bullet.h"
-#include <memory>
 #include "Player.h"
+#include "TestEnemy.h"
 
 namespace Engine
 {
-	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, RenderObject* _parent)
-		: RenderObject(_width, _height, _position, _velocity, _color), parent(_parent)
+	Bullet::Bullet(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+		: BaseGameObject(_width, _height, _position, _velocity, _color)
 	{
 
 	}
 
 	Bullet::~Bullet()
 	{
-		delete parent;
+
 	}
 
 	bool Bullet::update(float _dt)
@@ -29,8 +29,24 @@ namespace Engine
 		return true;
 	}
 
-	void Bullet::onCollision(RenderObject* object, RenderObject* collider, CollisionType type)
+	void Bullet::onCollision(BaseGameObject* collider, BaseGameObject* parent)
 	{
-		std::cout << "bullet hit" << std::endl;
+		Player* player = dynamic_cast<Player*>(parent);
+		if (player != nullptr)
+		{
+			collider->setNeedsToBeDeleted(true);
+			player->deleteBullet(this);
+			player->setScore(player->getScore() + 100);
+			std::cout << "player bullet hit" << std::endl;
+		}
+		TestEnemy* enemy = dynamic_cast<TestEnemy*>(parent);
+		if (enemy != nullptr)
+		{
+			Player* player = dynamic_cast<Player*>(collider);
+			if (player != nullptr)
+				player->respawn();
+			enemy->deleteBullet(this);
+			std::cout << "enemy bullet hit" << std::endl;
+		}
 	}
 }
