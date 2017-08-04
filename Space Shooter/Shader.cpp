@@ -12,7 +12,7 @@ namespace Engine
 
 	Shader::~Shader()
 	{
-
+		glDeleteProgram(program);
 	}
 
 	std::string Shader::readShaderFile(const std::string& path)

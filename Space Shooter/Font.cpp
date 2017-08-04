@@ -7,11 +7,6 @@ namespace Engine
 		LoadCharacters();
 	}
 
-	Font::~Font()
-	{
-
-	}
-
 	void Font::LoadCharacters()
 	{
 		FT_Set_Pixel_Sizes(face, 0, 18);

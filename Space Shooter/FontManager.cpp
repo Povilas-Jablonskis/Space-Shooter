@@ -2,15 +2,27 @@
 
 namespace Engine
 {
+	FontManager::~FontManager()
+	{
+		for (std::unordered_map<std::string, std::shared_ptr<Font>>::iterator it = faces.begin(); it != faces.end(); ++it)
+		{
+			auto characterList = it->second->getCharacterList();
+			for (std::map<GLchar, Character>::iterator it2 = characterList.begin(); it2 != characterList.end(); ++it2)
+			{
+				glDeleteTextures(1, &it2->second.TextureID);
+			}
+		}
+
+		faces.clear();
+
+		if (FT_Done_FreeType(library))
+			std::cout << "ERROR::FREETYPE: Could not free FreeType Library" << std::endl;
+	}
+
 	FontManager::FontManager()
 	{
 		if (FT_Init_FreeType(&library))
 			std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-	}
-
-	FontManager::~FontManager()
-	{
-
 	}
 
 	void FontManager::loadFont(const std::string& _path, const std::string& _name)
@@ -28,8 +40,10 @@ namespace Engine
 	std::shared_ptr<Font> FontManager::getFont(const std::string& name)
 	{
 		auto tempFace = faces.find(name);
+
 		if (tempFace != faces.end())
 			return tempFace->second;
+
 		return nullptr;
 	}
 }

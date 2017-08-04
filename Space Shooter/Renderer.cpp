@@ -54,14 +54,21 @@ namespace Engine
 
 	Renderer::~Renderer()
 	{
-
+		shaders.clear();
+		glDeleteBuffers(1, &textVBO);
+		glDeleteBuffers(1, &vbo);
+		glDeleteBuffers(1, &ebo);
+		glDeleteVertexArrays(1, &textVAO);
+		glDeleteVertexArrays(1, &vao);
 	}
 
 	GLuint Renderer::getShaderProgram(const std::string& name) const
 	{
 		auto tempShader = shaders.find(name);
+
 		if (tempShader != shaders.end())
 			return tempShader->second->getShader();
+
 		return -1;
 	}
 
@@ -69,6 +76,7 @@ namespace Engine
 	{
 		if (shaders.find(name) != shaders.end())
 			return;
+
 		shaders.insert(std::pair<std::string, std::shared_ptr<Shader>>(name, shader));
 	}
 
@@ -88,7 +96,7 @@ namespace Engine
 		int offsetLocation7 = glGetUniformLocation(program, "model");
 		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
 		glBindVertexArray(vao);
-		glUseProgram(program);
+			glUseProgram(program);
 				for (auto element : vector)
 				{
 					if (element->getColor(3) == 0.0f) continue;
@@ -141,7 +149,7 @@ namespace Engine
 		int offsetLocation7 = glGetUniformLocation(program, "model");
 		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
 		glBindVertexArray(vao);
-		glUseProgram(program);
+			glUseProgram(program);
 				if (element->getColor(3) == 0.0f) return;
 
 				auto texture = element->getTexture();

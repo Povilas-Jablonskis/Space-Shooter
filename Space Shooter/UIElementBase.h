@@ -23,7 +23,6 @@ namespace Engine
 	class UIElementBase : public RenderObject
 	{
 		public:
-			~UIElementBase();
 			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2);
 			void initFuncs();
 			virtual void update(float);

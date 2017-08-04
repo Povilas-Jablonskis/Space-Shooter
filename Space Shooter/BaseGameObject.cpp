@@ -10,7 +10,7 @@ namespace Engine
 
 	BaseGameObject::~BaseGameObject()
 	{
-
+		animations.clear();
 	}
 
 	bool BaseGameObject::update(float _dt)

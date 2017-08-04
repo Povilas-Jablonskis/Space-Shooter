@@ -23,7 +23,6 @@ namespace Engine
 	class RenderObject
 	{
 		public:
-			~RenderObject();
 			RenderObject(int, int, glm::vec2, glm::vec4);
 			inline void changeColor(float _color, int index) { color[index] = _color; }
 			inline float getColor(int index) const{ return color[index]; }

@@ -9,11 +9,6 @@ namespace Engine
 
 	}
 
-	Texture::~Texture()
-	{
-	
-	}
-
 	void Texture::readTextureFile(const std::string& _path)
 	{
 		glGenTextures(1, &texture);

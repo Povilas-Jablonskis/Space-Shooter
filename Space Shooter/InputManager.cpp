@@ -7,11 +7,6 @@ namespace Engine
 		resetInput();
 	}
 
-	InputManager::~InputManager()
-	{
-
-	}
-
 	void InputManager::resetInput()
 	{
 		setLeftMouseState(false);

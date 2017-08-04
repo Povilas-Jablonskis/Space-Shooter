@@ -13,7 +13,6 @@ namespace Engine
 	class TextureManager
 	{
 		public:
-			TextureManager();
 			~TextureManager();
 			void loadTexture(const std::string&, const std::string&, int, int, glm::vec2);
 			std::shared_ptr<Texture> getTexture(const std::string&);

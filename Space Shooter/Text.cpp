@@ -12,7 +12,7 @@ namespace Engine
 
 	Text::~Text()
 	{
-
+		cachedCharacters.clear();
 	}
 
 	void Text::onHoverEnterFuncDefaults()

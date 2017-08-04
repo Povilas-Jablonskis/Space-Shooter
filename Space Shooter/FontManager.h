@@ -14,8 +14,8 @@ namespace Engine
 	class FontManager
 	{
 		public:
-			FontManager();
 			~FontManager();
+			FontManager();
 			void loadFont(const std::string&, const std::string&);
 			std::shared_ptr<Font> getFont(const std::string&);
 		private:

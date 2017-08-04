@@ -33,7 +33,6 @@ namespace Engine
 		public:
 			~Application();
 			Application();
-			inline std::shared_ptr<Font> getFont(const std::string& name) { return fontManager->getFont(name); }
 			void checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<BaseGameObject>>*);
 			void checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<Bullet>>*, std::shared_ptr<BaseGameObject>);
 			inline GameState getState() const { return gameState; }

@@ -10,11 +10,6 @@ namespace Engine
 
 	}
 
-	Bullet::~Bullet()
-	{
-
-	}
-
 	bool Bullet::update(float _dt)
 	{
 		position.x += velocity.x * _dt;

@@ -15,8 +15,8 @@ namespace Engine
 	class Renderer
 	{
 		public:
-			Renderer();
 			~Renderer();
+			Renderer();
 			void addShader(const std::string& name, std::shared_ptr<Shader> shader);
 			inline GLuint getVAO() const { return vao; }
 			GLuint getShaderProgram(const std::string&) const;

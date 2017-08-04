@@ -14,7 +14,6 @@ namespace Engine
 	{
 		public:
 			Texture(int, int, glm::vec2);
-			~Texture();
 			void readTextureFile(const std::string&);
 			inline GLuint getTexture() const { return texture; }
 			int getSize(int index) const;

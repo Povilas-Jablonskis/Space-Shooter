@@ -9,8 +9,6 @@ namespace Engine
 	class CollisionManager
 	{
 		public:
-			CollisionManager();
-			~CollisionManager();
 			std::vector<std::shared_ptr<BaseGameObject>>::iterator checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<BaseGameObject>>*);
 			std::vector<std::shared_ptr<Bullet>>::iterator checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<Bullet>>*);
 		private:

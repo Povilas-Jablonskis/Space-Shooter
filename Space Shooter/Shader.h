@@ -11,8 +11,8 @@ namespace Engine
 	class Shader
 	{
 		public:
-			Shader(const std::string&, const std::string&);
 			~Shader();
+			Shader(const std::string&, const std::string&);
 			void loadShader(const std::string&, const std::string&);
 			std::string readShaderFile(const std::string&);
 			inline GLuint getShader() const { return program; }

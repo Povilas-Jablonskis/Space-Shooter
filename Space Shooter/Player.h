@@ -12,8 +12,8 @@ namespace Engine
 	class Player : public BaseGameObject
 	{
 		public:
-			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
 			~Player();
+			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float, std::shared_ptr<InputManager>);
 			void respawn();
 			void restart();

@@ -9,14 +9,10 @@ namespace Engine
 
 	}
 
-	RenderObject::~RenderObject()
-	{
-
-	}
-
 	void RenderObject::updateTexture(float dt)
 	{
 		if (texture == nullptr) return;
+
 		if (texture->getEndFrame() - texture->getStartFrame() > 0)
 		{
 			texture->setAnimTimer(texture->getAnimTimer() + dt);
@@ -41,6 +37,7 @@ namespace Engine
 	void RenderObject::applyTexture(std::shared_ptr<Texture> _texture)
 	{
 		if (_texture == nullptr) return;
+
 		_texture->setAnimTimer(0.0f);
 		texture = _texture;
 	}

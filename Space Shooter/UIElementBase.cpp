@@ -8,11 +8,6 @@ namespace Engine
 		initFuncs();
 	}
 
-	UIElementBase::~UIElementBase()
-	{
-
-	}
-
 	void UIElementBase::initFuncs()
 	{
 		onHoverEnterFunc = []()
@@ -39,12 +34,14 @@ namespace Engine
 	void UIElementBase::update(float dt)
 	{
 		if (color.a == 0.0f) return;
+
 		updateTexture(dt);
 	}
 
 	void UIElementBase::fixPosition(UIElementBase* parent)
 	{
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+
 		if (parent != nullptr)
 		{
 			if (positionPercents == glm::vec2(0.0f, 0.0f))
@@ -75,6 +72,7 @@ namespace Engine
 	{
 		if (colCoordinates.x >= position.x && colCoordinates.x <= (position.x + width) && colCoordinates.y <= position.y && colCoordinates.y >= (position.y + height))
 			return true;
+		
 		return false;
 	}
 
@@ -91,6 +89,7 @@ namespace Engine
 	void UIElementBase::checkIfMouseHoverThis(glm::vec2 lastMousePosition)
 	{
 		if (color.a == 0.0f || isStatic) return;
+		
 		if (checkIfCollides(lastMousePosition))
 		{
 			if (!gotMousedHovered)

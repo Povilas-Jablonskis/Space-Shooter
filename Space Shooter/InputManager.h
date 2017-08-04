@@ -8,7 +8,6 @@ namespace Engine
 	class InputManager
 	{
 		public:
-			~InputManager();
 			InputManager();
 			void resetInput();
 			inline bool getLeftMouseState() const { return leftMouseClick; }

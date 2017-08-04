@@ -22,8 +22,8 @@ namespace Engine
 	class Text : public UIElementBase
 	{
 		public:
-			Text(const std::string&, int, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
 			~Text();
+			Text(const std::string&, int, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
 			void update(float);
 			inline std::shared_ptr<Font> getFont() const { return font; }
 			inline std::vector<StructForTextCache> getCachedCharacters() { return cachedCharacters; }

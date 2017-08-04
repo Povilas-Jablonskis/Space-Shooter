@@ -16,27 +16,27 @@ namespace Engine
 		fopen_s(&pFile,"config.json", "rb");
 		if (pFile != NULL)
 		{
-		rapidjson::FileReadStream is(pFile, writeBuffer, sizeof(writeBuffer));
-		rapidjson::Document d;
-		d.ParseStream(is);
-		fclose(pFile);
+			rapidjson::FileReadStream is(pFile, writeBuffer, sizeof(writeBuffer));
+			rapidjson::Document d;
+			d.ParseStream(is);
+			fclose(pFile);
 
-		const rapidjson::Value& second = d["second"];
-		const rapidjson::Value& first = d["first"];
+			const rapidjson::Value& second = d["second"];
+			const rapidjson::Value& first = d["first"];
 
-		for (rapidjson::Value::ConstMemberIterator itr = second[0].MemberBegin(); itr != second[0].MemberEnd(); ++itr) {
-		std::cout << itr->name.GetString() << ":" << itr->value.GetType() << std::endl;
+			for (rapidjson::Value::ConstMemberIterator itr = second[0].MemberBegin(); itr != second[0].MemberEnd(); ++itr) {
+				std::cout << itr->name.GetString() << ":" << itr->value.GetType() << std::endl;
+			}
+
+			std::cout << std::endl << std::endl;
+
+			for (rapidjson::Value::ConstMemberIterator itr = first[0].MemberBegin(); itr != first[0].MemberEnd(); ++itr) {
+				std::cout << itr->name.GetString() << ":" << itr->value.GetType() << std::endl;
+			}
 		}
-
-		std::cout << std::endl << std::endl;
-
-		for (rapidjson::Value::ConstMemberIterator itr = first[0].MemberBegin(); itr != first[0].MemberEnd(); ++itr) {
-		std::cout << itr->name.GetString() << ":" << itr->value.GetType() << std::endl;
-		}
-		}
-		else {
-		std::cout << "config.json not found" << std::endl;
-		}*/
+		else 
+			std::cout << "config.json not found" << std::endl;
+		*/
 
 		renderer->addShader("shader", std::make_shared<Shader>("shader.vert", "shader.frag"));
 		renderer->addShader("textshader", std::make_shared<Shader>("textshader.vert", "textshader.frag"));
@@ -49,8 +49,9 @@ namespace Engine
 		textureManager->loadTexture("PNG/Enemies/enemyBlack1.png", "enemyBlack1", 0, 0, glm::vec2(1, 1));
 		textureManager->loadTexture("Backgrounds/blue.png", "blueBackground", 0, 0, glm::vec2(1, 1));
 		textureManager->loadTexture("PNG/Lasers/laserBlue01.png", "laserBlue01", 0, 0, glm::vec2(1, 1));
-		textureManager->loadTexture("PNG/Lasers/laserGreen11.png", "laserGreen11", 0, 0, glm::vec2(1, 1));
 		textureManager->loadTexture("PNG/Lasers/blueExplosionSpriteSheet.png", "blueExplosionSpriteSheet", 1, 2, glm::vec2(2, 1));
+		textureManager->loadTexture("PNG/Lasers/laserGreen11.png", "laserGreen11", 0, 0, glm::vec2(1, 1));
+		textureManager->loadTexture("PNG/Lasers/greenExplosionSpriteSheet.png", "greenExplosionSpriteSheet", 1, 2, glm::vec2(2, 1));
 
 		initGameUI();
 		currentMenu = ui["Main Menu"];
@@ -67,7 +68,10 @@ namespace Engine
 
 	Application::~Application()
 	{
-
+		enemies.clear();
+		explosions.clear();
+		ui.clear();
+		playerUI.clear();
 	}
 
 	template <class T>
@@ -105,7 +109,7 @@ namespace Engine
 		if (collision != bulletList->end())
 		{
 			auto explosion = std::make_shared<Explosion>(32, 32, object->getPosition());
-			explosion->applyTexture(object->getAnimation("explosion"));
+			explosion->applyTexture(std::make_shared<Texture>(*parent->getAnimation("explosion")));
 			explosions.push_back(explosion);
 			(*collision)->onCollision(object.get(), parent.get());
 		}
@@ -115,7 +119,7 @@ namespace Engine
 	{
 		playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
-		auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
+		auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
 		option->setIsStatic(true);
 		playerUI["Score"]->addText(option);
 
@@ -124,13 +128,13 @@ namespace Engine
 		auto option2 = std::make_shared<UIElement>(33, 26, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
 		option2->applyTexture(std::make_shared<Texture>(*textureManager->getTexture("playerLife1_blue")));
 		playerUI["Health"]->addUIElement(option2);
-		option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
+		option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
 		option->setIsStatic(true);
 		playerUI["Health"]->addText(option);
 
 		playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Level completed", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
-		auto option3 = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
+		auto option3 = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
 		option3->setIsStatic(true);
 		playerUI["Level completed"]->addText(option3);
 
@@ -151,7 +155,7 @@ namespace Engine
 				playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
 				//Score
-				auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
+				auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
 				option->setIsStatic(true);
 				playerUI["Score"]->addText(option);
 				playerUI["Score"]->fixPosition();
@@ -166,7 +170,7 @@ namespace Engine
 				auto option2 = std::make_shared<UIElement>(33, 26, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
 				option2->applyTexture(std::make_shared<Texture>(*textureManager->getTexture("playerLife1_blue")));
 				playerUI["Health"]->addUIElement(option2);
-				auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
+				auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
 				option->setIsStatic(true);
 				playerUI["Health"]->addText(option);
 				playerUI["Health"]->fixPosition();
@@ -185,9 +189,8 @@ namespace Engine
 		{
 			auto enemy = std::make_shared<TestEnemy>(32, 32, glm::vec2(i * space, 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
 			enemy->addAnimation("shoot", std::make_shared<Texture>(*textureManager->getTexture("laserGreen11")));
-			enemy->addAnimation("explosion", std::make_shared<Texture>(*textureManager->getTexture("blueExplosionSpriteSheet")));
+			enemy->addAnimation("explosion", std::make_shared<Texture>(*textureManager->getTexture("greenExplosionSpriteSheet")));
 			enemy->applyTexture(std::make_shared<Texture>(*textureManager->getTexture("enemyBlack1")));
-
 			enemies.push_back(enemy);
 		}
 
@@ -205,7 +208,7 @@ namespace Engine
 		auto C = std::make_shared<UIElement>(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), Options, glm::vec2(0.0f, 0.0f));
 
 		//Main Menu
-		auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(48.0f, 60.0f));
+		auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 60.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
 			initScene();
@@ -220,7 +223,7 @@ namespace Engine
 			ui["Main Menu"]->hideMain();
 		};
 		ui["Main Menu"]->addText(options);
-		options = std::make_shared<Text>("Options", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
+		options = std::make_shared<Text>("Options", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
 		options->onMouseReleaseFunc = [this, Options]()
 		{
 			currentMenu = Options;
@@ -228,7 +231,7 @@ namespace Engine
 			Options->showMain();
 		};
 		ui["Main Menu"]->addText(options);
-		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(48.0f, 50.0f));
+		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 50.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
 			currentMenu = nullptr;
@@ -240,7 +243,7 @@ namespace Engine
 		ui["Main Menu"]->showMain();
 
 		//Pause Menu
-		options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(45.0f, 60.0f));
+		options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(45.0f, 60.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
 			currentMenu = ui["Main Menu"];
@@ -249,7 +252,7 @@ namespace Engine
 			ui["Main Menu"]->showMain();
 		};
 		ui["Pause Menu"]->addText(options);
-		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
+		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
 			currentMenu = nullptr;
@@ -260,7 +263,7 @@ namespace Engine
 		ui["Pause Menu"]->addText(options);
 
 		//Options
-		options = std::make_shared<Text>("A", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
+		options = std::make_shared<Text>("A", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
 		options->onMouseReleaseFunc = [this, Options, C]()
 		{
 			currentMenu = C;
@@ -268,9 +271,9 @@ namespace Engine
 			C->showMain();
 		};
 		Options->addText(options);
-		options = std::make_shared<Text>("B", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
+		options = std::make_shared<Text>("B", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
 		Options->addText(options);
-		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(50.0f, 50.0f));
+		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 50.0f));
 		options->onMouseReleaseFunc = [this, Options]()
 		{
 			currentMenu = ui["Main Menu"];
@@ -281,9 +284,9 @@ namespace Engine
 		ui["Main Menu"]->addUIElement(Options);
 
 		//C
-		options = std::make_shared<Text>("C", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
+		options = std::make_shared<Text>("C", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
 		C->addText(options);
-		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
+		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
 		options->onMouseReleaseFunc = [this, Options, C]()
 		{
 			currentMenu = Options;
@@ -294,7 +297,7 @@ namespace Engine
 		Options->addUIElement(C);
 
 		//Game Over
-		options = std::make_shared<Text>("Game Over", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
+		options = std::make_shared<Text>("Game Over", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
 		options->setIsStatic(true);
 		ui["Game Over"]->addText(options);
 	}
@@ -450,38 +453,38 @@ namespace Engine
 		{
 			switch (c)
 			{
-			case 27:
-			{
-				if (getState() == GameState::ENDED)
+				case 27:
 				{
-					currentMenu = ui["Main Menu"];
-					ui["Game Over"]->hideMain();
-					ui["Main Menu"]->showMain();
-					setState(GameState::NOTSTARTEDYET);
-				}
-				else if (getState() == GameState::PAUSED)
-				{
-					currentMenu = nullptr;
-					ui["Pause Menu"]->hideMain();
-					setState(GameState::STARTED);
-				}
-				else if (getState() == GameState::STARTED)
-				{
-					currentMenu = ui["Pause Menu"];
-					ui["Pause Menu"]->showMain();
-					setState(GameState::PAUSED);
-				}
-				else if (getState() == GameState::NOTSTARTEDYET)
-				{
-					if (currentMenu != nullptr && currentMenu->getParent() != nullptr)
+					if (getState() == GameState::ENDED)
 					{
-						currentMenu->hideMain();
-						currentMenu = currentMenu->getParent();
-						currentMenu->showMain();
+						currentMenu = ui["Main Menu"];
+						ui["Game Over"]->hideMain();
+						ui["Main Menu"]->showMain();
+						setState(GameState::NOTSTARTEDYET);
 					}
+					else if (getState() == GameState::PAUSED)
+					{
+						currentMenu = nullptr;
+						ui["Pause Menu"]->hideMain();
+						setState(GameState::STARTED);
+					}
+					else if (getState() == GameState::STARTED)
+					{
+						currentMenu = ui["Pause Menu"];
+						ui["Pause Menu"]->showMain();
+						setState(GameState::PAUSED);
+					}
+					else if (getState() == GameState::NOTSTARTEDYET)
+					{
+						if (currentMenu != nullptr && currentMenu->getParent() != nullptr)
+						{
+							currentMenu->hideMain();
+							currentMenu = currentMenu->getParent();
+							currentMenu->showMain();
+						}
+					}
+					break;
 				}
-				break;
-			}
 			}
 			inputManager->setKey(c, true);
 		}

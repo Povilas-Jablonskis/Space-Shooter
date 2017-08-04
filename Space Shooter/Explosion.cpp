@@ -8,11 +8,6 @@ namespace Engine
 		
 	}
 
-	Explosion::~Explosion()
-	{
-
-	}
-
 	bool Explosion::update(float dt)
 	{
 		updateTexture(dt);

@@ -2,16 +2,6 @@
 
 namespace Engine
 {
-	CollisionManager::CollisionManager()
-	{
-
-	}
-
-	CollisionManager::~CollisionManager()
-	{
-
-	}
-
 	GLboolean CollisionManager::checkCollision(std::shared_ptr<BaseGameObject> object, std::shared_ptr<BaseGameObject> collider) // AABB - AABB collision
 	{
 		// Collision x-axis?

@@ -9,7 +9,6 @@ namespace Engine
 	{
 		public:
 			Explosion(int, int, glm::vec2);
-			~Explosion();
 			bool update(float);
 			void applyTexture(std::shared_ptr<Texture>);
 		};
