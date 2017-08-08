@@ -34,6 +34,16 @@ void resize(int width, int height)
 	application->resize(width, height);
 }
 
+void specialKeyInput(int key, int x, int y)
+{
+	application->specialKeyInput(key, x, y);
+}
+
+void specialKeyInputUp(int key, int x, int y)
+{
+	application->specialKeyInputUp(key, x, y);
+}
+
 int main(int argc, char *argv[])
 {
 	glutInit(&argc, argv);
@@ -64,6 +74,8 @@ int main(int argc, char *argv[])
 	glutKeyboardUpFunc(keyboardInputUp);
 	glutMouseFunc(processMouseClick);
 	glutPassiveMotionFunc(motionFunc);
+	glutSpecialFunc(specialKeyInput);
+	glutSpecialUpFunc(specialKeyInputUp);
 
 	application = std::make_shared<Application>();
 

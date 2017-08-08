@@ -7,7 +7,12 @@ namespace Engine
 	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
 		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), fontSize(_fontsize), text(_text), font(_font), lastText(""), needUpdate(true)
 	{
-		
+	}
+
+	Text::Text(const char _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
+		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), fontSize(_fontsize), text(""), font(_font), lastText(""), needUpdate(true)
+	{
+		text += _text;
 	}
 
 	Text::~Text()
@@ -76,12 +81,39 @@ namespace Engine
 				} 
 			};
 
-			cachedCharacters.push_back(tempStruct);
+			cachedCharacters.push_back(std::move(tempStruct));
 			position.x += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 
 		bbox[1] = position.x;
 		bbox[2] = position.y + (float)*std::max_element(std::begin(tempVector), std::end(tempVector));
 		position = lastPosition;
+	}
+
+	void Text::fixPosition(UIElementBase* parent)
+	{
+		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+
+		if (parent != nullptr)
+		{
+			if (positionPercents == glm::vec2(0.0f, 0.0f))
+			{
+				setPosition(0, parent->getPosition(0));
+				setPosition(1, parent->getPosition(1));
+			}
+			else
+			{
+				setPosition(0, parent->getPosition(0) + (parent->getSize(0) * (positionPercents.x / 100.0f)));
+				setPosition(1, parent->getPosition(1) + (parent->getSize(1) * (positionPercents.y / 100.0f)));
+			}
+		}
+		else
+		{
+			if (positionPercents == glm::vec2(0.0f, 0.0f))
+				return;
+
+			setPosition(0, temPos.x * (positionPercents.x / 100.0f));
+			setPosition(1, temPos.y * (positionPercents.y / 100.0f));
+		}
 	}
 }

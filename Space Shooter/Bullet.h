@@ -21,7 +21,7 @@ namespace Engine
 	class Bullet : public BaseGameObject
 	{
 		public:
-			Bullet(int, int, glm::vec2, glm::vec2, glm::vec4);
+			Bullet(float, float, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float);
 			void onCollision(BaseGameObject*, BaseGameObject*);
 	};

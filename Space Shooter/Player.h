@@ -6,6 +6,7 @@
 #include "BaseGameObject.h"
 #include "InputManager.h"
 #include "Bullet.h"
+#include "Subject.h"
 
 namespace Engine
 {
@@ -13,7 +14,7 @@ namespace Engine
 	{
 		public:
 			~Player();
-			Player(int, int, glm::vec2, glm::vec2, glm::vec4);
+			Player(float, float, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float, std::shared_ptr<InputManager>);
 			void respawn();
 			void restart();
@@ -26,7 +27,7 @@ namespace Engine
 			inline int getLastScore() const { return lastScore; }
 			inline int getLastHealth() const { return lastHealth; }
 			void onCollision(BaseGameObject*);
-		private:
+	private:
 			float delayBetweenShootsTimer;
 			float delayBetweenShoots;
 			std::vector<std::shared_ptr<Bullet>> bullets;

@@ -2,6 +2,12 @@
 #define _inputManagerH
 
 #include "vec2.hpp"
+#include "vec4.hpp"
+#include <map>
+#include <memory>
+#include <iostream>
+
+#include "Text.h"
 
 namespace Engine
 {
@@ -24,7 +30,14 @@ namespace Engine
 			inline void setKey(int key, bool boolean) { pressedkeys[key] = boolean; }
 			inline void setLastMousePosition(glm::vec2 position) { lastMousePosition = position; }
 			inline glm::vec2 getLastMousePosition() const { return lastMousePosition; }
+			inline std::map<std::string, int>* getKeyBindings() { return &keybindings; }
+			inline void setKeyBinding(const std::string& key, int value) { keybindings[key] = value; }
+			inline std::pair<std::string, std::shared_ptr<Text>>* getCurrentEditedKeyBinding() { return &currentEditedKeyBinding; }
+			inline void setCurrentEditedKeyBinding(std::pair<std::string, std::shared_ptr<Text>> value) { currentEditedKeyBinding = value; }
+			bool resetCurrentEditedKeyBinding();
 		private:
+			std::pair<std::string, std::shared_ptr<Text>> currentEditedKeyBinding;
+			std::map<std::string, int> keybindings;
 			glm::vec2 lastMousePosition;
 			bool lastLeftMouseClick;
 			bool leftMouseClick;

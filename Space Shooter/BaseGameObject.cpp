@@ -2,10 +2,13 @@
 
 namespace Engine
 {
-	BaseGameObject::BaseGameObject(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+	BaseGameObject::BaseGameObject(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: RenderObject(_width, _height, _position, _color), velocity(_velocity), needsToBeDeleted(false)
 	{
+		onDeath = []()
+		{
 
+		};
 	}
 
 	BaseGameObject::~BaseGameObject()
@@ -23,7 +26,9 @@ namespace Engine
 
 	void BaseGameObject::onCollision(BaseGameObject* collider)
 	{
-		std::cout << "some gameobject hit" << std::endl;
+		#if _DEBUG
+			std::cout << "some gameobject hit" << std::endl;
+		#endif
 	}
 
 	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Texture> animation)

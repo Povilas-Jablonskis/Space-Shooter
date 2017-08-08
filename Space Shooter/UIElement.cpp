@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	UIElement::UIElement(int _width, int _height, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<UIElement> _parent, glm::vec2 _positionPerc)
+	UIElement::UIElement(float _width, float _height, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<UIElement> _parent, glm::vec2 _positionPerc)
 		: UIElementBase(_width, _height, _position, _color, _positionPerc), parentMenu(_parent)
 	{
 
@@ -15,10 +15,17 @@ namespace Engine
 		elements.clear();
 	}
 
-	void UIElement::hideMain(bool showEverything)
+	void UIElement::hideMain(bool hideEverything)
 	{
-		if (showEverything)
+		if (hideEverything)
+		{
 			changeColor(0.0f, 3);
+
+			for (auto element : elements)
+			{
+				element->hideMain();
+			}
+		}
 
 		for (auto text : texts)
 		{
@@ -35,22 +42,6 @@ namespace Engine
 		{
 			text->changeColor(1.0f, 3);
 		}
-	}
-
-	void UIElement::hideElement(size_t index, bool showEverything)
-	{
-		if (index < 0 || index >= elements.size())
-			return;
-
-		elements[index]->hideMain(showEverything);
-	}
-
-	void UIElement::showElement(size_t index, bool showEverything)
-	{
-		if (index < 0 || index >= elements.size())
-			return;
-
-		elements[index]->showMain(showEverything);
 	}
 
 	void UIElement::onHoverEnterFuncDefaults()
@@ -115,18 +106,18 @@ namespace Engine
 		}
 	}
 
-	void UIElement::checkForMouseClickOnThis(std::shared_ptr<InputManager> inputManager, glm::vec2 lastMousePosition)
+	void UIElement::checkForMouseClickOnThis(bool leftMouseState, bool lastLeftMouseState, glm::vec2 lastMousePosition)
 	{
-		UIElementBase::checkForMouseClickOnThis(inputManager, lastMousePosition);
+		UIElementBase::checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
 
 		for (auto text : texts)
 		{
-			text->checkForMouseClickOnThis(inputManager, lastMousePosition);
+			text->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
 		}
 
 		for (auto element : elements)
 		{
-			element->checkForMouseClickOnThis(inputManager, lastMousePosition);
+			element->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
 		}
 	}
 

@@ -22,16 +22,18 @@ namespace Engine
 	{
 		public:
 			~BaseGameObject();
-			BaseGameObject(int, int, glm::vec2, glm::vec2, glm::vec4);
+			BaseGameObject(float, float, glm::vec2, glm::vec2, glm::vec4);
 			virtual bool update(float);
 			void addAnimation(std::string, std::shared_ptr<Texture>);
 			std::shared_ptr<Texture> getAnimation(std::string index) { return animations[index]; }
 			inline void setNeedsToBeDeleted(bool boolean) { needsToBeDeleted = boolean; };
+			inline bool getNeedsToBeDeleted() const { return needsToBeDeleted; }
 			inline void setVelocity(glm::vec2 _velocity) { velocity = _velocity; };
 			inline void setVelocity(int index, float _velocity) { velocity[index] = _velocity; };
 			inline float getVelocity(int index) { return velocity[index]; };
 			inline glm::vec2 getVelocity() { return velocity; };
 			virtual void onCollision(BaseGameObject*);
+			std::function<void()> onDeath;
 		protected:
 			std::unordered_map<std::string, std::shared_ptr<Texture>> animations;
 			bool needsToBeDeleted;

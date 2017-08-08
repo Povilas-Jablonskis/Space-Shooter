@@ -4,7 +4,7 @@
 namespace Engine
 {
 	Texture::Texture(int _startFame, int _endFrame, glm::vec2 _animsc) : 
-		startFrame(_startFame), endFrame(_endFrame), animsc(_animsc), width(0), height(0), texture(0), animComplete(false), animTimer(0.0f), loop(false), delay(1.0f / 60.0f), currentFrame(1)
+		startFrame(_startFame), endFrame(_endFrame), animsc(_animsc), width(0), height(0), texture(0), loop(false), delay(1.0f / 60.0f)
 	{
 
 	}

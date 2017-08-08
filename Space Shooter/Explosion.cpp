@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-	Explosion::Explosion(int _width, int _height, glm::vec2 _position)
+	Explosion::Explosion(float _width, float _height, glm::vec2 _position)
 		: RenderObject(_width, _height, _position, glm::vec4(255.0f, 255.0f, 255.0f, 1.0f))
 	{
 		
@@ -12,7 +12,7 @@ namespace Engine
 	{
 		updateTexture(dt);
 
-		return (texture != nullptr && !texture->getLoopStatus() && texture->getCurrentFrame() >= texture->getEndFrame() && texture->getAnimationStatus());
+		return (texture != nullptr && !texture->getLoopStatus() && currentFrame >= texture->getEndFrame() && animComplete);
 	}
 
 	void Explosion::applyTexture(std::shared_ptr<Texture> _texture)

@@ -10,7 +10,7 @@ namespace Engine
 	{
 		public:
 			~TestEnemy();
-			TestEnemy(int, int, glm::vec2, glm::vec2, glm::vec4);
+			TestEnemy(float, float, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float, float);
 			inline std::vector<std::shared_ptr<Bullet>>* getBulletsList() { return &bullets; }
 			void deleteBullet(Bullet*);

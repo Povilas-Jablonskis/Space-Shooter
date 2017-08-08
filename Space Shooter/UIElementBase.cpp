@@ -2,8 +2,8 @@
 
 namespace Engine
 {
-	UIElementBase::UIElementBase(int _width, int _height, glm::vec2 _position, glm::vec4 _color, glm::vec2 _positionPerc) :
-		RenderObject(_width, _height, _position, _color), gotMousedHovered(false), isStatic(false), positionPercents(_positionPerc)
+	UIElementBase::UIElementBase(float _width, float _height, glm::vec2 _position, glm::vec4 _color, glm::vec2 _positionPerc) :
+		RenderObject(_width, _height, _position, _color), gotMousedHovered(false), isStatic(false), positionPercents(_positionPerc), originalWidth(width), originalHeigth(height)
 	{
 		initFuncs();
 	}
@@ -42,6 +42,10 @@ namespace Engine
 	{
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
+		glm::vec2 posDiff;
+		posDiff.x = (float)glutGet(GLUT_INIT_WINDOW_WIDTH) - temPos.x;
+		posDiff.y = (float)glutGet(GLUT_INIT_WINDOW_HEIGHT) - temPos.y;
+
 		if (parent != nullptr)
 		{
 			if (positionPercents == glm::vec2(0.0f, 0.0f))
@@ -59,13 +63,19 @@ namespace Engine
 		{
 			if (positionPercents == glm::vec2(0.0f, 0.0f))
 			{
-				width = (int)temPos.x;
-				height = (int)temPos.y;
+				width = temPos.x;
+				height = temPos.y;
 				return;
 			}
 			position.x = temPos.x * (positionPercents.x / 100.0f);
 			position.y = temPos.y * (positionPercents.y / 100.0f);
 		}
+
+		if (posDiff.x != 0.0f)
+			width = originalWidth * (temPos.x / (float)glutGet(GLUT_INIT_WINDOW_WIDTH));
+
+		if (posDiff.y != 0.0f)
+			height = originalHeigth * (temPos.y / (float)(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
 	}
 
 	bool UIElementBase::checkIfCollides(glm::vec2 colCoordinates)
@@ -88,14 +98,15 @@ namespace Engine
 
 	void UIElementBase::checkIfMouseHoverThis(glm::vec2 lastMousePosition)
 	{
-		if (color.a == 0.0f || isStatic) return;
+		if (color.a == 0.0f) return;
 		
 		if (checkIfCollides(lastMousePosition))
 		{
 			if (!gotMousedHovered)
 			{
+				if(!isStatic)
+					onHoverEnterFuncDefaults();
 				onHoverEnterFunc();
-				onHoverEnterFuncDefaults();
 				gotMousedHovered = true;
 			}
 		}
@@ -103,20 +114,21 @@ namespace Engine
 		{
 			if (gotMousedHovered)
 			{
+				if (!isStatic)
+					onHoverExitFuncDefaults();
 				onHoverExitFunc();
-				onHoverExitFuncDefaults();
 				gotMousedHovered = false;
 			}
 		}
 	}
 
-	void UIElementBase::checkForMouseClickOnThis(std::shared_ptr<InputManager> inputManager, glm::vec2 lastMousePosition)
+	void UIElementBase::checkForMouseClickOnThis(bool leftMouseState, bool lastLeftMouseState, glm::vec2 lastMousePosition)
 	{
-		if (color.a == 0.0f || isStatic || !checkIfCollides(lastMousePosition)) return;
+		if (color.a == 0.0f || !checkIfCollides(lastMousePosition)) return;
 
-		if (!inputManager->getLastLeftMouseState() && inputManager->getLeftMouseState())
+		if (!lastLeftMouseState && leftMouseState)
 			onMouseClickFunc();
-		else if (inputManager->getLastLeftMouseState() && !inputManager->getLeftMouseState())
+		else if (lastLeftMouseState && !leftMouseState)
 			onMouseReleaseFunc();
 	}
 }

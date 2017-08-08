@@ -18,7 +18,7 @@ namespace Engine
 
 		auto tempTexture = std::make_shared<Texture>(_startFame, _endFrame, _animsc);
 		tempTexture->readTextureFile(_path);
-		textures.insert(std::pair<std::string, std::shared_ptr<Texture>>(_name, tempTexture));
+		textures.insert(std::pair<std::string, std::shared_ptr<Texture>>(_name, std::move(tempTexture)));
 	}
 
 	std::shared_ptr<Texture> TextureManager::getTexture(const std::string& name)

@@ -3,8 +3,8 @@
 
 namespace Engine
 {
-	RenderObject::RenderObject(int _width, int _height, glm::vec2 _position, glm::vec4 _color)
-		: width(_width), height(_height), position(_position), color(_color), texture(nullptr), rotationAngle(0.0f), rotationAxis(glm::vec3(0.0,0.0,1.0))
+	RenderObject::RenderObject(float _width, float _height, glm::vec2 _position, glm::vec4 _color)
+		: width(_width), height(_height), position(_position), color(_color), texture(nullptr), animComplete(false), animTimer(0.0f), currentFrame(0), rotationAngle(0.0f), rotationAxis(glm::vec3(0.0, 0.0, 1.0))
 	{
 
 	}
@@ -15,19 +15,19 @@ namespace Engine
 
 		if (texture->getEndFrame() - texture->getStartFrame() > 0)
 		{
-			texture->setAnimTimer(texture->getAnimTimer() + dt);
-			if (texture->getAnimTimer() > texture->getDelay())
+			animTimer += dt;
+			if (animTimer > texture->getDelay())
 			{
-				texture->setAnimTimer(texture->getAnimTimer() - texture->getDelay());
-				texture->setCurrentFrame(texture->getCurrentFrame() + 1);
-				if (texture->getCurrentFrame() < texture->getStartFrame() || texture->getCurrentFrame() > texture->getEndFrame())
+				animTimer = 0;
+				currentFrame++;
+				if (currentFrame < texture->getStartFrame() || currentFrame > texture->getEndFrame())
 				{
 					if (texture->getLoopStatus())
-						texture->setCurrentFrame(texture->getStartFrame());
+						currentFrame = texture->getStartFrame();
 					else
 					{
-						texture->setCurrentFrame(texture->getEndFrame());
-						texture->setAnimationStatus(true);
+						currentFrame = texture->getEndFrame();
+						animComplete = true;
 					}
 				}
 			}
@@ -36,13 +36,15 @@ namespace Engine
 
 	void RenderObject::applyTexture(std::shared_ptr<Texture> _texture)
 	{
-		if (_texture == nullptr) return;
+		if (_texture == nullptr || _texture == texture) return;
 
-		_texture->setAnimTimer(0.0f);
 		texture = _texture;
-	}
+		animTimer = 0.0;
+		animComplete = false;
+		currentFrame = texture->getStartFrame();
+	}		
 
-	int RenderObject::getSize(int index) const
+	float RenderObject::getSize(int index) const
 	{
 		switch (index)
 		{

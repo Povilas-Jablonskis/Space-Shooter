@@ -10,7 +10,6 @@
 #include <map>
 
 #include "RenderObject.h"
-#include "InputManager.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -23,14 +22,14 @@ namespace Engine
 	class UIElementBase : public RenderObject
 	{
 		public:
-			UIElementBase(int, int, glm::vec2, glm::vec4, glm::vec2);
+			UIElementBase(float, float, glm::vec2, glm::vec4, glm::vec2);
 			void initFuncs();
 			virtual void update(float);
 			inline void setIsStatic(bool _isStatic) { isStatic = _isStatic; }
 			virtual void fixPosition(UIElementBase* = nullptr);
 			virtual bool checkIfCollides(glm::vec2);
 			virtual void checkIfMouseHoverThis(glm::vec2);
-			virtual void checkForMouseClickOnThis(std::shared_ptr<InputManager>, glm::vec2);
+			virtual void checkForMouseClickOnThis(bool, bool, glm::vec2);
 			std::function<void()> onHoverEnterFunc;
 			std::function<void()> onHoverExitFunc;
 			std::function<void()> onMouseClickFunc;
@@ -38,6 +37,8 @@ namespace Engine
 			virtual void onHoverEnterFuncDefaults();
 			virtual void onHoverExitFuncDefaults();
 		protected:
+			float originalWidth;
+			float originalHeigth;
 			glm::vec2 positionPercents;
 			bool isStatic;
 			bool gotMousedHovered;

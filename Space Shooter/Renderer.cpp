@@ -84,8 +84,8 @@ namespace Engine
 	void Renderer::draw(std::vector<std::shared_ptr<RenderObject>> vector)
 	{
 		auto program = getShaderProgram("shader");
-		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
 		int offsetLocation = glGetUniformLocation(program, "color");
 		int offsetLocation2 = glGetUniformLocation(program, "renderMode");
@@ -94,7 +94,7 @@ namespace Engine
 		int offsetLocation5 = glGetUniformLocation(program, "curranim");
 		int offsetLocation6 = glGetUniformLocation(program, "projection");
 		int offsetLocation7 = glGetUniformLocation(program, "model");
-		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
+		glm::mat4 projection = glm::ortho(0.0f, windowWidth, 0.0f, windowHeigth, 0.0f, 1.0f);
 		glBindVertexArray(vao);
 			glUseProgram(program);
 				for (auto element : vector)
@@ -121,7 +121,7 @@ namespace Engine
 						glUniform1f(offsetLocation2, 1.0f);
 						glUniform1f(offsetLocation3, texture->getCount().x);
 						glUniform1f(offsetLocation4, texture->getCount().y);
-						glUniform1f(offsetLocation5, (float)texture->getCurrentFrame());
+						glUniform1f(offsetLocation5, (float)element->getCurrentFrame());
 					}
 					else
 						glUniform1f(offsetLocation2, 0.0f);
@@ -137,8 +137,8 @@ namespace Engine
 	void Renderer::draw(std::shared_ptr<RenderObject> element)
 	{
 		auto program = getShaderProgram("shader");
-		float windowwidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-		float windowheigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
 		int offsetLocation = glGetUniformLocation(program, "color");
 		int offsetLocation2 = glGetUniformLocation(program, "renderMode");
@@ -147,7 +147,7 @@ namespace Engine
 		int offsetLocation5 = glGetUniformLocation(program, "curranim");
 		int offsetLocation6 = glGetUniformLocation(program, "projection");
 		int offsetLocation7 = glGetUniformLocation(program, "model");
-		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
+		glm::mat4 projection = glm::ortho(0.0f, windowWidth, 0.0f, windowHeigth, 0.0f, 1.0f);
 		glBindVertexArray(vao);
 			glUseProgram(program);
 				if (element->getColor(3) == 0.0f) return;
@@ -172,7 +172,7 @@ namespace Engine
 					glUniform1f(offsetLocation2, 1.0f);
 					glUniform1f(offsetLocation3, texture->getCount().x);
 					glUniform1f(offsetLocation4, texture->getCount().y);
-					glUniform1f(offsetLocation5, (float)texture->getCurrentFrame());
+					glUniform1f(offsetLocation5, (float)element->getCurrentFrame());
 				}
 				else
 					glUniform1f(offsetLocation2, 0.0f);

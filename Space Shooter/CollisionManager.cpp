@@ -18,8 +18,10 @@ namespace Engine
 
 	std::vector<std::shared_ptr<BaseGameObject>>::iterator CollisionManager::checkCollision(std::shared_ptr<BaseGameObject> object, std::vector<std::shared_ptr<BaseGameObject>>* colliderlist) // AABB - AABB collision
 	{
+		if (object->getNeedsToBeDeleted()) return colliderlist->end();
 		for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = colliderlist->begin(); it != colliderlist->end(); ++it)
 		{
+			if ((*it)->getNeedsToBeDeleted()) continue;
 			if (checkCollision(*it, object))
 				return it;
 		}
@@ -28,8 +30,10 @@ namespace Engine
 
 	std::vector<std::shared_ptr<Bullet>>::iterator CollisionManager::checkCollision(std::shared_ptr<BaseGameObject> object, std::vector<std::shared_ptr<Bullet>>* bulletlist) // AABB - AABB collision
 	{
+		if (object->getNeedsToBeDeleted()) return bulletlist->end();
 		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bulletlist->begin(); it != bulletlist->end(); ++it)
 		{
+			if ((*it)->getNeedsToBeDeleted()) continue;
 			if (checkCollision(*it, object))
 				return it;
 		}

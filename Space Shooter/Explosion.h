@@ -8,7 +8,7 @@ namespace Engine
 	class Explosion : public RenderObject
 	{
 		public:
-			Explosion(int, int, glm::vec2);
+			Explosion(float, float, glm::vec2);
 			bool update(float);
 			void applyTexture(std::shared_ptr<Texture>);
 		};

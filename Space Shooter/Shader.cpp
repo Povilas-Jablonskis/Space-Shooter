@@ -24,7 +24,7 @@ namespace Engine
 		if (fs.is_open())
 		{
 			while (fs.get(buffer))
-				content.push_back(buffer);
+				content.push_back(std::move(buffer));
 			fs.close();
 		}
 		else
@@ -60,9 +60,11 @@ namespace Engine
 			std::vector<GLchar> errorLog(maxLength);
 			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &errorLog[0]);
 
-			std::cout << "Errors in vertex shader ( " << vertex_path << " ) :" << std::endl;
-			for (size_t i = 0; i < errorLog.size(); i++)
-				std::cout << errorLog[i];
+			#if _DEBUG
+				std::cout << "Errors in vertex shader ( " << vertex_path << " ) :" << std::endl;
+				for (size_t i = 0; i < errorLog.size(); i++)
+					std::cout << errorLog[i];
+			#endif
 		}
 
 		// Fragment shader
@@ -79,9 +81,11 @@ namespace Engine
 			std::vector<GLchar> errorLog(maxLength);
 			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &errorLog[0]);
 
-			std::cout << "Errors in fragment shader ( " << fragment_path << " ) :" << std::endl;
-			for (size_t i = 0; i < errorLog.size(); i++)
-				std::cout << errorLog[i];
+			#if _DEBUG
+				std::cout << "Errors in fragment shader ( " << fragment_path << " ) :" << std::endl;
+				for (size_t i = 0; i < errorLog.size(); i++)
+					std::cout << errorLog[i];
+			#endif
 		}
 
 		if (isCompiled == GL_FALSE)

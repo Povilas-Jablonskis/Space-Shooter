@@ -37,6 +37,7 @@ namespace Engine
 			void checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<Bullet>>*, std::shared_ptr<BaseGameObject>);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
+			void removeEnemyFromList(std::vector<std::shared_ptr<TestEnemy>>::iterator&);
 
 			template <class T>
 			void timer(const T& callback, unsigned int timeInMs);
@@ -52,6 +53,8 @@ namespace Engine
 			void keyboardInput(unsigned char, int, int);
 			void motionFunc(int, int);
 			void processMouseClick(int, int, int, int);
+			void specialKeyInput(int, int, int);
+			void specialKeyInputUp(int, int, int);
 		private:
 			std::shared_ptr<Player> player;
 			std::shared_ptr<UIElement> background;

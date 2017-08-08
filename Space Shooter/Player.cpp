@@ -10,10 +10,10 @@ namespace Engine
 		bullets.clear();
 	}
 
-	Player::Player(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+	Player::Player(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: BaseGameObject(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity), lastHealth(0), lastScore(0), delayBetweenShoots(0.2f), delayBetweenShootsTimer(0.0f)
 	{
-
+		
 	}
 
 	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager)
@@ -22,30 +22,31 @@ namespace Engine
 
 		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
-		
-		for (auto BaseGameObject : bullets)
-		{
-			BaseGameObject->update(dt);
-		}
+		auto keyBindings = inputManager->getKeyBindings();
 
 		delayBetweenShootsTimer += dt;
 
-		if (delayBetweenShootsTimer > delayBetweenShoots)
+		if (delayBetweenShootsTimer > delayBetweenShoots && inputManager->getKey(keyBindings->find("Attack")->second))
 		{
 			delayBetweenShootsTimer = 0.0f;
-			if (inputManager->getKey(32))
-			{
-				auto bullet = std::make_shared<Bullet>(9, 20, glm::vec2(position.x + (width / 2.0f), position.y + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-				bullet->applyTexture(std::make_shared<Texture>(*animations["shoot"]));
-				bullets.push_back(bullet);
-			}
+			auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(position.x + (width / 2.0f), position.y + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+			bullet->applyTexture(animations["shoot"]);
+			bullets.push_back(std::move(bullet));
 		}
 
-		if (inputManager->getKey('a'))
+		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end();)
+		{
+			if ((*it)->update(dt))
+				it = bullets.erase(it);
+			else
+				++it;
+		}
+
+		if (inputManager->getKey(keyBindings->find("Move_Left")->second))
 			position.x -= velocity.x * dt;
-		if (inputManager->getKey('d'))
+		if (inputManager->getKey(keyBindings->find("Move_Right")->second))
  			position.x += velocity.x * dt;
-		if (inputManager->getKey('s'))
+		if (inputManager->getKey(keyBindings->find("Move_Back")->second))
 			position.y -= velocity.y * dt;
 
 		position.y += (velocity.y * dt) / 2.0f;
@@ -66,6 +67,8 @@ namespace Engine
 	{
 		bullets.clear();
 		setHealth(getHealth()-1);
+		if (getHealth() < 1)
+			onDeath();
 		setVelocity(startVelocity);
 		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
 	}
@@ -85,7 +88,7 @@ namespace Engine
 		{
 			if (it->get() == bullet)
 			{
-				bullets.erase(it);
+				(*it)->setNeedsToBeDeleted(true);
 				return;
 			}
 		}
@@ -93,6 +96,8 @@ namespace Engine
 
 	void Player::onCollision(BaseGameObject* collider)
 	{
-		std::cout << "player hit" << std::endl;
+		#if _DEBUG
+			std::cout << "player hit" << std::endl;
+		#endif
 	}
 }

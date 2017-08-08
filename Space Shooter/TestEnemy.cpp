@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	TestEnemy::TestEnemy(int _width, int _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+	TestEnemy::TestEnemy(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: BaseGameObject(_width, _height, _position, _velocity, _color), delayBetweenShoots(1.5f), delayBetweenShootsTimer(0.0f)
 	{
 		float _dt = 0.0f;
@@ -29,21 +29,25 @@ namespace Engine
 		position.y += velocity.y * sin(t);
 		BaseGameObject::updateTexture(dt);
 
-		for (auto bullet : bullets)
-		{
-			bullet->update(dt);
-		}
-
 		delayBetweenShootsTimer += dt;
 		if (delayBetweenShootsTimer > delayBetweenShoots)
 		{
 			delayBetweenShootsTimer = 0.0f;
-			auto bullet = std::make_shared<Bullet>(9, 20, glm::vec2(position.x + (width / 2.0f), position.y - 5.0f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-			bullet->applyTexture(std::make_shared<Texture>(*animations["shoot"]));
+			auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(position.x + (width / 2.0f), position.y - 5.0f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+			bullet->applyTexture(animations["shoot"]);
 			bullet->setRotationAngle(3.141592f);
 			bullet->setRotationAxis(glm::vec3(0.0,0.0,1.0));
-			bullets.push_back(bullet);
+			bullets.push_back(std::move(bullet));
 		}
+
+		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end();)
+		{
+			if ((*it)->update(dt))
+				it = bullets.erase(it);
+			else
+				++it;
+		}
+
 		return needsToBeDeleted;
 	}
 
@@ -53,7 +57,7 @@ namespace Engine
 		{
 			if (it->get() == bullet)
 			{
-				bullets.erase(it);
+				(*it)->setNeedsToBeDeleted(true);
 				return;
 			}
 		}
@@ -65,6 +69,8 @@ namespace Engine
 		if (player != nullptr)
 			player->respawn();
 
-		std::cout << "enemy hit" << std::endl;
+		#if _DEBUG
+			std::cout << "enemy hit" << std::endl;
+		#endif
 	}
 }

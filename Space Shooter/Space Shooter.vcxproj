@@ -102,11 +102,13 @@
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="StructForTextCache.h" />
+    <ClInclude Include="Subject.h" />
     <ClInclude Include="TestEnemy.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
