@@ -63,11 +63,9 @@ namespace Engine
 		}
 	}
 
-	void TestEnemy::onCollision(BaseGameObject* collider)
+	void TestEnemy::onCollision(Player* collider)
 	{
-		Player* player = dynamic_cast<Player*>(collider);
-		if (player != nullptr)
-			player->respawn();
+		collider->respawn();
 
 		#if _DEBUG
 			std::cout << "enemy hit" << std::endl;

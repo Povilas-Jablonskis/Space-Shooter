@@ -18,12 +18,15 @@
 
 namespace Engine
 {
+	class Player;
+	class TestEnemy;
 	class Bullet : public BaseGameObject
 	{
 		public:
 			Bullet(float, float, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float);
-			void onCollision(BaseGameObject*, BaseGameObject*);
+			void onCollision(Player*, TestEnemy*);
+			void onCollision(TestEnemy*, Player*);
 	};
 }
 #endif

@@ -33,20 +33,17 @@ namespace Engine
 		public:
 			~Application();
 			Application();
-			void checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<BaseGameObject>>*);
-			void checkCollision(std::shared_ptr<BaseGameObject>, std::vector<std::shared_ptr<Bullet>>*, std::shared_ptr<BaseGameObject>);
+			static std::shared_ptr<Application> instance();
+			
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
-			void removeEnemyFromList(std::vector<std::shared_ptr<TestEnemy>>::iterator&);
-
+			void addEnemyToList(std::shared_ptr<TestEnemy> enemy) { enemies.push_back(enemy); };
+			void removeEnemyFromList(std::vector<std::shared_ptr<TestEnemy>>::iterator*);
+			void addExplosionToList(std::shared_ptr<Explosion> explosion) { explosions.push_back(explosion); };
+			void removeExplosionFromList(std::vector<std::shared_ptr<Explosion>>::iterator*);
 			template <class T>
 			void timer(const T& callback, unsigned int timeInMs);
 
-			void startNewLevel();
-			void initPlayerUI();
-			void updatePlayerUI();
-			void initScene();
-			void initGameUI();
 			void render();
 			void keyboardInputUp(unsigned char, int, int);
 			void resize(int, int);
@@ -56,6 +53,13 @@ namespace Engine
 			void specialKeyInput(int, int, int);
 			void specialKeyInputUp(int, int, int);
 		private:
+			void startNewLevel();
+			void initPlayerUI();
+			void updatePlayerUI();
+			void initScene();
+			void initGameUI();
+
+			static std::shared_ptr<Application> instance_;
 			std::shared_ptr<Player> player;
 			std::shared_ptr<UIElement> background;
 			std::shared_ptr<UIElement> currentMenu;

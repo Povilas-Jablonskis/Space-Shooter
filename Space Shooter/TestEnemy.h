@@ -6,6 +6,7 @@
 
 namespace Engine
 {
+	class Player;
 	class TestEnemy : public BaseGameObject
 	{
 		public:
@@ -14,7 +15,7 @@ namespace Engine
 			bool update(float, float);
 			inline std::vector<std::shared_ptr<Bullet>>* getBulletsList() { return &bullets; }
 			void deleteBullet(Bullet*);
-			void onCollision(BaseGameObject*);
+			void onCollision(Player*);
 		private:
 			float delayBetweenShootsTimer;
 			float delayBetweenShoots;

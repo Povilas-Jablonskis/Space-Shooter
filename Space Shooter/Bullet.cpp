@@ -1,6 +1,5 @@
 #include "Bullet.h"
-#include "Player.h"
-#include "TestEnemy.h"
+#include "Application.h"
 
 namespace Engine
 {
@@ -24,33 +23,33 @@ namespace Engine
 		return needsToBeDeleted;
 	}
 
-	void Bullet::onCollision(BaseGameObject* collider, BaseGameObject* parent)
+	void Bullet::onCollision(Player* collider, TestEnemy* parent)
 	{
-		Player* player = dynamic_cast<Player*>(parent);
-		if (player != nullptr)
+		parent->deleteBullet(this);
+		if (collider->getAddon("shield") != nullptr)
+			collider->removeAddon("shield");
+		else
 		{
-			collider->setNeedsToBeDeleted(true);
-			player->deleteBullet(this);
-			player->setScore(player->getScore() + 100);
-			#if _DEBUG
-				std::cout << "player bullet hit" << std::endl;
-			#endif
+			auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
+			explosion->applyTexture(parent->getAnimation("explosion"));
+			Application::instance()->addExplosionToList(std::move(explosion));
+			collider->respawn();
 		}
-		TestEnemy* enemy = dynamic_cast<TestEnemy*>(parent);
-		if (enemy != nullptr)
-		{
-			Player* player = dynamic_cast<Player*>(collider);
-			if (player != nullptr)
-			{
-				if (player->getAddon("shield") != nullptr)
-					player->removeAddon("shield");
-				else
-					player->respawn();
-			}
-			enemy->deleteBullet(this);
-			#if _DEBUG
-				std::cout << "enemy bullet hit" << std::endl;
-			#endif
-		}
+		#if _DEBUG
+			std::cout << "enemy bullet hit" << std::endl;
+		#endif
+	}
+
+	void Bullet::onCollision(TestEnemy* collider, Player* parent)
+	{
+		collider->setNeedsToBeDeleted(true);
+		parent->deleteBullet(this);
+		parent->setScore(parent->getScore() + 100);
+		auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
+		explosion->applyTexture(parent->getAnimation("explosion"));
+		Application::instance()->addExplosionToList(std::move(explosion));
+		#if _DEBUG
+			std::cout << "player bullet hit" << std::endl;
+		#endif
 	}
 }

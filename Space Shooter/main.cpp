@@ -1,47 +1,44 @@
 #include "Application.h"
-
 using namespace Engine;
-
-std::shared_ptr<Application> application;
 
 void motionFunc(int x, int y)
 {
-	application->motionFunc(x, y);
+	Application::instance()->motionFunc(x, y);
 }
 
 void processMouseClick(int button, int state, int x, int y)
 {
-	application->processMouseClick(button, state, x, y);
+	Application::instance()->processMouseClick(button, state, x, y);
 }
 
 void keyboardInput(unsigned char c, int x, int y)
 {
-	application->keyboardInput(c, x, y);
+	Application::instance()->keyboardInput(c, x, y);
 }
 
 void keyboardInputUp(unsigned char c, int x, int y)
 {
-	application->keyboardInputUp(c, x, y);
+	Application::instance()->keyboardInputUp(c, x, y);
 }
 
 void display(void)
 {
-	application->render();
+	Application::instance()->render();
 }
 
 void resize(int width, int height)
 {
-	application->resize(width, height);
+	Application::instance()->resize(width, height);
 }
 
 void specialKeyInput(int key, int x, int y)
 {
-	application->specialKeyInput(key, x, y);
+	Application::instance()->specialKeyInput(key, x, y);
 }
 
 void specialKeyInputUp(int key, int x, int y)
 {
-	application->specialKeyInputUp(key, x, y);
+	Application::instance()->specialKeyInputUp(key, x, y);
 }
 
 int main(int argc, char *argv[])
@@ -77,7 +74,7 @@ int main(int argc, char *argv[])
 	glutSpecialFunc(specialKeyInput);
 	glutSpecialUpFunc(specialKeyInputUp);
 
-	application = std::make_shared<Application>();
+	Application::instance();
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);
 	glutMainLoop();

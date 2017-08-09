@@ -2,6 +2,15 @@
 
 namespace Engine
 {
+	std::shared_ptr<Application> Application::instance_;
+
+	std::shared_ptr<Application> Application::instance()
+	{
+		// Lazy initialize.
+		if (instance_ == nullptr) instance_ = std::make_shared<Application>();
+		return instance_;
+	}
+
 	Application::Application() 
 		: collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), textureManager(std::make_shared<TextureManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
@@ -115,10 +124,10 @@ namespace Engine
 		timer->start();
 	}
 
-	void Application::removeEnemyFromList(std::vector<std::shared_ptr<TestEnemy>>::iterator& it)
+	void Application::removeEnemyFromList(std::vector<std::shared_ptr<TestEnemy>>::iterator* it)
 	{
-		if (it != enemies.end())
-			it = enemies.erase(it);
+		if (*it != enemies.end())
+			*it = enemies.erase(*it);
 
 		if (enemies.size() == 0)
 		{
@@ -127,23 +136,10 @@ namespace Engine
 		}
 	}
 
-	void Application::checkCollision(std::shared_ptr<BaseGameObject> object, std::vector<std::shared_ptr<BaseGameObject>>* colliderlist) // AABB - AABB collision
+	void Application::removeExplosionFromList(std::vector<std::shared_ptr<Explosion>>::iterator* it)
 	{
-		auto collision = collisionManager->checkCollision(object, colliderlist);
-		if (collision != colliderlist->end())
-			(*collision)->onCollision(object.get());
-	}
-
-	void Application::checkCollision(std::shared_ptr<BaseGameObject> object, std::vector<std::shared_ptr<Bullet>>* bulletList, std::shared_ptr<BaseGameObject> parent) // AABB - AABB collision
-	{
-		auto collision = collisionManager->checkCollision(object, bulletList);
-		if (collision != bulletList->end())
-		{
-			auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, object->getPosition());
-			explosion->applyTexture(parent->getAnimation("explosion"));
-			explosions.push_back(std::move(explosion));
-			(*collision)->onCollision(object.get(), parent.get());
-		}
+		if (*it != explosions.end())
+			*it = explosions.erase(*it);
 	}
 
 	void Application::initPlayerUI()
@@ -420,7 +416,7 @@ namespace Engine
 				for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end();)
 				{
 					if ((*it)->update(dt, t))
-						removeEnemyFromList(it);
+						removeEnemyFromList(&it);
 					else
 						it++;
 				}
@@ -444,11 +440,11 @@ namespace Engine
 
 			for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
 			{
-				checkCollision(player, (*it)->getBulletsList(), *it);
-				checkCollision(*it, playerBulletList, player);
+				collisionManager->checkCollision(player, (*it)->getBulletsList(), *it);
+				collisionManager->checkCollision(*it, playerBulletList, player);
 			}
 
-			checkCollision(player, &std::vector<std::shared_ptr<BaseGameObject>>(enemies.begin(), enemies.end()));
+			collisionManager->checkCollision(player, &enemies);
 
 			updatePlayerUI();
 
@@ -462,20 +458,17 @@ namespace Engine
 				renderer->draw(it->second);
 			}
 			//Render enemies
-			renderer->draw(std::vector<std::shared_ptr<RenderObject>>(enemies.begin(), enemies.end()));
-
+			renderer->draw(enemies);
 			//Render explosions
-			renderer->draw(std::vector<std::shared_ptr<RenderObject>>(explosions.begin(), explosions.end()));
-
+			renderer->draw(explosions);
 			//Render bullets
 			for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
 			{
 				auto enemyBulletList = (*it)->getBulletsList();
-				renderer->draw(std::vector<std::shared_ptr<RenderObject>>(enemyBulletList->begin(), enemyBulletList->end()));
+				renderer->draw(*enemyBulletList);
 			}
 
-			renderer->draw(std::vector<std::shared_ptr<RenderObject>>(playerBulletList->begin(), playerBulletList->end()));
-
+			renderer->draw(*playerBulletList);
 			//Render & Update player UI
 			for (auto uiElement : playerUI)
 			{
@@ -485,7 +478,7 @@ namespace Engine
 				uiElement.second->GetAllChildrenTexts(&listOfAllTexts);
 			}
 
-			renderer->draw(std::vector<std::shared_ptr<RenderObject>>(listOfAllElements.begin(), listOfAllElements.end()));
+			renderer->draw(listOfAllElements);
 			renderer->draw(listOfAllTexts);
 
 			listOfAllElements.clear();
@@ -501,7 +494,7 @@ namespace Engine
 			uiElement.second->GetAllChildrenTexts(&listOfAllTexts);
 		}
 
-		renderer->draw(std::vector<std::shared_ptr<RenderObject>>(listOfAllElements.begin(), listOfAllElements.end()));
+		renderer->draw(listOfAllElements);
 		renderer->draw(listOfAllTexts);
 
 		glutSwapBuffers();
