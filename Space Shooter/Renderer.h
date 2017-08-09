@@ -1,7 +1,7 @@
 #ifndef _rendererH
 #define _rendererH
 
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <algorithm>
 
@@ -30,7 +30,7 @@ namespace Engine
 			GLuint vbo, vao, ebo;
 			GLuint textVBO;
 			GLuint textVAO;
-			std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
+			std::map<std::string, std::shared_ptr<Shader>> shaders;
 	};
 }
 #endif

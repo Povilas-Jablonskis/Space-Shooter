@@ -42,10 +42,6 @@ namespace Engine
 	{
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
-		glm::vec2 posDiff;
-		posDiff.x = (float)glutGet(GLUT_INIT_WINDOW_WIDTH) - temPos.x;
-		posDiff.y = (float)glutGet(GLUT_INIT_WINDOW_HEIGHT) - temPos.y;
-
 		if (parent != nullptr)
 		{
 			if (positionPercents == glm::vec2(0.0f, 0.0f))
@@ -71,11 +67,8 @@ namespace Engine
 			position.y = temPos.y * (positionPercents.y / 100.0f);
 		}
 
-		if (posDiff.x != 0.0f)
-			width = originalWidth * (temPos.x / (float)glutGet(GLUT_INIT_WINDOW_WIDTH));
-
-		if (posDiff.y != 0.0f)
-			height = originalHeigth * (temPos.y / (float)(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
+		width = originalWidth * (temPos.x / (float)glutGet(GLUT_INIT_WINDOW_WIDTH));
+		height = originalHeigth * (temPos.y / (float)(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
 	}
 
 	bool UIElementBase::checkIfCollides(glm::vec2 colCoordinates)

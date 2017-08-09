@@ -2,7 +2,7 @@
 #define _textureManagerH
 
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <vec2.hpp>
 
@@ -17,7 +17,7 @@ namespace Engine
 			void loadTexture(const std::string&, const std::string&, int, int, glm::vec2);
 			std::shared_ptr<Texture> getTexture(const std::string&);
 		private:
-			std::unordered_map<std::string, std::shared_ptr<Texture>> textures;
+			std::map<std::string, std::shared_ptr<Texture>> textures;
 	};
 }
 #endif

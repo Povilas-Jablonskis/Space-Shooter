@@ -6,7 +6,7 @@
 #include "GL/glew.h"
 #include "GL/freeglut.h"
 #include <memory>
-#include <unordered_map>
+#include <map>
 
 #include "RenderObject.h"
 
@@ -35,7 +35,7 @@ namespace Engine
 			virtual void onCollision(BaseGameObject*);
 			std::function<void()> onDeath;
 		protected:
-			std::unordered_map<std::string, std::shared_ptr<Texture>> animations;
+			std::map<std::string, std::shared_ptr<Texture>> animations;
 			bool needsToBeDeleted;
 			glm::vec2 velocity;
 	};

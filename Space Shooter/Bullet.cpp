@@ -41,7 +41,12 @@ namespace Engine
 		{
 			Player* player = dynamic_cast<Player*>(collider);
 			if (player != nullptr)
-				player->respawn();
+			{
+				if (player->getAddon("shield") != nullptr)
+					player->removeAddon("shield");
+				else
+					player->respawn();
+			}
 			enemy->deleteBullet(this);
 			#if _DEBUG
 				std::cout << "enemy bullet hit" << std::endl;

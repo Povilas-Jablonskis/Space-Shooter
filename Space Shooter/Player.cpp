@@ -16,6 +16,21 @@ namespace Engine
 		
 	}
 
+	std::shared_ptr<Addon> Player::getAddon(std::string index)
+	{
+		auto addon = addons.find(index);
+		if (addon != addons.end())
+			return addon->second;
+		return nullptr;
+	}
+
+	void Player::removeAddon(std::string index)
+	{
+		auto addon = addons.find(index);
+		if (addon != addons.end())
+			addons.erase(addon);
+	}
+
 	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager)
 	{
 		BaseGameObject::updateTexture(dt);
@@ -38,6 +53,14 @@ namespace Engine
 		{
 			if ((*it)->update(dt))
 				it = bullets.erase(it);
+			else
+				++it;
+		}
+
+		for (std::map<std::string, std::shared_ptr<Addon>>::iterator it = addons.begin(); it != addons.end();)
+		{
+			if ((*it).second->update(dt, position))
+				it = addons.erase(it);
 			else
 				++it;
 		}

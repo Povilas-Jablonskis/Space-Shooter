@@ -71,6 +71,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Addon.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BaseGameObject.cpp" />
     <ClCompile Include="Bullet.cpp" />
@@ -92,6 +93,7 @@
     <ClCompile Include="UIElementBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Addon.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="BaseGameObject.h" />
     <ClInclude Include="Bullet.h" />

@@ -4,7 +4,7 @@ namespace Engine
 {
 	FontManager::~FontManager()
 	{
-		for (std::unordered_map<std::string, std::shared_ptr<Font>>::iterator it = faces.begin(); it != faces.end(); ++it)
+		for (std::map<std::string, std::shared_ptr<Font>>::iterator it = faces.begin(); it != faces.end(); ++it)
 		{
 			auto characterList = it->second->getCharacterList();
 			for (std::map<GLchar, Character>::iterator it2 = characterList.begin(); it2 != characterList.end(); ++it2)

@@ -1,7 +1,7 @@
 #ifndef _applicationH
 #define _applicationH
 
-#include <unordered_map>
+#include <map>
 #include <memory>
 #include <string>
 
@@ -67,8 +67,8 @@ namespace Engine
 
 			std::vector<std::shared_ptr<TestEnemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;
-			std::unordered_map<std::string, std::shared_ptr<UIElement>> ui;
-			std::unordered_map<std::string, std::shared_ptr<UIElement>> playerUI;
+			std::map<std::string, std::shared_ptr<UIElement>> ui;
+			std::map<std::string, std::shared_ptr<UIElement>> playerUI;
 
 			std::shared_ptr<CollisionManager> collisionManager;
 			std::shared_ptr<Renderer> renderer;

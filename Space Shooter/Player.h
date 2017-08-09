@@ -7,6 +7,7 @@
 #include "InputManager.h"
 #include "Bullet.h"
 #include "Subject.h"
+#include "Addon.h"
 
 namespace Engine
 {
@@ -27,9 +28,14 @@ namespace Engine
 			inline int getLastScore() const { return lastScore; }
 			inline int getLastHealth() const { return lastHealth; }
 			void onCollision(BaseGameObject*);
-	private:
+			inline std::map<std::string, std::shared_ptr<Addon>>* getAddons() { return &addons; }
+			std::shared_ptr<Addon> getAddon(std::string);
+			inline void addAddon(std::pair<std::string, std::shared_ptr<Addon>> addon) { addons.insert(addon); }
+			void removeAddon(std::string);
+		private:
 			float delayBetweenShootsTimer;
 			float delayBetweenShoots;
+			std::map<std::string, std::shared_ptr<Addon>> addons;
 			std::vector<std::shared_ptr<Bullet>> bullets;
 			glm::vec2 startVelocity;
 			int lastScore;

@@ -57,6 +57,10 @@ namespace Engine
 		textureManager->loadTexture("PNG/Lasers/blueExplosionSpriteSheet.png", "blueExplosionSpriteSheet", 1, 2, glm::vec2(2, 1));
 		textureManager->loadTexture("PNG/Lasers/laserGreen11.png", "laserGreen11", 0, 0, glm::vec2(1, 1));
 		textureManager->loadTexture("PNG/Lasers/greenExplosionSpriteSheet.png", "greenExplosionSpriteSheet", 1, 2, glm::vec2(2, 1));
+		textureManager->loadTexture("PNG/Effects/shieldSpriteSheet.png", "shieldSpriteSheet", 1, 3, glm::vec2(3, 1));
+
+		textureManager->getTexture("shieldSpriteSheet")->setLoopStatus(true);
+		textureManager->getTexture("shieldSpriteSheet")->setDelay(0.15f);
 
 		background = std::make_shared<UIElement>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), nullptr, glm::vec2(0.0f, 0.0f));
 		background->applyTexture(textureManager->getTexture("blueBackground"));
@@ -70,6 +74,10 @@ namespace Engine
 		player->applyTexture(textureManager->getTexture("playerShip1_blue"));
 		player->addAnimation("shoot", textureManager->getTexture("laserBlue01"));
 		player->addAnimation("explosion", textureManager->getTexture("blueExplosionSpriteSheet"));
+
+		auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+		shield->applyTexture(textureManager->getTexture("shieldSpriteSheet"));
+		player->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
 
 		initGameUI();
 		currentMenu = ui["Main Menu"];
@@ -172,7 +180,7 @@ namespace Engine
 	{
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
-		for (std::unordered_map<std::string, std::shared_ptr<UIElement>>::iterator it = playerUI.begin(); it != playerUI.end();)
+		for (std::map<std::string, std::shared_ptr<UIElement>>::iterator it = playerUI.begin(); it != playerUI.end();)
 		{
 			if (it->first == "Score" && player->getLastScore() != player->getScore())
 			{
@@ -448,6 +456,11 @@ namespace Engine
 			renderer->draw(background);
 			//Render player
 			renderer->draw(player);
+			auto addons = player->getAddons();
+			for (std::map<std::string, std::shared_ptr<Addon>>::iterator it = addons->begin(); it != addons->end(); it++)
+			{
+				renderer->draw(it->second);
+			}
 			//Render enemies
 			renderer->draw(std::vector<std::shared_ptr<RenderObject>>(enemies.begin(), enemies.end()));
 

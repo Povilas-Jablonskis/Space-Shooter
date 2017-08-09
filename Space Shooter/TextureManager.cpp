@@ -4,7 +4,7 @@ namespace Engine
 {
 	TextureManager::~TextureManager()
 	{
-		for (std::unordered_map<std::string, std::shared_ptr<Texture>>::iterator it = textures.begin(); it != textures.end(); ++it)
+		for (std::map<std::string, std::shared_ptr<Texture>>::iterator it = textures.begin(); it != textures.end(); ++it)
 		{
 			auto textureID = it->second->getTexture();
 			glDeleteTextures(1, &textureID);
