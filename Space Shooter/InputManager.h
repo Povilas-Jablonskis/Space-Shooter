@@ -16,6 +16,7 @@ namespace Engine
 		public:
 			InputManager();
 			void resetInput();
+			void fixInput();
 			inline bool getLeftMouseState() const { return leftMouseClick; }
 			inline bool getRightMouseState() const { return rightMouseClick; }
 			inline void setLeftMouseState(bool boolean) { leftMouseClick = boolean; }

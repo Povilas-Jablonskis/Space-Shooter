@@ -32,4 +32,13 @@ namespace Engine
 		}
 		return false;
 	}
+
+	void InputManager::fixInput()
+	{
+		for (int i = 0; i < 255; i++)
+		{
+			if (!GetAsyncKeyState(VkKeyScan(i)) && pressedkeys[i])
+				pressedkeys[i] = false;
+		}
+	}
 }

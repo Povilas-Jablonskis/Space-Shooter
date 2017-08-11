@@ -30,8 +30,8 @@ namespace Engine
 		fontManager->loadFont("kenvector_future.ttf", "kenvector_future");
 		fontManager->loadFont("kenvector_future_thin.ttf", "kenvector_future_thin");
 
-		spriteSheet = std::make_shared<SpriteSheet>();
-		backgroundSpriteSheet = std::make_shared<SpriteSheet>();
+		auto spriteSheet = std::make_shared<SpriteSheet>();
+		auto backgroundSpriteSheet = std::make_shared<SpriteSheet>();
 
 		backgroundSpriteSheet->loadSpriteSheet("Backgrounds/blue.png");
 
@@ -59,34 +59,25 @@ namespace Engine
 		spriteSheet->getAnimation("shieldSpriteSheet")->setLoopStatus(true);
 		spriteSheet->getAnimation("shieldSpriteSheet")->setDelay(0.15f);
 
-		/*textureManager->loadTexture("PNG/UI/playerLife1_blue.png", "playerLife1_blue", 0, 0, glm::vec2(1, 1));
-		textureManager->loadTexture("PNG/playerShip1_blue.png", "playerShip1_blue", 0, 0, glm::vec2(1, 1));
-		textureManager->loadTexture("PNG/Enemies/enemyBlack1.png", "enemyBlack1", 0, 0, glm::vec2(1, 1));
-		textureManager->loadTexture("Backgrounds/blue.png", "blueBackground", 0, 0, glm::vec2(1, 1));
-		textureManager->loadTexture("PNG/Lasers/laserBlue01.png", "laserBlue01", 0, 0, glm::vec2(1, 1));
-		textureManager->loadTexture("PNG/Lasers/blueExplosionSpriteSheet.png", "blueExplosionSpriteSheet", 1, 2, glm::vec2(2, 1));
-		textureManager->loadTexture("PNG/Lasers/laserGreen11.png", "laserGreen11", 0, 0, glm::vec2(1, 1));
-		textureManager->loadTexture("PNG/Lasers/greenExplosionSpriteSheet.png", "greenExplosionSpriteSheet", 1, 2, glm::vec2(2, 1));
-		textureManager->loadTexture("PNG/Effects/shieldSpriteSheet.png", "shieldSpriteSheet", 1, 3, glm::vec2(3, 1));*/
-
-		/*textureManager->getTexture("shieldSpriteSheet")->setLoopStatus(true);
-		textureManager->getTexture("shieldSpriteSheet")->setDelay(0.15f);*/
+		spriteSheets.insert(std::pair<std::string, std::shared_ptr<SpriteSheet>>("main", spriteSheet));
+		spriteSheets.insert(std::pair<std::string, std::shared_ptr<SpriteSheet>>("background", backgroundSpriteSheet));
 
 		background = std::make_shared<UIElement>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), nullptr, glm::vec2(0.0f, 0.0f));
-		background->applyAnimation(backgroundSpriteSheet->getSprite("wholeSpriteSheet"));
+		background->applyAnimation(spriteSheets["background"]->getSprite("wholeSpriteSheet"));
 		player = std::make_shared<Player>(32.0f, 32.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
 		player->onDeath = [this]()
 		{
+			inputManager->resetInput();
 			setState(GameState::ENDED);
 			currentMenu = ui["Game Over"];
 			ui["Game Over"]->showMain(false);
 		};
-		player->applyAnimation(spriteSheet->getSprite("playerShip1_blue.png"));
-		player->addAnimation("shoot", spriteSheet->getSprite("laserBlue01.png"));
-		player->addAnimation("explosion", spriteSheet->getAnimation("blueExplosionSpriteSheet"));
+		player->applyAnimation(spriteSheets["main"]->getSprite("playerShip1_blue.png"));
+		player->addAnimation("shoot", spriteSheets["main"]->getSprite("laserBlue01.png"));
+		player->addAnimation("explosion", spriteSheets["main"]->getAnimation("blueExplosionSpriteSheet"));
 
 		auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-		shield->applyAnimation(spriteSheet->getAnimation("shieldSpriteSheet"));
+		shield->applyAnimation(spriteSheets["main"]->getAnimation("shieldSpriteSheet"));
 		player->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
 
 		initGameUI();
@@ -101,6 +92,8 @@ namespace Engine
 		explosions.clear();
 		ui.clear();
 		playerUI.clear();
+		spriteSheets.clear();
+		pickups.clear();
 	}
 
 	template <class T>
@@ -156,7 +149,7 @@ namespace Engine
 		playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
 		auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-		option2->applyAnimation(spriteSheet->getSprite("playerLife1_blue.png"));
+		option2->applyAnimation(spriteSheets["main"]->getSprite("playerLife1_blue.png"));
 		playerUI["Health"]->addUIElement(std::move(option2));
 		option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
 		option->setIsStatic(true);
@@ -198,7 +191,7 @@ namespace Engine
 
 				//Health
 				auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-				option2->applyAnimation(spriteSheet->getSprite("playerLife1_blue.png"));
+				option2->applyAnimation(spriteSheets["main"]->getSprite("playerLife1_blue.png"));
 				playerUI["Health"]->addUIElement(std::move(option2));
 				auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
 				option->setIsStatic(true);
@@ -218,12 +211,26 @@ namespace Engine
 		for (size_t i = 0; i < ((glutGet(GLUT_INIT_WINDOW_WIDTH) - 32) / space); i++)
 		{
 			auto enemy = std::make_shared<TestEnemy>(32.0f, 32.0f, glm::vec2(i * space, 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
-			enemy->addAnimation("shoot", spriteSheet->getSprite("laserGreen11.png"));
-			enemy->addAnimation("explosion", spriteSheet->getAnimation("greenExplosionSpriteSheet"));
-			enemy->applyAnimation(spriteSheet->getSprite("enemyBlack1.png"));
+			enemy->addAnimation("shoot", spriteSheets["main"]->getSprite("laserGreen11.png"));
+			enemy->addAnimation("explosion", spriteSheets["main"]->getAnimation("greenExplosionSpriteSheet"));
+			enemy->applyAnimation(spriteSheets["main"]->getSprite("enemyBlack1.png"));
 			enemies.push_back(std::move(enemy));
 		}
 
+		auto pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
+		pickup->applyAnimation(spriteSheets["main"]->getSprite("pill_blue.png"));
+		pickup->onCollision = [pickup](Player* p)
+		{
+			if (pickup->getNeedsToBeDeleted()) return;
+
+			p->removeAddon("shield");
+			pickup->setNeedsToBeDeleted(true);
+
+			#if _DEBUG
+				std::cout << "pickup player hit" << std::endl;
+			#endif
+		};
+		pickups.push_back(std::move(pickup));
 		accumulator = 0.0f;
 		t = 0.0f;
 	}
@@ -241,12 +248,12 @@ namespace Engine
 		auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 60.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
-			initScene();
-
 			if (player != nullptr)
 				player->restart();
 
+			pickups.clear();
 			explosions.clear();
+			initScene();
 			setState(GameState::STARTED);
 			currentMenu = nullptr;
 			updatePlayerUI();
@@ -410,6 +417,7 @@ namespace Engine
 
 		while (accumulator >= dt)
 		{
+			inputManager->fixInput();
 			if (getState() == GameState::STARTED)
 			{
 				player->update(dt, inputManager);
@@ -430,6 +438,25 @@ namespace Engine
 						++it;
 				}
 
+				for (std::vector<std::shared_ptr<Pickup>>::iterator it = pickups.begin(); it != pickups.end();)
+				{
+					if ((*it)->update(dt))
+						it = pickups.erase(it);
+					else
+						++it;
+				}
+
+				//Collision detection
+				for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
+				{
+					auto playerBulletList = player->getBulletsList();
+					collisionManager->checkCollision(player, (*it)->getBulletsList(), *it);
+					collisionManager->checkCollision(*it, playerBulletList, player);
+				}
+
+				collisionManager->checkCollision(player, &enemies);
+				collisionManager->checkCollision(player, &pickups);
+
 				t += dt;
 			}
 			accumulator -= dt;
@@ -437,16 +464,6 @@ namespace Engine
 
 		if (getState() == GameState::STARTED)
 		{
-			auto playerBulletList = player->getBulletsList();
-
-			for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
-			{
-				collisionManager->checkCollision(player, (*it)->getBulletsList(), *it);
-				collisionManager->checkCollision(*it, playerBulletList, player);
-			}
-
-			collisionManager->checkCollision(player, &enemies);
-
 			updatePlayerUI();
 
 			//Render background
@@ -460,6 +477,8 @@ namespace Engine
 			}
 			//Render enemies
 			renderer->draw(enemies);
+			//Render pickups
+			renderer->draw(pickups);
 			//Render explosions
 			renderer->draw(explosions);
 			//Render bullets
@@ -469,7 +488,7 @@ namespace Engine
 				renderer->draw(*enemyBulletList);
 			}
 
-			renderer->draw(*playerBulletList);
+			renderer->draw(*player->getBulletsList());
 			//Render & Update player UI
 			for (auto uiElement : playerUI)
 			{

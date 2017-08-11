@@ -3,6 +3,11 @@
 
 namespace Engine
 {
+	SpriteSheet::~SpriteSheet()
+	{
+		glDeleteTextures(1, &texture);
+	}
+
 	void SpriteSheet::loadSpriteSheet(const std::string& _path)
 	{
 		glGenTextures(1, &texture);
@@ -33,9 +38,9 @@ namespace Engine
 		// Parse the buffer using the xml file parsing library into doc 
 		doc.parse<0>(&buffer[0]);
 		// Find our root node
-		root_node = doc.first_node("TextureAtlas");
+		root_node = doc.first_node();
 		// Iterate over the brewerys
-		for (rapidxml::xml_node<> * brewery_node = root_node->first_node("SubTexture"); brewery_node; brewery_node = brewery_node->next_sibling())
+		for (rapidxml::xml_node<> * brewery_node = root_node->first_node(); brewery_node; brewery_node = brewery_node->next_sibling())
 		{
 			auto animation = glm::vec4(atof(brewery_node->first_attribute("x")->value()), atof(brewery_node->first_attribute("y")->value()), atof(brewery_node->first_attribute("width")->value()), atof(brewery_node->first_attribute("height")->value()));
 			sprites.insert(std::pair<std::string, glm::vec4>(brewery_node->first_attribute("name")->value(), animation));

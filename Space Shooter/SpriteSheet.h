@@ -19,6 +19,7 @@ namespace Engine
 	class SpriteSheet
 	{
 		public:
+			~SpriteSheet();
 			void loadSpriteSheet(const std::string&);
 			void loadSpritesFromXml(const std::string&);
 			std::shared_ptr<Animation> getSprite(const std::string&);

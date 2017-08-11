@@ -16,6 +16,7 @@
 #include "SpriteSheet.h"
 #include "CollisionManager.h"
 
+#include "Pickup.h"
 #include "UIElement.h"
 #include "Player.h"
 #include "TestEnemy.h"
@@ -59,14 +60,13 @@ namespace Engine
 			std::shared_ptr<UIElement> background;
 			std::shared_ptr<UIElement> currentMenu;
 
-			std::shared_ptr<SpriteSheet> spriteSheet;
-			std::shared_ptr<SpriteSheet> backgroundSpriteSheet;
-
 			float t;
 			float dt;
 			float currentTime;
 			float accumulator;
 
+			std::vector<std::shared_ptr<Pickup>> pickups;
+			std::map<std::string, std::shared_ptr<SpriteSheet>> spriteSheets;
 			std::vector<std::shared_ptr<TestEnemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;
 			std::map<std::string, std::shared_ptr<UIElement>> ui;
