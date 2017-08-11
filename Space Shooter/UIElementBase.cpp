@@ -35,7 +35,7 @@ namespace Engine
 	{
 		if (color.a == 0.0f) return;
 
-		updateTexture(dt);
+		updateAnimation(dt);
 	}
 
 	void UIElementBase::fixPosition(UIElementBase* parent)

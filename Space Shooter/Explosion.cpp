@@ -10,16 +10,20 @@ namespace Engine
 
 	bool Explosion::update(float dt)
 	{
-		updateTexture(dt);
+		updateAnimation(dt);
 
-		return (texture != nullptr && !texture->getLoopStatus() && currentFrame >= texture->getEndFrame() && animComplete);
+		if (animation == nullptr)
+			return false;
+
+		auto sprites = animation->getAnimation();
+		return (!animation->getLoopStatus() && currentFrame >= (sprites->size() - 1) && animComplete);
 	}
 
-	void Explosion::applyTexture(std::shared_ptr<Texture> _texture)
+	void Explosion::applyAnimation(std::shared_ptr<Animation> _animation)
 	{
-		RenderObject::applyTexture(_texture);
+		RenderObject::applyAnimation(_animation);
 
-		if (texture != nullptr)
-			texture->setDelay(0.1f);
+		if (animation != nullptr)
+			animation->setDelay(0.1f);
 	}
 }

@@ -24,8 +24,8 @@ namespace Engine
 			~BaseGameObject();
 			BaseGameObject(float, float, glm::vec2, glm::vec2, glm::vec4);
 			virtual bool update(float);
-			void addAnimation(std::string, std::shared_ptr<Texture>);
-			std::shared_ptr<Texture> getAnimation(std::string index) { return animations[index]; }
+			void addAnimation(std::string, std::shared_ptr<Animation>);
+			std::shared_ptr<Animation> getAnimationByIndex(std::string index) { return animations[index]; }
 			inline void setNeedsToBeDeleted(bool boolean) { needsToBeDeleted = boolean; };
 			inline bool getNeedsToBeDeleted() const { return needsToBeDeleted; }
 			inline void setVelocity(glm::vec2 _velocity) { velocity = _velocity; };
@@ -35,7 +35,7 @@ namespace Engine
 			virtual void onCollision(BaseGameObject*);
 			std::function<void()> onDeath;
 		protected:
-			std::map<std::string, std::shared_ptr<Texture>> animations;
+			std::map<std::string, std::shared_ptr<Animation>> animations;
 			bool needsToBeDeleted;
 			glm::vec2 velocity;
 	};

@@ -67,21 +67,35 @@ namespace Engine
 			GLfloat w = (GLfloat)ch.Size.x;
 			GLfloat h = (GLfloat)ch.Size.y;
 			// Update VBO for each character
-			struct StructForTextCache tempStruct = 
-			{ 
-				ch.TextureID,
-				{
-					{ xpos, ypos + h, 0.0, 0.0 },
-					{ xpos, ypos, 0.0, 1.0 },
-					{ xpos + w, ypos, 1.0, 1.0 },
 
-					{ xpos, ypos + h, 0.0, 0.0 },
-					{ xpos + w, ypos, 1.0, 1.0 },
-					{ xpos + w, ypos + h, 1.0, 0.0 }
-				} 
+			std::vector<std::pair<GLuint, std::vector<GLfloat>>> testVector;
+
+			GLfloat tempVertices[4][6] = 
+			{
+				xpos, ypos + h, 0.0, 0.0,
+				xpos, ypos, 0.0, 1.0,
+				xpos + w, ypos, 1.0, 1.0,
+
+				xpos, ypos + h, 0.0, 0.0,
+				xpos + w, ypos, 1.0, 1.0,
+				xpos + w, ypos + h, 1.0, 0.0
 			};
 
-			cachedCharacters.push_back(std::move(tempStruct));
+			std::vector<GLfloat> vertices;
+		
+			for (size_t i = 0; i < 4; i++)
+			{
+				for (size_t i2 = 0; i2 < 6; i2++)
+				{
+					vertices.push_back(tempVertices[i][i2]);
+				}
+			}
+
+			cachedCharacters.push_back(std::pair<GLuint, std::vector<GLfloat>>
+			(
+				ch.TextureID,
+				std::move(vertices)
+			));
 			position.x += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 

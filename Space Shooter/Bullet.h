@@ -7,7 +7,6 @@
 #include "GL/freeglut.h"
 #include <memory>
 
-#include "Texture.h"
 #include "BaseGameObject.h"
 
 #include "gtc/matrix_transform.hpp"

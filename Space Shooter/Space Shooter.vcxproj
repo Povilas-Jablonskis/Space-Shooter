@@ -44,7 +44,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\P\Desktop\freetype-2.8\include;C:\Users\P\Desktop\rapidjson;C:\Users\P\Desktop\Simple OpenGL Image Library\src;C:\Users\P\Desktop\glew-2.0.0\include;C:\Users\P\Desktop\freeglut\include;C:\Users\P\Desktop\glm\glm;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\include;C:\Users\povilas.jablonskis\Desktop\rapidjson;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\src;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\include;C:\Users\povilas.jablonskis\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\P\Desktop\freetype-2.8\include;C:\Users\P\Desktop\rapidxml-1.13;C:\Users\P\Desktop\Simple OpenGL Image Library\src;C:\Users\P\Desktop\glew-2.0.0\include;C:\Users\P\Desktop\freeglut\include;C:\Users\P\Desktop\glm\glm;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\include;C:\Users\povilas.jablonskis\Desktop\rapidxml-1.13;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\src;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\include;C:\Users\povilas.jablonskis\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -60,7 +60,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Users\P\Desktop\freetype-2.8\include;C:\Users\P\Desktop\rapidjson;C:\Users\P\Desktop\Simple OpenGL Image Library\src;C:\Users\P\Desktop\glew-2.0.0\include;C:\Users\P\Desktop\freeglut\include;C:\Users\P\Desktop\glm\glm;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\include;C:\Users\povilas.jablonskis\Desktop\rapidjson;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\src;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\include;C:\Users\povilas.jablonskis\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\P\Desktop\freetype-2.8\include;C:\Users\P\Desktop\rapidxml-1.13;C:\Users\P\Desktop\Simple OpenGL Image Library\src;C:\Users\P\Desktop\glew-2.0.0\include;C:\Users\P\Desktop\freeglut\include;C:\Users\P\Desktop\glm\glm;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\include;C:\Users\povilas.jablonskis\Desktop\rapidxml-1.13;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\src;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\include;C:\Users\povilas.jablonskis\Desktop\freeglut\include;C:\Users\povilas.jablonskis\Desktop\glm\glm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -85,15 +85,16 @@
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="TestEnemy.cpp" />
     <ClCompile Include="Text.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIElementBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Addon.h" />
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="BaseGameObject.h" />
     <ClInclude Include="Bullet.h" />
@@ -109,12 +110,10 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="StructForTextCache.h" />
+    <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="TestEnemy.h" />
     <ClInclude Include="Text.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureManager.h" />
     <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIElementBase.h" />
   </ItemGroup>

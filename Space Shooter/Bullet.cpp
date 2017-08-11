@@ -13,7 +13,7 @@ namespace Engine
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
-		updateTexture(_dt);
+		updateAnimation(_dt);
 
 		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -31,7 +31,7 @@ namespace Engine
 		else
 		{
 			auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
-			explosion->applyTexture(parent->getAnimation("explosion"));
+			explosion->applyAnimation(parent->getAnimationByIndex("explosion"));
 			Application::instance()->addExplosionToList(std::move(explosion));
 			collider->respawn();
 		}
@@ -46,7 +46,7 @@ namespace Engine
 		parent->deleteBullet(this);
 		parent->setScore(parent->getScore() + 100);
 		auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
-		explosion->applyTexture(parent->getAnimation("explosion"));
+		explosion->applyAnimation(parent->getAnimationByIndex("explosion"));
 		Application::instance()->addExplosionToList(std::move(explosion));
 		#if _DEBUG
 			std::cout << "player bullet hit" << std::endl;

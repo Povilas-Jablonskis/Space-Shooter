@@ -12,40 +12,12 @@ namespace Engine
 	}
 
 	Application::Application() 
-		: collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), textureManager(std::make_shared<TextureManager>()), gameState(GameState::NOTSTARTEDYET)
+		: collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
 		currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
 		accumulator = 0.0f;
 		dt = 1.0f / 60.0f;
 		t = 0.0f;
-
-		/*char writeBuffer[65536];
-		FILE* pFile;
-
-		fopen_s(&pFile,"config.json", "rb");
-		if (pFile != NULL)
-		{
-			rapidjson::FileReadStream is(pFile, writeBuffer, sizeof(writeBuffer));
-			rapidjson::Document d;
-			d.ParseStream(is);
-			fclose(pFile);
-
-			const rapidjson::Value& second = d["second"];
-			const rapidjson::Value& first = d["first"];
-
-			for (rapidjson::Value::ConstMemberIterator itr = second[0].MemberBegin(); itr != second[0].MemberEnd(); ++itr) {
-				std::cout << itr->name.GetString() << ":" << itr->value.GetType() << std::endl;
-			}
-
-			std::cout << std::endl << std::endl;
-
-			for (rapidjson::Value::ConstMemberIterator itr = first[0].MemberBegin(); itr != first[0].MemberEnd(); ++itr) {
-				std::cout << itr->name.GetString() << ":" << itr->value.GetType() << std::endl;
-			}
-		}
-		else 
-			std::cout << "config.json not found" << std::endl;
-		*/
 
 		inputManager->setKeyBinding("Attack", 32);
 		inputManager->setKeyBinding("Move_Left", 97);
@@ -58,7 +30,36 @@ namespace Engine
 		fontManager->loadFont("kenvector_future.ttf", "kenvector_future");
 		fontManager->loadFont("kenvector_future_thin.ttf", "kenvector_future_thin");
 
-		textureManager->loadTexture("PNG/UI/playerLife1_blue.png", "playerLife1_blue", 0, 0, glm::vec2(1, 1));
+		spriteSheet = std::make_shared<SpriteSheet>();
+		backgroundSpriteSheet = std::make_shared<SpriteSheet>();
+
+		backgroundSpriteSheet->loadSpriteSheet("Backgrounds/blue.png");
+
+		spriteSheet->loadSpriteSheet("Spritesheet/sheet.png");
+		spriteSheet->loadSpritesFromXml("Spritesheet/sheet.xml");
+
+		std::vector<glm::vec4> sprites;
+		sprites.push_back(spriteSheet->getSpriteAsVector("laserBlue11.png"));
+		sprites.push_back(spriteSheet->getSpriteAsVector("laserBlue10.png"));
+		spriteSheet->makeAnimation("blueExplosionSpriteSheet", sprites);
+
+		sprites.clear();
+
+		sprites.push_back(spriteSheet->getSpriteAsVector("laserGreen01.png"));
+		sprites.push_back(spriteSheet->getSpriteAsVector("laserGreen16.png"));
+		spriteSheet->makeAnimation("greenExplosionSpriteSheet", sprites);
+
+		sprites.clear();
+
+		sprites.push_back(spriteSheet->getSpriteAsVector("shield1.png"));
+		sprites.push_back(spriteSheet->getSpriteAsVector("shield2.png"));
+		sprites.push_back(spriteSheet->getSpriteAsVector("shield3.png"));
+		spriteSheet->makeAnimation("shieldSpriteSheet", sprites);
+
+		spriteSheet->getAnimation("shieldSpriteSheet")->setLoopStatus(true);
+		spriteSheet->getAnimation("shieldSpriteSheet")->setDelay(0.15f);
+
+		/*textureManager->loadTexture("PNG/UI/playerLife1_blue.png", "playerLife1_blue", 0, 0, glm::vec2(1, 1));
 		textureManager->loadTexture("PNG/playerShip1_blue.png", "playerShip1_blue", 0, 0, glm::vec2(1, 1));
 		textureManager->loadTexture("PNG/Enemies/enemyBlack1.png", "enemyBlack1", 0, 0, glm::vec2(1, 1));
 		textureManager->loadTexture("Backgrounds/blue.png", "blueBackground", 0, 0, glm::vec2(1, 1));
@@ -66,13 +67,13 @@ namespace Engine
 		textureManager->loadTexture("PNG/Lasers/blueExplosionSpriteSheet.png", "blueExplosionSpriteSheet", 1, 2, glm::vec2(2, 1));
 		textureManager->loadTexture("PNG/Lasers/laserGreen11.png", "laserGreen11", 0, 0, glm::vec2(1, 1));
 		textureManager->loadTexture("PNG/Lasers/greenExplosionSpriteSheet.png", "greenExplosionSpriteSheet", 1, 2, glm::vec2(2, 1));
-		textureManager->loadTexture("PNG/Effects/shieldSpriteSheet.png", "shieldSpriteSheet", 1, 3, glm::vec2(3, 1));
+		textureManager->loadTexture("PNG/Effects/shieldSpriteSheet.png", "shieldSpriteSheet", 1, 3, glm::vec2(3, 1));*/
 
-		textureManager->getTexture("shieldSpriteSheet")->setLoopStatus(true);
-		textureManager->getTexture("shieldSpriteSheet")->setDelay(0.15f);
+		/*textureManager->getTexture("shieldSpriteSheet")->setLoopStatus(true);
+		textureManager->getTexture("shieldSpriteSheet")->setDelay(0.15f);*/
 
 		background = std::make_shared<UIElement>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), nullptr, glm::vec2(0.0f, 0.0f));
-		background->applyTexture(textureManager->getTexture("blueBackground"));
+		background->applyAnimation(backgroundSpriteSheet->getSprite("wholeSpriteSheet"));
 		player = std::make_shared<Player>(32.0f, 32.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
 		player->onDeath = [this]()
 		{
@@ -80,12 +81,12 @@ namespace Engine
 			currentMenu = ui["Game Over"];
 			ui["Game Over"]->showMain(false);
 		};
-		player->applyTexture(textureManager->getTexture("playerShip1_blue"));
-		player->addAnimation("shoot", textureManager->getTexture("laserBlue01"));
-		player->addAnimation("explosion", textureManager->getTexture("blueExplosionSpriteSheet"));
+		player->applyAnimation(spriteSheet->getSprite("playerShip1_blue.png"));
+		player->addAnimation("shoot", spriteSheet->getSprite("laserBlue01.png"));
+		player->addAnimation("explosion", spriteSheet->getAnimation("blueExplosionSpriteSheet"));
 
 		auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-		shield->applyTexture(textureManager->getTexture("shieldSpriteSheet"));
+		shield->applyAnimation(spriteSheet->getAnimation("shieldSpriteSheet"));
 		player->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
 
 		initGameUI();
@@ -155,7 +156,7 @@ namespace Engine
 		playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
 		auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-		option2->applyTexture(textureManager->getTexture("playerLife1_blue"));
+		option2->applyAnimation(spriteSheet->getSprite("playerLife1_blue.png"));
 		playerUI["Health"]->addUIElement(std::move(option2));
 		option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
 		option->setIsStatic(true);
@@ -197,7 +198,7 @@ namespace Engine
 
 				//Health
 				auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-				option2->applyTexture(textureManager->getTexture("playerLife1_blue"));
+				option2->applyAnimation(spriteSheet->getSprite("playerLife1_blue.png"));
 				playerUI["Health"]->addUIElement(std::move(option2));
 				auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
 				option->setIsStatic(true);
@@ -217,9 +218,9 @@ namespace Engine
 		for (size_t i = 0; i < ((glutGet(GLUT_INIT_WINDOW_WIDTH) - 32) / space); i++)
 		{
 			auto enemy = std::make_shared<TestEnemy>(32.0f, 32.0f, glm::vec2(i * space, 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
-			enemy->addAnimation("shoot", textureManager->getTexture("laserGreen11"));
-			enemy->addAnimation("explosion", textureManager->getTexture("greenExplosionSpriteSheet"));
-			enemy->applyTexture(textureManager->getTexture("enemyBlack1"));
+			enemy->addAnimation("shoot", spriteSheet->getSprite("laserGreen11.png"));
+			enemy->addAnimation("explosion", spriteSheet->getAnimation("greenExplosionSpriteSheet"));
+			enemy->applyAnimation(spriteSheet->getSprite("enemyBlack1.png"));
 			enemies.push_back(std::move(enemy));
 		}
 

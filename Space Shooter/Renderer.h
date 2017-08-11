@@ -31,9 +31,7 @@ namespace Engine
 
 				int offsetLocation = glGetUniformLocation(program, "color");
 				int offsetLocation2 = glGetUniformLocation(program, "renderMode");
-				int offsetLocation3 = glGetUniformLocation(program, "animscX");
-				int offsetLocation4 = glGetUniformLocation(program, "animscY");
-				int offsetLocation5 = glGetUniformLocation(program, "curranim");
+				int offsetLocation3 = glGetUniformLocation(program, "spriteCoordinates");
 				int offsetLocation6 = glGetUniformLocation(program, "projection");
 				int offsetLocation7 = glGetUniformLocation(program, "model");
 				glm::mat4 projection = glm::ortho(0.0f, windowWidth, 0.0f, windowHeigth, 0.0f, 1.0f);
@@ -43,7 +41,8 @@ namespace Engine
 				{
 					if (element->getColor(3) == 0.0f) continue;
 
-					auto texture = element->getTexture();
+					auto animation = element->getAnimation();
+					auto sprites = animation->getAnimation();
 
 					glm::mat4 model;
 					model = glm::translate(model, glm::vec3(element->getPosition(), 0.0f));
@@ -56,14 +55,14 @@ namespace Engine
 
 					glUniform4f(offsetLocation, element->getColor(0) / 255.0f, element->getColor(1) / 255.0f, element->getColor(2) / 255.0f, element->getColor(3));
 
-					if (texture != nullptr)
+					if (animation != nullptr)
 					{
-						glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+						auto currentSprite = sprites->at(element->getCurrentFrame());
+						glBindTexture(GL_TEXTURE_2D, animation->getSpriteSheetTexture());
 
 						glUniform1f(offsetLocation2, 1.0f);
-						glUniform1f(offsetLocation3, texture->getCount().x);
-						glUniform1f(offsetLocation4, texture->getCount().y);
-						glUniform1f(offsetLocation5, (float)element->getCurrentFrame());
+						auto spriteSheetSize = glm::vec2(animation->getSpriteSheetSize(0), animation->getSpriteSheetSize(1));
+						glUniform4f(offsetLocation3, currentSprite.x / spriteSheetSize.x, currentSprite.y / spriteSheetSize.y, currentSprite.z / spriteSheetSize.x, currentSprite.w / spriteSheetSize.y);
 					}
 					else
 						glUniform1f(offsetLocation2, 0.0f);
@@ -84,9 +83,7 @@ namespace Engine
 
 				int offsetLocation = glGetUniformLocation(program, "color");
 				int offsetLocation2 = glGetUniformLocation(program, "renderMode");
-				int offsetLocation3 = glGetUniformLocation(program, "animscX");
-				int offsetLocation4 = glGetUniformLocation(program, "animscY");
-				int offsetLocation5 = glGetUniformLocation(program, "curranim");
+				int offsetLocation3 = glGetUniformLocation(program, "spriteCoordinates");
 				int offsetLocation6 = glGetUniformLocation(program, "projection");
 				int offsetLocation7 = glGetUniformLocation(program, "model");
 				glm::mat4 projection = glm::ortho(0.0f, windowWidth, 0.0f, windowHeigth, 0.0f, 1.0f);
@@ -94,7 +91,8 @@ namespace Engine
 				glUseProgram(program);
 				if (element->getColor(3) == 0.0f) return;
 
-				auto texture = element->getTexture();
+				auto animation = element->getAnimation();
+				auto sprites = animation->getAnimation();
 
 				glm::mat4 model;
 				model = glm::translate(model, glm::vec3(element->getPosition(), 0.0f));
@@ -107,14 +105,14 @@ namespace Engine
 
 				glUniform4f(offsetLocation, element->getColor(0) / 255.0f, element->getColor(1) / 255.0f, element->getColor(2) / 255.0f, element->getColor(3));
 
-				if (texture != nullptr)
+				if (animation != nullptr)
 				{
-					glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+					auto currentSprite = sprites->at(element->getCurrentFrame());
+					glBindTexture(GL_TEXTURE_2D, animation->getSpriteSheetTexture());
 
 					glUniform1f(offsetLocation2, 1.0f);
-					glUniform1f(offsetLocation3, texture->getCount().x);
-					glUniform1f(offsetLocation4, texture->getCount().y);
-					glUniform1f(offsetLocation5, (float)element->getCurrentFrame());
+					auto spriteSheetSize = glm::vec2(animation->getSpriteSheetSize(0), animation->getSpriteSheetSize(1));
+					glUniform4f(offsetLocation3, currentSprite.x / spriteSheetSize.x, currentSprite.y / spriteSheetSize.y, currentSprite.z / spriteSheetSize.x, currentSprite.w / spriteSheetSize.y);
 				}
 				else
 					glUniform1f(offsetLocation2, 0.0f);

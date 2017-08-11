@@ -11,7 +11,7 @@ namespace Engine
 	bool Addon::update(float dt, glm::vec2 playerPosition)
 	{
 		position = playerPosition + positionOffset;
-		updateTexture(dt);
+		updateAnimation(dt);
 		return needsToBeDeleted;
 	}
 }

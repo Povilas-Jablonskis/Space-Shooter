@@ -97,13 +97,13 @@ namespace Engine
 
 					auto cache = text->getCachedCharacters();
 
-					for (std::vector<StructForTextCache>::iterator it = cache.begin(); it != cache.end(); it++)
+					for (std::vector<std::pair<GLuint, std::vector<GLfloat>>>::iterator it = cache.begin(); it != cache.end(); it++)
 					{
 						// Render glyph texture over quad
-						glBindTexture(GL_TEXTURE_2D, it->TextureID);
+						glBindTexture(GL_TEXTURE_2D, it->first);
 						// Update content of VBO memory
 						glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-						glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it->vertices[0]);
+						glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it->second[0]);
 						glBindBuffer(GL_ARRAY_BUFFER, 0);
 						// Render quad
 						glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -129,13 +129,13 @@ namespace Engine
 
 				auto cache = text->getCachedCharacters();
 
-				for (std::vector<StructForTextCache>::iterator it = cache.begin(); it != cache.end(); it++)
+				for (std::vector<std::pair<GLuint, std::vector<GLfloat>>>::iterator it = cache.begin(); it != cache.end(); it++)
 				{
 					// Render glyph texture over quad
-					glBindTexture(GL_TEXTURE_2D, it->TextureID);
+					glBindTexture(GL_TEXTURE_2D, it->first);
 					// Update content of VBO memory
 					glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-					glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it->vertices[0]);
+					glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it->second[0]);
 					glBindBuffer(GL_ARRAY_BUFFER, 0);
 					// Render quad
 					glDrawArrays(GL_TRIANGLES, 0, 6);

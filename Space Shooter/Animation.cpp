@@ -1,42 +1,46 @@
-#include "Texture.h"
-#include "SOIL.h"
+#include "Animation.h"
 
 namespace Engine
 {
-	Texture::Texture(int _startFame, int _endFrame, glm::vec2 _animsc) : 
-		startFrame(_startFame), endFrame(_endFrame), animsc(_animsc), width(0), height(0), texture(0), loop(false), delay(1.0f / 60.0f)
+	Animation::Animation(GLuint _spriteSheetTexture, int width, int heigth) : loop(false), delay(1.0f / 60.f), spriteSheetTexture(_spriteSheetTexture), spriteSheetHeigth(heigth), spriteSheetWidth(width)
 	{
 
 	}
 
-	void Texture::readTextureFile(const std::string& _path)
+	void Animation::loadFromFile(const std::string& _path)
 	{
-		glGenTextures(1, &texture);
+		glGenTextures(1, &spriteSheetTexture);
 
-		glBindTexture(GL_TEXTURE_2D, texture); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+		glBindTexture(GL_TEXTURE_2D, spriteSheetTexture); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
 		// Set our texture parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		// Set texture filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		int width, height;
 		unsigned char* image = SOIL_load_image(_path.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 		SOIL_free_image_data(image);
 		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
+
+		sprites.clear();
+		spriteSheetWidth = width;
+		spriteSheetHeigth = height;
+		sprites.push_back(glm::vec4(width, height, width, height));
 	}
 
-	int Texture::getSize(int index) const
+	int Animation::getSpriteSheetSize(int index) const
 	{
 		switch (index)
 		{
 			case 0:
 			{
-				return width;
+				return spriteSheetWidth;
 			}
 			case 1:
 			{
-				return height;
+				return spriteSheetHeigth;
 			}
 			default:
 			{

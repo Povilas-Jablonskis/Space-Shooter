@@ -4,29 +4,31 @@
 namespace Engine
 {
 	RenderObject::RenderObject(float _width, float _height, glm::vec2 _position, glm::vec4 _color)
-		: width(_width), height(_height), position(_position), color(_color), texture(nullptr), animComplete(false), animTimer(0.0f), currentFrame(0), rotationAngle(0.0f), rotationAxis(glm::vec3(0.0, 0.0, 1.0))
+		: width(_width), height(_height), position(_position), color(_color), animation(nullptr), animComplete(false), animTimer(0.0f), currentFrame(0), rotationAngle(0.0f), rotationAxis(glm::vec3(0.0, 0.0, 1.0))
 	{
 
 	}
 
-	void RenderObject::updateTexture(float dt)
+	void RenderObject::updateAnimation(float dt)
 	{
-		if (texture == nullptr) return;
+		if (animation == nullptr) return;
 
-		if (texture->getEndFrame() - texture->getStartFrame() > 0)
+		auto sprites = animation->getAnimation();
+
+		if (sprites->size() > 1)
 		{
 			animTimer += dt;
-			if (animTimer > texture->getDelay())
+			if (animTimer > animation->getDelay())
 			{
 				animTimer = 0;
 				currentFrame++;
-				if (currentFrame < texture->getStartFrame() || currentFrame > texture->getEndFrame())
+				if (currentFrame >= sprites->size())
 				{
-					if (texture->getLoopStatus())
-						currentFrame = texture->getStartFrame();
+					if (animation->getLoopStatus())
+						currentFrame = 0;
 					else
 					{
-						currentFrame = texture->getEndFrame();
+						currentFrame = (sprites->size() - 1);
 						animComplete = true;
 					}
 				}
@@ -34,14 +36,14 @@ namespace Engine
 		}
 	}
 
-	void RenderObject::applyTexture(std::shared_ptr<Texture> _texture)
+	void RenderObject::applyAnimation(std::shared_ptr<Animation> _animation)
 	{
-		if (_texture == nullptr || _texture == texture) return;
+		if (_animation == nullptr || _animation == animation) return;
 
-		texture = _texture;
+		animation = _animation;
 		animTimer = 0.0;
 		animComplete = false;
-		currentFrame = texture->getStartFrame();
+		currentFrame = 0;
 	}		
 
 	float RenderObject::getSize(int index) const

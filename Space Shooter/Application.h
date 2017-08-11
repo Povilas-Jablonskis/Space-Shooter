@@ -9,16 +9,11 @@
 #include <agents.h>
 #include <ppltasks.h>
 
-#include "document.h"
-#include "filereadstream.h"
-#include "filewritestream.h"
-#include "writer.h"
-
 #include "Renderer.h"
 #include "FontManager.h"
 #include "GameState.h"
 #include "InputManager.h"
-#include "TextureManager.h"
+#include "SpriteSheet.h"
 #include "CollisionManager.h"
 
 #include "UIElement.h"
@@ -64,6 +59,9 @@ namespace Engine
 			std::shared_ptr<UIElement> background;
 			std::shared_ptr<UIElement> currentMenu;
 
+			std::shared_ptr<SpriteSheet> spriteSheet;
+			std::shared_ptr<SpriteSheet> backgroundSpriteSheet;
+
 			float t;
 			float dt;
 			float currentTime;
@@ -74,9 +72,9 @@ namespace Engine
 			std::map<std::string, std::shared_ptr<UIElement>> ui;
 			std::map<std::string, std::shared_ptr<UIElement>> playerUI;
 
+
 			std::shared_ptr<CollisionManager> collisionManager;
 			std::shared_ptr<Renderer> renderer;
-			std::shared_ptr<TextureManager> textureManager;
 			std::shared_ptr<InputManager> inputManager;
 			std::shared_ptr<FontManager> fontManager;
 			GameState gameState;

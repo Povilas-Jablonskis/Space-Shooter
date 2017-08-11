@@ -5,8 +5,9 @@
 #include <freetype/ftglyph.h>
 #include FT_FREETYPE_H
 #include <memory>
+#include <map>
+#include <iostream>
 
-#include "Texture.h"
 #include "Character.h"
 
 namespace Engine

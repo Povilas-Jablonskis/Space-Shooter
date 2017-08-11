@@ -33,7 +33,7 @@ namespace Engine
 
 	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager)
 	{
-		BaseGameObject::updateTexture(dt);
+		BaseGameObject::updateAnimation(dt);
 
 		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -45,7 +45,7 @@ namespace Engine
 		{
 			delayBetweenShootsTimer = 0.0f;
 			auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(position.x + (width / 2.0f), position.y + height + 5.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-			bullet->applyTexture(animations["shoot"]);
+			bullet->applyAnimation(animations["shoot"]);
 			bullets.push_back(std::move(bullet));
 		}
 

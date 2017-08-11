@@ -27,14 +27,14 @@ namespace Engine
 	{
 		position.x += velocity.x * dt;
 		position.y += velocity.y * sin(t);
-		BaseGameObject::updateTexture(dt);
+		BaseGameObject::updateAnimation(dt);
 
 		delayBetweenShootsTimer += dt;
 		if (delayBetweenShootsTimer > delayBetweenShoots)
 		{
 			delayBetweenShootsTimer = 0.0f;
 			auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(position.x + (width / 2.0f), position.y - 5.0f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-			bullet->applyTexture(animations["shoot"]);
+			bullet->applyAnimation(animations["shoot"]);
 			bullet->setRotationAngle(3.141592f);
 			bullet->setRotationAxis(glm::vec3(0.0,0.0,1.0));
 			bullets.push_back(std::move(bullet));

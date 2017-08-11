@@ -4,6 +4,8 @@
 #include "GL/glew.h"
 #include "GL/freeglut.h"
 
+#include <vec2.hpp>
+
 namespace Engine
 {
 	struct Character 

@@ -20,7 +20,7 @@ namespace Engine
 	{
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
-		updateTexture(_dt);
+		updateAnimation(_dt);
 		return true;
 	}
 
@@ -31,11 +31,11 @@ namespace Engine
 		#endif
 	}
 
-	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Texture> animation)
+	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> animation)
 	{
 		if (animations.find(index) != animations.end())
 			return;
 
-		animations.insert(std::pair<std::string, std::shared_ptr<Texture>>(index, animation));
+		animations.insert(std::pair<std::string, std::shared_ptr<Animation>>(index, animation));
 	}
 }
