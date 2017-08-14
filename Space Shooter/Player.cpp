@@ -65,11 +65,11 @@ namespace Engine
 				++it;
 		}
 
-		if (inputManager->getKey(keyBindings->find("Move_Left")->second))
+		if (inputManager->getKey(keyBindings->find("Move Left")->second))
 			position.x -= velocity.x * dt;
-		if (inputManager->getKey(keyBindings->find("Move_Right")->second))
+		if (inputManager->getKey(keyBindings->find("Move Right")->second))
  			position.x += velocity.x * dt;
-		if (inputManager->getKey(keyBindings->find("Move_Back")->second))
+		if (inputManager->getKey(keyBindings->find("Move Back")->second))
 			position.y -= velocity.y * dt;
 
 		position.y += (velocity.y * dt) / 2.0f;

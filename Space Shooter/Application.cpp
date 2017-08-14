@@ -19,10 +19,10 @@ namespace Engine
 		dt = 1.0f / 60.0f;
 		t = 0.0f;
 
-		inputManager->setKeyBinding("Attack", 32);
-		inputManager->setKeyBinding("Move_Left", 97);
-		inputManager->setKeyBinding("Move_Right", 100);
-		inputManager->setKeyBinding("Move_Back", 115);
+		inputManager->setKeyBinding("Attack", VK_SPACE);
+		inputManager->setKeyBinding("Move Left", 0x41);
+		inputManager->setKeyBinding("Move Right", 0x44);
+		inputManager->setKeyBinding("Move Back", 0x53);
 
 		renderer->addShader("shader", std::make_shared<Shader>("shader.vert", "shader.frag"));
 		renderer->addShader("textshader", std::make_shared<Shader>("textshader.vert", "textshader.frag"));
@@ -308,44 +308,10 @@ namespace Engine
 		size_t i = 0;
 		for (std::map<std::string, int>::iterator it = keybindings->begin(); it != keybindings->end(); it++)
 		{
-			auto characterMoveName = it->first;
-			std::replace(characterMoveName.begin(), characterMoveName.end(), '_', ' ');
-			options = std::make_shared<Text>(characterMoveName + ": ", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(20.0f, 60.0f - (10 * i)));
+			options = std::make_shared<Text>(it->first + ": ", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(20.0f, 60.0f - (10 * i)));
 			options->setIsStatic(true);
 			Controls->addText(std::move(options));
-			switch (it->second)
-			{
-				case 32:
-				{
-					options = std::make_shared<Text>("Space", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
-					break;
-				}
-				case 128:
-				{
-					options = std::make_shared<Text>("Arrow Up", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
-					break;
-				}
-				case 129:
-				{
-					options = std::make_shared<Text>("Arrow Down", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
-					break;
-				}
-				case 130:
-				{
-					options = std::make_shared<Text>("Arrow Left", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
-					break;
-				}
-				case 131:
-				{
-					options = std::make_shared<Text>("Arrow Right", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
-					break;
-				}
-				default:
-				{
-					options = std::make_shared<Text>(it->second, 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
-					break;
-				}
-			}
+			options = std::make_shared<Text>(virtualKeyCodeToString(it->second), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
 			options->onMouseClickFunc = [this, options, it]()
 			{
 				inputManager->resetCurrentEditedKeyBinding();
@@ -541,13 +507,15 @@ namespace Engine
 
 	void Application::keyboardInputUp(unsigned char c, int x, int y)
 	{
-		if (inputManager->getKey(c))
-			inputManager->setKey(c, false);
+		auto key = VkKeyScan(c);
+		if (inputManager->getKey(key))
+			inputManager->setKey(key, false);
 	}
 
 	void Application::keyboardInput(unsigned char c, int x, int y)
 	{
-		if (!inputManager->getKey(c))
+		auto key = VkKeyScan(c);
+		if (!inputManager->getKey(key))
 		{
 			switch (c)
 			{
@@ -586,17 +554,14 @@ namespace Engine
 			}
 			auto keyBindings = inputManager->getKeyBindings();
 			auto currentKeyBinding = inputManager->getCurrentEditedKeyBinding();
-			if (c >= 32 && c < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [c](std::pair<std::string, int> element){return element.second == c; }) && keyBindings->find(currentKeyBinding->first) != keyBindings->end())
+			if (c >= 32 && c < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](std::pair<std::string, int> element){return element.second == key; }) && keyBindings->find(currentKeyBinding->first) != keyBindings->end())
 			{
 				auto currentKey = keyBindings->find(currentKeyBinding->first);
-				currentKey->second = c;
-				if (c == 32)
-					currentKeyBinding->second->setText("Space");
-				else
-					currentKeyBinding->second->setText(c);
+				currentKey->second = key;
+				currentKeyBinding->second->setText(virtualKeyCodeToString(key));
 				inputManager->resetCurrentEditedKeyBinding();
 			}
-			inputManager->setKey(c, true);
+			inputManager->setKey(key, true);
 		}
 	}
 
@@ -606,26 +571,26 @@ namespace Engine
 		{
 			case GLUT_KEY_UP:
 			{
-				if (inputManager->getKey(128))
-					inputManager->setKey(128, false);
+				if (inputManager->getKey(VK_UP))
+					inputManager->setKey(VK_UP, false);
 				break;
 			}
 			case GLUT_KEY_DOWN:
 			{
-				if (inputManager->getKey(129))
-					inputManager->setKey(129, false);
+				if (inputManager->getKey(VK_DOWN))
+					inputManager->setKey(VK_DOWN, false);
 				break;
 			}
 			case GLUT_KEY_LEFT:
 			{
-				if (inputManager->getKey(130))
-					inputManager->setKey(130, false);
+				if (inputManager->getKey(VK_LEFT))
+					inputManager->setKey(VK_LEFT, false);
 				break;
 			}
 			case GLUT_KEY_RIGHT:
 			{
-				if (inputManager->getKey(131))
-					inputManager->setKey(131, false);
+				if (inputManager->getKey(VK_RIGHT))
+					inputManager->setKey(VK_RIGHT, false);
 				break;
 			}
 		}
@@ -641,34 +606,34 @@ namespace Engine
 		{
 			case GLUT_KEY_UP:
 			{
-				charText = "Arrow Up";
-				c = 128;
-				if (!inputManager->getKey(128))
-					inputManager->setKey(128, true);
+				charText = virtualKeyCodeToString(VK_UP);
+				c = VK_UP;
+				if (!inputManager->getKey(VK_UP))
+					inputManager->setKey(VK_UP, true);
 				break;
 			}
 			case GLUT_KEY_DOWN:
 			{
-				charText = "Arrow Down";
-				c = 129;
-				if (!inputManager->getKey(129))
-					inputManager->setKey(129, true);
+				charText = virtualKeyCodeToString(VK_DOWN);
+				c = VK_DOWN;
+				if (!inputManager->getKey(VK_DOWN))
+					inputManager->setKey(VK_DOWN, true);
 				break;
 			}
 			case GLUT_KEY_LEFT:
 			{
-				charText = "Arrow Left";
-				c = 130;
-				if (!inputManager->getKey(130))
-					inputManager->setKey(130, true);
+				charText = virtualKeyCodeToString(VK_LEFT);
+				c = VK_LEFT;
+				if (!inputManager->getKey(VK_LEFT))
+					inputManager->setKey(VK_LEFT, true);
 				break;
 			}
 			case GLUT_KEY_RIGHT:
 			{
-				charText = "Arrow Right";
-				c = 131;
-				if (!inputManager->getKey(131))
-					inputManager->setKey(131, true);
+				charText = virtualKeyCodeToString(VK_RIGHT);
+				c = VK_RIGHT;
+				if (!inputManager->getKey(VK_RIGHT))
+					inputManager->setKey(VK_RIGHT, true);
 				break;
 			}
 		}
@@ -704,6 +669,7 @@ namespace Engine
 
 		if (button == GLUT_LEFT_BUTTON)
 		{
+			inputManager->setKey(VK_LBUTTON, state == GLUT_DOWN ? true : false);
 			inputManager->setLeftMouseState(state == GLUT_DOWN ? true : false);
 			inputManager->setLastLeftMouseState(state == GLUT_DOWN ? false : true);
 
@@ -712,7 +678,32 @@ namespace Engine
 				uiElement.second->checkForMouseClickOnThis(inputManager->getLeftMouseState(), inputManager->getLastLeftMouseState(), lastMousePosition);
 			}
 		}
-		/*if (button == GLUT_RIGHT_BUTTON)
-		state == GLUT_UP ? inputManager->SetRightMouseState(true), inputManager->SetLastRightMouseState(false) : inputManager->SetRightMouseState(false), inputManager->SetLastRightMouseState(true);*/
+		else if (button == GLUT_RIGHT_BUTTON)
+		{
+			inputManager->setKey(VK_RBUTTON, state == GLUT_DOWN ? true : false);
+			inputManager->setRightMouseState(state == GLUT_DOWN ? true : false);
+			inputManager->setLastRightMouseState(state == GLUT_DOWN ? false : true);
+		}
+	}
+
+	std::string Application::virtualKeyCodeToString(SHORT virtualKey)
+	{
+		UINT scanCode = MapVirtualKey(virtualKey, MAPVK_VK_TO_VSC);
+
+		CHAR szName[128];
+		int result = 0;
+		switch (virtualKey)
+		{
+			case VK_LEFT: case VK_UP: case VK_RIGHT: case VK_DOWN:
+			case VK_PRIOR: case VK_NEXT:
+			case VK_END: case VK_HOME:
+			case VK_INSERT: case VK_DELETE:
+			case VK_DIVIDE:
+			case VK_NUMLOCK:
+				scanCode |= 0x100;
+			default:
+				result = GetKeyNameTextA(scanCode << 16, szName, 128);
+		}
+		return szName;
 	}
 }

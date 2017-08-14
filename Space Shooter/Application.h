@@ -31,6 +31,7 @@ namespace Engine
 			Application();
 			static std::shared_ptr<Application> instance();
 			
+			std::string virtualKeyCodeToString(SHORT);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
 			void addEnemyToList(std::shared_ptr<TestEnemy> enemy) { enemies.push_back(enemy); };

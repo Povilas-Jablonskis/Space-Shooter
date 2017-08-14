@@ -37,7 +37,7 @@ namespace Engine
 	{
 		for (int i = 0; i < 255; i++)
 		{
-			if (!GetAsyncKeyState(VkKeyScan(i)) && pressedkeys[i])
+			if (!GetAsyncKeyState(i) && pressedkeys[i])
 				pressedkeys[i] = false;
 		}
 	}
