@@ -49,13 +49,13 @@ namespace Engine
 			void processMouseClick(int, int, int, int);
 			void specialKeyInput(int, int, int);
 			void specialKeyInputUp(int, int, int);
-		private:
 			void startNewLevel();
 			void initPlayerUI();
-			void updatePlayerUI();
+			void updatePlayerHealth();
+			void updatePlayerScore();
 			void initScene();
 			void initGameUI();
-
+		private:
 			static std::shared_ptr<Application> instance_;
 			std::shared_ptr<Player> player;
 			std::shared_ptr<UIElement> background;

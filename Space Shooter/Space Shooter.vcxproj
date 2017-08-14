@@ -81,12 +81,14 @@
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
+    <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TestEnemy.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Animation.cpp" />
@@ -101,6 +103,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="ObserverEvent.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />

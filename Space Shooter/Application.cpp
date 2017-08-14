@@ -166,42 +166,35 @@ namespace Engine
 		playerUI["Level completed"]->fixPosition();
 	}
 
-	void Application::updatePlayerUI()
+	void Application::updatePlayerHealth()
 	{
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
-		for (std::map<std::string, std::shared_ptr<UIElement>>::iterator it = playerUI.begin(); it != playerUI.end();)
-		{
-			if (it->first == "Score" && player->getLastScore() != player->getScore())
-			{
-				it = playerUI.erase(it);
-				playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+		playerUI.erase("Health");
+		playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
-				//Score
-				auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
-				option->setIsStatic(true);
-				playerUI["Score"]->addText(std::move(option));
-				playerUI["Score"]->fixPosition();
-				break;
-			}
-			else if (it->first == "Health" && player->getLastHealth() != player->getHealth())
-			{
-				it = playerUI.erase(it);
-				playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+		//Health
+		auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
+		option2->applyAnimation(spriteSheets["main"]->getSprite("playerLife1_blue.png"));
+		playerUI["Health"]->addUIElement(std::move(option2));
+		auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
+		option->setIsStatic(true);
+		playerUI["Health"]->addText(std::move(option));
+		playerUI["Health"]->fixPosition();
+	}
 
-				//Health
-				auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-				option2->applyAnimation(spriteSheets["main"]->getSprite("playerLife1_blue.png"));
-				playerUI["Health"]->addUIElement(std::move(option2));
-				auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
-				option->setIsStatic(true);
-				playerUI["Health"]->addText(std::move(option));
-				playerUI["Health"]->fixPosition();
-				break;
-			}
-			else
-				++it;
-		}
+	void Application::updatePlayerScore()
+	{
+		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+
+		playerUI.erase("Score");
+		playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+
+		//Score
+		auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
+		option->setIsStatic(true);
+		playerUI["Score"]->addText(std::move(option));
+		playerUI["Score"]->fixPosition();
 	}
 
 	void Application::initScene()
@@ -256,7 +249,7 @@ namespace Engine
 			initScene();
 			setState(GameState::STARTED);
 			currentMenu = nullptr;
-			updatePlayerUI();
+			//updatePlayerUI();
 			ui["Main Menu"]->hideMain();
 		};
 		ui["Main Menu"]->addText(std::move(options));
@@ -318,7 +311,6 @@ namespace Engine
 				inputManager->setCurrentEditedKeyBinding(std::pair<std::string, std::shared_ptr<Text>>(it->first, options));
 				options->setIsStatic(true);
 				options->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-
 			};
 			Controls->addText(std::move(options));
 			i++;
@@ -375,6 +367,9 @@ namespace Engine
 		auto listOfAllElements = std::vector<std::shared_ptr<UIElement>>();
 		auto listOfAllTexts = std::vector<std::shared_ptr<Text>>();
 
+		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+
 		float newTime = ((float)glutGet(GLUT_ELAPSED_TIME));
 		float frameTime = (newTime - currentTime) / 1000.0f;
 		currentTime = newTime;
@@ -386,7 +381,8 @@ namespace Engine
 			inputManager->fixInput();
 			if (getState() == GameState::STARTED)
 			{
-				player->update(dt, inputManager);
+				inputManager->updatePlayerInput(player.get(), dt);
+				player->update(dt);
 
 				for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end();)
 				{
@@ -413,6 +409,16 @@ namespace Engine
 				}
 
 				//Collision detection
+				if (player->getPosition(0) + player->getSize(0) >= windowWidth)
+					player->setPosition(0, windowWidth - player->getSize(0));
+				else if (player->getPosition(0) <= 0.0f)
+					player->setPosition(0, 0.0f);
+
+				if (player->getPosition(1) + player->getSize(1) >= windowHeigth)
+					player->setPosition(1, windowHeigth - player->getSize(1));
+				else if (player->getPosition(1) <= 0.0f)
+					player->setPosition(1, 0.0f);
+
 				for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
 				{
 					auto playerBulletList = player->getBulletsList();
@@ -430,7 +436,7 @@ namespace Engine
 
 		if (getState() == GameState::STARTED)
 		{
-			updatePlayerUI();
+			//updatePlayerUI();
 
 			//Render background
 			renderer->draw(background);

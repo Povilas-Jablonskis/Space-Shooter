@@ -1,27 +1,23 @@
 #ifndef _subjectH
 #define _subjectH
 
-#include "Observer.h"
-
-#include <vector>
+#include <map>
 #include <memory>
+#include <functional>
+
+#include "ObserverEvent.h"
 
 namespace Engine
 {
 	class Subject
 	{
 		public:
-			Subject::Subject()
-			{
-				observer = std::shared_ptr<Observer>();
-			}
-			void notify(const std::string& str)
-			{
-				observer->onNotify(str);
-			}
-
+			void addObserver(ObserverEvent, std::function<void()>);
+			void removeObserver(ObserverEvent);
+		protected:
+			void notify(ObserverEvent);
 		private:
-			std::shared_ptr<Observer> observer;
+			std::map<ObserverEvent, std::function<void()>> observers;
 	};
 }
 #endif

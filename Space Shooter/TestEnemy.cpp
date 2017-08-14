@@ -1,5 +1,9 @@
 #include "TestEnemy.h"
 #include "Player.h"
+#include "Application.h"
+
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 namespace Engine
 {
@@ -9,7 +13,7 @@ namespace Engine
 		float _dt = 0.0f;
 		float maxPos = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 		float value = 0.0f;
-		while (_dt < 3.14f)
+		while (_dt < M_PI)
 		{
 			value += sin(_dt);
 			_dt += (1.0f / 60.0f);
@@ -33,9 +37,10 @@ namespace Engine
 		if (delayBetweenShootsTimer > delayBetweenShoots)
 		{
 			delayBetweenShootsTimer = 0.0f;
-			auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(position.x + (width / 2.0f), position.y - 5.0f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+			auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(position.x + (width / 2.0f), position.y - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+			bullet->addAnimation("explosion", animations["explosion"]);
 			bullet->applyAnimation(animations["shoot"]);
-			bullet->setRotationAngle(3.141592f);
+			bullet->setRotationAngle((float)M_PI);
 			bullet->setRotationAxis(glm::vec3(0.0,0.0,1.0));
 			bullets.push_back(std::move(bullet));
 		}

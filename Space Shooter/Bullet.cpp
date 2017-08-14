@@ -6,21 +6,12 @@ namespace Engine
 	Bullet::Bullet(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: BaseGameObject(_width, _height, _position, _velocity, _color)
 	{
-
-	}
-
-	bool Bullet::update(float _dt)
-	{
-		position.x += velocity.x * _dt;
-		position.y += velocity.y * _dt;
-		updateAnimation(_dt);
-
-		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
-		 
-		if (needsToBeDeleted || position.y > windowHeigth || (position.y + height) < 0.0f || position.x > windowWidth || position.x < 0.0f)
-			return true;
-		return needsToBeDeleted;
+		addObserver(ObserverEvent::COLLISIONHAPPEND, [this]()
+		{ 
+			auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, getPosition());
+			explosion->applyAnimation(getAnimationByIndex("explosion"));
+			Application::instance()->addExplosionToList(std::move(explosion));
+		});
 	}
 
 	void Bullet::onCollision(Player* collider, TestEnemy* parent)
@@ -30,9 +21,7 @@ namespace Engine
 			collider->removeAddon("shield");
 		else
 		{
-			auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
-			explosion->applyAnimation(parent->getAnimationByIndex("explosion"));
-			Application::instance()->addExplosionToList(std::move(explosion));
+			notify(ObserverEvent::COLLISIONHAPPEND);
 			collider->respawn();
 		}
 		#if _DEBUG
@@ -45,9 +34,7 @@ namespace Engine
 		collider->setNeedsToBeDeleted(true);
 		parent->deleteBullet(this);
 		parent->setScore(parent->getScore() + 100);
-		auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
-		explosion->applyAnimation(parent->getAnimationByIndex("explosion"));
-		Application::instance()->addExplosionToList(std::move(explosion));
+		notify(ObserverEvent::COLLISIONHAPPEND);
 		#if _DEBUG
 			std::cout << "player bullet hit" << std::endl;
 		#endif

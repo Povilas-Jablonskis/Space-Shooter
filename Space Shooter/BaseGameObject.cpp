@@ -21,7 +21,7 @@ namespace Engine
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
 		updateAnimation(_dt);
-		return true;
+		return needsToBeDeleted;
 	}
 
 	void BaseGameObject::onCollision(BaseGameObject* collider)

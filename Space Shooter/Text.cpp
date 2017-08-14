@@ -5,12 +5,12 @@
 namespace Engine
 {
 	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
-		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), fontSize(_fontsize), text(_text), font(_font), lastText(""), needUpdate(true)
+		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), fontSize(_fontsize), text(_text), font(_font), needUpdate(true)
 	{
 	}
 
 	Text::Text(const char _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
-		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), fontSize(_fontsize), text(""), font(_font), lastText(""), needUpdate(true)
+		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), fontSize(_fontsize), text(""), font(_font), needUpdate(true)
 	{
 		text += _text;
 	}
@@ -57,7 +57,7 @@ namespace Engine
 
 		for (std::string::const_iterator c = text.begin(); c != text.end(); c++)
 		{
-			Character ch = cache.at(*c);
+			Character ch = cache->at(*c);
 
 			GLfloat xpos = position.x + ch.Bearing.x;
 			GLfloat ypos = position.y - (ch.Size.y - ch.Bearing.y);
