@@ -3,10 +3,11 @@
 
 #include "BaseGameObject.h"
 #include "Bullet.h"
+#include "Subject.h"
 
 namespace Engine
 {
-	class CollisionManager
+	class CollisionManager : public Subject
 	{
 		public:
 			GLboolean checkCollision(std::shared_ptr<BaseGameObject>, std::shared_ptr<BaseGameObject>);
@@ -43,6 +44,7 @@ namespace Engine
 					auto collision = checkCollision(object, *it);
 					if (collision)
 					{
+						notifyCollision(ObserverEvent::COLLISIONHAPPEND, it->get());
 						(*it)->onCollision(object.get(), parent.get());
 						return;
 					}

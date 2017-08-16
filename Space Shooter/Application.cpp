@@ -2,15 +2,6 @@
 
 namespace Engine
 {
-	std::shared_ptr<Application> Application::instance_;
-
-	std::shared_ptr<Application> Application::instance()
-	{
-		// Lazy initialize.
-		if (instance_ == nullptr) instance_ = std::make_shared<Application>();
-		return instance_;
-	}
-
 	Application::Application() 
 		: collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
@@ -18,6 +9,43 @@ namespace Engine
 		accumulator = 0.0f;
 		dt = 1.0f / 60.0f;
 		t = 0.0f;
+
+		onNotifyBase = [this](ObserverEvent _event)
+		{
+			switch (_event)
+			{
+				case SCORECHANGED:
+				{
+					updatePlayerScore();
+					break;
+				}
+				case HEALTHCHANGED:
+				{
+					updatePlayerHealth();
+					break;
+				}
+				default:
+					break;
+			}
+		};
+
+		onNotifyCollision = [this](ObserverEvent _event, BaseGameObject* _obj)
+		{
+			switch (_event)
+			{
+				case COLLISIONHAPPEND:
+				{
+					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, _obj->getPosition());
+					explosion->applyAnimation(_obj->getAnimationByIndex("explosion"));
+					addExplosionToList(std::move(explosion));
+					break;
+				}
+				default:
+					break;
+			}
+		};
+		
+		collisionManager->addObserver(this);
 
 		inputManager->setKeyBinding("Attack", VK_SPACE);
 		inputManager->setKeyBinding("Move Left", 0x41);
@@ -75,6 +103,7 @@ namespace Engine
 		player->applyAnimation(spriteSheets["main"]->getSprite("playerShip1_blue.png"));
 		player->addAnimation("shoot", spriteSheets["main"]->getSprite("laserBlue01.png"));
 		player->addAnimation("explosion", spriteSheets["main"]->getAnimation("blueExplosionSpriteSheet"));
+		player->addObserver(this);
 
 		auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 		shield->applyAnimation(spriteSheets["main"]->getAnimation("shieldSpriteSheet"));

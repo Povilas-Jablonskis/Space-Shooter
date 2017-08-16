@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "BaseGameObject.h"
-#include "Subject.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -20,7 +19,7 @@ namespace Engine
 {
 	class Player;
 	class TestEnemy;
-	class Bullet : public BaseGameObject, public Subject
+	class Bullet : public BaseGameObject
 	{
 		public:
 			Bullet(float, float, glm::vec2, glm::vec2, glm::vec4);

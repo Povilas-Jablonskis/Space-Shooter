@@ -2,25 +2,29 @@
 
 namespace Engine
 {
-	void Subject::addObserver(ObserverEvent _event, std::function<void()> _func)
+	void Subject::addObserver(Observer* observer)
 	{
-		if (observers.find(_event) == observers.end())
-			observers.insert(std::pair<ObserverEvent, std::function<void()>>(_event, _func));
+		observers.push_back(observer);
 	}
 
-	void Subject::removeObserver(ObserverEvent _event)
+	void Subject::removeObserver(Observer* observer)
 	{
-		auto observer = observers.find(_event);
-
-		if (observer != observers.end())
-			observers.erase(observer);
+		observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
 	}
 
-	void Subject::notify(ObserverEvent _event)
+	void Subject::notifyBase(ObserverEvent _event)
 	{
-		auto observer = observers.find(_event);
+		for (auto observer : observers)
+		{
+			observer->onNotifyBase(_event);
+		}
+	}
 
-		if (observer != observers.end())
-			observer->second();
+	void Subject::notifyCollision(ObserverEvent _event, BaseGameObject* _collider)
+	{
+		for (auto observer : observers)
+		{
+			observer->onNotifyCollision(_event, _collider);
+		}
 	}
 }

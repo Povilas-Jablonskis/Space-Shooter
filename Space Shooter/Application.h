@@ -21,16 +21,15 @@
 #include "Player.h"
 #include "TestEnemy.h"
 #include "Explosion.h"
+#include "Observer.h"
 
 namespace Engine
 {
-	class Application
+	class Application : public Observer
 	{
 		public:
 			~Application();
 			Application();
-			static std::shared_ptr<Application> instance();
-			
 			std::string virtualKeyCodeToString(SHORT);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
@@ -56,7 +55,6 @@ namespace Engine
 			void initScene();
 			void initGameUI();
 		private:
-			static std::shared_ptr<Application> instance_;
 			std::shared_ptr<Player> player;
 			std::shared_ptr<UIElement> background;
 			std::shared_ptr<UIElement> currentMenu;

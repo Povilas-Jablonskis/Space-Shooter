@@ -23,9 +23,9 @@ namespace Engine
 			inline float getDelayBetweenShoots() const { return delayBetweenShoots; }
 			inline void setDelayBetweenShoots(float _delayBetweenShoots) { delayBetweenShoots = _delayBetweenShoots; }
 			inline int getHealth() const { return health; }
-			inline void setHealth(int _health) { health = _health; notify(ObserverEvent::HEALTHCHANGED); }
+			inline void setHealth(int _health) { health = _health; notifyBase(ObserverEvent::HEALTHCHANGED); }
 			inline int getScore() const { return score; }
-			inline void setScore(int _score) { score = _score; notify(ObserverEvent::SCORECHANGED); }
+			inline void setScore(int _score) { score = _score; notifyBase(ObserverEvent::SCORECHANGED); }
 			inline std::vector<std::shared_ptr<Bullet>>* getBulletsList() { return &bullets; }
 			void deleteBullet(Bullet*);
 			inline void addBullet(std::shared_ptr<Bullet> bullet) { bullets.push_back(bullet); }

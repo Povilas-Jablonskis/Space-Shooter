@@ -1,23 +1,26 @@
 #ifndef _subjectH
 #define _subjectH
 
-#include <map>
+#include <vector>
 #include <memory>
 #include <functional>
+#include <algorithm>
 
-#include "ObserverEvent.h"
+#include "Observer.h"
 
 namespace Engine
 {
+	class BaseGameObject;
 	class Subject
 	{
 		public:
-			void addObserver(ObserverEvent, std::function<void()>);
-			void removeObserver(ObserverEvent);
+			void addObserver(Observer*);
+			void removeObserver(Observer*);
 		protected:
-			void notify(ObserverEvent);
+			void notifyBase(ObserverEvent);
+			void notifyCollision(ObserverEvent, BaseGameObject*);
 		private:
-			std::map<ObserverEvent, std::function<void()>> observers;
+			std::vector<Observer*> observers;
 	};
 }
 #endif
