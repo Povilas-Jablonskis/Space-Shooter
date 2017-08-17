@@ -3,7 +3,7 @@
 namespace Engine
 {
 	Application::Application() 
-		: collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
+		: spriteSheetManager(std::make_shared<SpriteSheetManager>()), collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
 		currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
 		accumulator = 0.0f;
@@ -58,6 +58,45 @@ namespace Engine
 		fontManager->loadFont("kenvector_future.ttf", "kenvector_future");
 		fontManager->loadFont("kenvector_future_thin.ttf", "kenvector_future_thin");
 
+
+		initSpriteSheets();
+
+		background = std::make_shared<UIElementBase>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f));
+		background->applyAnimation(spriteSheetManager->getSpriteSheet("background")->getSprite("wholeSpriteSheet"));
+		player = std::make_shared<Player>(32.0f, 32.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
+		player->onDeath = [this]()
+		{
+			inputManager->resetInput();
+			setState(GameState::ENDED);
+			currentMenu = ui["Game Over"];
+			ui["Game Over"]->showMain(false);
+		};
+		player->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("playerShip1_blue.png"));
+		player->addAnimation("shoot", spriteSheetManager->getSpriteSheet("main")->getSprite("laserBlue01.png"));
+		player->addAnimation("explosion", spriteSheetManager->getSpriteSheet("main")->getAnimation("blueExplosionSpriteSheet"));
+		player->addObserver(this);
+
+		auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+		shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
+		player->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
+
+		initGameUI();
+		currentMenu = ui["Main Menu"];
+
+		initPlayerUI();
+	}
+
+	Application::~Application()
+	{
+		enemies.clear();
+		explosions.clear();
+		ui.clear();
+		playerUI.clear();
+		pickups.clear();
+	}
+
+	void Application::initSpriteSheets()
+	{
 		auto spriteSheet = std::make_shared<SpriteSheet>();
 		auto backgroundSpriteSheet = std::make_shared<SpriteSheet>();
 
@@ -87,64 +126,8 @@ namespace Engine
 		spriteSheet->getAnimation("shieldSpriteSheet")->setLoopStatus(true);
 		spriteSheet->getAnimation("shieldSpriteSheet")->setDelay(0.15f);
 
-		spriteSheets.insert(std::pair<std::string, std::shared_ptr<SpriteSheet>>("main", spriteSheet));
-		spriteSheets.insert(std::pair<std::string, std::shared_ptr<SpriteSheet>>("background", backgroundSpriteSheet));
-
-		background = std::make_shared<UIElement>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), nullptr, glm::vec2(0.0f, 0.0f));
-		background->applyAnimation(spriteSheets["background"]->getSprite("wholeSpriteSheet"));
-		player = std::make_shared<Player>(32.0f, 32.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
-		player->onDeath = [this]()
-		{
-			inputManager->resetInput();
-			setState(GameState::ENDED);
-			currentMenu = ui["Game Over"];
-			ui["Game Over"]->showMain(false);
-		};
-		player->applyAnimation(spriteSheets["main"]->getSprite("playerShip1_blue.png"));
-		player->addAnimation("shoot", spriteSheets["main"]->getSprite("laserBlue01.png"));
-		player->addAnimation("explosion", spriteSheets["main"]->getAnimation("blueExplosionSpriteSheet"));
-		player->addObserver(this);
-
-		auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-		shield->applyAnimation(spriteSheets["main"]->getAnimation("shieldSpriteSheet"));
-		player->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
-
-		initGameUI();
-		currentMenu = ui["Main Menu"];
-
-		initPlayerUI();
-	}
-
-	Application::~Application()
-	{
-		enemies.clear();
-		explosions.clear();
-		ui.clear();
-		playerUI.clear();
-		spriteSheets.clear();
-		pickups.clear();
-	}
-
-	template <class T>
-	void Application::timer(const T& callback, unsigned int timeInMs)
-	{
-		concurrency::task_completion_event<void> tce;
-		auto call = new concurrency::call<int>(
-			[callback, tce](int)
-		{
-			callback();
-			tce.set();
-		});
-
-		auto timer = new concurrency::timer<int>(timeInMs, 0, call, false);
-		concurrency::task<void> event_set(tce);
-		event_set.then([timer, call]()
-		{
-			delete call;
-			delete timer;
-		});
-
-		timer->start();
+		spriteSheetManager->loadSpriteSheet("main", spriteSheet);
+		spriteSheetManager->loadSpriteSheet("background", backgroundSpriteSheet);
 	}
 
 	void Application::removeEnemyFromList(std::vector<std::shared_ptr<TestEnemy>>::iterator* it)
@@ -154,7 +137,7 @@ namespace Engine
 
 		if (enemies.size() == 0)
 		{
-			timer([this]{ startNewLevel(); }, 2000);
+			Timer::windowsTimer([this]{ startNewLevel(); }, 2000);
 			playerUI["Level completed"]->showMain(false);
 		}
 	}
@@ -178,7 +161,7 @@ namespace Engine
 		playerUI.insert(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
 		auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-		option2->applyAnimation(spriteSheets["main"]->getSprite("playerLife1_blue.png"));
+		option2->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("playerLife1_blue.png"));
 		playerUI["Health"]->addUIElement(std::move(option2));
 		option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
 		option->setIsStatic(true);
@@ -204,7 +187,7 @@ namespace Engine
 
 		//Health
 		auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-		option2->applyAnimation(spriteSheets["main"]->getSprite("playerLife1_blue.png"));
+		option2->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("playerLife1_blue.png"));
 		playerUI["Health"]->addUIElement(std::move(option2));
 		auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
 		option->setIsStatic(true);
@@ -233,14 +216,14 @@ namespace Engine
 		for (size_t i = 0; i < ((glutGet(GLUT_INIT_WINDOW_WIDTH) - 32) / space); i++)
 		{
 			auto enemy = std::make_shared<TestEnemy>(32.0f, 32.0f, glm::vec2(i * space, 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
-			enemy->addAnimation("shoot", spriteSheets["main"]->getSprite("laserGreen11.png"));
-			enemy->addAnimation("explosion", spriteSheets["main"]->getAnimation("greenExplosionSpriteSheet"));
-			enemy->applyAnimation(spriteSheets["main"]->getSprite("enemyBlack1.png"));
+			enemy->addAnimation("shoot", spriteSheetManager->getSpriteSheet("main")->getSprite("laserGreen11.png"));
+			enemy->addAnimation("explosion", spriteSheetManager->getSpriteSheet("main")->getAnimation("greenExplosionSpriteSheet"));
+			enemy->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("enemyBlack1.png"));
 			enemies.push_back(std::move(enemy));
 		}
 
 		auto pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
-		pickup->applyAnimation(spriteSheets["main"]->getSprite("pill_blue.png"));
+		pickup->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("pill_blue.png"));
 		pickup->onCollision = [pickup](Player* p)
 		{
 			if (pickup->getNeedsToBeDeleted()) return;

@@ -88,6 +88,7 @@
     <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
+    <ClCompile Include="SpriteSheetManager.cpp" />
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="TestEnemy.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -116,9 +117,11 @@
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SpriteSheet.h" />
+    <ClInclude Include="SpriteSheetManager.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="TestEnemy.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIElementBase.h" />
   </ItemGroup>
