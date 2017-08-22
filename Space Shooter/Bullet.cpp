@@ -9,7 +9,7 @@ namespace Engine
 
 	}
 
-	void Bullet::onCollision(Player* collider, TestEnemy* parent)
+	void Bullet::onCollision(Player* collider, Enemy* parent)
 	{
 		parent->deleteBullet(this);
 		if (collider->getAddon("shield") != nullptr)
@@ -21,7 +21,7 @@ namespace Engine
 		#endif
 	}
 
-	void Bullet::onCollision(TestEnemy* collider, Player* parent)
+	void Bullet::onCollision(Enemy* collider, Player* parent)
 	{
 		collider->setNeedsToBeDeleted(true);
 		parent->deleteBullet(this);

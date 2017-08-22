@@ -3,12 +3,14 @@
 namespace Engine
 {
 	Application::Application() 
-		: spriteSheetManager(std::make_shared<SpriteSheetManager>()), collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
+		: pickupManager(std::make_shared<PickupManager>()), spriteSheetManager(std::make_shared<SpriteSheetManager>()), collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
 		currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
 		accumulator = 0.0f;
 		dt = 1.0f / 60.0f;
 		t = 0.0f;
+
+		initEffects();
 
 		onNotifyBase = [this](ObserverEvent _event)
 		{
@@ -24,8 +26,6 @@ namespace Engine
 					updatePlayerHealth();
 					break;
 				}
-				default:
-					break;
 			}
 		};
 
@@ -40,8 +40,6 @@ namespace Engine
 					addExplosionToList(std::move(explosion));
 					break;
 				}
-				default:
-					break;
 			}
 		};
 		
@@ -58,8 +56,8 @@ namespace Engine
 		fontManager->loadFont("kenvector_future.ttf", "kenvector_future");
 		fontManager->loadFont("kenvector_future_thin.ttf", "kenvector_future_thin");
 
-
 		initSpriteSheets();
+		pickupManager->loadPickupsFromConfig(spriteSheetManager, effects);
 
 		background = std::make_shared<UIElementBase>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f));
 		background->applyAnimation(spriteSheetManager->getSpriteSheet("background")->getSprite("wholeSpriteSheet"));
@@ -75,10 +73,6 @@ namespace Engine
 		player->addAnimation("shoot", spriteSheetManager->getSpriteSheet("main")->getSprite("laserBlue01.png"));
 		player->addAnimation("explosion", spriteSheetManager->getSpriteSheet("main")->getAnimation("blueExplosionSpriteSheet"));
 		player->addObserver(this);
-
-		auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-		shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
-		player->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
 
 		initGameUI();
 		currentMenu = ui["Main Menu"];
@@ -130,7 +124,7 @@ namespace Engine
 		spriteSheetManager->loadSpriteSheet("background", backgroundSpriteSheet);
 	}
 
-	void Application::removeEnemyFromList(std::vector<std::shared_ptr<TestEnemy>>::iterator* it)
+	void Application::removeEnemyFromList(std::vector<std::shared_ptr<Enemy>>::iterator* it)
 	{
 		if (*it != enemies.end())
 			*it = enemies.erase(*it);
@@ -215,29 +209,75 @@ namespace Engine
 		float space = 60.f;
 		for (size_t i = 0; i < ((glutGet(GLUT_INIT_WINDOW_WIDTH) - 32) / space); i++)
 		{
-			auto enemy = std::make_shared<TestEnemy>(32.0f, 32.0f, glm::vec2(i * space, 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
+			auto enemy = std::make_shared<Enemy>(32.0f, 32.0f, glm::vec2(i * space, 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
 			enemy->addAnimation("shoot", spriteSheetManager->getSpriteSheet("main")->getSprite("laserGreen11.png"));
 			enemy->addAnimation("explosion", spriteSheetManager->getSpriteSheet("main")->getAnimation("greenExplosionSpriteSheet"));
 			enemy->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("enemyBlack1.png"));
 			enemies.push_back(std::move(enemy));
 		}
 
-		auto pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
-		pickup->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("pill_blue.png"));
-		pickup->onCollision = [pickup](Player* p)
-		{
-			if (pickup->getNeedsToBeDeleted()) return;
-
-			p->removeAddon("shield");
-			pickup->setNeedsToBeDeleted(true);
-
-			#if _DEBUG
-				std::cout << "pickup player hit" << std::endl;
-			#endif
-		};
+		auto pickup = pickupManager->getPickup("shield");
+		pickup->setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, (float)glutGet(GLUT_WINDOW_Y) / 2.0f));
 		pickups.push_back(std::move(pickup));
 		accumulator = 0.0f;
 		t = 0.0f;
+	}
+
+	void Application::initEffects()
+	{
+		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		(
+			"normalShooting", 
+			[](Player* p)
+			{
+				p->setDelayBetweenShoots(0.2f);
+				p->setShootingType(ShootingType::NORMAL);
+			}
+		));
+
+		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		(
+			"doubleShooting",
+			[](Player* p)
+			{
+				p->setDelayBetweenShoots(0.5f);
+				p->setShootingType(ShootingType::DOUBLE);
+			}
+		));
+
+		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		(
+			"halfCircleShooting",
+			[](Player* p)
+			{
+				p->setDelayBetweenShoots(0.5f);
+				p->setShootingType(ShootingType::HALFCIRCLE);
+			}
+		));
+
+		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		(
+			"doubleHalfCircleShooting",
+			[](Player* p)
+			{
+				p->setDelayBetweenShoots(1.0f);
+				p->setShootingType(ShootingType::DOUBLEHALFCIRCLE);
+			}
+		));
+
+		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		(
+			"shield",
+			[this](Player* p)
+			{
+				if (p->getAddon("shield") != nullptr)
+					return;
+
+				auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+				shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
+				p->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
+			}
+		));
 	}
 
 	void Application::initGameUI()
@@ -396,9 +436,17 @@ namespace Engine
 				inputManager->updatePlayerInput(player.get(), dt);
 				player->update(dt);
 
-				for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end();)
+				//for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end();)
+				//{
+				//	if ((*it)->update(dt, t))
+				//		removeEnemyFromList(&it);
+				//	else
+				//		it++;
+				//}
+
+				for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end();)
 				{
-					if ((*it)->update(dt, t))
+					if ((*it)->update(dt))
 						removeEnemyFromList(&it);
 					else
 						it++;
@@ -431,7 +479,7 @@ namespace Engine
 				else if (player->getPosition(1) <= 0.0f)
 					player->setPosition(1, 0.0f);
 
-				for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
+				for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
 				{
 					auto playerBulletList = player->getBulletsList();
 					collisionManager->checkCollision(player, (*it)->getBulletsList(), *it);
@@ -466,7 +514,7 @@ namespace Engine
 			//Render explosions
 			renderer->draw(explosions);
 			//Render bullets
-			for (std::vector<std::shared_ptr<TestEnemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
+			for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
 			{
 				auto enemyBulletList = (*it)->getBulletsList();
 				renderer->draw(*enemyBulletList);

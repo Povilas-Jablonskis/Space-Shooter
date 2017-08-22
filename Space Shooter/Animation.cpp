@@ -35,17 +35,11 @@ namespace Engine
 		switch (index)
 		{
 			case 0:
-			{
 				return spriteSheetWidth;
-			}
 			case 1:
-			{
 				return spriteSheetHeigth;
-			}
 			default:
-			{
 				return NULL;
-			}
 		}
 	}
 }

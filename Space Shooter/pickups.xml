@@ -1,0 +1,6 @@
+<Pickups>
+	<Pickup name="double" spriteName="bold_silver.png" effect="doubleShooting"/>
+	<Pickup name="halfcircle" spriteName="bolt_bronze.png" effect="halfCircleShooting"/>
+	<Pickup name="doublehalfcircle" spriteName="bolt_gold.png" effect="doubleHalfCircleShooting"/>
+	<Pickup name="shield" spriteName="shield_silver.png" effect="shield"/>
+</Pickups>

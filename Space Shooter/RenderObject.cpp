@@ -51,17 +51,11 @@ namespace Engine
 		switch (index)
 		{
 			case 0:
-			{
 				return width;
-			}
 			case 1:
-			{
 				return height;
-			}
 			default:
-			{
 				return NULL;
-			}
 		}
 	}
 }

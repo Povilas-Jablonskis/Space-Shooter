@@ -12,7 +12,7 @@ namespace Engine
 	}
 
 	Player::Player(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity), delayBetweenShoots(0.2f), delayBetweenShootsTimer(0.0f)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity), delayBetweenShoots(0.2f), delayBetweenShootsTimer(0.0f), shootingType(ShootingType::NORMAL)
 	{
 
 	}

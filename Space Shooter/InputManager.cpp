@@ -48,10 +48,31 @@ namespace Engine
 		if (player->getDelayBetweenShootsTimer() > player->getDelayBetweenShoots() && pressedkeys[keyBindings["Attack"]])
 		{
 			player->setDelayBetweenShootsTimer(0.0f);
-			auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
-			bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
-			bullet->applyAnimation(player->getAnimationByIndex("shoot"));
-			player->addBullet(std::move(bullet));
+
+			switch (player->getShootingType())
+			{
+				case NORMAL:
+				{
+					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
+					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
+					player->addBullet(std::move(bullet));
+					break;
+				}
+				case DOUBLE:
+				{
+					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
+					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
+					player->addBullet(std::move(bullet));
+
+					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 9.0f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
+					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
+					player->addBullet(std::move(bullet));
+					break;
+				}
+			}
 		}
 
 		if (pressedkeys[keyBindings["Move Left"]])

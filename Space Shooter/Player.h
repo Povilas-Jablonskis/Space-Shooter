@@ -7,6 +7,7 @@
 #include "Bullet.h"
 #include "Subject.h"
 #include "Addon.h"
+#include "ShootingType.h"
 
 namespace Engine
 {
@@ -18,6 +19,8 @@ namespace Engine
 			bool update(float);
 			void respawn();
 			void restart();
+			ShootingType getShootingType() const { return shootingType; }
+			void setShootingType(ShootingType _shootingType) { shootingType = _shootingType; }
 			inline float getDelayBetweenShootsTimer() const { return delayBetweenShootsTimer; }
 			inline void setDelayBetweenShootsTimer(float _delayBetweenShootsTimer) { delayBetweenShootsTimer = _delayBetweenShootsTimer; }
 			inline float getDelayBetweenShoots() const { return delayBetweenShoots; }
@@ -35,6 +38,7 @@ namespace Engine
 			inline void addAddon(std::pair<std::string, std::shared_ptr<Addon>> addon) { addons.insert(addon); }
 			void removeAddon(std::string);
 		private:
+			ShootingType shootingType;
 			float delayBetweenShootsTimer;
 			float delayBetweenShoots;
 			std::map<std::string, std::shared_ptr<Addon>> addons;

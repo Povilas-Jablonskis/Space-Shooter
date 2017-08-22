@@ -9,9 +9,12 @@ namespace Engine
 	{
 		public:
 			Pickup(float, float, glm::vec2, glm::vec2, glm::vec4);
-			bool update(float, glm::vec2);
-			std::function<void(Player*)> onCollision;
 			bool update(float);
+			void onCollision(Player*);
+			void setEffect(std::function<void(Player*)> _effect) { effect = _effect; }
+			std::function<void(Player*)> getEffect() const { return effect; }
+		private:
+			std::function<void(Player*)> effect;
 	};
 }
 #endif

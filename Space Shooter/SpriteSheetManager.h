@@ -3,7 +3,6 @@
 
 #include "SpriteSheet.h"
 
-
 namespace Engine
 {
 	class SpriteSheetManager

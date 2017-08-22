@@ -16,11 +16,11 @@
 #include "SpriteSheet.h"
 #include "CollisionManager.h"
 #include "SpriteSheetManager.h"
+#include "PickupManager.h"
 
-#include "Pickup.h"
 #include "UIElement.h"
 #include "Player.h"
-#include "TestEnemy.h"
+#include "Enemy.h"
 #include "Explosion.h"
 #include "Observer.h"
 #include "Timer.h"
@@ -35,8 +35,8 @@ namespace Engine
 			std::string virtualKeyCodeToString(SHORT);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
-			void addEnemyToList(std::shared_ptr<TestEnemy> enemy) { enemies.push_back(enemy); };
-			void removeEnemyFromList(std::vector<std::shared_ptr<TestEnemy>>::iterator*);
+			void addEnemyToList(std::shared_ptr<Enemy> enemy) { enemies.push_back(enemy); };
+			void removeEnemyFromList(std::vector<std::shared_ptr<Enemy>>::iterator*);
 			void addExplosionToList(std::shared_ptr<Explosion> explosion) { explosions.push_back(explosion); };
 			void removeExplosionFromList(std::vector<std::shared_ptr<Explosion>>::iterator*);
 
@@ -49,6 +49,7 @@ namespace Engine
 			void specialKeyInput(int, int, int);
 			void specialKeyInputUp(int, int, int);
 		private:
+			void initEffects();
 			void startNewLevel();
 			void initPlayerUI();
 			void initSpriteSheets();
@@ -66,13 +67,14 @@ namespace Engine
 			float currentTime;
 			float accumulator;
 
+			std::map<std::string, std::function<void(Player*)>> effects;
 			std::vector<std::shared_ptr<Pickup>> pickups;
-			std::vector<std::shared_ptr<TestEnemy>> enemies;
+			std::vector<std::shared_ptr<Enemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;
 			std::map<std::string, std::shared_ptr<UIElement>> ui;
 			std::map<std::string, std::shared_ptr<UIElement>> playerUI;
 
-
+			std::shared_ptr<PickupManager> pickupManager;
 			std::shared_ptr<SpriteSheetManager> spriteSheetManager;
 			std::shared_ptr<CollisionManager> collisionManager;
 			std::shared_ptr<Renderer> renderer;
