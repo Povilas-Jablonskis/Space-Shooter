@@ -225,55 +225,45 @@ namespace Engine
 
 	void Application::initEffects()
 	{
-		effects.insert(std::pair<std::string, std::function<void(Player*)>>
-		(
-			"normalShooting", 
-			[](Player* p)
-			{
-				p->setDelayBetweenShoots(0.2f);
-				p->setShootingType(ShootingType::NORMAL);
-			}
-		));
-
-		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		effects.insert(std::pair<std::string, std::function<void(BaseGameObject*)>>
 		(
 			"doubleShooting",
-			[](Player* p)
+			[](BaseGameObject* p)
 			{
 				p->setDelayBetweenShoots(0.5f);
 				p->setShootingType(ShootingType::DOUBLE);
 			}
 		));
 
-		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		effects.insert(std::pair<std::string, std::function<void(BaseGameObject*)>>
 		(
 			"halfCircleShooting",
-			[](Player* p)
+			[](BaseGameObject* p)
 			{
 				p->setDelayBetweenShoots(0.5f);
 				p->setShootingType(ShootingType::HALFCIRCLE);
 			}
 		));
 
-		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		effects.insert(std::pair<std::string, std::function<void(BaseGameObject*)>>
 		(
 			"doubleHalfCircleShooting",
-			[](Player* p)
+			[](BaseGameObject* p)
 			{
 				p->setDelayBetweenShoots(1.0f);
 				p->setShootingType(ShootingType::DOUBLEHALFCIRCLE);
 			}
 		));
 
-		effects.insert(std::pair<std::string, std::function<void(Player*)>>
+		effects.insert(std::pair<std::string, std::function<void(BaseGameObject*)>>
 		(
 			"shield",
-			[this](Player* p)
+			[this](BaseGameObject* p)
 			{
 				if (p->getAddon("shield") != nullptr)
 					return;
 
-				auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+				auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f));
 				shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
 				p->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
 			}

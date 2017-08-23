@@ -5,10 +5,10 @@
 
 namespace Engine
 {
-	class Pickup : public BaseGameObject
+	class Pickup : public RenderObject
 	{
 		public:
-			Pickup(float, float, glm::vec2, glm::vec2, glm::vec4);
+			Pickup(float, float, glm::vec2);
 			bool update(float);
 			void onCollision(Player*);
 			void setEffect(std::function<void(Player*)> _effect) { effect = _effect; }

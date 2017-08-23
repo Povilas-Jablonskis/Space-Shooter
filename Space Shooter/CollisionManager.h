@@ -10,7 +10,7 @@ namespace Engine
 	class CollisionManager : public Subject
 	{
 		public:
-			GLboolean checkCollision(std::shared_ptr<BaseGameObject>, std::shared_ptr<BaseGameObject>);
+			GLboolean checkCollision(std::shared_ptr<RenderObject>, std::shared_ptr<RenderObject>);
 			template <typename T, typename T2>
 			void checkCollision(std::shared_ptr<T> object, std::vector<std::shared_ptr<T2>>* colliderList)
 			{
@@ -44,7 +44,7 @@ namespace Engine
 					auto collision = checkCollision(object, *it);
 					if (collision)
 					{
-						notifyCollision(ObserverEvent::COLLISIONHAPPEND, it->get());
+						notifyCollision(ObserverEvent::COLLISIONHAPPEND, object.get());
 						(*it)->onCollision(object.get(), parent.get());
 						return;
 					}

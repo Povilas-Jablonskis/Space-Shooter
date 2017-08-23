@@ -48,7 +48,10 @@ namespace Engine
 			float getSize(int) const;
 			virtual void updateAnimation(float);
 			void applyAnimation(std::shared_ptr<Animation>);
+			inline void setNeedsToBeDeleted(bool boolean) { needsToBeDeleted = boolean; };
+			inline bool getNeedsToBeDeleted() const { return needsToBeDeleted; }
 		protected:
+			bool needsToBeDeleted;
 			size_t currentFrame;
 			bool animComplete;
 			float animTimer;

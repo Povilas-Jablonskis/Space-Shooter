@@ -15,7 +15,7 @@ namespace Engine
 	class PickupManager
 	{
 		public:
-			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::map<std::string, std::function<void(Player*)>>);
+			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::map<std::string, std::function<void(BaseGameObject*)>>);
 			std::shared_ptr<Pickup> getPickup(std::string);
 		private:
 			std::map<std::string, std::shared_ptr<Pickup>> pickups;

@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	void PickupManager::loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::map<std::string, std::function<void(Player*)>> effects)
+	void PickupManager::loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::map<std::string, std::function<void(BaseGameObject*)>> effects)
 	{
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
@@ -21,7 +21,7 @@ namespace Engine
 			auto spriteName = brewery_node->first_attribute("spriteName")->value();
 			auto effect = effects.find(brewery_node->first_attribute("effect")->value());
 			auto sprite = spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName);
-			auto pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
+			auto pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f));
 			pickup->applyAnimation(sprite);
 			if (effect != effects.end())
 				pickup->setEffect(effect->second);

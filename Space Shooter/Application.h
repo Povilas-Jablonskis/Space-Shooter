@@ -67,7 +67,7 @@ namespace Engine
 			float currentTime;
 			float accumulator;
 
-			std::map<std::string, std::function<void(Player*)>> effects;
+			std::map<std::string, std::function<void(BaseGameObject*)>> effects;
 			std::vector<std::shared_ptr<Pickup>> pickups;
 			std::vector<std::shared_ptr<Enemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;

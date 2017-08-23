@@ -2,8 +2,8 @@
 
 namespace Engine
 {
-	Addon::Addon(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color) :
-		BaseGameObject(_width, _height, glm::vec2(0.0, 0.0), _velocity, _color), positionOffset(_position)
+	Addon::Addon(float _width, float _height, glm::vec2 _position) :
+		RenderObject(_width, _height, glm::vec2(0.0, 0.0), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f)), positionOffset(_position)
 	{
 
 	}
