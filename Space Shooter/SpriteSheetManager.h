@@ -12,7 +12,7 @@ namespace Engine
 			void loadSpriteSheet(const std::string&, std::shared_ptr<SpriteSheet>);
 			std::shared_ptr<SpriteSheet> getSpriteSheet(const std::string&);
 		private:
-			std::map<std::string, std::shared_ptr<SpriteSheet>> spriteSheets;
+			std::vector<std::pair<std::string, std::shared_ptr<SpriteSheet>>> spriteSheets;
 	};
 }
 #endif

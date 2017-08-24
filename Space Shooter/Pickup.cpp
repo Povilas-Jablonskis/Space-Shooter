@@ -5,7 +5,7 @@ namespace Engine
 	Pickup::Pickup(float _width, float _height, glm::vec2 _position) :
 		RenderObject(_width, _height, glm::vec2(_position), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f))
 	{
-		effect = std::function<void(Player*)>
+		effect = std::function<void(BaseGameObject*)>
 		(
 			
 		);

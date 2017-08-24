@@ -1,8 +1,6 @@
 #ifndef _playerH
 #define _playerH
 
-#include <map>
-
 #include "BaseGameObject.h"
 #include "Bullet.h"
 #include "Subject.h"

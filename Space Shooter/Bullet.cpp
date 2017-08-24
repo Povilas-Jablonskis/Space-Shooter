@@ -31,9 +31,14 @@ namespace Engine
 
 	void Bullet::onCollision(Enemy* collider, Player* parent)
 	{
-		collider->setNeedsToBeDeleted(true);
-		parent->deleteBullet(this);
-		parent->setScore(parent->getScore() + 100);
+		if (collider->getAddon("shield") != nullptr)
+			collider->removeAddon("shield");
+		else
+		{
+			parent->deleteBullet(this);
+			parent->setScore(parent->getScore() + 100);
+			collider->setNeedsToBeDeleted(true);
+		}
 		#if _DEBUG
 			std::cout << "player bullet hit" << std::endl;
 		#endif

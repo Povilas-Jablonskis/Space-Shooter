@@ -3,7 +3,6 @@
 
 #include "vec2.hpp"
 #include "vec4.hpp"
-#include <map>
 #include <memory>
 #include <iostream>
 
@@ -33,14 +32,15 @@ namespace Engine
 			inline void setKey(int key, bool boolean) { pressedkeys[key] = boolean; }
 			inline void setLastMousePosition(glm::vec2 position) { lastMousePosition = position; }
 			inline glm::vec2 getLastMousePosition() const { return lastMousePosition; }
-			inline std::map<std::string, int>* getKeyBindings() { return &keyBindings; }
-			inline void setKeyBinding(const std::string& key, int value) { keyBindings[key] = value; }
+			inline std::vector<std::pair<std::string, int>>* getKeyBindings() { return &keyBindings; }
+			void setKeyBinding(const std::string&, int);
+			int getKeyBinding(const std::string&);
 			inline std::pair<std::string, std::shared_ptr<Text>>* getCurrentEditedKeyBinding() { return &currentEditedKeyBinding; }
 			inline void setCurrentEditedKeyBinding(std::pair<std::string, std::shared_ptr<Text>> value) { currentEditedKeyBinding = value; }
 			bool resetCurrentEditedKeyBinding();
 		private:
 			std::pair<std::string, std::shared_ptr<Text>> currentEditedKeyBinding;
-			std::map<std::string, int> keyBindings;
+			std::vector<std::pair<std::string, int>> keyBindings;
 			glm::vec2 lastMousePosition;
 			bool lastLeftMouseClick;
 			bool leftMouseClick;

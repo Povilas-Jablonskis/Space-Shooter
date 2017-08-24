@@ -6,7 +6,6 @@
 #include "SOIL.h"
 #include <string>
 #include <vec4.hpp>
-#include <map>
 #include <vector>
 #include <rapidxml.hpp>
 #include <iostream>
@@ -33,8 +32,8 @@ namespace Engine
 			int width;
 			int height;
 			GLuint texture;
-			std::map<std::string, glm::vec4> sprites;
-			std::map<std::string, std::shared_ptr<Animation>> animations;
+			std::vector<std::pair<std::string, glm::vec4>> sprites;
+			std::vector<std::pair<std::string, std::shared_ptr<Animation>>> animations;
 	};
 }
 #endif

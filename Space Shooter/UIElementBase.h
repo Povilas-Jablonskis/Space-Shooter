@@ -7,7 +7,6 @@
 #include "GL/freeglut.h"
 #include <functional>
 #include <memory>
-#include <map>
 
 #include "RenderObject.h"
 

@@ -7,20 +7,23 @@ namespace Engine
 		spriteSheets.clear();
 	}
 
-	void SpriteSheetManager::loadSpriteSheet(const std::string& name, std::shared_ptr<SpriteSheet> spriteSheet)
+	void SpriteSheetManager::loadSpriteSheet(const std::string& name, std::shared_ptr<SpriteSheet> _spriteSheet)
 	{
-		if (spriteSheets.find(name) == spriteSheets.end())
+		for (auto spriteSheet : spriteSheets)
 		{
-			spriteSheets.insert(std::pair<std::string, std::shared_ptr<SpriteSheet>>(name, spriteSheet));
+			if (spriteSheet.first == name)
+				return;
 		}
+		spriteSheets.push_back(std::pair<std::string, std::shared_ptr<SpriteSheet>>(name, _spriteSheet));
 	}
 
 	std::shared_ptr<SpriteSheet> SpriteSheetManager::getSpriteSheet(const std::string& name)
 	{
-		auto spriteSheet = spriteSheets.find(name);
-		if (spriteSheet == spriteSheets.end())
-			return nullptr;
-
-		return spriteSheet->second;
+		for (auto spriteSheet : spriteSheets)
+		{
+			if (spriteSheet.first == name)
+				return spriteSheet.second;
+		}
+		return nullptr;
 	}
 }

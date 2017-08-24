@@ -1,7 +1,6 @@
 #ifndef _rendererH
 #define _rendererH
 
-#include <map>
 #include <memory>
 #include <algorithm>
 
@@ -129,7 +128,7 @@ namespace Engine
 			GLuint vbo, vao, ebo;
 			GLuint textVBO;
 			GLuint textVAO;
-			std::map<std::string, std::shared_ptr<Shader>> shaders;
+			std::vector<std::pair<std::string, std::shared_ptr<Shader>>> shaders;
 	};
 }
 #endif

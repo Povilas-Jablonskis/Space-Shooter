@@ -1,10 +1,6 @@
 #ifndef _applicationH
 #define _applicationH
 
-#include <map>
-#include <memory>
-#include <string>
-
 #include <iostream>
 #include <agents.h>
 #include <ppltasks.h>
@@ -49,6 +45,10 @@ namespace Engine
 			void specialKeyInput(int, int, int);
 			void specialKeyInputUp(int, int, int);
 		private:
+			std::shared_ptr<UIElement> getUIElement(std::string);
+			std::shared_ptr<UIElement> getPlayerUIElement(std::string);
+			void erasePlayerUIElement(std::string);
+
 			void initEffects();
 			void startNewLevel();
 			void initPlayerUI();
@@ -67,12 +67,12 @@ namespace Engine
 			float currentTime;
 			float accumulator;
 
-			std::map<std::string, std::function<void(BaseGameObject*)>> effects;
+			std::vector<std::pair<std::string, std::function<void(BaseGameObject*)>>> effects;
 			std::vector<std::shared_ptr<Pickup>> pickups;
 			std::vector<std::shared_ptr<Enemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;
-			std::map<std::string, std::shared_ptr<UIElement>> ui;
-			std::map<std::string, std::shared_ptr<UIElement>> playerUI;
+			std::vector<std::pair<std::string, std::shared_ptr<UIElement>>> ui;
+			std::vector<std::pair<std::string, std::shared_ptr<UIElement>>> playerUI;
 
 			std::shared_ptr<PickupManager> pickupManager;
 			std::shared_ptr<SpriteSheetManager> spriteSheetManager;

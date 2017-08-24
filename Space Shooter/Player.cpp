@@ -29,7 +29,7 @@ namespace Engine
 				++it;
 		}
 
-		for (std::map<std::string, std::shared_ptr<Addon>>::iterator it = addons.begin(); it != addons.end();)
+		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end();)
 		{
 			if ((*it).second->update(dt, position))
 				it = addons.erase(it);
@@ -51,6 +51,7 @@ namespace Engine
 
 	void Player::restart()
 	{
+		setShootingType(ShootingType::NORMAL);
 		bullets.clear();
 		setScore(0);
 		setHealth(startHealth);

@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
 	if (GLEW_OK != err)
 	{
 		#if _DEBUG
-			std::cout << "Error: " << glewGetErrorString(err) << std::endl;
+			std::cout << "ERROR::GLEW: " << glewGetErrorString(err) << std::endl;
 		#endif
 	}
 

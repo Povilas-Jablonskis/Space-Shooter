@@ -5,7 +5,7 @@
 #include <freetype/ftglyph.h>
 #include FT_FREETYPE_H
 #include <iostream>
-#include <map>
+#include <vector>
 
 #include "Font.h"
 
@@ -20,7 +20,7 @@ namespace Engine
 			std::shared_ptr<Font> getFont(const std::string&);
 		private:
 			FT_Library library;
-			std::map<std::string, std::shared_ptr<Font>> faces;
+			std::vector<std::pair<std::string, std::shared_ptr<Font>>> faces;
 	};
 }
 #endif

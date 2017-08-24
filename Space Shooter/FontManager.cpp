@@ -4,7 +4,7 @@ namespace Engine
 {
 	FontManager::~FontManager()
 	{
-		for (std::map<std::string, std::shared_ptr<Font>>::iterator it = faces.begin(); it != faces.end(); ++it)
+		for (std::vector<std::pair<std::string, std::shared_ptr<Font>>>::iterator it = faces.begin(); it != faces.end(); ++it)
 		{
 			auto characterList = it->second->getCharacterList();
 			for (std::map<GLchar, Character>::iterator it2 = characterList->begin(); it2 != characterList->end(); ++it2)
@@ -35,8 +35,11 @@ namespace Engine
 
 	void FontManager::loadFont(const std::string& _path, const std::string& _name)
 	{
-		if (faces.find(_name) != faces.end())
-			return;
+		for (auto face : faces)
+		{
+			if (face.first == _name)
+				return;
+		}
 
 		FT_Face face;
 		if (FT_New_Face(library, _path.c_str(), 0, &face))
@@ -46,15 +49,16 @@ namespace Engine
 			#endif
 		}
 		auto tempFont = std::make_shared<Font>(face);
-		faces.insert(std::pair<std::string, std::shared_ptr<Font>>(_name, std::move(tempFont)));
+		faces.push_back(std::pair<std::string, std::shared_ptr<Font>>(_name, std::move(tempFont)));
 	}
 
 	std::shared_ptr<Font> FontManager::getFont(const std::string& name)
 	{
-		auto tempFace = faces.find(name);
-
-		if (tempFace != faces.end())
-			return tempFace->second;
+		for (auto face : faces)
+		{
+			if (face.first == name)
+				return face.second;
+		}
 
 		return nullptr;
 	}

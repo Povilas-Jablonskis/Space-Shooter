@@ -64,20 +64,24 @@ namespace Engine
 
 	GLuint Renderer::getShaderProgram(const std::string& name) const
 	{
-		auto tempShader = shaders.find(name);
-
-		if (tempShader != shaders.end())
-			return tempShader->second->getShader();
+		for (auto shader : shaders)
+		{
+			if (shader.first == name)
+				return shader.second->getShader();
+		}
 
 		return -1;
 	}
 
 	void Renderer::addShader(const std::string& name, std::shared_ptr<Shader> shader)
 	{
-		if (shaders.find(name) != shaders.end())
-			return;
+		for (auto shader : shaders)
+		{
+			if (shader.first == name)
+				return;
+		}
 
-		shaders.insert(std::pair<std::string, std::shared_ptr<Shader>>(name, shader));
+		shaders.push_back(std::pair<std::string, std::shared_ptr<Shader>>(name, shader));
 	}
 
 	void Renderer::draw(std::vector<std::shared_ptr<Text>> vector)

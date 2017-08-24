@@ -30,7 +30,7 @@ namespace Engine
 		else
 		{
 			#if _DEBUG
-				std::cout << "File " << path.c_str() << " not found" << std::endl;
+				std::cout << "ERROR::Shader: File " << path.c_str() << " not found" << std::endl;
 				getchar();
 			#endif
 			exit(0);
@@ -61,7 +61,7 @@ namespace Engine
 			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &errorLog[0]);
 
 			#if _DEBUG
-				std::cout << "Errors in vertex shader ( " << vertex_path << " ) :" << std::endl;
+				std::cout << "ERROR::Shader: Errors in vertex shader ( " << vertex_path << " ) :" << std::endl;
 				for (size_t i = 0; i < errorLog.size(); i++)
 					std::cout << errorLog[i];
 			#endif
@@ -82,7 +82,7 @@ namespace Engine
 			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &errorLog[0]);
 
 			#if _DEBUG
-				std::cout << "Errors in fragment shader ( " << fragment_path << " ) :" << std::endl;
+				std::cout << "ERROR::Shader: Errors in fragment shader ( " << fragment_path << " ) :" << std::endl;
 				for (size_t i = 0; i < errorLog.size(); i++)
 					std::cout << errorLog[i];
 			#endif
