@@ -4,9 +4,9 @@
 namespace Engine
 {
 	RenderObject::RenderObject(float _width, float _height, glm::vec2 _position, glm::vec4 _color)
-		: width(_width), height(_height), position(_position), color(_color), animation(nullptr), animComplete(false), animTimer(0.0f), currentFrame(0), rotationAngle(0.0f), rotationAxis(glm::vec3(0.0, 0.0, 1.0)), needsToBeDeleted(false)
+		: width(_width), height(_height), position(_position), color(_color), animation(nullptr), animComplete(false), animTimer(0.0f), currentFrame(0), rotationAngle(0.0f), rotationAxis(glm::vec3(0.0, 0.0, 1.0))
 	{
-
+		
 	}
 
 	void RenderObject::updateAnimation(float dt)

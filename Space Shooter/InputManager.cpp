@@ -2,9 +2,11 @@
 
 namespace Engine
 {
-	InputManager::InputManager() : currentEditedKeyBinding(std::pair<std::string, std::shared_ptr<Text>>("", nullptr))
+	InputManager::InputManager()
 	{
+		pressedkeys = new bool[pressedKeyCount];
 		resetInput();
+		setCurrentEditedKeyBinding(std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>>(keyBindings.end(), nullptr));
 	}
 
 	void InputManager::resetInput()
@@ -13,7 +15,7 @@ namespace Engine
 		setLastLeftMouseState(false);
 		setRightMouseState(false);
 		setLastRightMouseState(false);
-		for (int i = 0; i < 255; i++)
+		for (int i = 0; i < pressedKeyCount; i++)
 		{
 			setKey(i, false);
 		}
@@ -23,13 +25,15 @@ namespace Engine
 	{
 		auto currentKeyBinding = getCurrentEditedKeyBinding();
 
+		if (currentKeyBinding->second == nullptr)
+			return false;
+
 		for (auto keyBinding : keyBindings)
 		{
-			if (keyBinding.first == currentKeyBinding->first)
+			if (keyBinding.first == currentKeyBinding->first->first)
 			{
 				currentKeyBinding->second->setIsStatic(false);
 				currentKeyBinding->second->changeColor(glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
-				currentKeyBinding->first = "";
 				currentKeyBinding->second.reset();
 				return true;
 			}
@@ -40,7 +44,7 @@ namespace Engine
 
 	void InputManager::fixInput()
 	{
-		for (int i = 0; i < 255; i++)
+		for (int i = 0; i < pressedKeyCount; i++)
 		{
 			if (!GetAsyncKeyState(i) && pressedkeys[i])
 				pressedkeys[i] = false;
@@ -60,10 +64,10 @@ namespace Engine
 
 	int InputManager::getKeyBinding(const std::string& key)
 	{
-		for (size_t i = 0; i < keyBindings.size(); i++)
+		for (auto keyBinding : keyBindings)
 		{
-			if (keyBindings[i].first == key)
-				return i;
+			if (keyBinding.first == key)
+				return keyBinding.second;
 		}
 		
 		return -1;

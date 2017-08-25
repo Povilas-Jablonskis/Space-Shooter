@@ -8,8 +8,6 @@
 #include <memory>
 
 #include "RenderObject.h"
-#include "ShootingType.h"
-#include "Bullet.h"
 #include "Addon.h"
 
 #include "gtc/matrix_transform.hpp"
@@ -34,25 +32,10 @@ namespace Engine
 			inline glm::vec2 getVelocity() { return velocity; };
 			virtual void onCollision(BaseGameObject*);
 			std::function<void()> onDeath;
-			inline float getDelayBetweenShootsTimer() const { return delayBetweenShootsTimer; }
-			inline void setDelayBetweenShootsTimer(float _delayBetweenShootsTimer) { delayBetweenShootsTimer = _delayBetweenShootsTimer; }
-			inline float getDelayBetweenShoots() const { return delayBetweenShoots; }
-			virtual inline void setDelayBetweenShoots(float _delayBetweenShoots) { delayBetweenShoots = _delayBetweenShoots; }
-			ShootingType getShootingType() const { return shootingType; }
-			void setShootingType(ShootingType _shootingType) { shootingType = _shootingType; }
-			inline std::vector<std::shared_ptr<Bullet>>* getBulletsList() { return &bullets; }
-			void deleteBullet(Bullet*);
-			inline void addBullet(std::shared_ptr<Bullet> bullet) { bullets.push_back(bullet); }
-			inline std::vector<std::pair<std::string, std::shared_ptr<Addon>>>* getAddons() { return &addons; }
-			std::shared_ptr<Addon> getAddon(std::string);
-			void addAddon(std::pair<std::string, std::shared_ptr<Addon>>);
-			void removeAddon(std::string);
+			inline void setNeedsToBeDeleted(bool boolean) { needsToBeDeleted = boolean; };
+			inline bool getNeedsToBeDeleted() const { return needsToBeDeleted; }
 		protected:
-			std::vector<std::pair<std::string, std::shared_ptr<Addon>>> addons;
-			float delayBetweenShootsTimer;
-			float delayBetweenShoots;
-			std::vector<std::shared_ptr<Bullet>> bullets;
-			ShootingType shootingType;
+			bool needsToBeDeleted;
 			std::vector<std::pair<std::string, std::shared_ptr<Animation>>> animations;
 			glm::vec2 velocity;
 	};

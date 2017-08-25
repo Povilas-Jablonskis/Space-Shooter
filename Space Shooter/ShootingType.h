@@ -9,6 +9,7 @@ namespace Engine
 		DOUBLE = 1,
 		HALFCIRCLE = 2,
 		DOUBLEHALFCIRCLE = 3,
+		NONE = 4,
 	};
 }
 #endif

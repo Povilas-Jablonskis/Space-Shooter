@@ -10,7 +10,7 @@ namespace Engine
 	class CollisionManager : public Subject
 	{
 		public:
-			GLboolean checkCollision(std::shared_ptr<RenderObject>, std::shared_ptr<RenderObject>);
+			bool checkCollision(std::shared_ptr<RenderObject>, std::shared_ptr<RenderObject>);
 			template <typename T, typename T2>
 			void checkCollision(std::shared_ptr<T> object, std::vector<std::shared_ptr<T2>>* colliderList)
 			{
@@ -41,11 +41,10 @@ namespace Engine
  						(*it)->setNeedsToBeDeleted(true);
 						continue;
 					}
-					auto collision = checkCollision(object, *it);
-					if (collision)
+					if (checkCollision(object, *it))
 					{
 						notifyCollision(ObserverEvent::COLLISIONHAPPEND, object.get());
-						(*it)->onCollision(object.get(), parent.get());
+						(*it)->onCollision(object.get());
 						return;
 					}
 				}

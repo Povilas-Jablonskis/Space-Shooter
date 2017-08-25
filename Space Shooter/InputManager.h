@@ -35,18 +35,19 @@ namespace Engine
 			inline std::vector<std::pair<std::string, int>>* getKeyBindings() { return &keyBindings; }
 			void setKeyBinding(const std::string&, int);
 			int getKeyBinding(const std::string&);
-			inline std::pair<std::string, std::shared_ptr<Text>>* getCurrentEditedKeyBinding() { return &currentEditedKeyBinding; }
-			inline void setCurrentEditedKeyBinding(std::pair<std::string, std::shared_ptr<Text>> value) { currentEditedKeyBinding = value; }
+			inline std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>>* getCurrentEditedKeyBinding() { return &currentEditedKeyBinding; }
+			inline void setCurrentEditedKeyBinding(std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>> value) { currentEditedKeyBinding = value; }
 			bool resetCurrentEditedKeyBinding();
 		private:
-			std::pair<std::string, std::shared_ptr<Text>> currentEditedKeyBinding;
+			const int pressedKeyCount = 256;
+			std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>> currentEditedKeyBinding;
 			std::vector<std::pair<std::string, int>> keyBindings;
 			glm::vec2 lastMousePosition;
 			bool lastLeftMouseClick;
 			bool leftMouseClick;
 			bool lastRightMouseClick;
 			bool rightMouseClick;
-			bool pressedkeys[256];
+			bool* pressedkeys;
 	};
 }
 #endif

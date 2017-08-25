@@ -1,16 +1,20 @@
 #include "Application.h"
+#include <ctime>
 
 namespace Engine
 {
 	Application::Application() 
-		: pickupManager(std::make_shared<PickupManager>()), spriteSheetManager(std::make_shared<SpriteSheetManager>()), collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
+		: effectManagerForPlayer(std::make_shared<EffectManager<Player>>()), effectManagerForEnemies(std::make_shared<EffectManager<Enemy>>()), enemyManager(std::make_shared<EnemyManager>()), pickupManager(std::make_shared<PickupManager>()), spriteSheetManager(std::make_shared<SpriteSheetManager>()), collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
 		currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
 		accumulator = 0.0f;
 		dt = 1.0f / 60.0f;
 		t = 0.0f;
 
-		initEffects();
+		srand((int)time(NULL));
+
+		initEffectsForEnemies();
+		initEffectsForPlayer();
 
 		onNotifyBase = [this](ObserverEvent _event)
 		{
@@ -57,7 +61,8 @@ namespace Engine
 		fontManager->loadFont("kenvector_future_thin.ttf", "kenvector_future_thin");
 
 		initSpriteSheets();
-		pickupManager->loadPickupsFromConfig(spriteSheetManager, effects);
+		pickupManager->loadPickupsFromConfig(spriteSheetManager, effectManagerForPlayer);
+		enemyManager->loadEnemiesFromConfig(spriteSheetManager, effectManagerForEnemies);
 
 		background = std::make_shared<UIElementBase>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f));
 		background->applyAnimation(spriteSheetManager->getSpriteSheet("background")->getSprite("wholeSpriteSheet"));
@@ -119,6 +124,15 @@ namespace Engine
 
 		spriteSheet->getAnimation("shieldSpriteSheet")->setLoopStatus(true);
 		spriteSheet->getAnimation("shieldSpriteSheet")->setDelay(0.15f);
+
+		sprites.clear();
+
+		sprites.push_back(spriteSheet->getSpriteAsVector("meteorBrown_med1.png"));
+		sprites.push_back(spriteSheet->getSpriteAsVector("meteorBrown_med3.png"));
+		spriteSheet->makeAnimation("meteorBrown_med", sprites);
+
+		spriteSheet->getAnimation("meteorBrown_med")->setLoopStatus(true);
+		spriteSheet->getAnimation("meteorBrown_med")->setDelay(0.15f);
 
 		spriteSheetManager->loadSpriteSheet("main", spriteSheet);
 		spriteSheetManager->loadSpriteSheet("background", backgroundSpriteSheet);
@@ -207,72 +221,168 @@ namespace Engine
 	{
 		enemies.clear();
 		float space = 60.f;
-
-		for (size_t i = 0; true; i++)
+		for (size_t i = 0; ((32 + i * space) <= (glutGet(GLUT_INIT_WINDOW_WIDTH) - 32 - 32)); i++)
 		{
-			if ((32 + i * space) >= (glutGet(GLUT_INIT_WINDOW_WIDTH) - 32 - 32)) break;
-			int randIndex = rand() % effects.size();
-			auto enemy = std::make_shared<Enemy>(32.0f, 32.0f, glm::vec2(32 + i * space, 416.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
-			enemy->addAnimation("shoot", spriteSheetManager->getSpriteSheet("main")->getSprite("laserGreen11.png"));
-			enemy->addAnimation("explosion", spriteSheetManager->getSpriteSheet("main")->getAnimation("greenExplosionSpriteSheet"));
-			enemy->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("enemyBlack1.png"));
-			effects[randIndex].second(enemy.get());
+			auto enemy = enemyManager->getRandomEnemy();
+			enemy->setPosition(glm::vec2(32 + i * space, 416.0f));
+			effectManagerForEnemies->getRandomEffect()(enemy.get());
 			enemies.push_back(std::move(enemy));
 		}
 
-		auto pickup = pickupManager->getPickup("doublehalfcircle");
+		auto pickup = pickupManager->getRandomPickup();
 		pickup->setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, (float)glutGet(GLUT_WINDOW_Y) / 2.0f));
 		pickups.push_back(std::move(pickup));
+
+		for (size_t i = 0; meteors.size() < 10; i++)
+		{
+			auto found = false;
+			auto meteor = std::make_shared<BaseGameObject>(32.0f, 32.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			meteor->setPosition(0, rand() % (0 + (glutGet(GLUT_INIT_WINDOW_WIDTH) - 32)));
+			meteor->setPosition(1, rand() % (0 + (glutGet(GLUT_INIT_WINDOW_HEIGHT) - 32)));
+			if (collisionManager->checkCollision(player, meteor) == true)
+				found = true;
+
+			for (auto enemy : enemies)
+			{
+				if (collisionManager->checkCollision(enemy, meteor) == true)
+				{
+					found = true;
+					break;
+				}
+			}
+
+			for (auto _meteor : meteors)
+			{
+				if (collisionManager->checkCollision(_meteor, meteor) == true)
+				{
+					found = true;
+					break;
+				}
+			}
+
+			for (auto pickup : pickups)
+			{
+				if (collisionManager->checkCollision(pickup, meteor) == true)
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (found)
+				continue;
+
+			meteor->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("meteorBrown_med"));
+			meteors.push_back(std::move(meteor));
+		}
+
 		accumulator = 0.0f;
 		t = 0.0f;
 	}
 
-	void Application::initEffects()
+	void Application::initEffectsForPlayer()
 	{
-		effects.push_back(std::pair<std::string, std::function<void(BaseGameObject*)>>
+		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Player*)>>
 		(
 			"defaultShooting",
-			[](BaseGameObject* p)
+			[](Player* p)
 			{
 				p->setDelayBetweenShoots(0.25f);
 				p->setShootingType(ShootingType::NORMAL);
 			}
 		));
 
-		effects.push_back(std::pair<std::string, std::function<void(BaseGameObject*)>>
+		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Player*)>>
 		(
 			"doubleShooting",
-			[](BaseGameObject* p)
+			[](Player* p)
 			{
 				p->setDelayBetweenShoots(0.5f);
 				p->setShootingType(ShootingType::DOUBLE);
 			}
 		));
 
-		effects.push_back(std::pair<std::string, std::function<void(BaseGameObject*)>>
+		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Player*)>>
 		(
 			"halfCircleShooting",
-			[](BaseGameObject* p)
+			[](Player* p)
 			{
 				p->setDelayBetweenShoots(0.5f);
 				p->setShootingType(ShootingType::HALFCIRCLE);
 			}
 		));
 
-		effects.push_back(std::pair<std::string, std::function<void(BaseGameObject*)>>
+		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Player*)>>
 		(
 			"doubleHalfCircleShooting",
-			[](BaseGameObject* p)
+			[](Player* p)
 			{
 				p->setDelayBetweenShoots(1.0f);
 				p->setShootingType(ShootingType::DOUBLEHALFCIRCLE);
 			}
 		));
 
-		effects.push_back(std::pair<std::string, std::function<void(BaseGameObject*)>>
+		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Player*)>>
 		(
 			"shield",
-			[this](BaseGameObject* p)
+			[this](Player* p)
+			{
+				if (p->getAddon("shield") != nullptr)
+					return;
+
+				auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f));
+				shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
+				p->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
+			}
+		));
+	}
+
+	void Application::initEffectsForEnemies()
+	{
+		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Enemy*)>>
+		(
+			"defaultShooting",
+			[](Enemy* p)
+			{
+				p->setDelayBetweenShoots(0.25f);
+				p->setShootingType(ShootingType::NORMAL);
+			}
+		));
+
+		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Enemy*)>>
+		(
+			"doubleShooting",
+			[](Enemy* p)
+			{
+				p->setDelayBetweenShoots(0.5f);
+				p->setShootingType(ShootingType::DOUBLE);
+			}
+		));
+
+		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Enemy*)>>
+		(
+			"halfCircleShooting",
+			[](Enemy* p)
+			{
+				p->setDelayBetweenShoots(0.5f);
+				p->setShootingType(ShootingType::HALFCIRCLE);
+			}
+		));
+
+		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Enemy*)>>
+		(
+			"doubleHalfCircleShooting",
+			[](Enemy* p)
+			{
+				p->setDelayBetweenShoots(1.0f);
+				p->setShootingType(ShootingType::DOUBLEHALFCIRCLE);
+			}
+		));
+
+		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Enemy*)>>
+		(
+			"shield",
+			[this](Enemy* p)
 			{
 				if (p->getAddon("shield") != nullptr)
 					return;
@@ -364,7 +474,7 @@ namespace Engine
 			options->onMouseClickFunc = [this, options, it]()
 			{
 				inputManager->resetCurrentEditedKeyBinding();
-				inputManager->setCurrentEditedKeyBinding(std::pair<std::string, std::shared_ptr<Text>>(it->first, options));
+				inputManager->setCurrentEditedKeyBinding(std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>>(it, options));
 				options->setIsStatic(true);
 				options->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 			};
@@ -472,6 +582,14 @@ namespace Engine
 						++it;
 				}
 
+				for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = meteors.begin(); it != meteors.end();)
+				{
+					if ((*it)->update(dt))
+						it = meteors.erase(it);
+					else
+						++it;
+				}
+
 				//Collision detection
 				if (player->getPosition(0) + player->getSize(0) >= windowWidth)
 					player->setPosition(0, windowWidth - player->getSize(0));
@@ -490,6 +608,13 @@ namespace Engine
 					collisionManager->checkCollision(*it, playerBulletList, player);
 				}
 
+				for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = meteors.begin(); it != meteors.end(); it++)
+				{
+					auto playerBulletList = player->getBulletsList();
+					collisionManager->checkCollision(*it, playerBulletList);
+				}
+
+				collisionManager->checkCollision(player, &meteors);
 				collisionManager->checkCollision(player, &enemies);
 				collisionManager->checkCollision(player, &pickups);
 
@@ -512,7 +637,15 @@ namespace Engine
 				renderer->draw(it->second);
 			}
 			//Render enemies
-			renderer->draw(enemies);
+			for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
+			{
+				auto addons = (*it)->getAddons();
+				renderer->draw(*it);
+				for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it2 = addons->begin(); it2 != addons->end(); it2++)
+				{
+					renderer->draw(it2->second);
+				}
+			}
 			//Render pickups
 			renderer->draw(pickups);
 			//Render explosions
@@ -525,6 +658,8 @@ namespace Engine
 			}
 
 			renderer->draw(*player->getBulletsList());
+			//Render meteors
+			renderer->draw(meteors);
 			//Render & Update player UI
 			for (auto uiElement : playerUI)
 			{
@@ -622,13 +757,12 @@ namespace Engine
 					break;
 				}
 			}
+
 			auto keyBindings = inputManager->getKeyBindings();
 			auto currentKeyBinding = inputManager->getCurrentEditedKeyBinding();
-			auto keyBinding = inputManager->getKeyBinding(currentKeyBinding->first);
-			if (c >= 32 && c < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](std::pair<std::string, int> element){return element.second == key; }) && keyBinding != -1)
+			if (c >= 32 && c < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](std::pair<std::string, int> element){return element.second == key; }) && currentKeyBinding->second != nullptr)
 			{
-				auto currentKey = &keyBindings->at(keyBinding);
-				currentKey->second = key;
+				currentKeyBinding->first->second = key;
 				currentKeyBinding->second->setText(virtualKeyCodeToString(key));
 				inputManager->resetCurrentEditedKeyBinding();
 			}
@@ -709,11 +843,9 @@ namespace Engine
 
 		auto keyBindings = inputManager->getKeyBindings();
 		auto currentKeyBinding = inputManager->getCurrentEditedKeyBinding();
-		auto keyBinding = inputManager->getKeyBinding(currentKeyBinding->first);
-		if (c != 0 && !std::any_of(keyBindings->begin(), keyBindings->end(), [c](std::pair<std::string, int> element){return element.second == c; }) && keyBinding != -1)
+		if (c != 0 && !std::any_of(keyBindings->begin(), keyBindings->end(), [c](std::pair<std::string, int> element){return element.second == c; }) && currentKeyBinding->second != nullptr)
 		{
-			auto currentKey = &keyBindings->at(keyBinding);
-			currentKey->second = c;
+			currentKeyBinding->first->second = c;
 			currentKeyBinding->second->setText(charText);
 			inputManager->resetCurrentEditedKeyBinding();
 		}

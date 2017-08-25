@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 
+#include "EffectManager.h"
 #include "SpriteSheetManager.h"
 #include "Pickup.h"
 
@@ -15,8 +16,9 @@ namespace Engine
 	class PickupManager
 	{
 		public:
-			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::vector<std::pair<std::string, std::function<void(BaseGameObject*)>>>);
+			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager<Player>>);
 			std::shared_ptr<Pickup> getPickup(std::string);
+			std::shared_ptr<Pickup> getRandomPickup();
 		private:
 			std::vector<std::pair<std::string, std::shared_ptr<Pickup>>> pickups;
 	};

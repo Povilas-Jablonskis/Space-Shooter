@@ -1,6 +1,5 @@
 #include "Enemy.h"
 #include "Player.h"
-#include "Application.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -23,7 +22,7 @@ namespace Engine
 	//}
 
 	Enemy::Enemy(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), delayBetweenShoots(0.2f), delayBetweenShootsTimer(0.0f), shootingType(ShootingType::NONE)
 	{
 
 	}
@@ -59,7 +58,7 @@ namespace Engine
 	//			++it;
 	//	}
 
-	//	return needsToBeDeleted;
+	//	return getNeedsToBeDeleted();
 	//}
 
 	bool Enemy::update(float dt)
@@ -217,15 +216,58 @@ namespace Engine
 				++it;
 		}
 
-		return needsToBeDeleted;
+		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end();)
+		{
+			if ((*it).second->update(dt, position))
+				it = addons.erase(it);
+			else
+				++it;
+		}
+
+		return getNeedsToBeDeleted();
 	}
 
-	void Enemy::onCollision(Player* collider)
+	void Enemy::onCollision(BaseGameObject* collider)
 	{
-		collider->respawn();
+		if (getAddon("shield") != nullptr)
+			removeAddon("shield");
+		else
+			setNeedsToBeDeleted(true);
 
-		#if _DEBUG
-			std::cout << "enemy hit" << std::endl;
-		#endif
+		if (collider != nullptr && !collider->getNeedsToBeDeleted())
+			collider->onCollision(this);
+	}
+
+
+	std::shared_ptr<Addon> Enemy::getAddon(std::string index)
+	{
+		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end(); it++)
+		{
+			if (it->first == index)
+				return it->second;
+		}
+		return nullptr;
+	}
+
+	void Enemy::removeAddon(std::string index)
+	{
+		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end(); it++)
+		{
+			if (it->first == index)
+			{
+				addons.erase(it);
+				return;
+			}
+		}
+	}
+
+	void Enemy::addAddon(std::pair<std::string, std::shared_ptr<Addon>> _addon)
+	{
+		for (auto addon : addons)
+		{
+			if (addon.first == _addon.first) return;
+		}
+
+		addons.push_back(_addon);
 	}
 }

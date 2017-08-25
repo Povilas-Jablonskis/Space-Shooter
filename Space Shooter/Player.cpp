@@ -12,9 +12,9 @@ namespace Engine
 	}
 
 	Player::Player(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity), delayBetweenShoots(0.2f), delayBetweenShootsTimer(0.0f), shootingType(ShootingType::NORMAL)
 	{
-		
+
 	}
 
 	bool Player::update(float dt)
@@ -39,6 +39,14 @@ namespace Engine
 		return true;
 	}
 
+	void Player::onCollision(BaseGameObject* collider)
+	{
+		if (getAddon("shield") != nullptr)
+			removeAddon("shield");
+		else
+			respawn();
+	}
+
 	void Player::respawn()
 	{
 		bullets.clear();
@@ -51,6 +59,7 @@ namespace Engine
 
 	void Player::restart()
 	{
+		setDelayBetweenShoots(0.25f);
 		setShootingType(ShootingType::NORMAL);
 		bullets.clear();
 		setScore(0);
@@ -59,10 +68,35 @@ namespace Engine
 		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
 	}
 
-	void Player::onCollision(BaseGameObject* collider)
+	std::shared_ptr<Addon> Player::getAddon(std::string index)
 	{
-		#if _DEBUG
-			std::cout << "player hit" << std::endl;
-		#endif
+		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end(); it++)
+		{
+			if (it->first == index)
+				return it->second;
+		}
+		return nullptr;
+	}
+
+	void Player::removeAddon(std::string index)
+	{
+		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end(); it++)
+		{
+			if (it->first == index)
+			{
+				addons.erase(it);
+				return;
+			}
+		}
+	}
+
+	void Player::addAddon(std::pair<std::string, std::shared_ptr<Addon>> _addon)
+	{
+		for (auto addon : addons)
+		{
+			if (addon.first == _addon.first) return;
+		}
+
+		addons.push_back(_addon);
 	}
 }

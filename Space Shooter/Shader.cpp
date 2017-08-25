@@ -57,13 +57,13 @@ namespace Engine
 			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
 
 			// The maxLength includes the NULL character
-			std::vector<GLchar> errorLog(maxLength);
-			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &errorLog[0]);
+			std::vector<GLchar> errorLogs(maxLength);
+			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &errorLogs[0]);
 
 			#if _DEBUG
 				std::cout << "ERROR::Shader: Errors in vertex shader ( " << vertex_path << " ) :" << std::endl;
-				for (size_t i = 0; i < errorLog.size(); i++)
-					std::cout << errorLog[i];
+				for (auto errorLog : errorLogs)
+					std::cout << errorLog;
 			#endif
 		}
 
@@ -78,13 +78,13 @@ namespace Engine
 			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
 
 			// The maxLength includes the NULL character
-			std::vector<GLchar> errorLog(maxLength);
-			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &errorLog[0]);
+			std::vector<GLchar> errorLogs(maxLength);
+			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &errorLogs[0]);
 
 			#if _DEBUG
 				std::cout << "ERROR::Shader: Errors in fragment shader ( " << fragment_path << " ) :" << std::endl;
-				for (size_t i = 0; i < errorLog.size(); i++)
-					std::cout << errorLog[i];
+				for (auto errorLog : errorLogs)
+					std::cout << errorLog;
 			#endif
 		}
 

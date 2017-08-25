@@ -11,10 +11,13 @@ namespace Engine
 			Pickup(float, float, glm::vec2);
 			bool update(float);
 			void onCollision(Player*);
-			void setEffect(std::function<void(BaseGameObject*)> _effect) { effect = _effect; }
-			std::function<void(BaseGameObject*)> getEffect() const { return effect; }
+			void setEffect(std::function<void(Player*)> _effect) { effect = _effect; }
+			std::function<void(Player*)> getEffect() const { return effect; }
+			inline void setNeedsToBeDeleted(bool boolean) { needsToBeDeleted = boolean; };
+			inline bool getNeedsToBeDeleted() const { return needsToBeDeleted; }
 		private:
-			std::function<void(BaseGameObject*)> effect;
+			bool needsToBeDeleted;
+			std::function<void(Player*)> effect;
 	};
 }
 #endif

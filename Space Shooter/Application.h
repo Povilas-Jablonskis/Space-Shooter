@@ -13,6 +13,8 @@
 #include "CollisionManager.h"
 #include "SpriteSheetManager.h"
 #include "PickupManager.h"
+#include "EnemyManager.h"
+#include "EffectManager.h"
 
 #include "UIElement.h"
 #include "Player.h"
@@ -49,7 +51,8 @@ namespace Engine
 			std::shared_ptr<UIElement> getPlayerUIElement(std::string);
 			void erasePlayerUIElement(std::string);
 
-			void initEffects();
+			void initEffectsForEnemies();
+			void initEffectsForPlayer();
 			void startNewLevel();
 			void initPlayerUI();
 			void initSpriteSheets();
@@ -67,13 +70,16 @@ namespace Engine
 			float currentTime;
 			float accumulator;
 
-			std::vector<std::pair<std::string, std::function<void(BaseGameObject*)>>> effects;
+			std::vector<std::shared_ptr<BaseGameObject>> meteors;
 			std::vector<std::shared_ptr<Pickup>> pickups;
 			std::vector<std::shared_ptr<Enemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;
 			std::vector<std::pair<std::string, std::shared_ptr<UIElement>>> ui;
 			std::vector<std::pair<std::string, std::shared_ptr<UIElement>>> playerUI;
 
+			std::shared_ptr<EffectManager<Player>> effectManagerForPlayer;
+			std::shared_ptr<EffectManager<Enemy>> effectManagerForEnemies;
+			std::shared_ptr<EnemyManager> enemyManager;
 			std::shared_ptr<PickupManager> pickupManager;
 			std::shared_ptr<SpriteSheetManager> spriteSheetManager;
 			std::shared_ptr<CollisionManager> collisionManager;

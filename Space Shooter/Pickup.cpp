@@ -3,9 +3,9 @@
 namespace Engine
 {
 	Pickup::Pickup(float _width, float _height, glm::vec2 _position) :
-		RenderObject(_width, _height, glm::vec2(_position), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f))
+		RenderObject(_width, _height, glm::vec2(_position), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f)), needsToBeDeleted(false)
 	{
-		effect = std::function<void(BaseGameObject*)>
+		effect = std::function<void(Player*)>
 		(
 			
 		);
@@ -15,18 +15,12 @@ namespace Engine
 	{
 		updateAnimation(dt);
 
-		return needsToBeDeleted;
+		return getNeedsToBeDeleted();
 	}
 
-	void Pickup::onCollision(Player* player)
+	void Pickup::onCollision(Player* collider)
 	{
-		if (player->getNeedsToBeDeleted()) return;
-
-		effect(player);
-		needsToBeDeleted = true;
-
-		#if _DEBUG
-			std::cout << "pickup player hit" << std::endl;
-		#endif
+		effect(collider);
+		setNeedsToBeDeleted(true);
 	}
 }
