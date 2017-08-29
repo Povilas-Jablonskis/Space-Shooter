@@ -3,11 +3,10 @@
 
 #include "BaseGameObject.h"
 #include "Bullet.h"
-#include "Subject.h"
 
 namespace Engine
 {
-	class CollisionManager : public Subject
+	class CollisionManager
 	{
 		public:
 			bool checkCollision(std::shared_ptr<RenderObject>, std::shared_ptr<RenderObject>);
@@ -17,8 +16,7 @@ namespace Engine
 				for (std::vector<std::shared_ptr<T2>>::iterator it = colliderList->begin(); it != colliderList->end(); it++)
 				{
 					if ((*it)->getNeedsToBeDeleted()) continue;
-					auto collision = checkCollision(object, *it);
-					if (collision)
+					if (checkCollision(object, *it))
 					{
 						(*it)->onCollision(object.get());
 						return;
@@ -43,8 +41,7 @@ namespace Engine
 					}
 					if (checkCollision(object, *it))
 					{
-						notifyCollision(ObserverEvent::COLLISIONHAPPEND, object.get());
-						(*it)->onCollision(object.get());
+						(*it)->onCollision(object.get(), parent.get());
 						return;
 					}
 				}

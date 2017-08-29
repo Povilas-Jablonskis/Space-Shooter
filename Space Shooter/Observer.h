@@ -12,8 +12,7 @@ namespace Engine
 	{
 		public:
 			Observer();
-			std::function<void(ObserverEvent)> onNotifyBase;
-			std::function<void(ObserverEvent, BaseGameObject*)> onNotifyCollision;
+			std::function<void(ObserverEvent, BaseGameObject*)> onNotify;
 	};
 }
 #endif

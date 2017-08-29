@@ -6,10 +6,11 @@
 #include "Subject.h"
 #include "Addon.h"
 #include "ShootingType.h"
+#include "Subject.h"
 
 namespace Engine
 {
-	class Enemy : public BaseGameObject
+	class Enemy : public BaseGameObject, public Subject
 	{
 		public:
 			~Enemy();

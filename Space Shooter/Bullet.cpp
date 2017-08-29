@@ -6,15 +6,7 @@ namespace Engine
 	Bullet::Bullet(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: BaseGameObject(_width, _height, _position, _velocity, _color)
 	{
-		onDeath = []()
-		{
 
-		};
-	}
-
-	Bullet::~Bullet()
-	{
-		onDeath();
 	}
 
 	bool Bullet::update(float _dt)
@@ -25,8 +17,18 @@ namespace Engine
 		return getNeedsToBeDeleted();
 	}
 
-	void Bullet::onCollision(BaseGameObject* collider)
+	void Bullet::onCollision(BaseGameObject* collider, Enemy* parent)
 	{
+		parent->notify(ObserverEvent::BULLETDESTROYED, this);
+		setNeedsToBeDeleted(true);
+
+		if (collider != nullptr && !collider->getNeedsToBeDeleted())
+			collider->onCollision(this);
+	}
+
+	void Bullet::onCollision(BaseGameObject* collider, Player* parent)
+	{
+		parent->notify(ObserverEvent::BULLETDESTROYED, this);
 		setNeedsToBeDeleted(true);
 
 		if (collider != nullptr && !collider->getNeedsToBeDeleted())

@@ -75,6 +75,7 @@ namespace Engine
 				case NORMAL:
 				{
 					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f), getPosition(1) - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -84,12 +85,14 @@ namespace Engine
 				case DOUBLE:
 				{
 					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f), getPosition(1) - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
 
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f), getPosition(1) - 20.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -101,18 +104,21 @@ namespace Engine
 					//Middle
 					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f), getPosition(1) - 20.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
 
 					//Right side
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) - 20.0f, getPosition(1) - 15.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
 
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) - 40.0f, getPosition(1) - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -120,12 +126,14 @@ namespace Engine
 
 					//Left side
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) + 20.0f, getPosition(1) - 15.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
 
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) + 40.0f, getPosition(1) - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -138,6 +146,7 @@ namespace Engine
 
 					//Middle
 					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f), getPosition(1) - 20.0f - 4.5f - 20.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -145,12 +154,14 @@ namespace Engine
 
 					//Right side
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) - 20.0f, getPosition(1) - 20.0f + 4.5f - 15.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
 
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) - 40.0f, getPosition(1) - 20.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -158,12 +169,14 @@ namespace Engine
 
 					//Left side
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) + 20.0f, getPosition(1) - 20.0f - 4.5f - 15.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
 
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) + 40.0f, getPosition(1) - 20.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -173,6 +186,7 @@ namespace Engine
 
 					//Middle
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f), getPosition(1) - 20.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -180,12 +194,14 @@ namespace Engine
 
 					//Right side
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) - 20.0f, getPosition(1) - 15.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
 
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) - 40.0f, getPosition(1) - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
@@ -193,12 +209,14 @@ namespace Engine
 
 					//Left side
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) + 20.0f, getPosition(1) - 15.0f - 4.5f - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
 
 					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(getPosition(0) + (getSize(0) / 2.0f) + 40.0f, getPosition(1) - 4.5f), glm::vec2(0.0f, -200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
 					bullet->applyAnimation(getAnimationByIndex("shoot"));
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));

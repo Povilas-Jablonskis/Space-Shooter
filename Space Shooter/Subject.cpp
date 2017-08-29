@@ -1,4 +1,5 @@
 #include "Subject.h"
+#include "BaseGameObject.h"
 
 namespace Engine
 {
@@ -12,19 +13,11 @@ namespace Engine
 		observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
 	}
 
-	void Subject::notifyBase(ObserverEvent _event)
+	void Subject::notify(ObserverEvent _event, BaseGameObject* subject)
 	{
 		for (auto observer : observers)
 		{
-			observer->onNotifyBase(_event);
-		}
-	}
-
-	void Subject::notifyCollision(ObserverEvent _event, BaseGameObject* _collider)
-	{
-		for (auto observer : observers)
-		{
-			observer->onNotifyCollision(_event, _collider);
+			observer->onNotify(_event, subject);
 		}
 	}
 }

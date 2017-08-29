@@ -19,9 +19,9 @@ namespace Engine
 			void restart();
 			void onCollision(BaseGameObject*);
 			inline int getHealth() const { return health; }
-			inline void setHealth(int _health) { health = _health; notifyBase(ObserverEvent::HEALTHCHANGED); }
+			inline void setHealth(int _health) { health = _health; notify(ObserverEvent::HEALTHCHANGED, this); }
 			inline int getScore() const { return score; }
-			inline void setScore(int _score) { score = _score; notifyBase(ObserverEvent::SCORECHANGED); }
+			inline void setScore(int _score) { score = _score; notify(ObserverEvent::SCORECHANGED, this); }
 			inline float getDelayBetweenShootsTimer() const { return delayBetweenShootsTimer; }
 			inline void setDelayBetweenShootsTimer(float _delayBetweenShootsTimer) { delayBetweenShootsTimer = _delayBetweenShootsTimer; }
 			inline float getDelayBetweenShoots() const { return delayBetweenShoots; }

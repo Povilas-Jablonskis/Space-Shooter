@@ -16,9 +16,7 @@ namespace Engine
 		public:
 			void addObserver(Observer*);
 			void removeObserver(Observer*);
-		protected:
-			void notifyBase(ObserverEvent);
-			void notifyCollision(ObserverEvent, BaseGameObject*);
+			void notify(ObserverEvent, BaseGameObject*);
 		private:
 			std::vector<Observer*> observers;
 	};

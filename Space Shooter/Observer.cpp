@@ -1,15 +1,11 @@
 #include "Observer.h"
+#include "BaseGameObject.h"
 
 namespace Engine
 {
 	Observer::Observer()
 	{
-		onNotifyBase = [](ObserverEvent _event)
-		{
-
-		};
-
-		onNotifyCollision = [](ObserverEvent _event, BaseGameObject* _obj)
+		onNotify = [](ObserverEvent _event, BaseGameObject* subject)
 		{
 
 		};

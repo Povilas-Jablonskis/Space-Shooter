@@ -18,17 +18,19 @@
 
 namespace Engine
 {
+	class Enemy;
+	class Player;
 	class Bullet : public BaseGameObject
 	{
 		public:
-			~Bullet();
 			Bullet(float, float, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float);
 			inline void setVelocity(glm::vec2 _velocity) { velocity = _velocity; };
 			inline void setVelocity(int index, float _velocity) { velocity[index] = _velocity; };
 			inline float getVelocity(int index) { return velocity[index]; };
 			inline glm::vec2 getVelocity() { return velocity; };
-			void onCollision(BaseGameObject*);
+			void onCollision(BaseGameObject*, Enemy*);
+			void onCollision(BaseGameObject*, Player*);
 	};
 }
 #endif

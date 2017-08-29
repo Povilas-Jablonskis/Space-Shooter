@@ -16,7 +16,7 @@ namespace Engine
 		initEffectsForEnemies();
 		initEffectsForPlayer();
 
-		onNotifyBase = [this](ObserverEvent _event)
+		onNotify = [this](ObserverEvent _event, BaseGameObject* subject)
 		{
 			switch (_event)
 			{
@@ -30,24 +30,15 @@ namespace Engine
 					updatePlayerHealth();
 					break;
 				}
-			}
-		};
-
-		onNotifyCollision = [this](ObserverEvent _event, BaseGameObject* _obj)
-		{
-			switch (_event)
-			{
-				case COLLISIONHAPPEND:
+				case BULLETDESTROYED:
 				{
-					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, _obj->getPosition());
-					explosion->applyAnimation(_obj->getAnimationByIndex("explosion"));
+					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, subject->getPosition());
+					explosion->applyAnimation(subject->getAnimationByIndex("explosion"));
 					addExplosionToList(std::move(explosion));
 					break;
 				}
 			}
 		};
-		
-		collisionManager->addObserver(this);
 
 		inputManager->setKeyBinding("Attack", VK_SPACE);
 		inputManager->setKeyBinding("Move Left", 0x41);
@@ -220,11 +211,12 @@ namespace Engine
 	void Application::initScene()
 	{
 		enemies.clear();
-		float space = 60.f;
+		float space = 100.f;
 		for (size_t i = 0; ((32 + i * space) <= (glutGet(GLUT_INIT_WINDOW_WIDTH) - 32 - 32)); i++)
 		{
 			auto enemy = enemyManager->getRandomEnemy();
 			enemy->setPosition(glm::vec2(32 + i * space, 416.0f));
+			enemy->addObserver(this);
 			effectManagerForEnemies->getRandomEffect()(enemy.get());
 			enemies.push_back(std::move(enemy));
 		}
@@ -237,8 +229,10 @@ namespace Engine
 		{
 			auto found = false;
 			auto meteor = std::make_shared<BaseGameObject>(32.0f, 32.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-			meteor->setPosition(0, rand() % (0 + (glutGet(GLUT_INIT_WINDOW_WIDTH) - 32)));
-			meteor->setPosition(1, rand() % (0 + (glutGet(GLUT_INIT_WINDOW_HEIGHT) - 32)));
+			auto randX = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / ((float)glutGet(GLUT_INIT_WINDOW_WIDTH) - 32.0f)));
+			auto randY = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / ((float)glutGet(GLUT_INIT_WINDOW_HEIGHT) - 32.0f)));
+			meteor->setPosition(0, randX);
+			meteor->setPosition(1, randY);
 			if (collisionManager->checkCollision(player, meteor) == true)
 				found = true;
 
@@ -611,7 +605,7 @@ namespace Engine
 				for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = meteors.begin(); it != meteors.end(); it++)
 				{
 					auto playerBulletList = player->getBulletsList();
-					collisionManager->checkCollision(*it, playerBulletList);
+					collisionManager->checkCollision(*it, playerBulletList, player);
 				}
 
 				collisionManager->checkCollision(player, &meteors);
