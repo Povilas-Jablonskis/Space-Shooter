@@ -1,5 +1,6 @@
 #include "BaseGameObject.h"
 #include "Player.h"
+#include "Enemy.h"
 
 namespace Engine
 {
@@ -10,11 +11,33 @@ namespace Engine
 		{
 
 		};
+
+		collisionEffect = [](BaseGameObject* collider)
+		{
+
+		};
+
+		collisionEffectEntity = [](Entity* collider)
+		{
+
+		};
 	}
 
 	BaseGameObject::~BaseGameObject()
 	{
 		animations.clear();
+	}
+
+	void BaseGameObject::onCollision(BaseGameObject* collider)
+	{
+		setNeedsToBeDeleted(true);
+		collisionEffect(collider);
+	}
+
+	void BaseGameObject::onCollision(Entity* collider)
+	{
+		setNeedsToBeDeleted(true);
+		collisionEffectEntity(collider);
 	}
 
 	bool BaseGameObject::update(float _dt)
@@ -23,12 +46,6 @@ namespace Engine
 		position.y += velocity.y * _dt;
 		updateAnimation(_dt);
 		return getNeedsToBeDeleted();
-	}
-
-	void BaseGameObject::onCollision(BaseGameObject* collider)
-	{
-		setNeedsToBeDeleted(true);
-		collider->onCollision(this);
 	}
 
 	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> animation)

@@ -7,13 +7,14 @@
 #include <memory>
 #include <functional>
 
+#include "Entity.h"
+
 namespace Engine
 {
-	template <class T>
 	class EffectManager
 	{
 		public:
-			void loadEffect(std::string index, std::function<void(T*)> _effect)
+			void loadEffect(std::string index, std::function<void(Entity*)> _effect)
 			{
 				for (auto effect : effects)
 				{
@@ -21,9 +22,9 @@ namespace Engine
 						return;
 				}
 
-				effects.push_back(std::pair<std::string, std::function<void(T*)>>(index, _effect));
+				effects.push_back(std::pair<std::string, std::function<void(Entity*)>>(index, _effect));
 			}
-			void loadEffect(std::pair<std::string, std::function<void(T*)>> _effect)
+			void loadEffect(std::pair<std::string, std::function<void(Entity*)>> _effect)
 			{
 				for (auto effect : effects)
 				{
@@ -33,7 +34,7 @@ namespace Engine
 
 				effects.push_back(_effect);
 			}
-			std::function<void(T*)> getEffect(std::string index)
+			std::function<void(Entity*)> getEffect(std::string index)
 			{
 				for (auto effect : effects)
 				{
@@ -43,13 +44,13 @@ namespace Engine
 
 				return nullptr;
 			}
-			std::function<void(T*)> getRandomEffect()
+			std::function<void(Entity*)> getRandomEffect()
 			{
 				int randIndex = rand() % effects.size();
 				return effects[randIndex].second;
 			}
 		private:
-			std::vector<std::pair<std::string, std::function<void(T*)>>> effects;
+			std::vector<std::pair<std::string, std::function<void(Entity*)>>> effects;
 	};
 }
 #endif

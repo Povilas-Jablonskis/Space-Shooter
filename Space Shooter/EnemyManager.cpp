@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	void EnemyManager::loadEnemiesFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<EffectManager<Enemy>> effectManager)
+	void EnemyManager::loadEnemiesFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<EffectManager> effectManager)
 	{
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;

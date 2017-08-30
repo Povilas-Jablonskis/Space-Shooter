@@ -12,15 +12,14 @@
 
 namespace Engine
 {
-	class Player;
 	class PickupManager
 	{
 		public:
-			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager<Player>>);
-			std::shared_ptr<Pickup> getPickup(std::string);
-			std::shared_ptr<Pickup> getRandomPickup();
+			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager>);
+			std::shared_ptr<BaseGameObject> getPickup(std::string);
+			std::shared_ptr<BaseGameObject> getRandomPickup();
 		private:
-			std::vector<std::pair<std::string, std::shared_ptr<Pickup>>> pickups;
+			std::vector<std::pair<std::string, std::shared_ptr<BaseGameObject>>> pickups;
 	};
 }
 #endif

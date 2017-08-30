@@ -78,13 +78,13 @@
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Observer.cpp" />
-    <ClCompile Include="Pickup.cpp" />
     <ClCompile Include="PickupManager.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -107,7 +107,9 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="EffectManager.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="ObserverEvent.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="Font.h" />
@@ -115,7 +117,6 @@
     <ClInclude Include="GameState.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Observer.h" />
-    <ClInclude Include="Pickup.h" />
     <ClInclude Include="PickupManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
@@ -125,7 +126,6 @@
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="SpriteSheetManager.h" />
     <ClInclude Include="Subject.h" />
-    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="UIElement.h" />

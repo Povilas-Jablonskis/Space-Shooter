@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	void PickupManager::loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<EffectManager<Player>> effectManager)
+	void PickupManager::loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<EffectManager> effectManager)
 	{
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
@@ -20,27 +20,31 @@ namespace Engine
 		{
 			auto spriteName = brewery_node->first_attribute("spriteName")->value();
 			auto sprite = spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName);
-			auto pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f));
+			auto pickup = std::make_shared<BaseGameObject>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			auto effect = effectManager->getEffect(brewery_node->first_attribute("effect")->value());
 			pickup->applyAnimation(sprite);
-			pickup->setEffect(effectManager->getEffect(brewery_node->first_attribute("effect")->value()));
-			pickups.push_back(std::pair<std::string, std::shared_ptr<Pickup>>(brewery_node->first_attribute("name")->value(), std::move(pickup)));
+			pickup->collisionEffectEntity = [effect, pickup](Entity* collider)
+			{
+				if (collider != nullptr && !collider->getNeedsToBeDeleted())
+					effect(collider);
+			};
+			pickups.push_back(std::pair<std::string, std::shared_ptr<BaseGameObject>>(brewery_node->first_attribute("name")->value(), std::move(pickup)));
 		}
 	}
 
-	std::shared_ptr<Pickup> PickupManager::getPickup(std::string index)
+	std::shared_ptr<BaseGameObject> PickupManager::getPickup(std::string index)
 	{
 		for (auto pickup : pickups)
 		{
 			if (pickup.first == index)
-				return std::make_shared<Pickup>(*pickup.second);
+				return std::make_shared<BaseGameObject>(*pickup.second);
 		}
-
 		return nullptr;
 	}
 
-	std::shared_ptr<Pickup> PickupManager::getRandomPickup()
+	std::shared_ptr<BaseGameObject> PickupManager::getRandomPickup()
 	{
 		int randIndex = rand() % pickups.size();
-		return std::make_shared<Pickup>(*pickups[randIndex].second);
+		return std::make_shared<BaseGameObject>(*pickups[randIndex].second);
 	}
 }

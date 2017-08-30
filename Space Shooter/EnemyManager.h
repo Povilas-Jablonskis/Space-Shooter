@@ -15,7 +15,7 @@ namespace Engine
 	class EnemyManager
 	{
 		public:
-			void loadEnemiesFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager<Enemy>>);
+			void loadEnemiesFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager>);
 			std::shared_ptr<Enemy> getEnemy(std::string);
 			std::shared_ptr<Enemy> getRandomEnemy();
 		private:

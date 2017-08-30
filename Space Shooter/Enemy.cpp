@@ -22,14 +22,15 @@ namespace Engine
 	//}
 
 	Enemy::Enemy(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color), delayBetweenShoots(0.2f), delayBetweenShootsTimer(0.0f), shootingType(ShootingType::NONE)
+		: Entity(_width, _height, _position, _velocity, _color)
 	{
-
+		setDelayBetweenShoots(0.2f);
+		setShootingType(ShootingType::NONE);
 	}
 
 	Enemy::~Enemy()
 	{
-		bullets.clear();
+		clearBullets();
 	}
 
 	//bool Enemy::update(float dt, float t)
@@ -65,10 +66,10 @@ namespace Engine
 	{
 		BaseGameObject::update(dt);
 
-		delayBetweenShootsTimer += dt;
-		if (delayBetweenShootsTimer > delayBetweenShoots)
+		setDelayBetweenShootsTimer(getDelayBetweenShootsTimer() + dt);
+		if (getDelayBetweenShootsTimer() > getDelayBetweenShoots())
 		{
-			delayBetweenShootsTimer = 0.0f;
+			setDelayBetweenShootsTimer(0.0f);
 
 			switch (getShootingType())
 			{
@@ -226,18 +227,21 @@ namespace Engine
 			}
 		}
 
-		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end();)
+		auto bullets = getBulletsList();
+		auto addons = getAddons();
+
+		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets->begin(); it != bullets->end();)
 		{
 			if ((*it)->update(dt))
-				it = bullets.erase(it);
+				it = bullets->erase(it);
 			else
 				++it;
 		}
 
-		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end();)
+		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons->begin(); it != addons->end();)
 		{
 			if ((*it).second->update(dt, position))
-				it = addons.erase(it);
+				it = addons->erase(it);
 			else
 				++it;
 		}
@@ -245,7 +249,7 @@ namespace Engine
 		return getNeedsToBeDeleted();
 	}
 
-	void Enemy::onCollision(BaseGameObject* collider)
+	void Enemy::onCollision(Entity* collider)
 	{
 		if (getAddon("shield") != nullptr)
 			removeAddon("shield");
@@ -253,39 +257,11 @@ namespace Engine
 			setNeedsToBeDeleted(true);
 
 		if (collider != nullptr && !collider->getNeedsToBeDeleted())
-			collider->onCollision(this);
-	}
-
-
-	std::shared_ptr<Addon> Enemy::getAddon(std::string index)
-	{
-		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end(); it++)
 		{
-			if (it->first == index)
-				return it->second;
+			if (collider->getAddon("shield") != nullptr)
+				collider->removeAddon("shield");
+			else
+				collider->setNeedsToBeDeleted(true);
 		}
-		return nullptr;
-	}
-
-	void Enemy::removeAddon(std::string index)
-	{
-		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end(); it++)
-		{
-			if (it->first == index)
-			{
-				addons.erase(it);
-				return;
-			}
-		}
-	}
-
-	void Enemy::addAddon(std::pair<std::string, std::shared_ptr<Addon>> _addon)
-	{
-		for (auto addon : addons)
-		{
-			if (addon.first == _addon.first) return;
-		}
-
-		addons.push_back(_addon);
 	}
 }
