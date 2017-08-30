@@ -32,7 +32,7 @@ namespace Engine
 		auto bullets = getBulletsList();
 		auto addons = getAddons();
 
-		for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets->begin(); it != bullets->end();)
+		for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = bullets->begin(); it != bullets->end();)
 		{
 			if ((*it)->update(dt))
 				it = bullets->erase(it);

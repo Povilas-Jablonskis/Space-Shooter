@@ -40,6 +40,44 @@ namespace Engine
 		collisionEffectEntity(collider);
 	}
 
+	void BaseGameObject::onCollision(Entity* collider, Entity* parent)
+	{
+		parent->notify(ObserverEvent::BULLETDESTROYED, this);
+		setNeedsToBeDeleted(true);
+
+		if (collider != nullptr && !collider->getNeedsToBeDeleted())
+		{
+			auto player = dynamic_cast<Player*>(parent);
+			if (collider->getAddon("shield") != nullptr)
+			{
+				collider->removeAddon("shield");
+				if (player != nullptr)
+					player->setScore(player->getScore() + 10);
+			}
+			else
+			{
+				collider->setNeedsToBeDeleted(true);
+				if (player != nullptr)
+					player->setScore(player->getScore() + 100);
+			}
+		}
+	}
+
+	void BaseGameObject::onCollision(BaseGameObject* collider, Entity* parent)
+	{
+		parent->notify(ObserverEvent::BULLETDESTROYED, this);
+		setNeedsToBeDeleted(true);
+
+		if (collider != nullptr && !collider->getNeedsToBeDeleted())
+		{
+			auto player = dynamic_cast<Player*>(parent);
+			if (player != nullptr)
+				player->setScore(player->getScore() + 25);
+
+			collider->setNeedsToBeDeleted(true);
+		}
+	}
+
 	bool BaseGameObject::update(float _dt)
 	{
 		position.x += velocity.x * _dt;

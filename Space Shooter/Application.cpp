@@ -274,8 +274,6 @@ namespace Engine
 			meteor->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("meteorBrown_med"));
 			meteor->collisionEffectEntity = [meteor](Entity* collider)
 			{
-				meteor->setNeedsToBeDeleted(true);
-
 				if (collider != nullptr && !collider->getNeedsToBeDeleted())
 				{
 					if (collider->getAddon("shield") != nullptr)

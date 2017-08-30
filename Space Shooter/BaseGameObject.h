@@ -27,6 +27,8 @@ namespace Engine
 			virtual bool update(float);
 			std::function<void(BaseGameObject*)> collisionEffect;
 			std::function<void(Entity*)> collisionEffectEntity;
+			void onCollision(Entity*, Entity*);
+			void onCollision(BaseGameObject*, Entity*);
 			virtual void onCollision(BaseGameObject*);
 			virtual void onCollision(Entity*);
 			void addAnimation(std::string, std::shared_ptr<Animation>);

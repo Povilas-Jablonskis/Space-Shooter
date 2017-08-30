@@ -84,7 +84,7 @@ namespace Engine
 			{
 				case NORMAL:
 				{
-					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					auto bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
@@ -92,12 +92,12 @@ namespace Engine
 				}
 				case DOUBLE:
 				{
-					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					auto bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
@@ -106,29 +106,29 @@ namespace Engine
 				case HALFCIRCLE:
 				{
 					//Middle
-					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					auto bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
 					//Right side
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 20.0f, player->getPosition(1) + player->getSize(1) + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 20.0f, player->getPosition(1) + player->getSize(1) + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 40.0f, player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 40.0f, player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
 					//Left side
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 20.0f, player->getPosition(1) + player->getSize(1) + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 20.0f, player->getPosition(1) + player->getSize(1) + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 40.0f, player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 40.0f, player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
@@ -139,29 +139,29 @@ namespace Engine
 					////////////1
 
 					//Middle
-					auto bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					auto bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
 					//Right side
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 20.0f, player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 20.0f, player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 40.0f, player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 40.0f, player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
 					//Left side
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 20.0f, player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 20.0f, player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 40.0f, player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 40.0f, player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
@@ -169,29 +169,29 @@ namespace Engine
 					////////////2
 
 					//Middle
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f), player->getPosition(1) + player->getSize(1) + 20.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
 					//Right side
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 20.0f, player->getPosition(1) + player->getSize(1) + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 20.0f, player->getPosition(1) + player->getSize(1) + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 40.0f, player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) - 40.0f, player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
 					//Left side
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 20.0f, player->getPosition(1) + player->getSize(1) + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 20.0f, player->getPosition(1) + player->getSize(1) + 15.0f + 4.5f + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));
 
-					bullet = std::make_shared<Bullet>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 40.0f, player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(player->getPosition(0) + (player->getSize(0) / 2.0f) + 40.0f, player->getPosition(1) + player->getSize(1) + 4.5f), glm::vec2(0.0f, 200.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
 					bullet->addAnimation("explosion", player->getAnimationByIndex("explosion"));
 					bullet->applyAnimation(player->getAnimationByIndex("shoot"));
 					player->addBullet(std::move(bullet));

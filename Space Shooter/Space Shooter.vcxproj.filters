@@ -60,9 +60,6 @@
     <ClCompile Include="BaseGameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Bullet.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Addon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -138,9 +135,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RenderObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Bullet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Observer.h">
