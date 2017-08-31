@@ -6,6 +6,8 @@ namespace Engine
 	Application::Application() 
 		: effectManagerForPlayer(std::make_shared<EffectManager>()), effectManagerForEnemies(std::make_shared<EffectManager>()), enemyManager(std::make_shared<EnemyManager>()), pickupManager(std::make_shared<PickupManager>()), spriteSheetManager(std::make_shared<SpriteSheetManager>()), collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
+		soundEngine = irrklang::createIrrKlangDevice();
+
 		currentTime = (float)(glutGet(GLUT_ELAPSED_TIME));
 		accumulator = 0.0f;
 		dt = 1.0f / 60.0f;
@@ -272,10 +274,12 @@ namespace Engine
 				continue;
 
 			meteor->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("meteorBrown_med"));
-			meteor->collisionEffectEntity = [meteor](Entity* collider)
+			meteor->collisionEffectEntity = [this, meteor](Entity* collider)
 			{
 				if (collider != nullptr && !collider->getNeedsToBeDeleted())
 				{
+					soundEngine->play2D("Sounds/explosions/2.wav", GL_FALSE);
+
 					if (collider->getAddon("shield") != nullptr)
 						collider->removeAddon("shield");
 					else
@@ -296,8 +300,10 @@ namespace Engine
 		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
 		(
 			"defaultShooting",
-			[](Entity* p)
+			[this](Entity* p)
 			{
+				soundEngine->play2D("Sounds/powerups/3.wav", GL_FALSE);
+
 				p->setDelayBetweenShoots(0.25f);
 				p->setShootingType(ShootingType::NORMAL);
 			}
@@ -306,8 +312,10 @@ namespace Engine
 		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
 		(
 			"doubleShooting",
-			[](Entity* p)
+			[this](Entity* p)
 			{
+				soundEngine->play2D("Sounds/powerups/3.wav", GL_FALSE);
+
 				p->setDelayBetweenShoots(0.5f);
 				p->setShootingType(ShootingType::DOUBLE);
 			}
@@ -316,8 +324,10 @@ namespace Engine
 		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
 		(
 			"halfCircleShooting",
-			[](Entity* p)
+			[this](Entity* p)
 			{
+				soundEngine->play2D("Sounds/powerups/3.wav", GL_FALSE);
+
 				p->setDelayBetweenShoots(0.5f);
 				p->setShootingType(ShootingType::HALFCIRCLE);
 			}
@@ -326,8 +336,10 @@ namespace Engine
 		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
 		(
 			"doubleHalfCircleShooting",
-			[](Entity* p)
+			[this](Entity* p)
 			{
+				soundEngine->play2D("Sounds/powerups/3.wav", GL_FALSE);
+
 				p->setDelayBetweenShoots(1.0f);
 				p->setShootingType(ShootingType::DOUBLEHALFCIRCLE);
 			}
@@ -340,6 +352,8 @@ namespace Engine
 			{
 				if (p->getAddon("shield") != nullptr)
 					return;
+
+				soundEngine->play2D("Sounds/powerups/1.wav", GL_FALSE);
 
 				auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f));
 				shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));

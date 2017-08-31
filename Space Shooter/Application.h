@@ -5,6 +5,8 @@
 #include <agents.h>
 #include <ppltasks.h>
 
+#include <irrKlang.h>
+
 #include "Renderer.h"
 #include "FontManager.h"
 #include "GameState.h"
@@ -60,6 +62,8 @@ namespace Engine
 			void updatePlayerScore();
 			void initScene();
 			void initGameUI();
+
+			irrklang::ISoundEngine* soundEngine;
 
 			std::shared_ptr<Player> player;
 			std::shared_ptr<UIElementBase> background;
