@@ -34,6 +34,8 @@ namespace Engine
 				}
 				case BULLETDESTROYED:
 				{
+					soundEngine->play2D("Sounds/explosions/6.wav", GL_FALSE);
+
 					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, subject->getPosition());
 					explosion->applyAnimation(subject->getAnimationByIndex("explosion"));
 					addExplosionToList(std::move(explosion));
@@ -432,6 +434,8 @@ namespace Engine
 		auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 60.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
+			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
+
 			explosions.clear();
 			initScene();
 			setState(GameState::STARTED);
@@ -443,6 +447,8 @@ namespace Engine
 		options = std::make_shared<Text>("Options", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
 		options->onMouseReleaseFunc = [this, Options]()
 		{
+			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
+
 			currentMenu = Options;
 			getUIElement("Main Menu")->hideMain();
 			Options->showMain();
@@ -465,6 +471,8 @@ namespace Engine
 		options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(45.0f, 60.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
+			soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
+
 			currentMenu = getUIElement("Main Menu");
 			setState(GameState::NOTSTARTEDYET);
 			getUIElement("Pause Menu")->hideMain();
@@ -494,6 +502,8 @@ namespace Engine
 			options = std::make_shared<Text>(virtualKeyCodeToString(it->second), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
 			options->onMouseClickFunc = [this, options, it]()
 			{
+				soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
+
 				inputManager->resetCurrentEditedKeyBinding();
 				inputManager->setCurrentEditedKeyBinding(std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>>(it, options));
 				options->setIsStatic(true);
@@ -505,6 +515,7 @@ namespace Engine
 		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(20.0f, 60.0f - (10 * i)));
 		options->onMouseReleaseFunc = [this, Options, Controls]()
 		{
+			soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
 			currentMenu = Options;
 			Controls->hideMain();
 			Options->showMain();
@@ -515,6 +526,7 @@ namespace Engine
 		options = std::make_shared<Text>("Controls", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
 		options->onMouseReleaseFunc = [this, Options, Controls]()
 		{
+			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 			currentMenu = Controls;
 			Options->hideMain();
 			Controls->showMain();
@@ -525,6 +537,7 @@ namespace Engine
 		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 50.0f));
 		options->onMouseReleaseFunc = [this, Options]()
 		{
+			soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
 			currentMenu = getUIElement("Main Menu");
 			Options->hideMain();
 			getUIElement("Main Menu")->showMain();
@@ -782,6 +795,7 @@ namespace Engine
 					{
 						if (!inputManager->resetCurrentEditedKeyBinding() && currentMenu != nullptr && currentMenu->getParent() != nullptr)
 						{
+							soundEngine->play2D("Sounds/buttonselect/6.wav", GL_FALSE);
 							currentMenu->hideMain();
 							currentMenu = currentMenu->getParent();
 							currentMenu->showMain();
@@ -795,6 +809,7 @@ namespace Engine
 			auto currentKeyBinding = inputManager->getCurrentEditedKeyBinding();
 			if (c >= 32 && c < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](std::pair<std::string, int> element){return element.second == key; }) && currentKeyBinding->second != nullptr)
 			{
+				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 				currentKeyBinding->first->second = key;
 				currentKeyBinding->second->setText(virtualKeyCodeToString(key));
 				inputManager->resetCurrentEditedKeyBinding();
@@ -878,6 +893,7 @@ namespace Engine
 		auto currentKeyBinding = inputManager->getCurrentEditedKeyBinding();
 		if (c != 0 && !std::any_of(keyBindings->begin(), keyBindings->end(), [c](std::pair<std::string, int> element){return element.second == c; }) && currentKeyBinding->second != nullptr)
 		{
+			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 			currentKeyBinding->first->second = c;
 			currentKeyBinding->second->setText(charText);
 			inputManager->resetCurrentEditedKeyBinding();
