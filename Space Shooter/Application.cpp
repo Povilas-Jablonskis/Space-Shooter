@@ -41,6 +41,11 @@ namespace Engine
 					addExplosionToList(std::move(explosion));
 					break;
 				}
+				case BULLETSHOT:
+				{
+					soundEngine->play2D("Sounds/lasers/7.wav", GL_FALSE);
+					break;
+				}
 			}
 		};
 

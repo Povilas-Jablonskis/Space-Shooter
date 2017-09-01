@@ -6,6 +6,7 @@ namespace Engine
 	enum ObserverEvent
 	{
 		BULLETDESTROYED,
+		BULLETSHOT,
 		SCORECHANGED,
 		HEALTHCHANGED
 	};

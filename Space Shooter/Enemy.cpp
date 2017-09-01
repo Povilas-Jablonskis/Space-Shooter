@@ -225,6 +225,7 @@ namespace Engine
 					break;
 				}
 			}
+			notify(ObserverEvent::BULLETSHOT, nullptr);
 		}
 
 		auto bullets = getBulletsList();

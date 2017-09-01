@@ -12,9 +12,9 @@ namespace Engine
 			Player(float, float, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float);
 			inline int getHealth() const { return health; }
-			inline void setHealth(int _health) { health = _health; notify(ObserverEvent::HEALTHCHANGED, this); }
+			inline void setHealth(int _health) { health = _health; notify(ObserverEvent::HEALTHCHANGED, nullptr); }
 			inline int getScore() const { return score; }
-			inline void setScore(int _score) { score = _score; notify(ObserverEvent::SCORECHANGED, this); }
+			inline void setScore(int _score) { score = _score; notify(ObserverEvent::SCORECHANGED, nullptr); }
 		private:
 			void respawn();
 			void restart();
