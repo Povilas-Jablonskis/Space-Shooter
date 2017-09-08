@@ -26,10 +26,7 @@ namespace Engine
 			std::shared_ptr<Addon> getAddon(std::string);
 			void addAddon(std::pair<std::string, std::shared_ptr<Addon>>);
 			void removeAddon(std::string);
-			inline void setShootingSound(std::string _shootingSound) { shootingSound = _shootingSound; }
-			inline std::string getShootingSound() const { return shootingSound; }
 		private:
-			std::string shootingSound;
 			ShootingType shootingType;
 			std::vector<std::shared_ptr<BaseGameObject>> bullets;
 			std::vector<std::pair<std::string, std::shared_ptr<Addon>>> addons;
