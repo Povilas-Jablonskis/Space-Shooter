@@ -43,7 +43,9 @@ namespace Engine
 				}
 				case BULLETSHOT:
 				{
-					soundEngine->play2D("Sounds/lasers/7.wav", GL_FALSE);
+					auto _subject = dynamic_cast<Entity*>(subject);
+					if (_subject != nullptr)
+						soundEngine->play2D(_subject->getShootingSound().c_str(), GL_FALSE);
 					break;
 				}
 			}
@@ -147,7 +149,7 @@ namespace Engine
 	{
 		playerUI.clear();
 
-		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_INIT_WINDOW_WIDTH)), (float)(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
+		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
 		playerUI.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
@@ -223,12 +225,32 @@ namespace Engine
 
 		enemies.clear();
 		float space = 100.f;
-		for (size_t i = 0; ((32 + i * space) <= (glutGet(GLUT_INIT_WINDOW_WIDTH) - 32 - 32)); i++)
+		for (size_t i = 0; enemies.size() < (rand() % 10 + 1); i++)
 		{
+			auto found = false;
 			auto enemy = enemyManager->getRandomEnemy();
-			enemy->setPosition(glm::vec2(32 + i * space, 416.0f));
+			auto randX = randomFloat(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH) - 32.0f);
+			auto randY = randomFloat(340.0f, (float)glutGet(GLUT_WINDOW_HEIGHT) - 32.0f);
+			enemy->setPosition(0, randX);
+			enemy->setPosition(1, randY);
+
+			if (collisionManager->checkCollision(player, enemy))
+				found = true;
+
+			for (auto _enemy : enemies)
+			{
+				if (collisionManager->checkCollision(enemy, _enemy))
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (found)
+				continue;
+
 			enemy->addObserver(this);
-			effectManagerForEnemies->getRandomEffect()(enemy.get());
+			//effectManagerForEnemies->getRandomEffect()(enemy.get());
 			enemies.push_back(std::move(enemy));
 		}
 
@@ -242,8 +264,8 @@ namespace Engine
 		{
 			auto found = false;
 			auto meteor = std::make_shared<BaseGameObject>(32.0f, 32.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-			auto randX = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / ((float)glutGet(GLUT_INIT_WINDOW_WIDTH) - 32.0f)));
-			auto randY = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / ((float)glutGet(GLUT_INIT_WINDOW_HEIGHT) - 32.0f)));
+			auto randX = randomFloat(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH) - 32.0f);
+			auto randY = randomFloat(100.0f, 300.0f);
 			meteor->setPosition(0, randX);
 			meteor->setPosition(1, randY);
 
@@ -552,7 +574,7 @@ namespace Engine
 		getUIElement("Main Menu")->addUIElement(std::move(Options));
 
 		//Game Over
-		options = std::make_shared<Text>("Game Over", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
+		options = std::make_shared<Text>("Game Over", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
 		options->setIsStatic(true);
 		getUIElement("Game Over")->addText(std::move(options));
 
@@ -997,5 +1019,18 @@ namespace Engine
 				return;
 			}
 		}
+	}
+
+	float Application::randomFloat(float min, float max)
+	{
+		// this  function assumes max > min, you may want 
+		// more robust error checking for a non-debug build
+		assert(max > min);
+		float random = ((float)rand()) / (float)RAND_MAX;
+
+		// generate (in your case) a float between 0 and (4.5-.78)
+		// then add .78, giving you a float between .78 and 4.5
+		float range = max - min;
+		return (random*range) + min;
 	}
 }

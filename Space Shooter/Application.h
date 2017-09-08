@@ -53,6 +53,8 @@ namespace Engine
 			std::shared_ptr<UIElement> getPlayerUIElement(std::string);
 			void erasePlayerUIElement(std::string);
 
+			float randomFloat(float, float);
+
 			void initEffectsForEnemies();
 			void initEffectsForPlayer();
 			void startNewLevel();

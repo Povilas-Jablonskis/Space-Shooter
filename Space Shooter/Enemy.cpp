@@ -26,6 +26,7 @@ namespace Engine
 	{
 		setDelayBetweenShoots(0.2f);
 		setShootingType(ShootingType::NONE);
+		setShootingSound("Sounds/lasers/6.wav");
 	}
 
 	Enemy::~Enemy()
@@ -225,7 +226,7 @@ namespace Engine
 					break;
 				}
 			}
-			notify(ObserverEvent::BULLETSHOT, nullptr);
+			notify(ObserverEvent::BULLETSHOT, this);
 		}
 
 		auto bullets = getBulletsList();
