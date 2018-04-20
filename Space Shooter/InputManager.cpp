@@ -198,7 +198,7 @@ namespace Engine
 					break;
 				}
 			}
-			player->notify(ObserverEvent::BULLETSHOT, nullptr);
+			player->notify(ObserverEvent::BULLETSHOT, player);
 		}
 
 		if (getKey(getKeyBinding("Move Left")))

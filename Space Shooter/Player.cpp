@@ -16,6 +16,7 @@ namespace Engine
 	{
 		setDelayBetweenShoots(0.2f);
 		setShootingType(ShootingType::NORMAL);
+		setShootingSound("Sounds/lasers/7.wav");
 	}
 
 	bool Player::update(float dt)
