@@ -4,7 +4,7 @@
 namespace Engine
 {
 	Application::Application() 
-		: effectManagerForPlayer(std::make_shared<EffectManager>()), effectManagerForEnemies(std::make_shared<EffectManager>()), enemyManager(std::make_shared<EnemyManager>()), pickupManager(std::make_shared<PickupManager>()), spriteSheetManager(std::make_shared<SpriteSheetManager>()), collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
+		: effectManager(std::make_shared<EffectManager>()), enemyManager(std::make_shared<EnemyManager>()), pickupManager(std::make_shared<PickupManager>()), spriteSheetManager(std::make_shared<SpriteSheetManager>()), collisionManager(std::make_shared<CollisionManager>()), renderer(std::make_shared<Renderer>()), fontManager(std::make_shared<FontManager>()), inputManager(std::make_shared<InputManager>()), gameState(GameState::NOTSTARTEDYET)
 	{
 		soundEngine = irrklang::createIrrKlangDevice();
 
@@ -14,9 +14,6 @@ namespace Engine
 		t = 0.0f;
 
 		srand((int)time(NULL));
-
-		initEffectsForEnemies();
-		initEffectsForPlayer();
 
 		onNotify = [this](ObserverEvent _event, BaseGameObject* subject)
 		{
@@ -63,8 +60,9 @@ namespace Engine
 		fontManager->loadFont("kenvector_future_thin.ttf", "kenvector_future_thin");
 
 		initSpriteSheets();
-		pickupManager->loadPickupsFromConfig(spriteSheetManager, effectManagerForPlayer);
-		enemyManager->loadEnemiesFromConfig(spriteSheetManager, effectManagerForEnemies);
+		effectManager->loadEffectsFromConfig(spriteSheetManager, soundEngine);
+		pickupManager->loadPickupsFromConfig(spriteSheetManager, effectManager);
+		enemyManager->loadEnemiesFromConfig(spriteSheetManager, effectManager);
 
 		background = std::make_shared<UIElementBase>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f));
 		background->applyAnimation(spriteSheetManager->getSpriteSheet("background")->getSprite("wholeSpriteSheet"));
@@ -225,7 +223,8 @@ namespace Engine
 
 		enemies.clear();
 		float space = 100.f;
-		for (size_t i = 0; enemies.size() < (size_t)(rand() % 10 + 1); i++)
+		size_t max = rand() % 10 + 1;
+		for (size_t i = 0; enemies.size() < max; i++)
 		{
 			auto found = false;
 			auto enemy = enemyManager->getRandomEnemy();
@@ -237,9 +236,9 @@ namespace Engine
 			if (collisionManager->checkCollision(player, enemy))
 				found = true;
 
-			for (auto _enemy : enemies)
+			for (auto enemyForCollision : enemies)
 			{
-				if (collisionManager->checkCollision(enemy, _enemy))
+				if (collisionManager->checkCollision(enemy, enemyForCollision))
 				{
 					found = true;
 					break;
@@ -250,7 +249,6 @@ namespace Engine
 				continue;
 
 			enemy->addObserver(this);
-			//effectManagerForEnemies->getRandomEffect()(enemy.get());
 			enemies.push_back(std::move(enemy));
 		}
 
@@ -281,9 +279,9 @@ namespace Engine
 				}
 			}
 
-			for (auto _meteor : meteors)
+			for (auto meteorForCollision : meteors)
 			{
-				if (collisionManager->checkCollision(_meteor, meteor))
+				if (collisionManager->checkCollision(meteorForCollision, meteor))
 				{
 					found = true;
 					break;
@@ -303,16 +301,18 @@ namespace Engine
 				continue;
 
 			meteor->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("meteorBrown_med"));
-			meteor->collisionEffectEntity = [this, meteor](Entity* collider)
+			meteor->onCollision = [this, meteor](std::shared_ptr<BaseGameObject> collider)
 			{
-				if (collider != nullptr && !collider->getNeedsToBeDeleted())
-				{
-					soundEngine->play2D("Sounds/explosions/2.wav", GL_FALSE);
+				soundEngine->play2D("Sounds/explosions/2.wav", GL_FALSE);
+				meteor->setNeedsToBeDeleted(true);
 
-					if (collider->getAddon("shield") != nullptr)
-						collider->removeAddon("shield");
+				auto entity = dynamic_cast<Entity*>(collider.get());
+				if (entity != nullptr && !entity->getNeedsToBeDeleted())
+				{
+					if (entity->getAddon("shield") != nullptr)
+						entity->removeAddon("shield");
 					else
-						collider->setNeedsToBeDeleted(true);
+						entity->setNeedsToBeDeleted(true);
 				}
 			};
 			meteors.push_back(std::move(meteor));
@@ -322,130 +322,6 @@ namespace Engine
 
 		accumulator = 0.0f;
 		t = 0.0f;
-	}
-
-	void Application::initEffectsForPlayer()
-	{
-		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"defaultShooting",
-			[this](Entity* p)
-			{
-				soundEngine->play2D("Sounds/powerups/3.wav", GL_FALSE);
-
-				p->setDelayBetweenShoots(0.25f);
-				p->setShootingType(ShootingType::NORMAL);
-			}
-		));
-
-		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"doubleShooting",
-			[this](Entity* p)
-			{
-				soundEngine->play2D("Sounds/powerups/3.wav", GL_FALSE);
-
-				p->setDelayBetweenShoots(0.5f);
-				p->setShootingType(ShootingType::DOUBLE);
-			}
-		));
-
-		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"halfCircleShooting",
-			[this](Entity* p)
-			{
-				soundEngine->play2D("Sounds/powerups/3.wav", GL_FALSE);
-
-				p->setDelayBetweenShoots(0.5f);
-				p->setShootingType(ShootingType::HALFCIRCLE);
-			}
-		));
-
-		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"doubleHalfCircleShooting",
-			[this](Entity* p)
-			{
-				soundEngine->play2D("Sounds/powerups/3.wav", GL_FALSE);
-
-				p->setDelayBetweenShoots(1.0f);
-				p->setShootingType(ShootingType::DOUBLEHALFCIRCLE);
-			}
-		));
-
-		effectManagerForPlayer->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"shield",
-			[this](Entity* p)
-			{
-				if (p->getAddon("shield") != nullptr)
-					return;
-
-				soundEngine->play2D("Sounds/powerups/1.wav", GL_FALSE);
-
-				auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f));
-				shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
-				p->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
-			}
-		));
-	}
-
-	void Application::initEffectsForEnemies()
-	{
-		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"defaultShooting",
-			[](Entity* p)
-			{
-				p->setDelayBetweenShoots(0.25f);
-				p->setShootingType(ShootingType::NORMAL);
-			}
-		));
-
-		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"doubleShooting",
-			[](Entity* p)
-			{
-				p->setDelayBetweenShoots(0.5f);
-				p->setShootingType(ShootingType::DOUBLE);
-			}
-		));
-
-		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"halfCircleShooting",
-			[](Entity* p)
-			{
-				p->setDelayBetweenShoots(0.75f);
-				p->setShootingType(ShootingType::HALFCIRCLE);
-			}
-		));
-
-		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"doubleHalfCircleShooting",
-			[](Entity* p)
-			{
-				p->setDelayBetweenShoots(1.0f);
-				p->setShootingType(ShootingType::DOUBLEHALFCIRCLE);
-			}
-		));
-
-		effectManagerForEnemies->loadEffect(std::pair<std::string, std::function<void(Entity*)>>
-		(
-			"shield",
-			[this](Entity* p)
-			{
-				if (p->getAddon("shield") != nullptr)
-					return;
-
-				auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f));
-				shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
-				p->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
-			}
-		));
 	}
 
 	void Application::initGameUI()
@@ -521,7 +397,7 @@ namespace Engine
 		//Controls
 		auto keybindings = inputManager->getKeyBindings();
 		size_t i = 0;
-		for (std::vector<std::pair<std::string, int>>::iterator it = keybindings->begin(); it != keybindings->end(); it++)
+		for (auto it = keybindings->begin(); it != keybindings->end(); it++)
 		{
 			options = std::make_shared<Text>(it->first + ": ", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(20.0f, 60.0f - (10 * i)));
 			options->setIsStatic(true);
@@ -611,7 +487,7 @@ namespace Engine
 				inputManager->updatePlayerInput(player.get(), dt);
 				player->update(dt);
 
-				//for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end();)
+				//for (auto it = enemies.begin(); it != enemies.end();)
 				//{
 				//	if ((*it)->update(dt, t))
 				//		removeEnemyFromList(&it);
@@ -619,7 +495,7 @@ namespace Engine
 				//		it++;
 				//}
 
-				for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end();)
+				for (auto it = enemies.begin(); it != enemies.end();)
 				{
 					if ((*it)->update(dt))
 						removeEnemyFromList(&it);
@@ -627,7 +503,7 @@ namespace Engine
 						it++;
 				}
 
-				for (std::vector<std::shared_ptr<Explosion>>::iterator it = explosions.begin(); it != explosions.end();)
+				for (auto it = explosions.begin(); it != explosions.end();)
 				{
 					if ((*it)->update(dt))
 						it = explosions.erase(it);
@@ -635,7 +511,7 @@ namespace Engine
 						++it;
 				}
 
-				for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = pickups.begin(); it != pickups.end();)
+				for (auto it = pickups.begin(); it != pickups.end();)
 				{
 					if ((*it)->update(dt))
 						it = pickups.erase(it);
@@ -643,7 +519,7 @@ namespace Engine
 						++it;
 				}
 
-				for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = meteors.begin(); it != meteors.end();)
+				for (auto it = meteors.begin(); it != meteors.end();)
 				{
 					if ((*it)->update(dt))
 						it = meteors.erase(it);
@@ -662,14 +538,14 @@ namespace Engine
 				else if (player->getPosition(1) <= 0.0f)
 					player->setPosition(1, 0.0f);
 
-				for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
+				for (auto it = enemies.begin(); it != enemies.end(); it++)
 				{
 					auto playerBulletList = player->getBulletsList();
 					collisionManager->checkCollision(player, (*it)->getBulletsList(), *it);
 					collisionManager->checkCollision(*it, playerBulletList, player);
 				}
 
-				for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = meteors.begin(); it != meteors.end(); it++)
+				for (auto it = meteors.begin(); it != meteors.end(); it++)
 				{
 					auto playerBulletList = player->getBulletsList();
 					collisionManager->checkCollision(*it, playerBulletList, player);
@@ -693,16 +569,16 @@ namespace Engine
 			//Render player
 			renderer->draw(player);
 			auto addons = player->getAddons();
-			for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons->begin(); it != addons->end(); it++)
+			for (auto it = addons->begin(); it != addons->end(); it++)
 			{
 				renderer->draw(it->second);
 			}
 			//Render enemies
-			for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
+			for (auto it = enemies.begin(); it != enemies.end(); it++)
 			{
 				auto addons = (*it)->getAddons();
 				renderer->draw(*it);
-				for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it2 = addons->begin(); it2 != addons->end(); it2++)
+				for (auto it2 = addons->begin(); it2 != addons->end(); it2++)
 				{
 					renderer->draw(it2->second);
 				}
@@ -712,7 +588,7 @@ namespace Engine
 			//Render explosions
 			renderer->draw(explosions);
 			//Render bullets
-			for (std::vector<std::shared_ptr<Enemy>>::iterator it = enemies.begin(); it != enemies.end(); it++)
+			for (auto it = enemies.begin(); it != enemies.end(); it++)
 			{
 				auto enemyBulletList = (*it)->getBulletsList();
 				renderer->draw(*enemyBulletList);
@@ -1011,7 +887,7 @@ namespace Engine
 
 	void Application::erasePlayerUIElement(std::string index)
 	{
-		for (std::vector<std::pair<std::string, std::shared_ptr<UIElement>>>::iterator it = playerUI.begin(); it != playerUI.end(); it++)
+		for (auto it = playerUI.begin(); it != playerUI.end(); it++)
 		{
 			if (it->first == index)
 			{

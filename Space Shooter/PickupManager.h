@@ -6,9 +6,11 @@
 #include <vector>
 #include <memory>
 
-#include "EffectManager.h"
-#include "SpriteSheetManager.h"
+#include <irrKlang.h>
+
 #include "Pickup.h"
+#include "SpriteSheetManager.h"
+#include "EffectManager.h"
 
 namespace Engine
 {
@@ -16,10 +18,10 @@ namespace Engine
 	{
 		public:
 			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager>);
-			std::shared_ptr<BaseGameObject> getPickup(std::string);
-			std::shared_ptr<BaseGameObject> getRandomPickup();
+			std::shared_ptr<Pickup> getPickup(std::string);
+			std::shared_ptr<Pickup> getRandomPickup();
 		private:
-			std::vector<std::pair<std::string, std::shared_ptr<BaseGameObject>>> pickups;
+			std::vector<std::pair<std::string, std::shared_ptr<Pickup>>> pickups;
 	};
 }
 #endif

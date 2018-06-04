@@ -40,7 +40,7 @@ namespace Engine
 		// Find our root node
 		root_node = doc.first_node();
 		// Iterate over the brewerys
-		for (rapidxml::xml_node<> * brewery_node = root_node->first_node(); brewery_node; brewery_node = brewery_node->next_sibling())
+		for (auto brewery_node = root_node->first_node(); brewery_node; brewery_node = brewery_node->next_sibling())
 		{
 			auto animation = glm::vec4(atof(brewery_node->first_attribute("x")->value()), atof(brewery_node->first_attribute("y")->value()), atof(brewery_node->first_attribute("width")->value()), atof(brewery_node->first_attribute("height")->value()));
 			sprites.push_back(std::pair<std::string, glm::vec4>(brewery_node->first_attribute("name")->value(), animation));

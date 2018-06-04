@@ -1,23 +1,15 @@
 #ifndef _pickupH
 #define _pickupH
 
-#include "Player.h"
+#include "BaseGameObject.h"
 
 namespace Engine
 {
-	class Pickup : public RenderObject
+	class Pickup : public BaseGameObject
 	{
 		public:
-			Pickup(float, float, glm::vec2);
-			bool update(float);
-			void onCollision(Player*);
-			void setEffect(std::function<void(Player*)> _effect) { effect = _effect; }
-			std::function<void(Player*)> getEffect() const { return effect; }
-			inline void setNeedsToBeDeleted(bool boolean) { needsToBeDeleted = boolean; };
-			inline bool getNeedsToBeDeleted() const { return needsToBeDeleted; }
-		private:
-			bool needsToBeDeleted;
-			std::function<void(Player*)> effect;
+			Pickup(float, float, glm::vec2, glm::vec2, glm::vec4);
+			std::function<bool(std::shared_ptr<BaseGameObject>)> effect;
 	};
 }
 #endif

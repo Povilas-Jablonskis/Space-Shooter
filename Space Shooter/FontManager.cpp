@@ -4,10 +4,10 @@ namespace Engine
 {
 	FontManager::~FontManager()
 	{
-		for (std::vector<std::pair<std::string, std::shared_ptr<Font>>>::iterator it = faces.begin(); it != faces.end(); ++it)
+		for (auto it = faces.begin(); it != faces.end(); ++it)
 		{
 			auto characterList = it->second->getCharacterList();
-			for (std::map<GLchar, Character>::iterator it2 = characterList->begin(); it2 != characterList->end(); ++it2)
+			for (auto it2 = characterList->begin(); it2 != characterList->end(); ++it2)
 			{
 				glDeleteTextures(1, &it2->second.TextureID);
 			}

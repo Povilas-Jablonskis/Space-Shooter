@@ -1,5 +1,7 @@
 #include "PickupManager.h"
+#include "Player.h"
 #include <fstream>
+#include <map>
 
 namespace Engine
 {
@@ -8,7 +10,7 @@ namespace Engine
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
 		// Read the xml file into a vector
-		std::ifstream theFile("pickups.xml");
+		std::ifstream theFile("Config/pickups.xml");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
@@ -16,35 +18,44 @@ namespace Engine
 		// Find our root node
 		root_node = doc.first_node("Pickups");
 		// Iterate over the brewerys
-		for (rapidxml::xml_node<> * brewery_node = root_node->first_node("Pickup"); brewery_node; brewery_node = brewery_node->next_sibling("Pickup"))
+		for (auto brewery_node = root_node->first_node("Pickup"); brewery_node; brewery_node = brewery_node->next_sibling("Pickup"))
 		{
+			std::string name = brewery_node->first_attribute("name")->value();
 			auto spriteName = brewery_node->first_attribute("spriteName")->value();
 			auto sprite = spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName);
-			auto pickup = std::make_shared<BaseGameObject>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-			auto effect = effectManager->getEffect(brewery_node->first_attribute("effect")->value());
+			auto pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 			pickup->applyAnimation(sprite);
-			pickup->collisionEffectEntity = [effect, pickup](Entity* collider)
-			{
-				if (collider != nullptr && !collider->getNeedsToBeDeleted())
-					effect(collider);
-			};
-			pickups.push_back(std::pair<std::string, std::shared_ptr<BaseGameObject>>(brewery_node->first_attribute("name")->value(), std::move(pickup)));
+			pickup->effect = effectManager->getEffect(name);
+
+			pickups.push_back(std::pair<std::string, std::shared_ptr<Pickup>>(name, std::move(pickup)));
 		}
 	}
 
-	std::shared_ptr<BaseGameObject> PickupManager::getPickup(std::string index)
+	std::shared_ptr<Pickup> PickupManager::getPickup(std::string index)
 	{
 		for (auto pickup : pickups)
 		{
 			if (pickup.first == index)
-				return std::make_shared<BaseGameObject>(*pickup.second);
+			{
+				auto _pickup = std::make_shared<Pickup>(*pickup.second);
+				_pickup->onCollision = [_pickup](std::shared_ptr<BaseGameObject> collider)
+				{
+					if(_pickup->effect(collider)) _pickup->setNeedsToBeDeleted(true);
+				};
+				return _pickup;
+			}
 		}
 		return nullptr;
 	}
 
-	std::shared_ptr<BaseGameObject> PickupManager::getRandomPickup()
+	std::shared_ptr<Pickup> PickupManager::getRandomPickup()
 	{
 		int randIndex = rand() % pickups.size();
-		return std::make_shared<BaseGameObject>(*pickups[randIndex].second);
+		auto _pickup = std::make_shared<Pickup>(*pickups[randIndex].second);
+		_pickup->onCollision = [_pickup](std::shared_ptr<BaseGameObject> collider)
+		{
+			if (_pickup->effect(collider)) _pickup->setNeedsToBeDeleted(true);
+		};
+		return _pickup;
 	}
 }

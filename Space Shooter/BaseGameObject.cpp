@@ -12,70 +12,15 @@ namespace Engine
 
 		};
 
-		collisionEffect = [](BaseGameObject* collider)
+		onCollision = [this](std::shared_ptr<BaseGameObject> collider)
 		{
-
-		};
-
-		collisionEffectEntity = [](Entity* collider)
-		{
-
+			setNeedsToBeDeleted(true);
 		};
 	}
 
 	BaseGameObject::~BaseGameObject()
 	{
 		animations.clear();
-	}
-
-	void BaseGameObject::onCollision(BaseGameObject* collider)
-	{
-		setNeedsToBeDeleted(true);
-		collisionEffect(collider);
-	}
-
-	void BaseGameObject::onCollision(Entity* collider)
-	{
-		setNeedsToBeDeleted(true);
-		collisionEffectEntity(collider);
-	}
-
-	void BaseGameObject::onCollision(Entity* collider, Entity* parent)
-	{
-		parent->notify(ObserverEvent::BULLETDESTROYED, this);
-		setNeedsToBeDeleted(true);
-
-		if (collider != nullptr && !collider->getNeedsToBeDeleted())
-		{
-			auto player = dynamic_cast<Player*>(parent);
-			if (collider->getAddon("shield") != nullptr)
-			{
-				collider->removeAddon("shield");
-				if (player != nullptr)
-					player->setScore(player->getScore() + 10);
-			}
-			else
-			{
-				collider->setNeedsToBeDeleted(true);
-				if (player != nullptr)
-					player->setScore(player->getScore() + 100);
-			}
-		}
-	}
-
-	void BaseGameObject::onCollision(BaseGameObject* collider, Entity* parent)
-	{
-		parent->notify(ObserverEvent::BULLETDESTROYED, this);
-		setNeedsToBeDeleted(true);
-
-		if (collider != nullptr && !collider->getNeedsToBeDeleted())
-		{
-			auto player = dynamic_cast<Player*>(parent);
-			if (player != nullptr)
-				player->setScore(player->getScore() + 25);
-
-			collider->setNeedsToBeDeleted(true);
-		}
 	}
 
 	bool BaseGameObject::update(float _dt)
@@ -88,7 +33,7 @@ namespace Engine
 
 	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> animation)
 	{
-		for (std::vector<std::pair<std::string, std::shared_ptr<Animation>>>::iterator it = animations.begin(); it != animations.end(); it++)
+		for (auto it = animations.begin(); it != animations.end(); it++)
 		{
 			if (it->first == index)
 				return;

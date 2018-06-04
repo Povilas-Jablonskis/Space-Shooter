@@ -55,8 +55,6 @@ namespace Engine
 
 			float randomFloat(float, float);
 
-			void initEffectsForEnemies();
-			void initEffectsForPlayer();
 			void startNewLevel();
 			void initPlayerUI();
 			void initSpriteSheets();
@@ -83,8 +81,7 @@ namespace Engine
 			std::vector<std::pair<std::string, std::shared_ptr<UIElement>>> ui;
 			std::vector<std::pair<std::string, std::shared_ptr<UIElement>>> playerUI;
 
-			std::shared_ptr<EffectManager> effectManagerForPlayer;
-			std::shared_ptr<EffectManager> effectManagerForEnemies;
+			std::shared_ptr<EffectManager> effectManager;
 			std::shared_ptr<EnemyManager> enemyManager;
 			std::shared_ptr<PickupManager> pickupManager;
 			std::shared_ptr<SpriteSheetManager> spriteSheetManager;

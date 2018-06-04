@@ -73,7 +73,7 @@ namespace Engine
 	{
 		auto tempList = getElements();
 
-		for (std::vector<std::shared_ptr<UIElement>>::iterator it = tempList->begin(); it != tempList->end(); ++it)
+		for (auto it = tempList->begin(); it != tempList->end(); ++it)
 		{
 			out->push_back(*it);
 			(*it)->GetAllChildrenElements(out);
@@ -87,7 +87,7 @@ namespace Engine
 
 		out->insert(out->end(), tempTextList->begin(), tempTextList->end());
 
-		for (std::vector<std::shared_ptr<UIElement>>::iterator it = tempList->begin(); it != tempList->end(); ++it)
+		for (auto it = tempList->begin(); it != tempList->end(); ++it)
 			(*it)->GetAllChildrenTexts(out);
 	}
 

@@ -27,6 +27,23 @@ namespace Engine
 		setDelayBetweenShoots(0.2f);
 		setShootingType(ShootingType::NONE);
 		setShootingSound("Sounds/lasers/6.wav");
+
+		onCollision = [this](std::shared_ptr<BaseGameObject> collider)
+		{
+			if (getAddon("shield") != nullptr)
+				removeAddon("shield");
+			else
+				setNeedsToBeDeleted(true);
+
+			auto entity = dynamic_cast<Entity*>(collider.get());
+			if (entity != nullptr && !entity->getNeedsToBeDeleted())
+			{
+				if (entity->getAddon("shield") != nullptr)
+					entity->removeAddon("shield");
+				else
+					entity->setNeedsToBeDeleted(true);
+			}
+		};
 	}
 
 	Enemy::~Enemy()
@@ -52,7 +69,7 @@ namespace Engine
 	//		bullets.push_back(std::move(bullet));
 	//	}
 
-	//	for (std::vector<std::shared_ptr<Bullet>>::iterator it = bullets.begin(); it != bullets.end();)
+	//	for (auto it = bullets.begin(); it != bullets.end();)
 	//	{
 	//		if ((*it)->update(dt))
 	//			it = bullets.erase(it);
@@ -82,6 +99,8 @@ namespace Engine
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
+
+					notify(ObserverEvent::BULLETSHOT, this);
 					break;
 				}
 				case DOUBLE:
@@ -99,6 +118,8 @@ namespace Engine
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
+
+					notify(ObserverEvent::BULLETSHOT, this);
 					break;
 				}
 				case HALFCIRCLE:
@@ -140,6 +161,8 @@ namespace Engine
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
+
+					notify(ObserverEvent::BULLETSHOT, this);
 					break;
 				}
 				case DOUBLEHALFCIRCLE:
@@ -223,16 +246,17 @@ namespace Engine
 					bullet->setRotationAngle((float)M_PI);
 					bullet->setRotationAxis(glm::vec3(0.0, 0.0, 1.0));
 					addBullet(std::move(bullet));
+
+					notify(ObserverEvent::BULLETSHOT, this);
 					break;
 				}
 			}
-			notify(ObserverEvent::BULLETSHOT, this);
 		}
 
 		auto bullets = getBulletsList();
 		auto addons = getAddons();
 
-		for (std::vector<std::shared_ptr<BaseGameObject>>::iterator it = bullets->begin(); it != bullets->end();)
+		for (auto it = bullets->begin(); it != bullets->end();)
 		{
 			if ((*it)->update(dt))
 				it = bullets->erase(it);
@@ -240,7 +264,7 @@ namespace Engine
 				++it;
 		}
 
-		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons->begin(); it != addons->end();)
+		for (auto it = addons->begin(); it != addons->end();)
 		{
 			if ((*it).second->update(dt, position))
 				it = addons->erase(it);
@@ -249,21 +273,5 @@ namespace Engine
 		}
 
 		return getNeedsToBeDeleted();
-	}
-
-	void Enemy::onCollision(Entity* collider)
-	{
-		if (getAddon("shield") != nullptr)
-			removeAddon("shield");
-		else
-			setNeedsToBeDeleted(true);
-
-		if (collider != nullptr && !collider->getNeedsToBeDeleted())
-		{
-			if (collider->getAddon("shield") != nullptr)
-				collider->removeAddon("shield");
-			else
-				collider->setNeedsToBeDeleted(true);
-		}
 	}
 }

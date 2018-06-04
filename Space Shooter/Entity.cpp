@@ -10,7 +10,7 @@ namespace Engine
 
 	std::shared_ptr<Addon> Entity::getAddon(std::string index)
 	{
-		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end(); it++)
+		for (auto it = addons.begin(); it != addons.end(); it++)
 		{
 			if (it->first == index)
 				return it->second;
@@ -20,7 +20,7 @@ namespace Engine
 
 	void Entity::removeAddon(std::string index)
 	{
-		for (std::vector<std::pair<std::string, std::shared_ptr<Addon>>>::iterator it = addons.begin(); it != addons.end(); it++)
+		for (auto it = addons.begin(); it != addons.end(); it++)
 		{
 			if (it->first == index)
 			{

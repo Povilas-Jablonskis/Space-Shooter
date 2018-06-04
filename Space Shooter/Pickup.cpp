@@ -2,27 +2,12 @@
 
 namespace Engine
 {
-	Pickup::Pickup(float _width, float _height, glm::vec2 _position) :
-		RenderObject(_width, _height, glm::vec2(_position), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f)), needsToBeDeleted(false)
+	Pickup::Pickup(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+		: BaseGameObject(_width, _height, _position, _velocity, _color)
 	{
-		effect = [](Player* collider)
+		effect = [](std::shared_ptr<BaseGameObject> collider)
 		{
-			
+			return true;
 		};
-	}
-
-	bool Pickup::update(float dt)
-	{
-		updateAnimation(dt);
-
-		return getNeedsToBeDeleted();
-	}
-
-	void Pickup::onCollision(Player* collider)
-	{
-		setNeedsToBeDeleted(true);
-
-		if (collider != nullptr && !collider->getNeedsToBeDeleted())
-			effect(collider);
 	}
 }
