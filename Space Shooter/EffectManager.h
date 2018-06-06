@@ -10,7 +10,6 @@
 #include "BaseGameObject.h"
 #include "SpriteSheetManager.h"
 #include "irrKlang.h"
-#include "ShootingType.h"
 
 namespace Engine
 {

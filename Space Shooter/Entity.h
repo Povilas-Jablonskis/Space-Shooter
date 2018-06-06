@@ -5,7 +5,6 @@
 #include "Bullet.h"
 #include "Subject.h"
 #include "Addon.h"
-#include "ShootingType.h"
 
 namespace Engine
 {
@@ -13,10 +12,8 @@ namespace Engine
 	{
 		public:
 			Entity(float, float, glm::vec2, glm::vec2, glm::vec4);
-			ShootingType getShootingType() const { return shootingType; }
-			void setShootingType(ShootingType _shootingType) { shootingType = _shootingType; }
 			inline std::vector<std::shared_ptr<BaseGameObject>>* getBulletsList() { return &bullets; }
-			inline void addBullet(std::shared_ptr<BaseGameObject> bullet) { bullets.push_back(bullet); }
+			virtual void addBullet(std::shared_ptr<BaseGameObject>);
 			inline void clearBullets() { bullets.clear(); }
 			inline float getDelayBetweenShootsTimer() const { return delayBetweenShootsTimer; }
 			inline void setDelayBetweenShootsTimer(float _delayBetweenShootsTimer) { delayBetweenShootsTimer = _delayBetweenShootsTimer; }
@@ -28,9 +25,9 @@ namespace Engine
 			void removeAddon(std::string);
 			inline void setShootingSound(std::string _shootingSound) { shootingSound = _shootingSound; }
 			inline std::string getShootingSound() const { return shootingSound; }
+			std::function<void(Entity*)> shootingMode;
 		private:
 			std::string shootingSound;
-			ShootingType shootingType;
 			std::vector<std::shared_ptr<BaseGameObject>> bullets;
 			std::vector<std::pair<std::string, std::shared_ptr<Addon>>> addons;
 			float delayBetweenShootsTimer;

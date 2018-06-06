@@ -2,6 +2,7 @@
 #define _observerH
 
 #include <functional>
+#include <map>
 
 #include "ObserverEvent.h"
 
@@ -12,7 +13,7 @@ namespace Engine
 	{
 		public:
 			Observer();
-			std::function<void(ObserverEvent, BaseGameObject*)> onNotify;
+			std::function<void(ObserverEvent, std::map<std::string, BaseGameObject*>)> onNotify;
 	};
 }
 #endif

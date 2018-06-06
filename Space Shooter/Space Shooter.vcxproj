@@ -124,7 +124,6 @@
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShootingType.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="SpriteSheetManager.h" />
     <ClInclude Include="Subject.h" />

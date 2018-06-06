@@ -57,7 +57,7 @@ namespace Engine
 
 		for (auto c = text.begin(); c != text.end(); c++)
 		{
-			Character ch = cache->at(*c);
+			Character ch = (*cache)[*c];
 
 			GLfloat xpos = position.x + ch.Bearing.x;
 			GLfloat ypos = position.y - (ch.Size.y - ch.Bearing.y);

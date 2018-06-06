@@ -13,11 +13,11 @@ namespace Engine
 		observers.erase(std::remove(observers.begin(), observers.end(), observer), observers.end());
 	}
 
-	void Subject::notify(ObserverEvent _event, BaseGameObject* subject)
+	void Subject::notify(ObserverEvent _event, std::map<std::string, BaseGameObject*> params)
 	{
 		for (auto observer : observers)
 		{
-			observer->onNotify(_event, subject);
+			observer->onNotify(_event, params);
 		}
 	}
 }

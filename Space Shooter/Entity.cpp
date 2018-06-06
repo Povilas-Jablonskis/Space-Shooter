@@ -5,7 +5,32 @@ namespace Engine
 	Entity::Entity(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: BaseGameObject(_width, _height, _position, _velocity, _color), delayBetweenShootsTimer(0.0f)
 	{
+		setDelayBetweenShoots(0.25f);
+		setShootingSound("Sounds/lasers/4.wav");
+		shootingMode = [](Entity* entity)
+		{
 
+		};
+	}
+
+	void Entity::addBullet(std::shared_ptr<BaseGameObject> bullet)
+	{ 
+		bullet->onCollision = [bullet](std::shared_ptr<BaseGameObject> collider)
+		{
+			bullet->setNeedsToBeDeleted(true);
+
+			auto entity = dynamic_cast<Entity*>(collider.get());
+			if (entity != nullptr)
+			{
+				if (entity->getAddon("shield") != nullptr)
+					entity->removeAddon("shield");
+				else
+					entity->setNeedsToBeDeleted(true);
+			}
+			else
+				collider->setNeedsToBeDeleted(true);
+		};
+		bullets.push_back(bullet); 
 	}
 
 	std::shared_ptr<Addon> Entity::getAddon(std::string index)

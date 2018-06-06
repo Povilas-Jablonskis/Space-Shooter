@@ -5,7 +5,7 @@ namespace Engine
 {
 	Observer::Observer()
 	{
-		onNotify = [](ObserverEvent _event, BaseGameObject* subject)
+		onNotify = [](ObserverEvent _event, std::map<std::string, BaseGameObject*> params)
 		{
 
 		};

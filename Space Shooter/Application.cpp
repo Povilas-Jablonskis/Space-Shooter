@@ -1,5 +1,8 @@
 #include "Application.h"
 #include <ctime>
+#include <fstream>
+#include <sstream>
+#include "rapidxml_print.hpp"
 
 namespace Engine
 {
@@ -15,7 +18,7 @@ namespace Engine
 
 		srand((int)time(NULL));
 
-		onNotify = [this](ObserverEvent _event, BaseGameObject* subject)
+		onNotify = [this](ObserverEvent _event, std::map<std::string, BaseGameObject*> params)
 		{
 			switch (_event)
 			{
@@ -33,14 +36,20 @@ namespace Engine
 				{
 					soundEngine->play2D("Sounds/explosions/6.wav", GL_FALSE);
 
-					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, subject->getPosition());
-					explosion->applyAnimation(subject->getAnimationByIndex("explosion"));
+					auto player = dynamic_cast<Player*>(params["parent"]);
+					if (player != nullptr)
+						player->setScore(player->getScore() + 50);
+
+					auto collider = params["collider"];
+					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
+					explosion->applyAnimation(collider->getAnimationByIndex("explosion"));
 					addExplosionToList(std::move(explosion));
 					break;
 				}
 				case BULLETSHOT:
 				{
-					auto _subject = dynamic_cast<Entity*>(subject);
+					auto collider = params["collider"];
+					auto _subject = dynamic_cast<Entity*>(collider);
 					if (_subject != nullptr)
 						soundEngine->play2D(_subject->getShootingSound().c_str(), GL_FALSE);
 					break;
@@ -48,17 +57,7 @@ namespace Engine
 			}
 		};
 
-		inputManager->setKeyBinding("Attack", VK_SPACE);
-		inputManager->setKeyBinding("Move Left", 0x41);
-		inputManager->setKeyBinding("Move Right", 0x44);
-		inputManager->setKeyBinding("Move Back", 0x53);
-
-		renderer->addShader("shader", std::make_shared<Shader>("shader.vert", "shader.frag"));
-		renderer->addShader("textshader", std::make_shared<Shader>("textshader.vert", "textshader.frag"));
-
-		fontManager->loadFont("kenvector_future.ttf", "kenvector_future");
-		fontManager->loadFont("kenvector_future_thin.ttf", "kenvector_future_thin");
-
+		loadConfig();
 		initSpriteSheets();
 		effectManager->loadEffectsFromConfig(spriteSheetManager, soundEngine);
 		pickupManager->loadPickupsFromConfig(spriteSheetManager, effectManager);
@@ -79,50 +78,45 @@ namespace Engine
 		playerUI.clear();
 		pickups.clear();
 		meteors.clear();
+
+		saveConfig();
 	}
 
 	void Application::initSpriteSheets()
 	{
-		auto spriteSheet = std::make_shared<SpriteSheet>();
-		auto backgroundSpriteSheet = std::make_shared<SpriteSheet>();
+		rapidxml::xml_document<> doc;
+		rapidxml::xml_node<> * root_node;
+		// Read the xml file into a vector
+		std::ifstream theFile("Config/spritesheets.xml");
+		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
+		buffer.push_back('\0');
+		// Parse the buffer using the xml file parsing library into doc 
+		doc.parse<0>(&buffer[0]);
+		// Find our root node
+		root_node = doc.first_node("Spritesheets");
+		// Iterate over the brewerys
+		for (auto brewery_node = root_node->first_node("Spritesheet"); brewery_node; brewery_node = brewery_node->next_sibling("Spritesheet"))
+		{
+			auto spriteSheet = std::make_shared<SpriteSheet>();
 
-		backgroundSpriteSheet->loadSpriteSheet("Backgrounds/blue.png");
+			spriteSheet->loadSpriteSheet(brewery_node->first_attribute("spriteSheetName")->value());
+			spriteSheet->loadSpritesFromXml(brewery_node->first_attribute("spriteSheetNameXml")->value());
 
-		spriteSheet->loadSpriteSheet("Spritesheet/sheet.png");
-		spriteSheet->loadSpritesFromXml("Spritesheet/sheet.xml");
+			for (auto beer_node = brewery_node->first_node("Sprites"); beer_node; beer_node = beer_node->next_sibling("Sprites"))
+			{
+				std::vector<glm::vec4> sprites;
+				for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
+				{
+					sprites.push_back(spriteSheet->getSpriteAsVector(beer_node2->first_attribute("name")->value()));
+				}
 
-		std::vector<glm::vec4> sprites;
-		sprites.push_back(spriteSheet->getSpriteAsVector("laserBlue11.png"));
-		sprites.push_back(spriteSheet->getSpriteAsVector("laserBlue10.png"));
-		spriteSheet->makeAnimation("blueExplosionSpriteSheet", sprites);
+				spriteSheet->makeAnimation(beer_node->first_attribute("name")->value(), sprites);
+				spriteSheet->getAnimation(beer_node->first_attribute("name")->value())->setLoopStatus(std::stoi(beer_node->first_attribute("loop")->value()));
+				spriteSheet->getAnimation(beer_node->first_attribute("name")->value())->setDelay(std::stof(beer_node->first_attribute("delay")->value()));
+			}
 
-		sprites.clear();
-
-		sprites.push_back(spriteSheet->getSpriteAsVector("laserGreen01.png"));
-		sprites.push_back(spriteSheet->getSpriteAsVector("laserGreen16.png"));
-		spriteSheet->makeAnimation("greenExplosionSpriteSheet", sprites);
-
-		sprites.clear();
-
-		sprites.push_back(spriteSheet->getSpriteAsVector("shield1.png"));
-		sprites.push_back(spriteSheet->getSpriteAsVector("shield2.png"));
-		sprites.push_back(spriteSheet->getSpriteAsVector("shield3.png"));
-		spriteSheet->makeAnimation("shieldSpriteSheet", sprites);
-
-		spriteSheet->getAnimation("shieldSpriteSheet")->setLoopStatus(true);
-		spriteSheet->getAnimation("shieldSpriteSheet")->setDelay(0.15f);
-
-		sprites.clear();
-
-		sprites.push_back(spriteSheet->getSpriteAsVector("meteorBrown_med1.png"));
-		sprites.push_back(spriteSheet->getSpriteAsVector("meteorBrown_med3.png"));
-		spriteSheet->makeAnimation("meteorBrown_med", sprites);
-
-		spriteSheet->getAnimation("meteorBrown_med")->setLoopStatus(true);
-		spriteSheet->getAnimation("meteorBrown_med")->setDelay(0.15f);
-
-		spriteSheetManager->loadSpriteSheet("main", spriteSheet);
-		spriteSheetManager->loadSpriteSheet("background", backgroundSpriteSheet);
+			spriteSheetManager->loadSpriteSheet(brewery_node->first_attribute("name")->value(), spriteSheet);
+		}
 	}
 
 	void Application::removeEnemyFromList(std::vector<std::shared_ptr<Enemy>>::iterator* it)
@@ -209,6 +203,7 @@ namespace Engine
 	void Application::initScene()
 	{
 		player = std::make_shared<Player>(32.0f, 32.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
+		effectManager->getEffect("defaultShooting")(player);
 		player->onDeath = [this]()
 		{
 			inputManager->resetInput();
@@ -248,6 +243,22 @@ namespace Engine
 			if (found)
 				continue;
 
+			enemy->onCollision = [enemy](std::shared_ptr<BaseGameObject> collider)
+			{
+				if (enemy->getAddon("shield") != nullptr)
+					enemy->removeAddon("shield");
+				else
+					enemy->setNeedsToBeDeleted(true);
+
+				auto entity = dynamic_cast<Entity*>(collider.get());
+				if (entity != nullptr && !entity->getNeedsToBeDeleted())
+				{
+					if (entity->getAddon("shield") != nullptr)
+						entity->removeAddon("shield");
+					else
+						entity->setNeedsToBeDeleted(true);
+				}
+			};
 			enemy->addObserver(this);
 			enemies.push_back(std::move(enemy));
 		}
@@ -458,6 +469,100 @@ namespace Engine
 		getUIElement("Pause Menu")->hideMain();
 	}
 
+	void Application::saveConfig()
+	{
+		auto keyBindings = inputManager->getKeyBindings();
+		auto keyBindings2 = std::vector<std::pair<std::string, std::string>>();
+		auto shaders = renderer->getShaders();
+		auto fonts = fontManager->getFonts();
+		rapidxml::xml_document<> doc;
+
+		rapidxml::xml_node<>* Config = doc.allocate_node(rapidxml::node_element, "Config");
+		doc.append_node(Config);
+
+		rapidxml::xml_node<>* KeyBindings = doc.allocate_node(rapidxml::node_element, "KeyBindings");
+
+		for (auto it = keyBindings->begin(); it != keyBindings->end(); it++)
+		{
+			keyBindings2.push_back(std::pair<std::string, std::string>(it->first, std::to_string(it->second)));
+		}
+
+		for (auto it = keyBindings2.begin(); it != keyBindings2.end(); it++)
+		{
+			rapidxml::xml_node<>* KeyBinding = doc.allocate_node(rapidxml::node_element, "KeyBinding");
+			KeyBinding->append_attribute(doc.allocate_attribute("key", it->first.c_str()));
+			KeyBinding->append_attribute(doc.allocate_attribute("value", it->second.c_str()));
+			KeyBindings->append_node(KeyBinding);
+		}
+
+		Config->append_node(KeyBindings);
+		rapidxml::xml_node<>* Shaders = doc.allocate_node(rapidxml::node_element, "Shaders");
+
+		for (auto it = shaders->begin(); it != shaders->end(); it++)
+		{
+			rapidxml::xml_node<>* Shader = doc.allocate_node(rapidxml::node_element, "Shader");
+			Shader->append_attribute(doc.allocate_attribute("key", it->first.c_str()));
+			Shaders->append_node(Shader);
+		}
+
+		Config->append_node(Shaders);
+		rapidxml::xml_node<>* Fonts = doc.allocate_node(rapidxml::node_element, "Fonts");
+
+		for (auto it = fonts->begin(); it != fonts->end(); it++)
+		{
+			rapidxml::xml_node<>* Font = doc.allocate_node(rapidxml::node_element, "Font");
+			Font->append_attribute(doc.allocate_attribute("key", it->first.c_str()));
+			Fonts->append_node(Font);
+		}
+
+		Config->append_node(Fonts);
+
+		std::ofstream file_stored("Config/config.xml");
+		file_stored << doc;
+		file_stored.close();
+		doc.clear();
+	}
+
+	void Application::loadConfig()
+	{
+		rapidxml::xml_document<> doc;
+		rapidxml::xml_node<> * root_node;
+		// Read the xml file into a vector
+		std::ifstream theFile("Config/config.xml");
+		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
+		buffer.push_back('\0');
+		// Parse the buffer using the xml file parsing library into doc 
+		doc.parse<0>(&buffer[0]);
+		// Find our root node
+		root_node = doc.first_node("Config");
+		// Iterate over the brewerys
+		for (auto brewery_node = root_node->first_node("KeyBindings"); brewery_node; brewery_node = brewery_node->next_sibling("KeyBindings"))
+		{
+			for (auto beer_node = brewery_node->first_node("KeyBinding"); beer_node; beer_node = beer_node->next_sibling("KeyBinding"))
+			{
+				inputManager->setKeyBinding(beer_node->first_attribute("key")->value(), std::stoi(beer_node->first_attribute("value")->value()));
+			}
+		}
+
+		for (auto brewery_node = root_node->first_node("Fonts"); brewery_node; brewery_node = brewery_node->next_sibling("Fonts"))
+		{
+			for (auto beer_node = brewery_node->first_node("Font"); beer_node; beer_node = beer_node->next_sibling("Font"))
+			{
+				std::string key = beer_node->first_attribute("key")->value();
+				fontManager->loadFont(key + ".ttf", key);
+			}
+		}
+
+		for (auto brewery_node = root_node->first_node("Shaders"); brewery_node; brewery_node = brewery_node->next_sibling("Shaders"))
+		{
+			for (auto beer_node = brewery_node->first_node("Shader"); beer_node; beer_node = beer_node->next_sibling("Shader"))
+			{
+				std::string key = beer_node->first_attribute("key")->value();
+				renderer->addShader(key, std::make_shared<Shader>(key + ".vert", key + ".frag"));
+			}
+		}
+	}
+
 	void Application::startNewLevel()
 	{
 		getPlayerUIElement("Level completed")->hideMain();
@@ -541,6 +646,11 @@ namespace Engine
 				for (auto it = enemies.begin(); it != enemies.end(); it++)
 				{
 					auto playerBulletList = player->getBulletsList();
+					auto enemyBulletList = (*it)->getBulletsList();
+					for (auto it2 = playerBulletList->begin(); it2 != playerBulletList->end(); it2++)
+					{
+						collisionManager->checkCollision(*it2, enemyBulletList, *it);
+					}
 					collisionManager->checkCollision(player, (*it)->getBulletsList(), *it);
 					collisionManager->checkCollision(*it, playerBulletList, player);
 				}
@@ -566,6 +676,8 @@ namespace Engine
 
 			//Render background
 			renderer->draw(background);
+			//Render meteors
+			renderer->draw(meteors);
 			//Render player
 			renderer->draw(player);
 			auto addons = player->getAddons();
@@ -595,8 +707,6 @@ namespace Engine
 			}
 
 			renderer->draw(*player->getBulletsList());
-			//Render meteors
-			renderer->draw(meteors);
 			//Render & Update player UI
 			for (auto uiElement : playerUI)
 			{

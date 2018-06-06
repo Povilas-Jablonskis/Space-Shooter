@@ -10,6 +10,8 @@ namespace Engine
 
 	void SpriteSheet::loadSpriteSheet(const std::string& _path)
 	{
+		if (_path.size() == 0) return;
+
 		glGenTextures(1, &texture);
 
 		glBindTexture(GL_TEXTURE_2D, texture); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
@@ -29,6 +31,8 @@ namespace Engine
 
 	void SpriteSheet::loadSpritesFromXml(const std::string& _path)
 	{
+		if (_path.size() == 0) return;
+
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
 		// Read the xml file into a vector

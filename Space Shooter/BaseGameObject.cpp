@@ -14,7 +14,7 @@ namespace Engine
 
 		onCollision = [this](std::shared_ptr<BaseGameObject> collider)
 		{
-			setNeedsToBeDeleted(true);
+			
 		};
 	}
 

@@ -42,7 +42,7 @@ namespace Engine
 		}
 
 		FT_Face face;
-		if (FT_New_Face(library, _path.c_str(), 0, &face))
+		if (FT_New_Face(library, ("Fonts/" + _path).c_str(), 0, &face))
 		{
 			#if _DEBUG
 				std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;

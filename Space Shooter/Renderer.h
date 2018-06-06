@@ -17,6 +17,7 @@ namespace Engine
 			~Renderer();
 			Renderer();
 			void addShader(const std::string& name, std::shared_ptr<Shader> shader);
+			inline std::vector<std::pair<std::string, std::shared_ptr<Shader>>>* getShaders() { return &shaders; }
 			inline GLuint getVAO() const { return vao; }
 			GLuint getShaderProgram(const std::string&) const;
 			inline GLuint getTextVBO() const { return textVBO; }

@@ -40,8 +40,8 @@ namespace Engine
 
 	void Shader::loadShader(const std::string& vertex_path, const std::string& fragment_path)
 	{
-		std::string vertShaderStr = readShaderFile(vertex_path);
-		std::string fragShaderStr = readShaderFile(fragment_path);
+		std::string vertShaderStr = readShaderFile("Shaders/" + vertex_path);
+		std::string fragShaderStr = readShaderFile("Shaders/" + fragment_path);
 		const char *vertexShaderSource = vertShaderStr.c_str();
 		const char *fragmentShaderSource = fragShaderStr.c_str();
 		GLint isCompiled = 0;
@@ -61,7 +61,7 @@ namespace Engine
 			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &errorLogs[0]);
 
 			#if _DEBUG
-				std::cout << "ERROR::Shader: Errors in vertex shader ( " << vertex_path << " ) :" << std::endl;
+				std::cout << "ERROR::Shader: Errors in vertex shader ( " << ("Shaders/" + vertex_path << " ) :" << std::endl;
 				for (auto errorLog : errorLogs)
 					std::cout << errorLog;
 			#endif
@@ -82,7 +82,7 @@ namespace Engine
 			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &errorLogs[0]);
 
 			#if _DEBUG
-				std::cout << "ERROR::Shader: Errors in fragment shader ( " << fragment_path << " ) :" << std::endl;
+				std::cout << "ERROR::Shader: Errors in fragment shader ( " << "Shaders/" + fragment_path << " ) :" << std::endl;
 				for (auto errorLog : errorLogs)
 					std::cout << errorLog;
 			#endif

@@ -19,11 +19,11 @@ namespace Engine
 		for (auto brewery_node = root_node->first_node("Enemy"); brewery_node; brewery_node = brewery_node->next_sibling("Enemy"))
 		{
 			auto spriteName = brewery_node->first_attribute("spriteName")->value();
-			std::string shootingEffect = brewery_node->first_attribute("shootingEffect")->value();
+			std::string shootingMode = brewery_node->first_attribute("shootingMode")->value();
 			auto sprite = spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName);
 			auto enemy = std::make_shared<Enemy>(32.0f, 32.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
 			enemy->applyAnimation(sprite);
-			effectManager->getEffect(shootingEffect)(enemy);
+			effectManager->getEffect(shootingMode)(enemy);
 
 			for (auto beer_node = brewery_node->first_node("Animations"); beer_node; beer_node = beer_node->next_sibling("Animations"))
 			{

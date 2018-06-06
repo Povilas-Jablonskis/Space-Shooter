@@ -14,8 +14,6 @@ namespace Engine
 	Player::Player(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: Entity(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity)
 	{
-		setDelayBetweenShoots(0.2f);
-		setShootingType(ShootingType::NORMAL);
 		setShootingSound("Sounds/lasers/7.wav");
 	}
 
@@ -51,23 +49,18 @@ namespace Engine
 		return true;
 	}
 
+	void Player::addBullet(std::shared_ptr<BaseGameObject> bullet)
+	{
+		bullet->setVelocity(1, 200.0f);
+		Entity::addBullet(bullet);
+	}
+
 	void Player::respawn()
 	{
 		clearBullets();
 		setHealth(getHealth()-1);
 		if (getHealth() < 1)
 			onDeath();
-		setVelocity(startVelocity);
-		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
-	}
-
-	void Player::restart()
-	{
-		setDelayBetweenShoots(0.25f);
-		setShootingType(ShootingType::NORMAL);
-		clearBullets();
-		setScore(0);
-		setHealth(startHealth);
 		setVelocity(startVelocity);
 		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
 	}

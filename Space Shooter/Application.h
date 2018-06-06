@@ -55,6 +55,8 @@ namespace Engine
 
 			float randomFloat(float, float);
 
+			void saveConfig();
+			void loadConfig();
 			void startNewLevel();
 			void initPlayerUI();
 			void initSpriteSheets();
