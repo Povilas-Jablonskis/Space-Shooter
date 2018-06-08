@@ -73,9 +73,15 @@ namespace Engine
 
 	bool UIElementBase::checkIfCollides(glm::vec2 colCoordinates)
 	{
-		if (colCoordinates.x >= position.x && colCoordinates.x <= (position.x + width) && colCoordinates.y <= position.y && colCoordinates.y >= (position.y + height))
+		// Collision x-axis?
+		bool collisionX = position.x + width >= colCoordinates.x &&
+			colCoordinates.x >= position.x;
+		// Collision y-axis?
+		bool collisionY = position.y + height >= colCoordinates.y &&
+			colCoordinates.y >= position.y;
+		// Collision only if on both axes
+		if (collisionX && collisionY)
 			return true;
-		
 		return false;
 	}
 
@@ -115,13 +121,15 @@ namespace Engine
 		}
 	}
 
-	void UIElementBase::checkForMouseClickOnThis(bool leftMouseState, bool lastLeftMouseState, glm::vec2 lastMousePosition)
+	bool UIElementBase::checkForMouseClickOnThis(bool leftMouseState, bool lastLeftMouseState, glm::vec2 lastMousePosition)
 	{
-		if (color.a == 0.0f || !checkIfCollides(lastMousePosition)) return;
+		if (color.a == 0.0f || !checkIfCollides(lastMousePosition)) return false;
 
 		if (!lastLeftMouseState && leftMouseState)
 			onMouseClickFunc();
 		else if (lastLeftMouseState && !leftMouseState)
 			onMouseReleaseFunc();
+
+		return true;
 	}
 }

@@ -106,19 +106,20 @@ namespace Engine
 		}
 	}
 
-	void UIElement::checkForMouseClickOnThis(bool leftMouseState, bool lastLeftMouseState, glm::vec2 lastMousePosition)
+	bool UIElement::checkForMouseClickOnThis(bool leftMouseState, bool lastLeftMouseState, glm::vec2 lastMousePosition)
 	{
 		UIElementBase::checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
 
 		for (auto text : texts)
 		{
-			text->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
+			if (text->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition)) return true;
 		}
 
-		for (auto element : elements)
+		for (auto text : texts)
 		{
-			element->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
+			text->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
 		}
+		return false;
 	}
 
 	void UIElement::update(float dt)

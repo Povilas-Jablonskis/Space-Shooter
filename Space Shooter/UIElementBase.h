@@ -28,7 +28,7 @@ namespace Engine
 			virtual void fixPosition(UIElementBase* = nullptr);
 			virtual bool checkIfCollides(glm::vec2);
 			virtual void checkIfMouseHoverThis(glm::vec2);
-			virtual void checkForMouseClickOnThis(bool, bool, glm::vec2);
+			virtual bool checkForMouseClickOnThis(bool, bool, glm::vec2);
 			std::function<void()> onHoverEnterFunc;
 			std::function<void()> onHoverExitFunc;
 			std::function<void()> onMouseClickFunc;

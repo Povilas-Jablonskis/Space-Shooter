@@ -343,6 +343,7 @@ namespace Engine
 		ui.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Game Over", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 		auto Options = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), getUIElement("Main Menu"), glm::vec2(0.0f, 0.0f));
 		auto Controls = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), Options, glm::vec2(0.0f, 0.0f));
+		auto Sounds = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), Options, glm::vec2(0.0f, 0.0f));
 
 		//Main Menu
 		auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 60.0f));
@@ -366,7 +367,7 @@ namespace Engine
 			currentMenu = Options;
 			getUIElement("Main Menu")->hideMain();
 			Options->showMain();
-		};
+	};
 		getUIElement("Main Menu")->addText(std::move(options));
 		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 50.0f));
 		options->onMouseReleaseFunc = [this]()
@@ -404,7 +405,7 @@ namespace Engine
 			exit(0);
 		};
 		getUIElement("Pause Menu")->addText(std::move(options));
-		
+
 		//Controls
 		auto keybindings = inputManager->getKeyBindings();
 		size_t i = 0;
@@ -414,7 +415,7 @@ namespace Engine
 			options->setIsStatic(true);
 			Controls->addText(std::move(options));
 			options = std::make_shared<Text>(virtualKeyCodeToString(it->second), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
-			options->onMouseClickFunc = [this, options, it]()
+			options->onMouseReleaseFunc = [this, options, it]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
 
@@ -436,6 +437,47 @@ namespace Engine
 		};
 		Controls->addText(std::move(options));
 
+		//Sounds
+		options = std::make_shared<Text>("Volume: ", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
+		options->setIsStatic(true);
+		Sounds->addText(std::move(options));
+		options = std::make_shared<Text>("<", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(70.0f, 60.0f));
+		options->onMouseReleaseFunc = [this, Sounds]()
+		{
+			soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
+			float vol = soundEngine->getSoundVolume() - 0.01f;
+			if (vol >= 0.0f)
+			{
+				soundEngine->setSoundVolume(vol);
+				(*Sounds->getTexts())[2]->setText(std::to_string((int)(vol * 100.f)));
+			}
+		};
+		Sounds->addText(std::move(options));
+		options = std::make_shared<Text>(std::to_string((int)(soundEngine->getSoundVolume() * 100.0f)), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(75.0f, 60.0f));
+		options->setIsStatic(true);
+		Sounds->addText(std::move(options));
+		options = std::make_shared<Text>(">", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(85.0f, 60.0f));
+		options->onMouseReleaseFunc = [this, Sounds]()
+		{
+			soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
+			float vol = soundEngine->getSoundVolume() + 0.01f;
+			if (vol <= 1.0f)
+			{
+				soundEngine->setSoundVolume(vol);
+				(*Sounds->getTexts())[2]->setText(std::to_string((int)(vol * 100.0f)));
+			}
+		};
+		Sounds->addText(std::move(options));
+		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
+		options->onMouseReleaseFunc = [this, Options, Sounds]()
+		{
+			soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
+			currentMenu = Options;
+			Sounds->hideMain();
+			Options->showMain();
+		};
+		Sounds->addText(std::move(options));
+
 		//Options
 		options = std::make_shared<Text>("Controls", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
 		options->onMouseReleaseFunc = [this, Options, Controls]()
@@ -447,6 +489,13 @@ namespace Engine
 		};
 		Options->addText(std::move(options));
 		options = std::make_shared<Text>("Sounds", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
+		options->onMouseReleaseFunc = [this, Options, Sounds]()
+		{
+			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
+			currentMenu = Sounds;
+			Options->hideMain();
+			Sounds->showMain();
+		};
 		Options->addText(std::move(options));
 		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 50.0f));
 		options->onMouseReleaseFunc = [this, Options]()
@@ -457,7 +506,9 @@ namespace Engine
 			getUIElement("Main Menu")->showMain();
 		};
 		Options->addText(std::move(options));
+
 		Options->addUIElement(std::move(Controls));
+		Options->addUIElement(std::move(Sounds));
 		getUIElement("Main Menu")->addUIElement(std::move(Options));
 
 		//Game Over
@@ -517,6 +568,10 @@ namespace Engine
 
 		Config->append_node(Fonts);
 
+		rapidxml::xml_node<>* Volume = doc.allocate_node(rapidxml::node_element, "Volume");
+		Volume->append_attribute(doc.allocate_attribute("value", std::to_string(soundEngine->getSoundVolume()).c_str()));
+		Config->append_node(Volume);
+
 		std::ofstream file_stored("Config/config.xml");
 		file_stored << doc;
 		file_stored.close();
@@ -560,6 +615,11 @@ namespace Engine
 				std::string key = beer_node->first_attribute("key")->value();
 				renderer->addShader(key, std::make_shared<Shader>(key + ".vert", key + ".frag"));
 			}
+		}
+
+		for (auto brewery_node = root_node->first_node("Volume"); brewery_node; brewery_node = brewery_node->next_sibling("Volume"))
+		{
+			soundEngine->setSoundVolume(std::stof(brewery_node->first_attribute("value")->value()));
 		}
 	}
 
@@ -915,8 +975,6 @@ namespace Engine
 
 	void Application::motionFunc(int x, int y)
 	{
-		inputManager->setLastMousePosition(glm::vec2(x, y));
-
 		glm::vec2 lastMousePosition = glm::vec2(x, y);
 		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
 		lastMousePosition.y *= -1;
