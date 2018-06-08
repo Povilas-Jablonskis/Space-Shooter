@@ -115,9 +115,9 @@ namespace Engine
 			if (text->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition)) return true;
 		}
 
-		for (auto text : texts)
+		for (auto element : elements)
 		{
-			text->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
+			element->checkForMouseClickOnThis(leftMouseState, lastLeftMouseState, lastMousePosition);
 		}
 		return false;
 	}
