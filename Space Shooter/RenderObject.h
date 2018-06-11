@@ -19,6 +19,8 @@
 
 namespace Engine
 {
+	typedef std::pair<std::string, std::shared_ptr<Animation>> animation;
+
 	class RenderObject
 	{
 		public:
@@ -37,7 +39,7 @@ namespace Engine
 			inline float getRotationAxis(int index) const { return rotationAxis[index]; }
 			inline glm::vec3 getRotationAxis() const { return rotationAxis; }
 			inline float getRotationAngle() const { return rotationAngle; }
-			inline std::shared_ptr<Animation> getAnimation() { return animation; }
+			inline std::shared_ptr<Animation> getAnimation() { return theAnimation; }
 			inline void setBBOXVar(int index, float value) { bbox[index] = value; }
 			virtual inline void setPosition(glm::vec2 _position) { position = _position; }
 			virtual inline void setPosition(int index, float _position) { position[index] = _position; }
@@ -51,7 +53,7 @@ namespace Engine
 			size_t currentFrame;
 			bool animComplete;
 			float animTimer;
-			std::shared_ptr<Animation> animation;
+			std::shared_ptr<Animation> theAnimation;
 			glm::vec3 rotationAxis;
 			float rotationAngle;
 			glm::vec2 position;

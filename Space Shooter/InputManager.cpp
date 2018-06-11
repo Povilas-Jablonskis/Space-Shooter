@@ -6,7 +6,7 @@ namespace Engine
 	{
 		pressedkeys = new bool[pressedKeyCount];
 		resetInput();
-		setCurrentEditedKeyBinding(std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>>(keyBindings.end(), nullptr));
+		setCurrentEditedKeyBinding(currentEditedKeyBinding(keyBindings.end(), nullptr));
 	}
 
 	void InputManager::resetInput()
@@ -59,7 +59,7 @@ namespace Engine
 				return;
 		}
 
-		keyBindings.push_back(std::pair<std::string, int>(key, value));
+		keyBindings.push_back(keybinding(key, value));
 	}
 
 	int InputManager::getKeyBinding(const std::string& key)

@@ -12,6 +12,8 @@
 
 namespace Engine
 {
+	typedef std::pair<GLchar, Character> character;
+
 	class Font
 	{
 		public:

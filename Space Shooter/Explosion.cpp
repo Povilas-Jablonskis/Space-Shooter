@@ -12,18 +12,18 @@ namespace Engine
 	{
 		updateAnimation(dt);
 
-		if (animation == nullptr)
+		if (theAnimation == nullptr)
 			return false;
 
-		auto sprites = animation->getAnimation();
-		return (!animation->getLoopStatus() && currentFrame >= (sprites->size() - 1) && animComplete);
+		auto sprites = theAnimation->getAnimation();
+		return (!theAnimation->getLoopStatus() && currentFrame >= (sprites->size() - 1) && animComplete);
 	}
 
 	void Explosion::applyAnimation(std::shared_ptr<Animation> _animation)
 	{
 		RenderObject::applyAnimation(_animation);
 
-		if (animation != nullptr)
-			animation->setDelay(0.1f);
+		if (theAnimation != nullptr)
+			theAnimation->setDelay(0.1f);
 	}
 }

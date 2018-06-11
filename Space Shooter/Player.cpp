@@ -51,6 +51,10 @@ namespace Engine
 
 	void Player::addBullet(std::shared_ptr<BaseGameObject> bullet)
 	{
+		bullet->onDeath = [this]()
+		{
+			setScore(getScore() + 50);
+		};
 		bullet->setVelocity(1, 200.0f);
 		Entity::addBullet(bullet);
 	}

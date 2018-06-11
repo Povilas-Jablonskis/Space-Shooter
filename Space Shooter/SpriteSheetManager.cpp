@@ -14,7 +14,7 @@ namespace Engine
 			if (spriteSheet.first == name)
 				return;
 		}
-		spriteSheets.push_back(std::pair<std::string, std::shared_ptr<SpriteSheet>>(name, _spriteSheet));
+		spriteSheets.push_back(spriteSheet(name, _spriteSheet));
 	}
 
 	std::shared_ptr<SpriteSheet> SpriteSheetManager::getSpriteSheet(const std::string& name)

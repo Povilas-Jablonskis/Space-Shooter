@@ -13,6 +13,8 @@
 
 namespace Engine
 {
+	typedef std::pair<std::string, std::function<bool(std::shared_ptr<BaseGameObject>)>> effect;
+
 	class EffectManager
 	{
 		public:
@@ -20,7 +22,7 @@ namespace Engine
 			std::function<bool(std::shared_ptr<BaseGameObject>)> getEffect(std::string index);
 			std::function<bool(std::shared_ptr<BaseGameObject>)> getRandomEffect();
 		private:
-			std::vector<std::pair<std::string, std::function<bool(std::shared_ptr<BaseGameObject>)>>> effects;
+			std::vector<effect> effects;
 	};
 }
 #endif

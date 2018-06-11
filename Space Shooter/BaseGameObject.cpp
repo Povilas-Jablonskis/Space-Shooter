@@ -25,13 +25,15 @@ namespace Engine
 
 	bool BaseGameObject::update(float _dt)
 	{
+		if (getNeedsToBeDeleted()) onDeath();
+
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
 		updateAnimation(_dt);
 		return getNeedsToBeDeleted();
 	}
 
-	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> animation)
+	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> _animation)
 	{
 		for (auto it = animations.begin(); it != animations.end(); it++)
 		{
@@ -39,7 +41,7 @@ namespace Engine
 				return;
 		}
 
-		animations.push_back(std::pair<std::string, std::shared_ptr<Animation>>(index, animation));
+		animations.push_back(animation(index, _animation));
 	}
 
 	std::shared_ptr<Animation> BaseGameObject::getAnimationByIndex(std::string index)

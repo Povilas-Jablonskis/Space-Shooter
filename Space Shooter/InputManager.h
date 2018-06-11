@@ -11,6 +11,9 @@
 
 namespace Engine
 {
+	typedef std::pair<std::string, int> keybinding;
+	typedef std::pair<std::vector<keybinding>::iterator, std::shared_ptr<Text>> currentEditedKeyBinding;
+
 	class InputManager
 	{
 		public:
@@ -32,16 +35,16 @@ namespace Engine
 			inline void setKey(int key, bool boolean) { pressedkeys[key] = boolean; }
 			inline void setLastMousePosition(glm::vec2 position) { lastMousePosition = position; }
 			inline glm::vec2 getLastMousePosition() const { return lastMousePosition; }
-			inline std::vector<std::pair<std::string, int>>* getKeyBindings() { return &keyBindings; }
+			inline std::vector<keybinding>* getKeyBindings() { return &keyBindings; }
 			void setKeyBinding(const std::string&, int);
 			int getKeyBinding(const std::string&);
-			inline std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>>* getCurrentEditedKeyBinding() { return &currentEditedKeyBinding; }
-			inline void setCurrentEditedKeyBinding(std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>> value) { currentEditedKeyBinding = value; }
+			inline currentEditedKeyBinding* getCurrentEditedKeyBinding() { return &theCurrentEditedKeyBinding; }
+			inline void setCurrentEditedKeyBinding(currentEditedKeyBinding value) { theCurrentEditedKeyBinding = value; }
 			bool resetCurrentEditedKeyBinding();
 		private:
 			const int pressedKeyCount = 256;
-			std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>> currentEditedKeyBinding;
-			std::vector<std::pair<std::string, int>> keyBindings;
+			currentEditedKeyBinding theCurrentEditedKeyBinding;
+			std::vector<keybinding> keyBindings;
 			glm::vec2 lastMousePosition;
 			bool lastLeftMouseClick;
 			bool leftMouseClick;

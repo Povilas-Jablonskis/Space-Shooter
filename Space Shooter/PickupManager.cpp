@@ -23,11 +23,11 @@ namespace Engine
 			std::string name = brewery_node->first_attribute("name")->value();
 			auto spriteName = brewery_node->first_attribute("spriteName")->value();
 			auto sprite = spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName);
-			auto pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-			pickup->applyAnimation(sprite);
-			pickup->effect = effectManager->getEffect(name);
+			auto _pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			_pickup->applyAnimation(sprite);
+			_pickup->effect = effectManager->getEffect(name);
 
-			pickups.push_back(std::pair<std::string, std::shared_ptr<Pickup>>(name, std::move(pickup)));
+			pickups.push_back(pickup(name, std::move(_pickup)));
 		}
 	}
 

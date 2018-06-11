@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "rapidxml_print.hpp"
+#include "Timer.h"
 
 namespace Engine
 {
@@ -36,10 +37,6 @@ namespace Engine
 				{
 					soundEngine->play2D("Sounds/explosions/6.wav", GL_FALSE);
 
-					auto player = dynamic_cast<Player*>(params["parent"]);
-					if (player != nullptr)
-						player->setScore(player->getScore() + 50);
-
 					auto collider = params["collider"];
 					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
 					explosion->applyAnimation(collider->getAnimationByIndex("explosion"));
@@ -49,9 +46,9 @@ namespace Engine
 				case BULLETSHOT:
 				{
 					auto collider = params["collider"];
-					auto _subject = dynamic_cast<Entity*>(collider);
-					if (_subject != nullptr)
-						soundEngine->play2D(_subject->getShootingSound().c_str(), GL_FALSE);
+					auto subject = dynamic_cast<Entity*>(collider);
+					if (subject != nullptr)
+						soundEngine->play2D(subject->getShootingSound().c_str(), GL_FALSE);
 					break;
 				}
 			}
@@ -143,13 +140,13 @@ namespace Engine
 
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
-		playerUI.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+		playerUI.push_back(uiPlayerElement("Score", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
 		auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
 		option->setIsStatic(true);
 		getPlayerUIElement("Score")->addText(std::move(option));
 
-		playerUI.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+		playerUI.push_back(uiPlayerElement("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
 		auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
 		option2->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("playerLife1_blue.png"));
@@ -158,7 +155,7 @@ namespace Engine
 		option->setIsStatic(true);
 		getPlayerUIElement("Health")->addText(std::move(option));
 
-		playerUI.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Level completed", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+		playerUI.push_back(uiPlayerElement("Level completed", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
 		auto option3 = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
 		option3->setIsStatic(true);
@@ -202,6 +199,9 @@ namespace Engine
 
 	void Application::initScene()
 	{
+		enemyManager->generateRandomMeteorSpawnPoints();
+		enemyManager->generateRandomSpawnPoints();
+
 		player = std::make_shared<Player>(32.0f, 32.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
 		effectManager->getEffect("defaultShooting")(player);
 		player->onDeath = [this]()
@@ -217,107 +217,36 @@ namespace Engine
 		player->addObserver(this);
 
 		enemies.clear();
-		float space = 100.f;
 		size_t max = rand() % 10 + 1;
 		for (size_t i = 0; enemies.size() < max; i++)
 		{
-			auto found = false;
 			auto enemy = enemyManager->getRandomEnemy();
-			auto randX = randomFloat(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH) - 32.0f);
-			auto randY = randomFloat(340.0f, (float)glutGet(GLUT_WINDOW_HEIGHT) - 32.0f);
-			enemy->setPosition(0, randX);
-			enemy->setPosition(1, randY);
-
-			if (collisionManager->checkCollision(player, enemy))
-				found = true;
-
-			for (auto enemyForCollision : enemies)
-			{
-				if (collisionManager->checkCollision(enemy, enemyForCollision))
-				{
-					found = true;
-					break;
-				}
-			}
-
-			if (found)
-				continue;
-
-			enemy->onCollision = [enemy](std::shared_ptr<BaseGameObject> collider)
-			{
-				if (enemy->getAddon("shield") != nullptr)
-					enemy->removeAddon("shield");
-				else
-					enemy->setNeedsToBeDeleted(true);
-
-				auto entity = dynamic_cast<Entity*>(collider.get());
-				if (entity != nullptr && !entity->getNeedsToBeDeleted())
-				{
-					if (entity->getAddon("shield") != nullptr)
-						entity->removeAddon("shield");
-					else
-						entity->setNeedsToBeDeleted(true);
-				}
-			};
 			enemy->addObserver(this);
 			enemies.push_back(std::move(enemy));
 		}
 
 		pickups.clear();
-		auto pickup = pickupManager->getRandomPickup();
-		pickup->setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, (float)glutGet(GLUT_WINDOW_Y) / 2.0f));
-		pickups.push_back(std::move(pickup));
 
 		meteors.clear();
-		for (size_t i = 0; meteors.size() < 10; i++)
+		for (size_t i = 0; meteors.size() < max; i++)
 		{
-			auto found = false;
 			auto meteor = std::make_shared<BaseGameObject>(32.0f, 32.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-			auto randX = randomFloat(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH) - 32.0f);
-			auto randY = randomFloat(100.0f, 300.0f);
-			meteor->setPosition(0, randX);
-			meteor->setPosition(1, randY);
-
-			if (collisionManager->checkCollision(player, meteor))
-				found = true;
-
-			for (auto enemy : enemies)
-			{
-				if (collisionManager->checkCollision(enemy, meteor))
-				{
-					found = true;
-					break;
-				}
-			}
-
-			for (auto meteorForCollision : meteors)
-			{
-				if (collisionManager->checkCollision(meteorForCollision, meteor))
-				{
-					found = true;
-					break;
-				}
-			}
-
-			for (auto pickup : pickups)
-			{
-				if (collisionManager->checkCollision(pickup, meteor))
-				{
-					found = true;
-					break;
-				}
-			}
-
-			if (found)
-				continue;
-
+			meteor->setPosition(enemyManager->getRandomMeteorSpawnPoint());
 			meteor->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("meteorBrown_med"));
+			meteor->onDeath = [this, meteor]()
+			{
+				if ((rand() % 2) == 0) return;
+
+				auto pickup = pickupManager->getRandomPickup();
+				pickup->setPosition(meteor->getPosition());
+				pickups.push_back(std::move(pickup));
+			};
 			meteor->onCollision = [this, meteor](std::shared_ptr<BaseGameObject> collider)
 			{
-				soundEngine->play2D("Sounds/explosions/2.wav", GL_FALSE);
-				meteor->setNeedsToBeDeleted(true);
-
 				auto entity = dynamic_cast<Entity*>(collider.get());
+
+				soundEngine->play2D("Sounds/explosions/2.wav", GL_FALSE);
+
 				if (entity != nullptr && !entity->getNeedsToBeDeleted())
 				{
 					if (entity->getAddon("shield") != nullptr)
@@ -338,9 +267,9 @@ namespace Engine
 	void Application::initGameUI()
 	{
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_INIT_WINDOW_WIDTH)), (float)(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
-		ui.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Main Menu", std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), nullptr, glm::vec2(30.0f, 30.0f))));
-		ui.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Pause Menu", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-		ui.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Game Over", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+		ui.push_back(uiElement("Main Menu", std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), nullptr, glm::vec2(30.0f, 30.0f))));
+		ui.push_back(uiElement("Pause Menu", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
+		ui.push_back(uiElement("Game Over", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 		auto Options = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), getUIElement("Main Menu"), glm::vec2(0.0f, 0.0f));
 		auto Controls = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), Options, glm::vec2(0.0f, 0.0f));
 		auto Sounds = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), Options, glm::vec2(0.0f, 0.0f));
@@ -420,7 +349,7 @@ namespace Engine
 				soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
 
 				inputManager->resetCurrentEditedKeyBinding();
-				inputManager->setCurrentEditedKeyBinding(std::pair<std::vector<std::pair<std::string, int>>::iterator, std::shared_ptr<Text>>(it, options));
+				inputManager->setCurrentEditedKeyBinding(currentEditedKeyBinding(it, options));
 				options->setIsStatic(true);
 				options->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 			};
@@ -522,8 +451,10 @@ namespace Engine
 
 	void Application::saveConfig()
 	{
+		typedef std::pair<std::string, std::string> keyBinding;
+
 		auto keyBindings = inputManager->getKeyBindings();
-		auto keyBindings2 = std::vector<std::pair<std::string, std::string>>();
+		auto keyBindings2 = std::vector<keyBinding>();
 		auto shaders = renderer->getShaders();
 		auto fonts = fontManager->getFonts();
 		rapidxml::xml_document<> doc;
@@ -535,7 +466,7 @@ namespace Engine
 
 		for (auto it = keyBindings->begin(); it != keyBindings->end(); it++)
 		{
-			keyBindings2.push_back(std::pair<std::string, std::string>(it->first, std::to_string(it->second)));
+			keyBindings2.push_back(keyBinding(it->first, std::to_string(it->second)));
 		}
 
 		for (auto it = keyBindings2.begin(); it != keyBindings2.end(); it++)
@@ -880,7 +811,7 @@ namespace Engine
 
 			auto keyBindings = inputManager->getKeyBindings();
 			auto currentKeyBinding = inputManager->getCurrentEditedKeyBinding();
-			if (c >= 32 && c < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](std::pair<std::string, int> element){return element.second == key; }) && currentKeyBinding->second != nullptr)
+			if (c >= 32 && c < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](keybinding element){return element.second == key; }) && currentKeyBinding->second != nullptr)
 			{
 				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 				currentKeyBinding->first->second = key;
@@ -964,7 +895,7 @@ namespace Engine
 
 		auto keyBindings = inputManager->getKeyBindings();
 		auto currentKeyBinding = inputManager->getCurrentEditedKeyBinding();
-		if (c != 0 && !std::any_of(keyBindings->begin(), keyBindings->end(), [c](std::pair<std::string, int> element){return element.second == c; }) && currentKeyBinding->second != nullptr)
+		if (c != 0 && !std::any_of(keyBindings->begin(), keyBindings->end(), [c](keybinding element){return element.second == c; }) && currentKeyBinding->second != nullptr)
 		{
 			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 			currentKeyBinding->first->second = c;

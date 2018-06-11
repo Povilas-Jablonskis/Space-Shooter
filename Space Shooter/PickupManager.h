@@ -14,6 +14,8 @@
 
 namespace Engine
 {
+	typedef std::pair<std::string, std::shared_ptr<Pickup>> pickup;
+
 	class PickupManager
 	{
 		public:
@@ -21,7 +23,7 @@ namespace Engine
 			std::shared_ptr<Pickup> getPickup(std::string);
 			std::shared_ptr<Pickup> getRandomPickup();
 		private:
-			std::vector<std::pair<std::string, std::shared_ptr<Pickup>>> pickups;
+			std::vector<pickup> pickups;
 	};
 }
 #endif

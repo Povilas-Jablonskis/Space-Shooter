@@ -23,10 +23,12 @@
 #include "Enemy.h"
 #include "Explosion.h"
 #include "Observer.h"
-#include "Timer.h"
 
 namespace Engine
 {
+	typedef std::pair<std::string, std::shared_ptr<UIElement>> uiElement;
+	typedef std::pair<std::string, std::shared_ptr<UIElement>> uiPlayerElement;
+
 	class Application : public Observer
 	{
 		public:
@@ -80,8 +82,8 @@ namespace Engine
 			std::vector<std::shared_ptr<BaseGameObject>> pickups;
 			std::vector<std::shared_ptr<Enemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;
-			std::vector<std::pair<std::string, std::shared_ptr<UIElement>>> ui;
-			std::vector<std::pair<std::string, std::shared_ptr<UIElement>>> playerUI;
+			std::vector<uiElement> ui;
+			std::vector<uiPlayerElement> playerUI;
 
 			std::shared_ptr<EffectManager> effectManager;
 			std::shared_ptr<EnemyManager> enemyManager;

@@ -11,6 +11,8 @@
 
 namespace Engine
 {
+	typedef std::pair<std::string, std::shared_ptr<Font>> font;
+
 	class FontManager
 	{
 		public:
@@ -18,10 +20,10 @@ namespace Engine
 			FontManager();
 			void loadFont(const std::string&, const std::string&);
 			std::shared_ptr<Font> getFont(const std::string&);
-			inline std::vector<std::pair<std::string, std::shared_ptr<Font>>>* getFonts() { return &faces; };
+			inline std::vector<font>* getFonts() { return &faces; };
 		private:
 			FT_Library library;
-			std::vector<std::pair<std::string, std::shared_ptr<Font>>> faces;
+			std::vector<font> faces;
 	};
 }
 #endif

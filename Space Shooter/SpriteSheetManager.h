@@ -5,6 +5,8 @@
 
 namespace Engine
 {
+	typedef std::pair<std::string, std::shared_ptr<SpriteSheet>> spriteSheet;
+
 	class SpriteSheetManager
 	{
 		public:
@@ -12,7 +14,7 @@ namespace Engine
 			void loadSpriteSheet(const std::string&, std::shared_ptr<SpriteSheet>);
 			std::shared_ptr<SpriteSheet> getSpriteSheet(const std::string&);
 		private:
-			std::vector<std::pair<std::string, std::shared_ptr<SpriteSheet>>> spriteSheets;
+			std::vector<spriteSheet> spriteSheets;
 	};
 }
 #endif

@@ -163,7 +163,7 @@ namespace Engine
 				std::string shootingMode = std::string(beer_node->first_attribute("shootingMode")->value());
 				float delayBetweenShoots = std::stof(beer_node->first_attribute("delayBetweenShoots")->value(), &sz);
 
-				auto effect = [soundEngine, shootingMode = list[shootingMode], sound, delayBetweenShoots](std::shared_ptr<BaseGameObject> collider)
+				auto _effect = [soundEngine, shootingMode = list[shootingMode], sound, delayBetweenShoots](std::shared_ptr<BaseGameObject> collider)
 				{
 					auto entity = dynamic_cast<Entity*>(collider.get());
 					auto player = dynamic_cast<Player*>(collider.get());
@@ -175,14 +175,14 @@ namespace Engine
 					entity->shootingMode = shootingMode;
 					return true;
 				};
-				effects.push_back(std::pair<std::string, std::function<bool(std::shared_ptr<BaseGameObject>)>>(brewery_node->first_attribute("name")->value(), std::move(effect)));
+				effects.push_back(effect(brewery_node->first_attribute("name")->value(), std::move(_effect)));
 			}
 
 			for (auto beer_node = brewery_node->first_node("Shield"); beer_node; beer_node = beer_node->next_sibling("Shield"))
 			{
 				std::string sound = beer_node->first_attribute("sound")->value();
 
-				auto effect = [soundEngine, beer_node, spriteSheetManager, sound](std::shared_ptr<BaseGameObject> collider)
+				auto _effect = [soundEngine, beer_node, spriteSheetManager, sound](std::shared_ptr<BaseGameObject> collider)
 				{
 					auto entity = dynamic_cast<Entity*>(collider.get());
 					auto player = dynamic_cast<Player*>(collider.get());
@@ -194,11 +194,11 @@ namespace Engine
 
 					auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -6.0f));
 					shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
-					entity->addAddon(std::pair<std::string, std::shared_ptr<Addon>>("shield", std::move(shield)));
+					entity->addAddon(addon("shield", std::move(shield)));
 					return true;
 				};
 
-				effects.push_back(std::pair<std::string, std::function<bool(std::shared_ptr<BaseGameObject>)>>(brewery_node->first_attribute("name")->value(), std::move(effect)));
+				effects.push_back(effect(brewery_node->first_attribute("name")->value(), std::move(_effect)));
 			}
 		}
 	}

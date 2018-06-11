@@ -20,7 +20,7 @@ namespace Engine
 			bullet->setNeedsToBeDeleted(true);
 
 			auto entity = dynamic_cast<Entity*>(collider.get());
-			if (entity != nullptr)
+			if (entity != nullptr && !entity->getNeedsToBeDeleted())
 			{
 				if (entity->getAddon("shield") != nullptr)
 					entity->removeAddon("shield");
@@ -55,7 +55,7 @@ namespace Engine
 		}
 	}
 
-	void Entity::addAddon(std::pair<std::string, std::shared_ptr<Addon>> _addon)
+	void Entity::addAddon(addon _addon)
 	{
 		for (auto addon : addons)
 		{

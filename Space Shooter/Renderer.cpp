@@ -73,15 +73,15 @@ namespace Engine
 		return -1;
 	}
 
-	void Renderer::addShader(const std::string& name, std::shared_ptr<Shader> shader)
+	void Renderer::addShader(const std::string& name, std::shared_ptr<Shader> _shader)
 	{
-		for (auto shader : shaders)
+		for (auto theShader : shaders)
 		{
-			if (shader.first == name)
+			if (theShader.first == name)
 				return;
 		}
 
-		shaders.push_back(std::pair<std::string, std::shared_ptr<Shader>>(name, shader));
+		shaders.push_back(shader(name, _shader));
 	}
 
 	void Renderer::draw(std::vector<std::shared_ptr<Text>> vector)

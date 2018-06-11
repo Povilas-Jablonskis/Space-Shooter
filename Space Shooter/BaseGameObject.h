@@ -37,7 +37,7 @@ namespace Engine
 			inline bool getNeedsToBeDeleted() const { return needsToBeDeleted; }
 		protected:
 			bool needsToBeDeleted;
-			std::vector<std::pair<std::string, std::shared_ptr<Animation>>> animations;
+			std::vector<animation> animations;
 			glm::vec2 velocity;
 	};
 }

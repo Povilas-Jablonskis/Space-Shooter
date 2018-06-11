@@ -68,7 +68,7 @@ namespace Engine
 			GLfloat h = (GLfloat)ch.Size.y;
 			// Update VBO for each character
 
-			std::vector<std::pair<GLuint, std::vector<GLfloat>>> testVector;
+			std::vector<cachedCharacter> textVector;
 
 			GLfloat tempVertices[4][6] = 
 			{
@@ -91,7 +91,7 @@ namespace Engine
 				}
 			}
 
-			cachedCharacters.push_back(std::pair<GLuint, std::vector<GLfloat>>
+			cachedCharacters.push_back(cachedCharacter
 			(
 				ch.TextureID,
 				std::move(vertices)

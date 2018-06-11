@@ -8,6 +8,8 @@
 
 namespace Engine
 {
+	typedef std::pair<std::string, std::shared_ptr<Addon>> addon;
+
 	class Entity : public BaseGameObject, public Subject
 	{
 		public:
@@ -19,9 +21,9 @@ namespace Engine
 			inline void setDelayBetweenShootsTimer(float _delayBetweenShootsTimer) { delayBetweenShootsTimer = _delayBetweenShootsTimer; }
 			inline float getDelayBetweenShoots() const { return delayBetweenShoots; }
 			inline void setDelayBetweenShoots(float _delayBetweenShoots) { delayBetweenShoots = _delayBetweenShoots; }
-			inline std::vector<std::pair<std::string, std::shared_ptr<Addon>>>* getAddons() { return &addons; }
+			inline std::vector<addon>* getAddons() { return &addons; }
 			std::shared_ptr<Addon> getAddon(std::string);
-			void addAddon(std::pair<std::string, std::shared_ptr<Addon>>);
+			void addAddon(addon);
 			void removeAddon(std::string);
 			inline void setShootingSound(std::string _shootingSound) { shootingSound = _shootingSound; }
 			inline std::string getShootingSound() const { return shootingSound; }
@@ -29,7 +31,7 @@ namespace Engine
 		private:
 			std::string shootingSound;
 			std::vector<std::shared_ptr<BaseGameObject>> bullets;
-			std::vector<std::pair<std::string, std::shared_ptr<Addon>>> addons;
+			std::vector<addon> addons;
 			float delayBetweenShootsTimer;
 			float delayBetweenShoots;
 	};

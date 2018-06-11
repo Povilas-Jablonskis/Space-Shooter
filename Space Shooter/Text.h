@@ -11,12 +11,15 @@
 
 #include "UIElementBase.h"
 #include "Font.h"
+#include "SpriteManager.h"
 
 #include <vec2.hpp>
 #include <vec4.hpp>
 
 namespace Engine
 {
+	typedef std::pair<GLuint, std::vector<GLfloat>> cachedCharacter;
+
 	class Text : public UIElementBase
 	{
 		public:
@@ -25,7 +28,7 @@ namespace Engine
 			Text(const char, int, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
 			void update(float);
 			inline std::shared_ptr<Font> getFont() const { return font; }
-			inline std::vector<std::pair<GLuint, std::vector<GLfloat>>> getCachedCharacters() { return cachedCharacters; }
+			inline std::vector<cachedCharacter> getCachedCharacters() { return cachedCharacters; }
 			inline std::string getText() const { return text; }
 			inline void setText(std::string newtext) { needUpdate = true; text = newtext; }
 			inline void setText(char newtext) { needUpdate = true; text = newtext; }
@@ -39,7 +42,7 @@ namespace Engine
 			bool needUpdate;
 			std::string text;
 			int fontSize;
-			std::vector<std::pair<GLuint, std::vector<GLfloat>>> cachedCharacters;
+			std::vector<cachedCharacter> cachedCharacters;
 			std::shared_ptr<Font> font;
 			SHORT leftButtonClicked;
 	};

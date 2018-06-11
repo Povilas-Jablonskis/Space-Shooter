@@ -15,6 +15,9 @@
 
 namespace Engine
 {
+	typedef std::pair<std::string, glm::vec4> sprite;
+	typedef std::pair<std::string, std::shared_ptr<Animation>> animation;
+
 	class SpriteSheet
 	{
 		public:
@@ -32,8 +35,8 @@ namespace Engine
 			int width;
 			int height;
 			GLuint texture;
-			std::vector<std::pair<std::string, glm::vec4>> sprites;
-			std::vector<std::pair<std::string, std::shared_ptr<Animation>>> animations;
+			std::vector<sprite> sprites;
+			std::vector<animation> animations;
 	};
 }
 #endif
