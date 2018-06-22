@@ -5,7 +5,7 @@
 namespace Engine
 {
 	BaseGameObject::BaseGameObject(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: RenderObject(_width, _height, _position, _color), velocity(_velocity), needsToBeDeleted(false)
+		: RenderObject(_width, _height, _position, _color), velocity(_velocity), needsToBeRemoved(false)
 	{
 		onDeath = []()
 		{
@@ -25,12 +25,12 @@ namespace Engine
 
 	bool BaseGameObject::update(float _dt)
 	{
-		if (getNeedsToBeDeleted()) onDeath();
+		if (getNeedsToBeRemoved()) onDeath();
 
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
 		updateAnimation(_dt);
-		return getNeedsToBeDeleted();
+		return getNeedsToBeRemoved();
 	}
 
 	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> _animation)
@@ -41,7 +41,7 @@ namespace Engine
 				return;
 		}
 
-		animations.push_back(animation(index, _animation));
+		animations.push_back(std::move(animation(index, _animation)));
 	}
 
 	std::shared_ptr<Animation> BaseGameObject::getAnimationByIndex(std::string index)

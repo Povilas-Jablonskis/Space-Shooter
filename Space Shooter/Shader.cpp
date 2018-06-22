@@ -61,7 +61,7 @@ namespace Engine
 			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &errorLogs[0]);
 
 			#if _DEBUG
-				std::cout << "ERROR::Shader: Errors in vertex shader ( " << ("Shaders/" + vertex_path << " ) :" << std::endl;
+				std::cout << "ERROR::Shader: Errors in vertex shader ( Shaders/" + vertex_path + " ) :" << std::endl;
 				for (auto errorLog : errorLogs)
 					std::cout << errorLog;
 			#endif
@@ -82,7 +82,7 @@ namespace Engine
 			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &errorLogs[0]);
 
 			#if _DEBUG
-				std::cout << "ERROR::Shader: Errors in fragment shader ( " << "Shaders/" + fragment_path << " ) :" << std::endl;
+				std::cout << "ERROR::Shader: Errors in fragment shader ( Shaders/ " + fragment_path + " ) :" << std::endl;
 				for (auto errorLog : errorLogs)
 					std::cout << errorLog;
 			#endif

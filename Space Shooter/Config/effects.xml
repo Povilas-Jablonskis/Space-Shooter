@@ -1,17 +1,17 @@
 <Effects>
 	<Effect name="defaultShooting">
-		<ShootingEffect sound="Sounds/powerups/3.wav" delayBetweenShoots="0.25" shootingMode="NORMAL" />
+		<ShootingEffect explosionSound="Sounds/explosions/6.wav" delayBetweenShoots="0.25" shootingMode="NORMAL" />
 	</Effect>
 	<Effect name="doubleShooting">
-		<ShootingEffect sound="Sounds/powerups/3.wav" delayBetweenShoots="0.5" shootingMode="DOUBLE" />
+		<ShootingEffect explosionSound="Sounds/explosions/6.wav" delayBetweenShoots="0.5" shootingMode="DOUBLE" />
 	</Effect>
 	<Effect name="halfCircleShooting">
-		<ShootingEffect sound="Sounds/powerups/3.wav" delayBetweenShoots="0.5" shootingMode="HALFCIRCLE" />
+		<ShootingEffect explosionSound="Sounds/explosions/6.wav" delayBetweenShoots="0.5" shootingMode="HALFCIRCLE" />
 	</Effect>
 	<Effect name="doubleHalfCircleShooting">
-		<ShootingEffect sound="Sounds/powerups/3.wav" delayBetweenShoots="1.0" shootingMode="DOUBLEHALFCIRCLE" />
+		<ShootingEffect explosionSound="Sounds/explosions/6.wav" delayBetweenShoots="1.0" shootingMode="DOUBLEHALFCIRCLE" />
 	</Effect>
 	<Effect name="shield">
-		<Shield sound="Sounds/powerups/1.wav" />
+		<Shield loseSound="Sounds/sfx_shieldDown.ogg"/>
 	</Effect>
 </Effects>

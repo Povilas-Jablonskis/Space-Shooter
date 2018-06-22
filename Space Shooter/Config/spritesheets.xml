@@ -1,19 +1,29 @@
 <Spritesheets>
 	<Spritesheet name="main" spriteSheetName="Spritesheet/sheet.png" spriteSheetNameXml="Spritesheet/sheet.xml">
 		<Sprites name="blueExplosionSpriteSheet" loop="0" delay="0.0166666666666667">
-			<Sprite name="laserBlue11.png"/>
+			<Sprite name="laserBlue08.png"/>
 			<Sprite name="laserBlue10.png"/>
+			<Sprite name="laserBlue11.png"/>
+			<Sprite name="laserBlue09.png"/>
 		</Sprites>
 		<Sprites name="greenExplosionSpriteSheet" loop="0" delay="0.0166666666666667">
-			<Sprite name="laserGreen01.png"/>
+			<Sprite name="laserGreen14.png"/>
 			<Sprite name="laserGreen16.png"/>
+			<Sprite name="laserGreen15.png"/>
+			<Sprite name="laserGreen01.png"/>
+		</Sprites>
+		<Sprites name="redExplosionSpriteSheet" loop="0" delay="0.0166666666666667">
+			<Sprite name="laserRed08.png"/>
+			<Sprite name="laserRed10.png"/>
+			<Sprite name="laserRed09.png"/>
+			<Sprite name="laserRed11.png"/>
 		</Sprites>
 		<Sprites name="shieldSpriteSheet" loop="1" delay="0.15">
 			<Sprite name="shield1.png"/>
 			<Sprite name="shield2.png"/>
 			<Sprite name="shield3.png"/>
 		</Sprites>
-		<Sprites name="meteorBrown_med" loop="0" delay="0.0166666666666667">
+		<Sprites name="meteorBrown_med" loop="1" delay="0.15">
 			<Sprite name="meteorBrown_med1.png"/>
 			<Sprite name="meteorBrown_med3.png"/>
 		</Sprites>

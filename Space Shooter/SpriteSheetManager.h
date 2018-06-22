@@ -11,9 +11,10 @@ namespace Engine
 	{
 		public:
 			~SpriteSheetManager();
-			void loadSpriteSheet(const std::string&, std::shared_ptr<SpriteSheet>);
+			void loadSpriteSheetsFromConfig();
 			std::shared_ptr<SpriteSheet> getSpriteSheet(const std::string&);
 		private:
+			void loadSpriteSheet(const std::string&, std::shared_ptr<SpriteSheet>);
 			std::vector<spriteSheet> spriteSheets;
 	};
 }

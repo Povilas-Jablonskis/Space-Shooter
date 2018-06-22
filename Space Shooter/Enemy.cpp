@@ -21,14 +21,37 @@ namespace Engine
 	Enemy::Enemy(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: Entity(_width, _height, _position, _velocity, _color)
 	{
-		setShootingSound("Sounds/lasers/6.wav");
+
 	}
 
-	void Enemy::addBullet(std::shared_ptr<BaseGameObject> bullet)
+	void Enemy::addBullet(std::shared_ptr<BaseGameObject> bullet, glm::vec2 offset)
 	{
+		bullet->setPosition(glm::vec2(position.x + (width / 2.0f) - (bullet->getSize(0) / 2.0f), position.y - (height / 2.0f)));
+		bullet->setPosition(bullet->getPosition() - offset);
 		bullet->setVelocity(1, -200.0f);
 		bullet->setRotationAngle(3.14159265358979323846f);
-		Entity::addBullet(bullet);
+		bullet->onCollision = [this, bullet](std::shared_ptr<BaseGameObject> collider)
+		{
+			bullet->setNeedsToBeRemoved(true);
+
+			auto params = std::map<std::string, BaseGameObject*>();
+			params["bullet"] = bullet.get();
+			params["parent"] = this;
+			params["collider"] = collider.get();
+			notify(ObserverEvent::BULLETDESTROYED, params);
+
+			auto entity = dynamic_cast<Entity*>(collider.get());
+			if (entity != nullptr && !entity->getNeedsToBeRemoved())
+			{
+				if (entity->getAddon("shield") != nullptr)
+					entity->getAddon("shield")->setNeedsToBeRemoved(true);
+				else
+					entity->setNeedsToBeRemoved(true);
+			}
+			else
+				collider->setNeedsToBeRemoved(true);
+		};
+		Entity::addBullet(bullet, offset);
 	}
 
 	Enemy::~Enemy()
@@ -62,7 +85,7 @@ namespace Engine
 	//			++it;
 	//	}
 
-	//	return getNeedsToBeDeleted();
+	//	return getNeedsToBeRemoved();
 	//}
 
 	bool Enemy::update(float dt)
@@ -95,6 +118,6 @@ namespace Engine
 				++it;
 		}
 
-		return getNeedsToBeDeleted();
+		return getNeedsToBeRemoved();
 	}
 }

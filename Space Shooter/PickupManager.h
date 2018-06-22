@@ -19,7 +19,7 @@ namespace Engine
 	class PickupManager
 	{
 		public:
-			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager>);
+			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager>, irrklang::ISoundEngine*);
 			std::shared_ptr<Pickup> getPickup(std::string);
 			std::shared_ptr<Pickup> getRandomPickup();
 		private:

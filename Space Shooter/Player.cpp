@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <functional>
 #include <string>
-#include "Application.h"
 
 namespace Engine
 {
@@ -14,14 +13,14 @@ namespace Engine
 	Player::Player(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: Entity(_width, _height, _position, _velocity, _color), startHealth(3), health(startHealth), score(0), startVelocity(_velocity)
 	{
-		setShootingSound("Sounds/lasers/7.wav");
+		setShootingSound("Sounds/sfx_laser2.ogg");
 	}
 
 	bool Player::update(float dt)
 	{
-		if (needsToBeDeleted)
+		if (needsToBeRemoved)
 		{
-			needsToBeDeleted = false;
+			needsToBeRemoved = false;
 			respawn();
 			return false;
 		}
@@ -46,25 +45,57 @@ namespace Engine
 			else
 				++it;
 		}
+
+		setShootingPosition(glm::vec2(position.x + (width / 2.0f), position.y + height));
+
 		return true;
 	}
 
-	void Player::addBullet(std::shared_ptr<BaseGameObject> bullet)
+	void Player::addBullet(std::shared_ptr<BaseGameObject> bullet, glm::vec2 offset)
 	{
-		bullet->onDeath = [this]()
-		{
-			setScore(getScore() + 50);
-		};
+		bullet->setPosition(glm::vec2(position.x + (width / 2.0f) - (bullet->getSize(0) / 2.0f), position.y + height));
+		bullet->setPosition(bullet->getPosition() + offset);
 		bullet->setVelocity(1, 200.0f);
-		Entity::addBullet(bullet);
+		bullet->onCollision = [this, bullet](std::shared_ptr<BaseGameObject> collider)
+		{
+			bullet->setNeedsToBeRemoved(true);
+
+			auto params = std::map<std::string, BaseGameObject*>();
+			params["bullet"] = bullet.get();
+			params["parent"] = this;
+			params["collider"] = collider.get();
+			notify(ObserverEvent::BULLETDESTROYED, params);
+
+			auto entity = dynamic_cast<Entity*>(collider.get());
+			if (entity != nullptr && !entity->getNeedsToBeRemoved())
+			{
+				if (entity->getAddon("shield") != nullptr)
+				{
+					setScore(getScore() + 50);
+					entity->getAddon("shield")->setNeedsToBeRemoved(true);
+				}
+				else
+				{
+					setScore(getScore() + 100);
+					entity->setNeedsToBeRemoved(true);
+				}
+			}
+			else
+			{
+				setScore(getScore() + 100);
+				collider->setNeedsToBeRemoved(true);
+			}
+		};
+		Entity::addBullet(bullet, offset);
 	}
 
 	void Player::respawn()
 	{
-		clearBullets();
 		setHealth(getHealth()-1);
 		if (getHealth() < 1)
 			onDeath();
+		else
+			notify(ObserverEvent::PLAYERDIED, std::map<std::string, BaseGameObject*>());
 		setVelocity(startVelocity);
 		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
 	}

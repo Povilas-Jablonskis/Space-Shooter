@@ -5,11 +5,6 @@ namespace Engine
 	UIElementBase::UIElementBase(float _width, float _height, glm::vec2 _position, glm::vec4 _color, glm::vec2 _positionPerc) :
 		RenderObject(_width, _height, _position, _color), gotMousedHovered(false), isStatic(false), positionPercents(_positionPerc), originalWidth(width), originalHeigth(height)
 	{
-		initFuncs();
-	}
-
-	void UIElementBase::initFuncs()
-	{
 		onHoverEnterFunc = []()
 		{
 
@@ -29,6 +24,8 @@ namespace Engine
 		{
 
 		};
+
+		fixPosition();
 	}
 
 	void UIElementBase::update(float dt)
@@ -38,34 +35,18 @@ namespace Engine
 		updateAnimation(dt);
 	}
 
-	void UIElementBase::fixPosition(UIElementBase* parent)
+	void UIElementBase::fixPosition()
 	{
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
-		if (parent != nullptr)
+		if (positionPercents == glm::vec2(0.0f, 0.0f))
 		{
-			if (positionPercents == glm::vec2(0.0f, 0.0f))
-			{
-				position.x = parent->getPosition(0);
-				position.y = parent->getPosition(1);
-			}
-			else
-			{
-				position.x = parent->getPosition(0) + (parent->getSize(0) * (positionPercents.x / 100.0f));
-				position.y = parent->getPosition(1) + (parent->getSize(1) * (positionPercents.y / 100.0f));
-			}
+			width = temPos.x;
+			height = temPos.y;
+			return;
 		}
-		else
-		{
-			if (positionPercents == glm::vec2(0.0f, 0.0f))
-			{
-				width = temPos.x;
-				height = temPos.y;
-				return;
-			}
-			position.x = temPos.x * (positionPercents.x / 100.0f);
-			position.y = temPos.y * (positionPercents.y / 100.0f);
-		}
+		position.x = temPos.x * (positionPercents.x / 100.0f);
+		position.y = temPos.y * (positionPercents.y / 100.0f);
 
 		width = originalWidth * (temPos.x / (float)glutGet(GLUT_INIT_WINDOW_WIDTH));
 		height = originalHeigth * (temPos.y / (float)(glutGet(GLUT_INIT_WINDOW_HEIGHT)));

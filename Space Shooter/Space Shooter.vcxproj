@@ -49,8 +49,8 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\P\Desktop\freetype-2.8\objs\vc2010\Win32;C:\Users\P\Desktop\Simple OpenGL Image Library\projects\VC9\Release;C:\Users\P\Desktop\glew-2.0.0\lib\Release\Win32;C:\Users\P\Desktop\freeglut\lib;C:\Users\P\Desktop\irrKlang-1.5.0\lib\Win32-visualStudio;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\objs\vc2010\Win32;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\projects\VC9\Release;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\lib\Release\Win32;C:\Users\povilas.jablonskis\Desktop\freeglut\lib;C:\Users\povilas.jablonskis\Desktop\irrKlang-1.5.0\lib\Win32-visualStudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SOIL.lib;glew32.lib;freeglut.lib;freetype28.lib;irrKlang.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\P\Desktop\freetype-2.8\objs\vc2010\Win32;C:\Users\P\Desktop\Simple OpenGL Image Library\projects\VC9\Release;C:\Users\P\Desktop\glew-2.0.0\lib\Release\Win32;C:\Users\P\Desktop\freeglut\lib;C:\Users\P\Desktop\irrKlang-1.5.0\lib\Win32-visualStudio;C:\Users\povilas.jablonskis\Desktop\freetype-2.8\objs\vc2010\Win32;C:\Users\povilas.jablonskis\Desktop\Simple OpenGL Image Library\projects\VC9\Release;C:\Users\povilas.jablonskis\Desktop\glew-2.0.0\lib\Release\Win32;C:\Users\povilas.jablonskis\Desktop\freeglut\lib;C:\Users\povilas.jablonskis\Desktop\irrKlang-1.5.0\lib\Win32-visualStudio</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SOIL.lib;glew32.lib;freeglut.lib;freetype28.lib;irrKlang.lib</AdditionalDependencies>
       <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -97,7 +97,6 @@
     <ClCompile Include="Subject.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="UIElement.cpp" />
     <ClCompile Include="UIElementBase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -129,7 +128,6 @@
     <ClInclude Include="Subject.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Timer.h" />
-    <ClInclude Include="UIElement.h" />
     <ClInclude Include="UIElementBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -33,10 +33,10 @@ namespace Engine
 			inline float getVelocity(int index) { return velocity[index]; };
 			inline glm::vec2 getVelocity() { return velocity; };
 			std::function<void()> onDeath;
-			inline void setNeedsToBeDeleted(bool boolean) { needsToBeDeleted = boolean; };
-			inline bool getNeedsToBeDeleted() const { return needsToBeDeleted; }
+			inline void setNeedsToBeRemoved(bool boolean) { needsToBeRemoved = boolean; };
+			inline bool getNeedsToBeRemoved() const { return needsToBeRemoved; }
 		protected:
-			bool needsToBeDeleted;
+			bool needsToBeRemoved;
 			std::vector<animation> animations;
 			glm::vec2 velocity;
 	};

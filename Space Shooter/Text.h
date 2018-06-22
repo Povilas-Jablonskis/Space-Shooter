@@ -37,7 +37,8 @@ namespace Engine
 			bool checkIfCollides(glm::vec2);
 			void onHoverEnterFuncDefaults();
 			void onHoverExitFuncDefaults();
-			void fixPosition(UIElementBase* = nullptr);
+			void fixPosition();
+			void draw(std::shared_ptr<Renderer>);
 		private:
 			bool needUpdate;
 			std::string text;

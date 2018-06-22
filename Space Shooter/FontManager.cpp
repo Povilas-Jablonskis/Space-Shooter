@@ -49,7 +49,7 @@ namespace Engine
 			#endif
 		}
 		auto tempFont = std::make_shared<Font>(face);
-		faces.push_back(font(_name, std::move(tempFont)));
+		faces.push_back(std::move(font(_name, std::move(tempFont))));
 	}
 
 	std::shared_ptr<Font> FontManager::getFont(const std::string& name)

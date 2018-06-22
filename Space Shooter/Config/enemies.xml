@@ -1,32 +1,92 @@
 <Enemies>
-	<Enemy name="enemyBlack1" spriteName="enemyBlack1.png" shootingMode="defaultShooting">
+	<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" shootingMode="defaultShooting">
 		<Animations>
-			<Sprite name="shoot" spriteName="laserGreen11.png"/>
+			<Sprite name="shoot" spriteName="laserBlue04.png"/>
+			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" shootingMode="doubleShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserBlue05.png"/>
+			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyBlue3" spriteName="enemyBlue3.png" shootingMode="doubleShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserBlue14.png"/>
+			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyBlue4" spriteName="enemyBlue4.png" shootingMode="halfCircleShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserBlue15.png"/>
+			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyBlue5" spriteName="enemyBlue5.png" shootingMode="defaultShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserBlue15.png"/>
+			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyGreen1" spriteName="enemyGreen1.png" shootingMode="defaultShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserGreen08.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyBlack2" spriteName="enemyBlack2.png" shootingMode="doubleShooting">
+	<Enemy name="enemyGreen2" spriteName="enemyGreen2.png" shootingMode="doubleShooting">
 		<Animations>
-			<Sprite name="shoot" spriteName="laserGreen11.png"/>
+			<Sprite name="shoot" spriteName="laserGreen09.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyBlack3" spriteName="enemyBlack3.png" shootingMode="doubleShooting">
+	<Enemy name="enemyGreen3" spriteName="enemyGreen3.png" shootingMode="doubleShooting">
 		<Animations>
-			<Sprite name="shoot" spriteName="laserGreen11.png"/>
+			<Sprite name="shoot" spriteName="laserGreen06.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyBlack4" spriteName="enemyBlack4.png" shootingMode="halfCircleShooting">
+	<Enemy name="enemyGreen4" spriteName="enemyGreen4.png" shootingMode="halfCircleShooting">
 		<Animations>
-			<Sprite name="shoot" spriteName="laserGreen11.png"/>
+			<Sprite name="shoot" spriteName="laserGreen07.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyBlack5" spriteName="enemyBlack5.png" shootingMode="doubleHalfCircleShooting">
+	<Enemy name="enemyGreen5" spriteName="enemyGreen5.png" shootingMode="defaultShooting">
 		<Animations>
-			<Sprite name="shoot" spriteName="laserGreen11.png"/>
+			<Sprite name="shoot" spriteName="laserGreen07.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyRed1" spriteName="enemyRed1.png" shootingMode="defaultShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserRed14.png"/>
+			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyRed2" spriteName="enemyRed2.png" shootingMode="doubleShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserRed15.png"/>
+			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyRed3" spriteName="enemyRed3.png" shootingMode="doubleShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserRed04.png"/>
+			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyRed4" spriteName="enemyRed4.png" shootingMode="halfCircleShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserRed05.png"/>
+			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
+		</Animations>
+	</Enemy>
+	<Enemy name="enemyRed5" spriteName="enemyRed5.png" shootingMode="defaultShooting">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserRed05.png"/>
+			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
 </Enemies>

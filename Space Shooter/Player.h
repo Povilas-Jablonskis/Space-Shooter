@@ -15,7 +15,7 @@ namespace Engine
 			inline void setHealth(int _health) { health = _health; notify(ObserverEvent::HEALTHCHANGED, std::map<std::string, BaseGameObject*>()); }
 			inline int getScore() const { return score; }
 			inline void setScore(int _score) { score = _score; notify(ObserverEvent::SCORECHANGED, std::map<std::string, BaseGameObject*>()); }
-			void addBullet(std::shared_ptr<BaseGameObject>);
+			void addBullet(std::shared_ptr<BaseGameObject>, glm::vec2);
 		private:
 			void respawn();
 			glm::vec2 startVelocity;

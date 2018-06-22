@@ -17,6 +17,8 @@ namespace Engine
 		dt = 1.0f / 60.0f;
 		t = 0.0f;
 
+		currentLevel = 0;
+
 		srand((int)time(NULL));
 
 		onNotify = [this](ObserverEvent _event, std::map<std::string, BaseGameObject*> params)
@@ -35,85 +37,46 @@ namespace Engine
 				}
 				case BULLETDESTROYED:
 				{
-					soundEngine->play2D("Sounds/explosions/6.wav", GL_FALSE);
+					auto bullet = params["bullet"];
 
-					auto collider = params["collider"];
-					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, collider->getPosition());
-					explosion->applyAnimation(collider->getAnimationByIndex("explosion"));
+					auto explosion = std::make_shared<Explosion>(32.0f, 32.0f, bullet->getPosition());
+					explosion->applyAnimation(bullet->getAnimationByIndex("explosion"));
 					addExplosionToList(std::move(explosion));
 					break;
 				}
 				case BULLETSHOT:
 				{
-					auto collider = params["collider"];
-					auto subject = dynamic_cast<Entity*>(collider);
-					if (subject != nullptr)
-						soundEngine->play2D(subject->getShootingSound().c_str(), GL_FALSE);
+					auto subject = dynamic_cast<Entity*>(params["collider"]);
+					soundEngine->play2D(subject->getShootingSound().c_str(), GL_FALSE);
 					break;
+				}
+				case PLAYERDIED:
+				{
+					soundEngine->play2D("Sounds/sfx_lose.ogg", GL_FALSE);
 				}
 			}
 		};
 
 		loadConfig();
-		initSpriteSheets();
+		spriteSheetManager->loadSpriteSheetsFromConfig();
 		effectManager->loadEffectsFromConfig(spriteSheetManager, soundEngine);
-		pickupManager->loadPickupsFromConfig(spriteSheetManager, effectManager);
+		pickupManager->loadPickupsFromConfig(spriteSheetManager, effectManager, soundEngine);
 		enemyManager->loadEnemiesFromConfig(spriteSheetManager, effectManager);
+		initGameUI();
 
 		background = std::make_shared<UIElementBase>((float)glutGet(GLUT_INIT_WINDOW_WIDTH), (float)glutGet(GLUT_INIT_WINDOW_HEIGHT), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f));
 		background->applyAnimation(spriteSheetManager->getSpriteSheet("background")->getSprite("wholeSpriteSheet"));
-
-		initGameUI();
-		currentMenu = getUIElement("Main Menu");
 	}
 
 	Application::~Application()
 	{
 		enemies.clear();
 		explosions.clear();
-		ui.clear();
 		playerUI.clear();
 		pickups.clear();
 		meteors.clear();
 
 		saveConfig();
-	}
-
-	void Application::initSpriteSheets()
-	{
-		rapidxml::xml_document<> doc;
-		rapidxml::xml_node<> * root_node;
-		// Read the xml file into a vector
-		std::ifstream theFile("Config/spritesheets.xml");
-		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
-		buffer.push_back('\0');
-		// Parse the buffer using the xml file parsing library into doc 
-		doc.parse<0>(&buffer[0]);
-		// Find our root node
-		root_node = doc.first_node("Spritesheets");
-		// Iterate over the brewerys
-		for (auto brewery_node = root_node->first_node("Spritesheet"); brewery_node; brewery_node = brewery_node->next_sibling("Spritesheet"))
-		{
-			auto spriteSheet = std::make_shared<SpriteSheet>();
-
-			spriteSheet->loadSpriteSheet(brewery_node->first_attribute("spriteSheetName")->value());
-			spriteSheet->loadSpritesFromXml(brewery_node->first_attribute("spriteSheetNameXml")->value());
-
-			for (auto beer_node = brewery_node->first_node("Sprites"); beer_node; beer_node = beer_node->next_sibling("Sprites"))
-			{
-				std::vector<glm::vec4> sprites;
-				for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
-				{
-					sprites.push_back(spriteSheet->getSpriteAsVector(beer_node2->first_attribute("name")->value()));
-				}
-
-				spriteSheet->makeAnimation(beer_node->first_attribute("name")->value(), sprites);
-				spriteSheet->getAnimation(beer_node->first_attribute("name")->value())->setLoopStatus(std::stoi(beer_node->first_attribute("loop")->value()));
-				spriteSheet->getAnimation(beer_node->first_attribute("name")->value())->setDelay(std::stof(beer_node->first_attribute("delay")->value()));
-			}
-
-			spriteSheetManager->loadSpriteSheet(brewery_node->first_attribute("name")->value(), spriteSheet);
-		}
 	}
 
 	void Application::removeEnemyFromList(std::vector<std::shared_ptr<Enemy>>::iterator* it)
@@ -124,141 +87,64 @@ namespace Engine
 		if (enemies.size() == 0)
 		{
 			Timer::windowsTimer([this]{ startNewLevel(); }, 2000);
-			getPlayerUIElement("Level completed")->showMain(false);
+
+			auto option = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
+			option->setIsStatic(true);
+			playerUI.push_back(std::move(uiPlayerElement("Level completed", option)));
 		}
-	}
-
-	void Application::removeExplosionFromList(std::vector<std::shared_ptr<Explosion>>::iterator* it)
-	{
-		if (*it != explosions.end())
-			*it = explosions.erase(*it);
-	}
-
-	void Application::initPlayerUI()
-	{
-		playerUI.clear();
-
-		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
-
-		playerUI.push_back(uiPlayerElement("Score", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-
-		auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
-		option->setIsStatic(true);
-		getPlayerUIElement("Score")->addText(std::move(option));
-
-		playerUI.push_back(uiPlayerElement("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-
-		auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
-		option2->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("playerLife1_blue.png"));
-		getPlayerUIElement("Health")->addUIElement(std::move(option2));
-		option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
-		option->setIsStatic(true);
-		getPlayerUIElement("Health")->addText(std::move(option));
-
-		playerUI.push_back(uiPlayerElement("Level completed", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-
-		auto option3 = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
-		option3->setIsStatic(true);
-		getPlayerUIElement("Level completed")->addText(std::move(option3));
-
-		getPlayerUIElement("Score")->fixPosition();
-		getPlayerUIElement("Health")->fixPosition();
-		getPlayerUIElement("Level completed")->fixPosition();
 	}
 
 	void Application::updatePlayerHealth()
 	{
-		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
-
-		erasePlayerUIElement("Health");
-		playerUI.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Health", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-
-		//Health
-		auto option2 = std::make_shared<UIElement>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), nullptr, glm::vec2(6.0f, 91.0f));
+		erasePlayerUIElement("HealthSprite");
+		erasePlayerUIElement("HealthCount");
+		
+		auto option2 = std::make_shared<UIElementBase>(33.0f, 26.0f, glm::vec2(0.0f, 0.0f), glm::vec4(178.0f, 34.0f, 34.0f, 1.0f), glm::vec2(6.0f, 91.0f));
 		option2->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("playerLife1_blue.png"));
-		getPlayerUIElement("Health")->addUIElement(std::move(option2));
-		auto option = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
-		option->setIsStatic(true);
-		getPlayerUIElement("Health")->addText(std::move(option));
-		getPlayerUIElement("Health")->fixPosition();
+		playerUI.push_back(std::move(uiPlayerElement("HealthSprite", option2)));
+
+		auto option3 = std::make_shared<Text>(" X " + std::to_string(player->getHealth()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(12.0f, 92.0f));
+		option3->setIsStatic(true);
+		playerUI.push_back(std::move(uiPlayerElement("HealthCount", option3)));
 	}
 
 	void Application::updatePlayerScore()
 	{
-		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
-
 		erasePlayerUIElement("Score");
-		playerUI.push_back(std::pair<std::string, std::shared_ptr<UIElement>>("Score", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
 
-		//Score
 		auto option = std::make_shared<Text>(std::to_string(player->getScore()), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(90.0f, 93.0f));
 		option->setIsStatic(true);
-		getPlayerUIElement("Score")->addText(std::move(option));
-		getPlayerUIElement("Score")->fixPosition();
+		playerUI.push_back(std::move(uiPlayerElement("Score", option)));
 	}
 
-	void Application::initScene()
+	void Application::resetScene()
 	{
-		enemyManager->generateRandomMeteorSpawnPoints();
-		enemyManager->generateRandomSpawnPoints();
+		explosions.clear();
+		enemies.clear();
+		pickups.clear();
+		meteors.clear();
 
 		player = std::make_shared<Player>(32.0f, 32.0f, glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f), glm::vec2(80.0f, 100.0f), glm::vec4(255.0f, 255.0f, 0.0f, 1.0f));
 		effectManager->getEffect("defaultShooting")(player);
 		player->onDeath = [this]()
 		{
+			auto option = std::make_shared<Text>("Game Over", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
+			option->setIsStatic(true);
+			playerUI.push_back(std::move(uiPlayerElement("Game Over", option)));
+
+			player->clearBullets();
 			inputManager->resetInput();
 			setState(GameState::ENDED);
-			currentMenu = getUIElement("Game Over");
-			getUIElement("Game Over")->showMain(false);
 		};
 		player->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("playerShip1_blue.png"));
-		player->addAnimation("shoot", spriteSheetManager->getSpriteSheet("main")->getSprite("laserBlue01.png"));
-		player->addAnimation("explosion", spriteSheetManager->getSpriteSheet("main")->getAnimation("blueExplosionSpriteSheet"));
+		player->addAnimation("shoot", std::move(spriteSheetManager->getSpriteSheet("main")->getSprite("laserBlue13.png")));
+		player->addAnimation("explosion", std::move(spriteSheetManager->getSpriteSheet("main")->getAnimation("blueExplosionSpriteSheet")));
 		player->addObserver(this);
 
-		enemies.clear();
-		size_t max = rand() % 10 + 1;
-		for (size_t i = 0; enemies.size() < max; i++)
-		{
-			auto enemy = enemyManager->getRandomEnemy();
-			enemy->addObserver(this);
-			enemies.push_back(std::move(enemy));
-		}
-
-		pickups.clear();
-
-		meteors.clear();
-		for (size_t i = 0; meteors.size() < max; i++)
-		{
-			auto meteor = std::make_shared<BaseGameObject>(32.0f, 32.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-			meteor->setPosition(enemyManager->getRandomMeteorSpawnPoint());
-			meteor->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("meteorBrown_med"));
-			meteor->onDeath = [this, meteor]()
-			{
-				if ((rand() % 2) == 0) return;
-
-				auto pickup = pickupManager->getRandomPickup();
-				pickup->setPosition(meteor->getPosition());
-				pickups.push_back(std::move(pickup));
-			};
-			meteor->onCollision = [this, meteor](std::shared_ptr<BaseGameObject> collider)
-			{
-				auto entity = dynamic_cast<Entity*>(collider.get());
-
-				soundEngine->play2D("Sounds/explosions/2.wav", GL_FALSE);
-
-				if (entity != nullptr && !entity->getNeedsToBeDeleted())
-				{
-					if (entity->getAddon("shield") != nullptr)
-						entity->removeAddon("shield");
-					else
-						entity->setNeedsToBeDeleted(true);
-				}
-			};
-			meteors.push_back(std::move(meteor));
-		}
-
-		initPlayerUI();
+		initScene();
+		updatePlayerHealth();
+		updatePlayerScore();
+		erasePlayerUIElement("Game Over");
 
 		accumulator = 0.0f;
 		t = 0.0f;
@@ -266,84 +152,70 @@ namespace Engine
 
 	void Application::initGameUI()
 	{
-		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_INIT_WINDOW_WIDTH)), (float)(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
-		ui.push_back(uiElement("Main Menu", std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), nullptr, glm::vec2(30.0f, 30.0f))));
-		ui.push_back(uiElement("Pause Menu", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-		ui.push_back(uiElement("Game Over", std::make_shared<UIElement>(temPos.x, temPos.y, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 0.0f, 0.0f), nullptr, glm::vec2(0.0f, 0.0f))));
-		auto Options = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), getUIElement("Main Menu"), glm::vec2(0.0f, 0.0f));
-		auto Controls = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), Options, glm::vec2(0.0f, 0.0f));
-		auto Sounds = std::make_shared<UIElement>(temPos.x / 2.0f, temPos.y / 2.0f, glm::vec2(0.0, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.0f), Options, glm::vec2(0.0f, 0.0f));
+		auto _options = std::make_shared<menu>("Options", std::vector<std::shared_ptr<UIElementBase>>());
+		auto mainMenu = std::make_shared<menu>("Main Menu", std::vector<std::shared_ptr<UIElementBase>>());
+		auto pauseMenu = std::make_shared<menu>("Pause Menu", std::vector<std::shared_ptr<UIElementBase>>());
+		auto controls = std::make_shared<menu>("Controls", std::vector<std::shared_ptr<UIElementBase>>());
+		auto sounds = std::make_shared<menu>("Sounds", std::vector<std::shared_ptr<UIElementBase>>());
 
 		//Main Menu
-		auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 60.0f));
+		auto options = std::make_shared<Text>("Start Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 60.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
-
-			explosions.clear();
-			initScene();
+			resetScene();
 			setState(GameState::STARTED);
-			currentMenu = nullptr;
-			//updatePlayerUI();
-			getUIElement("Main Menu")->hideMain();
 		};
-		getUIElement("Main Menu")->addText(std::move(options));
-		options = std::make_shared<Text>("Options", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
-		options->onMouseReleaseFunc = [this, Options]()
+		mainMenu->second.push_back(std::move(options));
+		options = std::make_shared<Text>("Options", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
+		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 
-			currentMenu = Options;
-			getUIElement("Main Menu")->hideMain();
-			Options->showMain();
-	};
-		getUIElement("Main Menu")->addText(std::move(options));
-		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 50.0f));
+			currentMenu = getMenu("Options");
+		};
+		mainMenu->second.push_back(std::move(options));
+		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 50.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
-			currentMenu = nullptr;
 			#if _DEBUG
 				std::cout << "exiting" << std::endl;
 				getchar();
 			#endif
 			exit(0);
 		};
-		getUIElement("Main Menu")->addText(std::move(options));
-		getUIElement("Main Menu")->showMain(true);
+		mainMenu->second.push_back(std::move(options));
 
 		//Pause Menu
-		options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(45.0f, 60.0f));
+		options = std::make_shared<Text>("Go To Main Menu", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(45.0f, 60.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
 
-			currentMenu = getUIElement("Main Menu");
+			currentMenu = getMenu("Main Menu");
 			setState(GameState::NOTSTARTEDYET);
-			getUIElement("Pause Menu")->hideMain();
-			getUIElement("Main Menu")->showMain();
 		};
-		getUIElement("Pause Menu")->addText(std::move(options));
-		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
+		pauseMenu->second.push_back(std::move(options));
+		options = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
 		options->onMouseReleaseFunc = [this]()
 		{
-			currentMenu = nullptr;
 			#if _DEBUG
 				std::cout << "exiting" << std::endl;
 				getchar();
 			#endif
 			exit(0);
 		};
-		getUIElement("Pause Menu")->addText(std::move(options));
+		pauseMenu->second.push_back(std::move(options));
 
 		//Controls
 		auto keybindings = inputManager->getKeyBindings();
 		size_t i = 0;
 		for (auto it = keybindings->begin(); it != keybindings->end(); it++)
 		{
-			options = std::make_shared<Text>(it->first + ": ", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(20.0f, 60.0f - (10 * i)));
+			options = std::make_shared<Text>(it->first + ": ", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(20.0f, 60.0f - (10 * i)));
 			options->setIsStatic(true);
-			Controls->addText(std::move(options));
-			options = std::make_shared<Text>(virtualKeyCodeToString(it->second), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
+			controls->second.push_back(std::move(options));
+			options = std::make_shared<Text>(virtualKeyCodeToString(it->second), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f - (10 * i)));
 			options->onMouseReleaseFunc = [this, options, it]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
@@ -353,100 +225,157 @@ namespace Engine
 				options->setIsStatic(true);
 				options->changeColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 			};
-			Controls->addText(std::move(options));
+			controls->second.push_back(std::move(options));
 			i++;
 		}
-		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(20.0f, 60.0f - (10 * i)));
-		options->onMouseReleaseFunc = [this, Options, Controls]()
+		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(20.0f, 60.0f - (10 * i)));
+		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
-			currentMenu = Options;
-			Controls->hideMain();
-			Options->showMain();
+
+			currentMenu = getMenu("Options");
 		};
-		Controls->addText(std::move(options));
+		controls->second.push_back(std::move(options));
 
 		//Sounds
-		options = std::make_shared<Text>("Volume: ", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
+		options = std::make_shared<Text>("Volume: ", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
 		options->setIsStatic(true);
-		Sounds->addText(std::move(options));
-		options = std::make_shared<Text>("<", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(70.0f, 60.0f));
-		options->onMouseReleaseFunc = [this, Sounds]()
+		sounds->second.push_back(std::move(options));
+		options = std::make_shared<Text>("<", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(70.0f, 60.0f));
+		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
+
 			float vol = soundEngine->getSoundVolume() - 0.01f;
 			if (vol >= 0.0f)
 			{
 				soundEngine->setSoundVolume(vol);
-				(*Sounds->getTexts())[2]->setText(std::to_string((int)(vol * 100.f)));
+				dynamic_cast<Text*>(getMenu("Sounds")->second[2].get())->setText(std::to_string((int)(vol * 100.f)));
 			}
 		};
-		Sounds->addText(std::move(options));
-		options = std::make_shared<Text>(std::to_string((int)(soundEngine->getSoundVolume() * 100.0f)), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(75.0f, 60.0f));
+		sounds->second.push_back(std::move(options));
+		options = std::make_shared<Text>(std::to_string((int)(soundEngine->getSoundVolume() * 100.0f)), 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(75.0f, 60.0f));
 		options->setIsStatic(true);
-		Sounds->addText(std::move(options));
-		options = std::make_shared<Text>(">", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(85.0f, 60.0f));
-		options->onMouseReleaseFunc = [this, Sounds]()
+		sounds->second.push_back(std::move(options));
+		options = std::make_shared<Text>(">", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(85.0f, 60.0f));
+		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
 			float vol = soundEngine->getSoundVolume() + 0.01f;
 			if (vol <= 1.0f)
 			{
 				soundEngine->setSoundVolume(vol);
-				(*Sounds->getTexts())[2]->setText(std::to_string((int)(vol * 100.0f)));
+				dynamic_cast<Text*>(getMenu("Sounds")->second[2].get())->setText(std::to_string((int)(vol * 100.f)));
 			}
 		};
-		Sounds->addText(std::move(options));
-		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
-		options->onMouseReleaseFunc = [this, Options, Sounds]()
+		sounds->second.push_back(std::move(options));
+		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
+		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
-			currentMenu = Options;
-			Sounds->hideMain();
-			Options->showMain();
+			
+			currentMenu = getMenu("Options");
 		};
-		Sounds->addText(std::move(options));
+		sounds->second.push_back(std::move(options));
 
 		//Options
-		options = std::make_shared<Text>("Controls", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
-		options->onMouseReleaseFunc = [this, Options, Controls]()
+		options = std::make_shared<Text>("Controls", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 60.0f));
+		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
-			currentMenu = Controls;
-			Options->hideMain();
-			Controls->showMain();
+			
+			currentMenu = getMenu("Controls");
 		};
-		Options->addText(std::move(options));
-		options = std::make_shared<Text>("Sounds", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
-		options->onMouseReleaseFunc = [this, Options, Sounds]()
+		_options->second.push_back(std::move(options));
+		options = std::make_shared<Text>("Sounds", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
+		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
-			currentMenu = Sounds;
-			Options->hideMain();
-			Sounds->showMain();
+			
+			currentMenu = getMenu("Sounds");
 		};
-		Options->addText(std::move(options));
-		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 50.0f));
-		options->onMouseReleaseFunc = [this, Options]()
+		_options->second.push_back(std::move(options));
+		options = std::make_shared<Text>("Back", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 50.0f));
+		options->onMouseReleaseFunc = [this]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
-			currentMenu = getUIElement("Main Menu");
-			Options->hideMain();
-			getUIElement("Main Menu")->showMain();
+			
+			currentMenu = getMenu("Main Menu");
 		};
-		Options->addText(std::move(options));
+		_options->second.push_back(std::move(options));
 
-		Options->addUIElement(std::move(Controls));
-		Options->addUIElement(std::move(Sounds));
-		getUIElement("Main Menu")->addUIElement(std::move(Options));
+		gameMenu.push_back(std::move(mainMenu));
+		gameMenu.push_back(std::move(pauseMenu));
+		gameMenu.push_back(std::move(controls));
+		gameMenu.push_back(std::move(sounds));
+		gameMenu.push_back(std::move(_options));
 
-		//Game Over
-		options = std::make_shared<Text>("Game Over", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 0.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(50.0f, 55.0f));
-		options->setIsStatic(true);
-		getUIElement("Game Over")->addText(std::move(options));
+		currentMenu = getMenu("Main Menu");
+	}
 
-		getUIElement("Game Over")->hideMain();
-		getUIElement("Pause Menu")->hideMain();
+	void Application::initScene()
+	{
+		size_t i = 0;
+		rapidxml::xml_document<> doc;
+		rapidxml::xml_node<> * root_node;
+		// Read the xml file into a vector
+		std::ifstream theFile("Config/levels.xml");
+		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
+		buffer.push_back('\0');
+		// Parse the buffer using the xml file parsing library into doc 
+		doc.parse<0>(&buffer[0]);
+		// Find our root node
+		root_node = doc.first_node("Levels");
+		// Iterate over the brewerys
+		for (auto brewery_node = root_node->first_node("Level"); brewery_node; brewery_node = brewery_node->next_sibling("Level"))
+		{
+			if (i == currentLevel)
+			{
+				std::string::size_type sz;
+				for (auto beer_node = brewery_node->first_node("Enemy"); beer_node; beer_node = beer_node->next_sibling("Enemy"))
+				{
+					float positionX = std::stof(beer_node->first_attribute("positionX")->value(), &sz);
+					float positionY = std::stof(beer_node->first_attribute("positionY")->value(), &sz);
+
+					auto enemy = enemyManager->getEnemy(beer_node->first_attribute("name")->value());
+					enemy->setPosition(glm::vec2(positionX, positionY));
+					enemy->addObserver(this);
+					enemies.push_back(std::move(enemy));
+				}
+				for (auto beer_node = brewery_node->first_node("Meteor"); beer_node; beer_node = beer_node->next_sibling("Meteor"))
+				{
+					float positionX = std::stof(beer_node->first_attribute("positionX")->value(), &sz);
+					float positionY = std::stof(beer_node->first_attribute("positionY")->value(), &sz);
+
+					auto meteor = std::make_shared<BaseGameObject>(32.0f, 32.0f, glm::vec2(positionX, positionY), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+					meteor->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node->first_attribute("name")->value()));
+					meteor->onDeath = [this, meteor]()
+					{
+						if ((rand() % 2) == 0) return;
+
+						auto pickup = pickupManager->getRandomPickup();
+						pickup->setPosition(meteor->getPosition());
+						pickups.push_back(std::move(pickup));
+					};
+					meteor->onCollision = [this, meteor](std::shared_ptr<BaseGameObject> collider)
+					{
+						meteor->setNeedsToBeRemoved(true);
+
+						auto entity = dynamic_cast<Entity*>(collider.get());
+
+						if (entity != nullptr && !entity->getNeedsToBeRemoved())
+						{
+							if (entity->getAddon("shield") != nullptr)
+								entity->getAddon("shield")->setNeedsToBeRemoved(true);
+							else
+								entity->setNeedsToBeRemoved(true);
+						}
+					};
+					meteors.push_back(std::move(meteor));
+				}
+			}
+			i++;
+		}
 	}
 
 	void Application::saveConfig()
@@ -466,7 +395,7 @@ namespace Engine
 
 		for (auto it = keyBindings->begin(); it != keyBindings->end(); it++)
 		{
-			keyBindings2.push_back(keyBinding(it->first, std::to_string(it->second)));
+			keyBindings2.push_back(std::move(keyBinding(it->first, std::to_string(it->second))));
 		}
 
 		for (auto it = keyBindings2.begin(); it != keyBindings2.end(); it++)
@@ -500,7 +429,8 @@ namespace Engine
 		Config->append_node(Fonts);
 
 		rapidxml::xml_node<>* Volume = doc.allocate_node(rapidxml::node_element, "Volume");
-		Volume->append_attribute(doc.allocate_attribute("value", std::to_string(soundEngine->getSoundVolume()).c_str()));
+		std::string vol = std::to_string(soundEngine->getSoundVolume());
+		Volume->append_attribute(doc.allocate_attribute("value", vol.c_str()));
 		Config->append_node(Volume);
 
 		std::ofstream file_stored("Config/config.xml");
@@ -544,7 +474,7 @@ namespace Engine
 			for (auto beer_node = brewery_node->first_node("Shader"); beer_node; beer_node = beer_node->next_sibling("Shader"))
 			{
 				std::string key = beer_node->first_attribute("key")->value();
-				renderer->addShader(key, std::make_shared<Shader>(key + ".vert", key + ".frag"));
+				renderer->addShader(key, std::move(std::make_shared<Shader>(key + ".vert", key + ".frag")));
 			}
 		}
 
@@ -556,15 +486,14 @@ namespace Engine
 
 	void Application::startNewLevel()
 	{
-		getPlayerUIElement("Level completed")->hideMain();
+		erasePlayerUIElement("Level completed");
+		currentLevel++;
+		initScene();
 	}
 
 	void Application::render()
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		auto listOfAllElements = std::vector<std::shared_ptr<UIElement>>();
-		auto listOfAllTexts = std::vector<std::shared_ptr<Text>>();
 
 		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -582,15 +511,10 @@ namespace Engine
 			{
 				inputManager->updatePlayerInput(player.get(), dt);
 				player->update(dt);
+			}
 
-				//for (auto it = enemies.begin(); it != enemies.end();)
-				//{
-				//	if ((*it)->update(dt, t))
-				//		removeEnemyFromList(&it);
-				//	else
-				//		it++;
-				//}
-
+			if (getState() != GameState::NOTSTARTEDYET && getState() != GameState::PAUSED)
+			{
 				for (auto it = enemies.begin(); it != enemies.end();)
 				{
 					if ((*it)->update(dt))
@@ -622,7 +546,10 @@ namespace Engine
 					else
 						++it;
 				}
+			}
 
+			if (getState() == GameState::STARTED)
+			{
 				//Collision detection
 				if (player->getPosition(0) + player->getSize(0) >= windowWidth)
 					player->setPosition(0, windowWidth - player->getSize(0));
@@ -655,76 +582,80 @@ namespace Engine
 				collisionManager->checkCollision(player, &meteors);
 				collisionManager->checkCollision(player, &enemies);
 				collisionManager->checkCollision(player, &pickups);
-
-				t += dt;
 			}
+
+			if (getState() == GameState::STARTED)
+				t += dt;
+
 			accumulator -= dt;
 		}
 
-		if (getState() == GameState::STARTED)
+		if (getState() != GameState::NOTSTARTEDYET && getState() != GameState::PAUSED)
 		{
-			//updatePlayerUI();
-
 			//Render background
-			renderer->draw(background);
+			background->draw(renderer);
 			//Render meteors
-			renderer->draw(meteors);
+			for (auto meteor : meteors)
+			{
+				meteor->draw(renderer);
+			}
 			//Render player
-			renderer->draw(player);
+			player->draw(renderer);
 			auto addons = player->getAddons();
 			for (auto it = addons->begin(); it != addons->end(); it++)
 			{
-				renderer->draw(it->second);
+				it->second->draw(renderer);
 			}
 			//Render enemies
 			for (auto it = enemies.begin(); it != enemies.end(); it++)
 			{
 				auto addons = (*it)->getAddons();
-				renderer->draw(*it);
+				(*it)->draw(renderer);
 				for (auto it2 = addons->begin(); it2 != addons->end(); it2++)
 				{
-					renderer->draw(it2->second);
+					it2->second->draw(renderer);
 				}
 			}
 			//Render pickups
-			renderer->draw(pickups);
+			for (auto pickup : pickups)
+			{
+				pickup->draw(renderer);
+			}
 			//Render explosions
-			renderer->draw(explosions);
+			for (auto explosion : explosions)
+			{
+				explosion->draw(renderer);
+			}
 			//Render bullets
 			for (auto it = enemies.begin(); it != enemies.end(); it++)
 			{
 				auto enemyBulletList = (*it)->getBulletsList();
-				renderer->draw(*enemyBulletList);
+				for (auto it2 = enemyBulletList->begin(); it2 != enemyBulletList->end(); it2++)
+				{
+					(*it2)->draw(renderer);
+				}
 			}
 
-			renderer->draw(*player->getBulletsList());
+			auto playerBulletList = player->getBulletsList();
+			for (auto it = playerBulletList->begin(); it != playerBulletList->end(); it++)
+			{
+				(*it)->draw(renderer);
+			}
 			//Render & Update player UI
 			for (auto uiElement : playerUI)
 			{
 				uiElement.second->update(dt);
-				listOfAllElements.push_back(uiElement.second);
-				uiElement.second->GetAllChildrenElements(&listOfAllElements);
-				uiElement.second->GetAllChildrenTexts(&listOfAllTexts);
+				uiElement.second->draw(renderer);
 			}
-
-			renderer->draw(listOfAllElements);
-			renderer->draw(listOfAllTexts);
-
-			listOfAllElements.clear();
-			listOfAllTexts.clear();
 		}
-
-		//Render & Update UI
-		for (auto uiElement : ui)
+		else if (getState() == GameState::NOTSTARTEDYET || getState() == GameState::PAUSED)
 		{
-			uiElement.second->update(dt);
-			listOfAllElements.push_back(uiElement.second);
-			uiElement.second->GetAllChildrenElements(&listOfAllElements);
-			uiElement.second->GetAllChildrenTexts(&listOfAllTexts);
+			for (auto uiElement : currentMenu->second)
+			{
+				uiElement->update(dt);
+				uiElement->draw(renderer);
+			}
 		}
-
-		renderer->draw(listOfAllElements);
-		renderer->draw(listOfAllTexts);
 
 		glutSwapBuffers();
 	}
@@ -733,8 +664,13 @@ namespace Engine
 	{
 		//const float ar = (float) width / (float) height;
 
-		for (auto uiElement : ui)
-			uiElement.second->fixPosition();
+		for (auto menu : gameMenu)
+		{
+			for (auto uiElement : menu->second)
+			{
+				uiElement->fixPosition();
+			}
+		}
 
 		for (auto uiElement : playerUI)
 			uiElement.second->fixPosition();
@@ -778,31 +714,23 @@ namespace Engine
 				{
 					if (getState() == GameState::ENDED)
 					{
-						currentMenu = getUIElement("Main Menu");
-						getUIElement("Game Over")->hideMain();
-						getUIElement("Main Menu")->showMain();
+						currentMenu = getMenu("Main Menu");
 						setState(GameState::NOTSTARTEDYET);
 					}
 					else if (getState() == GameState::PAUSED)
 					{
-						currentMenu = nullptr;
-						getUIElement("Pause Menu")->hideMain();
 						setState(GameState::STARTED);
 					}
 					else if (getState() == GameState::STARTED)
 					{
-						currentMenu = getUIElement("Pause Menu");
-						getUIElement("Pause Menu")->showMain(false);
+						currentMenu = getMenu("Pause Menu");
 						setState(GameState::PAUSED);
 					}
 					else if (getState() == GameState::NOTSTARTEDYET)
 					{
-						if (!inputManager->resetCurrentEditedKeyBinding() && currentMenu != nullptr && currentMenu->getParent() != nullptr)
+						if (!inputManager->resetCurrentEditedKeyBinding())
 						{
-							soundEngine->play2D("Sounds/buttonselect/6.wav", GL_FALSE);
-							currentMenu->hideMain();
-							currentMenu = currentMenu->getParent();
-							currentMenu->showMain();
+							currentMenu->second.back()->onMouseReleaseFunc();
 						}
 					}
 					break;
@@ -906,13 +834,15 @@ namespace Engine
 
 	void Application::motionFunc(int x, int y)
 	{
+		if (getState() != GameState::NOTSTARTEDYET && getState() != GameState::PAUSED) return;
+
 		glm::vec2 lastMousePosition = glm::vec2(x, y);
 		lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
 		lastMousePosition.y *= -1;
 
-		for (auto uiElement : ui)
+		for (auto uiElement : currentMenu->second)
 		{
-			uiElement.second->checkIfMouseHoverThis(lastMousePosition);
+			uiElement->checkIfMouseHoverThis(lastMousePosition);
 		}
 	}
 
@@ -928,9 +858,11 @@ namespace Engine
 			inputManager->setLeftMouseState(state == GLUT_DOWN ? true : false);
 			inputManager->setLastLeftMouseState(state == GLUT_DOWN ? false : true);
 
-			for (auto uiElement : ui)
+			if (getState() != GameState::NOTSTARTEDYET && getState() != GameState::PAUSED) return;
+
+			for (auto uiElement : currentMenu->second)
 			{
-				uiElement.second->checkForMouseClickOnThis(inputManager->getLeftMouseState(), inputManager->getLastLeftMouseState(), lastMousePosition);
+				uiElement->checkForMouseClickOnThis(inputManager->getLeftMouseState(), inputManager->getLastLeftMouseState(), lastMousePosition);
 			}
 		}
 		else if (button == GLUT_RIGHT_BUTTON)
@@ -962,18 +894,7 @@ namespace Engine
 		return szName;
 	}
 
-	std::shared_ptr<UIElement> Application::getUIElement(std::string index)
-	{
-		for (auto uiElement : ui)
-		{
-			if (uiElement.first == index)
-				return uiElement.second;
-		}
-
-		return nullptr;
-	}
-
-	std::shared_ptr<UIElement> Application::getPlayerUIElement(std::string index)
+	std::shared_ptr<UIElementBase> Application::getPlayerUIElement(std::string index)
 	{
 		for (auto uiElement : playerUI)
 		{
@@ -996,16 +917,14 @@ namespace Engine
 		}
 	}
 
-	float Application::randomFloat(float min, float max)
+	std::shared_ptr<menu> Application::getMenu(std::string index)
 	{
-		// this  function assumes max > min, you may want 
-		// more robust error checking for a non-debug build
-		assert(max > min);
-		float random = ((float)rand()) / (float)RAND_MAX;
+		for (auto _menu : gameMenu)
+		{
+			if (_menu->first == index)
+				return _menu;
+		}
 
-		// generate (in your case) a float between 0 and (4.5-.78)
-		// then add .78, giving you a float between .78 and 4.5
-		float range = max - min;
-		return (random*range) + min;
+		return nullptr;
 	}
 }

@@ -6,7 +6,7 @@ namespace Engine
 	class Timer
 	{
 		public:
-			template <class T>
+			template <typename T>
 			static void windowsTimer(const T& callback, unsigned int timeInMs)
 			{
 				concurrency::task_completion_event<void> tce;

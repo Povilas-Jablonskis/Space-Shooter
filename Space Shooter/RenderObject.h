@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "Animation.h"
+#include "Renderer.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -49,6 +50,7 @@ namespace Engine
 			float getSize(int) const;
 			virtual void updateAnimation(float);
 			void applyAnimation(std::shared_ptr<Animation>);
+			virtual void draw(std::shared_ptr<Renderer>);
 		protected:
 			size_t currentFrame;
 			bool animComplete;

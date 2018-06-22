@@ -1,0 +1,24 @@
+<Levels>
+	<Level>
+		<Enemy name="enemyBlue1" positionX="32.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="64.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="96.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="128.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="288.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="256.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="224.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="192.0f" positionY="400.0f"/>
+		<Meteor name="meteorBrown_med" positionX="320.0f" positionY="150.0f"/>
+	</Level>
+	<Level>
+		<Enemy name="enemyBlue1" positionX="32.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="64.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="96.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="128.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="288.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="256.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="224.0f" positionY="400.0f"/>
+		<Enemy name="enemyBlue1" positionX="192.0f" positionY="400.0f"/>
+		<Meteor name="meteorBrown_med" positionX="320.0f" positionY="150.0f"/>
+	</Level>
+</Levels>

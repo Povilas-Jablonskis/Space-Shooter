@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-	void PickupManager::loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<EffectManager> effectManager)
+	void PickupManager::loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<EffectManager> effectManager, irrklang::ISoundEngine* soundEngine)
 	{
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
@@ -20,14 +20,18 @@ namespace Engine
 		// Iterate over the brewerys
 		for (auto brewery_node = root_node->first_node("Pickup"); brewery_node; brewery_node = brewery_node->next_sibling("Pickup"))
 		{
+			std::string pickupSound = brewery_node->first_attribute("pickupSound")->value();
 			std::string name = brewery_node->first_attribute("name")->value();
 			auto spriteName = brewery_node->first_attribute("spriteName")->value();
 			auto sprite = spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName);
 			auto _pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 			_pickup->applyAnimation(sprite);
 			_pickup->effect = effectManager->getEffect(name);
-
-			pickups.push_back(pickup(name, std::move(_pickup)));
+			_pickup->onDeath = [soundEngine, pickupSound]()
+			{
+				soundEngine->play2D(pickupSound.c_str(), GL_FALSE);
+			};
+			pickups.push_back(std::move(pickup(name, std::move(_pickup))));
 		}
 	}
 
@@ -40,7 +44,7 @@ namespace Engine
 				auto _pickup = std::make_shared<Pickup>(*pickup.second);
 				_pickup->onCollision = [_pickup](std::shared_ptr<BaseGameObject> collider)
 				{
-					if(_pickup->effect(collider)) _pickup->setNeedsToBeDeleted(true);
+					if(_pickup->effect(collider)) _pickup->setNeedsToBeRemoved(true);
 				};
 				return _pickup;
 			}
@@ -54,7 +58,7 @@ namespace Engine
 		auto _pickup = std::make_shared<Pickup>(*pickups[randIndex].second);
 		_pickup->onCollision = [_pickup](std::shared_ptr<BaseGameObject> collider)
 		{
-			if (_pickup->effect(collider)) _pickup->setNeedsToBeDeleted(true);
+			if (_pickup->effect(collider)) _pickup->setNeedsToBeRemoved(true);
 		};
 		return _pickup;
 	}

@@ -18,7 +18,7 @@
 #include "EnemyManager.h"
 #include "EffectManager.h"
 
-#include "UIElement.h"
+#include "UIElementBase.h"
 #include "Player.h"
 #include "Enemy.h"
 #include "Explosion.h"
@@ -26,8 +26,8 @@
 
 namespace Engine
 {
-	typedef std::pair<std::string, std::shared_ptr<UIElement>> uiElement;
-	typedef std::pair<std::string, std::shared_ptr<UIElement>> uiPlayerElement;
+	typedef std::pair<std::string, std::shared_ptr<UIElementBase>> uiPlayerElement;
+	typedef std::pair<std::string, std::vector<std::shared_ptr<UIElementBase>>> menu;
 
 	class Application : public Observer
 	{
@@ -37,10 +37,13 @@ namespace Engine
 			std::string virtualKeyCodeToString(SHORT);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
-			void addEnemyToList(std::shared_ptr<Enemy> enemy) { enemies.push_back(enemy); };
 			void removeEnemyFromList(std::vector<std::shared_ptr<Enemy>>::iterator*);
 			void addExplosionToList(std::shared_ptr<Explosion> explosion) { explosions.push_back(explosion); };
-			void removeExplosionFromList(std::vector<std::shared_ptr<Explosion>>::iterator*);
+			inline std::shared_ptr<FontManager> getFontManager() { return fontManager; };
+			inline std::shared_ptr<InputManager> getInputManager() { return inputManager; };
+			std::shared_ptr<UIElementBase> getPlayerUIElement(std::string);
+			void erasePlayerUIElement(std::string);
+			std::shared_ptr<menu> getMenu(std::string);
 
 			void render();
 			void keyboardInputUp(unsigned char, int, int);
@@ -50,40 +53,35 @@ namespace Engine
 			void processMouseClick(int, int, int, int);
 			void specialKeyInput(int, int, int);
 			void specialKeyInputUp(int, int, int);
-		private:
-			std::shared_ptr<UIElement> getUIElement(std::string);
-			std::shared_ptr<UIElement> getPlayerUIElement(std::string);
-			void erasePlayerUIElement(std::string);
-
-			float randomFloat(float, float);
 
 			void saveConfig();
 			void loadConfig();
 			void startNewLevel();
-			void initPlayerUI();
-			void initSpriteSheets();
 			void updatePlayerHealth();
 			void updatePlayerScore();
+			void resetScene();
 			void initScene();
 			void initGameUI();
-
+		private:
 			irrklang::ISoundEngine* soundEngine;
 
 			std::shared_ptr<Player> player;
 			std::shared_ptr<UIElementBase> background;
-			std::shared_ptr<UIElement> currentMenu;
 
 			float t;
 			float dt;
 			float currentTime;
 			float accumulator;
 
+			int currentLevel;
+
 			std::vector<std::shared_ptr<BaseGameObject>> meteors;
 			std::vector<std::shared_ptr<BaseGameObject>> pickups;
 			std::vector<std::shared_ptr<Enemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;
-			std::vector<uiElement> ui;
 			std::vector<uiPlayerElement> playerUI;
+			std::vector<std::shared_ptr<menu>> gameMenu;
+			std::shared_ptr<menu> currentMenu;
 
 			std::shared_ptr<EffectManager> effectManager;
 			std::shared_ptr<EnemyManager> enemyManager;

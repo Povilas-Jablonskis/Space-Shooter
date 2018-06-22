@@ -10,4 +10,11 @@ namespace Engine
 			return true;
 		};
 	}
+
+	bool Pickup::update(float)
+	{
+		if (getNeedsToBeRemoved()) onDeath();
+
+		return getNeedsToBeRemoved();
+	}
 }

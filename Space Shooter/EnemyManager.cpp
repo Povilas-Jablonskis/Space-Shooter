@@ -29,15 +29,15 @@ namespace Engine
 			{
 				for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
 				{
-					_enemy->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node2->first_attribute("spriteName")->value()));
+					_enemy->addAnimation(beer_node2->first_attribute("name")->value(), std::move(spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node2->first_attribute("spriteName")->value())));
 				}
 				for (auto beer_node2 = beer_node->first_node("Animation"); beer_node2; beer_node2 = beer_node2->next_sibling("Animation"))
 				{
-					_enemy->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node2->first_attribute("animationName")->value()));
+					_enemy->addAnimation(beer_node2->first_attribute("name")->value(), std::move(spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node2->first_attribute("animationName")->value())));
 				}
 			}
 
-			enemies.push_back(enemy(brewery_node->first_attribute("name")->value(), std::move(_enemy)));
+			enemies.push_back(std::move(enemy(brewery_node->first_attribute("name")->value(), std::move(_enemy))));
 		}
 	}
 
@@ -46,11 +46,7 @@ namespace Engine
 		for (auto enemy : enemies)
 		{
 			if (enemy.first == index)
-			{
-				auto _enemy = std::make_shared<Enemy>(*enemy.second);
-				_enemy->setPosition(getRandomSpawnPoint());
-				return _enemy;
-			}
+				return std::make_shared<Enemy>(*enemy.second);
 		}
 
 		return nullptr;
@@ -59,52 +55,6 @@ namespace Engine
 	std::shared_ptr<Enemy> EnemyManager::getRandomEnemy()
 	{
 		int randIndex = rand() % enemies.size();
-		auto _enemy = std::make_shared<Enemy>(*enemies[randIndex].second);
-		_enemy->setPosition(getRandomSpawnPoint());
-		return _enemy;
-	}
-
-	glm::vec2 EnemyManager::getRandomSpawnPoint()
-	{
-		int rnd = rand() % spawnPoints.size();
-		auto spawnPoint = spawnPoints[rnd];
-		spawnPoints.erase(spawnPoints.begin() + rnd);
-		return spawnPoint;
-	}
-
-	glm::vec2 EnemyManager::getRandomMeteorSpawnPoint()
-	{
-		int rnd = rand() % meteorSpawnPoints.size();
-		auto spawnPoint = meteorSpawnPoints[rnd];
-		meteorSpawnPoints.erase(meteorSpawnPoints.begin() + rnd);
-		return spawnPoint;
-	}
-
-	void EnemyManager::generateRandomSpawnPoints()
-	{
-		spawnPoints.clear();
-		for (float x = 0.0f; x < ((float)glutGet(GLUT_WINDOW_WIDTH) - 32.0f);)
-		{
-			for (float y = 340.0f; y < ((float)glutGet(GLUT_WINDOW_HEIGHT) - 32.0f);)
-			{
-				spawnPoints.push_back(glm::vec2(x, y));
-				y += 64.0f;
-			}
-			x += 96.0f;
-		}
-	}
-
-	void EnemyManager::generateRandomMeteorSpawnPoints()
-	{
-		meteorSpawnPoints.clear();
-		for (float x = 0.0f; x < ((float)glutGet(GLUT_WINDOW_WIDTH) - 32.0f);)
-		{
-			for (float y = 100.0f; y < 300.0f;)
-			{
-				meteorSpawnPoints.push_back(glm::vec2(x, y));
-				y += 32.0f;
-			}
-			x += 32.0f;
-		}
+		return std::make_shared<Enemy>(*enemies[randIndex].second);
 	}
 }

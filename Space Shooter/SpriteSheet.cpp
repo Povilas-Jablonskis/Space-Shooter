@@ -26,7 +26,7 @@ namespace Engine
 		SOIL_free_image_data(image);
 		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 
-		sprites.push_back(sprite("wholeSpriteSheet", glm::vec4(width, height, width, height)));
+		sprites.push_back(std::move(sprite("wholeSpriteSheet", glm::vec4(width, height, width, height))));
 	}
 
 	void SpriteSheet::loadSpritesFromXml(const std::string& _path)
@@ -47,7 +47,7 @@ namespace Engine
 		for (auto brewery_node = root_node->first_node(); brewery_node; brewery_node = brewery_node->next_sibling())
 		{
 			auto animation = glm::vec4(atof(brewery_node->first_attribute("x")->value()), atof(brewery_node->first_attribute("y")->value()), atof(brewery_node->first_attribute("width")->value()), atof(brewery_node->first_attribute("height")->value()));
-			sprites.push_back(sprite(brewery_node->first_attribute("name")->value(), animation));
+			sprites.push_back(std::move(sprite(brewery_node->first_attribute("name")->value(), animation)));
 		}
 	}
 
@@ -114,7 +114,7 @@ namespace Engine
 			}
 		}
 
-		animations.push_back(animation(index, _animation));
+		animations.push_back(std::move(animation(index, _animation)));
 	}
 
 	void SpriteSheet::makeAnimation(const std::string& index, std::vector<glm::vec4> sprites)
@@ -132,7 +132,7 @@ namespace Engine
 			_animation->addSprite(sprite);
 		}
 
-		animations.push_back(animation(index, _animation));
+		animations.push_back(std::move(animation(index, _animation)));
 	}
 
 	std::shared_ptr<Animation> SpriteSheet::getAnimation(const std::string& index)

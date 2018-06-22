@@ -16,7 +16,6 @@ namespace Engine
 	{
 		public:
 			void addObserver(Observer*);
-			void removeObserver(Observer*);
 			void notify(ObserverEvent, std::map<std::string, BaseGameObject*>);
 		private:
 			std::vector<Observer*> observers;

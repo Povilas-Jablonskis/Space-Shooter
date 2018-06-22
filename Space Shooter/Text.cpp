@@ -91,43 +91,58 @@ namespace Engine
 				}
 			}
 
-			cachedCharacters.push_back(cachedCharacter
+			cachedCharacters.push_back(std::move(cachedCharacter
 			(
 				ch.TextureID,
 				std::move(vertices)
-			));
+			)));
 			position.x += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 
 		bbox[1] = position.x;
-		bbox[2] = position.y + (float)*std::max_element(std::begin(tempVector), std::end(tempVector));
+		bbox[2] = position.y + (tempVector.size() == 0 ? 0.0f : (float)*std::max_element(std::begin(tempVector), std::end(tempVector)));
 		position = lastPosition;
 	}
 
-	void Text::fixPosition(UIElementBase* parent)
+	void Text::fixPosition()
 	{
 		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
 
-		if (parent != nullptr)
-		{
-			if (positionPercents == glm::vec2(0.0f, 0.0f))
-			{
-				setPosition(0, parent->getPosition(0));
-				setPosition(1, parent->getPosition(1));
-			}
-			else
-			{
-				setPosition(0, parent->getPosition(0) + (parent->getSize(0) * (positionPercents.x / 100.0f)));
-				setPosition(1, parent->getPosition(1) + (parent->getSize(1) * (positionPercents.y / 100.0f)));
-			}
-		}
-		else
-		{
-			if (positionPercents == glm::vec2(0.0f, 0.0f))
-				return;
+		if (positionPercents == glm::vec2(0.0f, 0.0f))
+			return;
 
-			setPosition(0, temPos.x * (positionPercents.x / 100.0f));
-			setPosition(1, temPos.y * (positionPercents.y / 100.0f));
+		setPosition(0, temPos.x * (positionPercents.x / 100.0f));
+		setPosition(1, temPos.y * (positionPercents.y / 100.0f));
+	}
+
+	void Text::draw(std::shared_ptr<Renderer> renderer)
+	{
+		if (getColor(3) == 0.0f || getFont() == nullptr) return;
+		auto program = renderer->getShaderProgram("textshader");
+		int offsetLocation = glGetUniformLocation(program, "color");
+		int offsetLocation2 = glGetUniformLocation(program, "projection");
+		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
+		glBindVertexArray(renderer->getTextVAO());
+		glUseProgram(program);
+		if (getColor(3) == 0.0f || getFont() == nullptr) return;
+
+		glUniform4f(offsetLocation, getColor(0) / 255.0f, getColor(1) / 255.0f, getColor(2) / 255.0f, getColor(3));
+		glUniformMatrix4fv(offsetLocation2, 1, GL_FALSE, glm::value_ptr(projection));
+
+		auto cache = getCachedCharacters();
+
+		for (auto it = cache.begin(); it != cache.end(); it++)
+		{
+			// Render glyph texture over quad
+			glBindTexture(GL_TEXTURE_2D, it->first);
+			// Update content of VBO memory
+			glBindBuffer(GL_ARRAY_BUFFER, renderer->getTextVBO());
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it->second[0]);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			// Render quad
+			glDrawArrays(GL_TRIANGLES, 0, 6);
 		}
+		glUseProgram(0);
+		glBindVertexArray(0);
 	}
 }

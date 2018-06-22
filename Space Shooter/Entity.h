@@ -15,7 +15,7 @@ namespace Engine
 		public:
 			Entity(float, float, glm::vec2, glm::vec2, glm::vec4);
 			inline std::vector<std::shared_ptr<BaseGameObject>>* getBulletsList() { return &bullets; }
-			virtual void addBullet(std::shared_ptr<BaseGameObject>);
+			virtual void addBullet(std::shared_ptr<BaseGameObject>, glm::vec2);
 			inline void clearBullets() { bullets.clear(); }
 			inline float getDelayBetweenShootsTimer() const { return delayBetweenShootsTimer; }
 			inline void setDelayBetweenShootsTimer(float _delayBetweenShootsTimer) { delayBetweenShootsTimer = _delayBetweenShootsTimer; }
@@ -24,11 +24,13 @@ namespace Engine
 			inline std::vector<addon>* getAddons() { return &addons; }
 			std::shared_ptr<Addon> getAddon(std::string);
 			void addAddon(addon);
-			void removeAddon(std::string);
 			inline void setShootingSound(std::string _shootingSound) { shootingSound = _shootingSound; }
 			inline std::string getShootingSound() const { return shootingSound; }
+			inline void setShootingPosition(glm::vec2 _shootingPosition) { shootingPosition = _shootingPosition; }
+			inline glm::vec2 getShootingPosition() const { return shootingPosition; }
 			std::function<void(Entity*)> shootingMode;
 		private:
+			glm::vec2 shootingPosition;
 			std::string shootingSound;
 			std::vector<std::shared_ptr<BaseGameObject>> bullets;
 			std::vector<addon> addons;

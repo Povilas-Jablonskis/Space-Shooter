@@ -59,7 +59,7 @@ namespace Engine
 				return;
 		}
 
-		keyBindings.push_back(keybinding(key, value));
+		keyBindings.push_back(std::move(keybinding(key, value)));
 	}
 
 	int InputManager::getKeyBinding(const std::string& key)

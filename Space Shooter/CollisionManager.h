@@ -16,7 +16,7 @@ namespace Engine
 			{
 				for (auto it = colliderList->begin(); it != colliderList->end(); it++)
 				{
-					if ((*it)->getNeedsToBeDeleted()) continue;
+					if ((*it)->getNeedsToBeRemoved()) continue;
 					if (checkCollision(object, *it))
 					{
 						(*it)->onCollision(object);

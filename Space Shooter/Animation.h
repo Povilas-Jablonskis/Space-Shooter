@@ -12,7 +12,7 @@ namespace Engine
 	class Animation
 	{
 		public:
-			Animation(GLuint = 0, int = 0, int = 0);
+			Animation(GLuint, int, int);
 			inline void setDelay(float _delay) { delay = _delay; }
 			inline float getDelay() const { return delay; }
 			inline void setLoopStatus(bool _status) { loop = _status; }

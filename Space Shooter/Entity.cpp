@@ -3,34 +3,21 @@
 namespace Engine
 {
 	Entity::Entity(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_width, _height, _position, _velocity, _color), delayBetweenShootsTimer(0.0f)
+		: BaseGameObject(_width, _height, _position, _velocity, _color), shootingSound("Sounds/sfx_laser1.ogg"), delayBetweenShoots(0.0f), delayBetweenShootsTimer(0.0f), shootingPosition(glm::vec2(0.0f, 0.0f))
 	{
-		setDelayBetweenShoots(0.25f);
-		setShootingSound("Sounds/lasers/4.wav");
 		shootingMode = [](Entity* entity)
 		{
 
 		};
 	}
 
-	void Entity::addBullet(std::shared_ptr<BaseGameObject> bullet)
+	void Entity::addBullet(std::shared_ptr<BaseGameObject> bullet, glm::vec2 offset)
 	{ 
-		bullet->onCollision = [bullet](std::shared_ptr<BaseGameObject> collider)
-		{
-			bullet->setNeedsToBeDeleted(true);
+		auto params = std::map<std::string, BaseGameObject*>();
+		params["collider"] = this;
+		notify(ObserverEvent::BULLETSHOT, params);
 
-			auto entity = dynamic_cast<Entity*>(collider.get());
-			if (entity != nullptr && !entity->getNeedsToBeDeleted())
-			{
-				if (entity->getAddon("shield") != nullptr)
-					entity->removeAddon("shield");
-				else
-					entity->setNeedsToBeDeleted(true);
-			}
-			else
-				collider->setNeedsToBeDeleted(true);
-		};
-		bullets.push_back(bullet); 
+		bullets.push_back(std::move(bullet));
 	}
 
 	std::shared_ptr<Addon> Entity::getAddon(std::string index)
@@ -43,18 +30,6 @@ namespace Engine
 		return nullptr;
 	}
 
-	void Entity::removeAddon(std::string index)
-	{
-		for (auto it = addons.begin(); it != addons.end(); it++)
-		{
-			if (it->first == index)
-			{
-				addons.erase(it);
-				return;
-			}
-		}
-	}
-
 	void Entity::addAddon(addon _addon)
 	{
 		for (auto addon : addons)
@@ -63,6 +38,6 @@ namespace Engine
 		}
 
 		_addon.second->setPosition(getPosition() + _addon.second->getPositionOffset());
-		addons.push_back(_addon);
+		addons.push_back(std::move(_addon));
 	}
 }

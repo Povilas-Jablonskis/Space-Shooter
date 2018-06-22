@@ -22,10 +22,9 @@ namespace Engine
 	{
 		public:
 			UIElementBase(float, float, glm::vec2, glm::vec4, glm::vec2);
-			void initFuncs();
 			virtual void update(float);
 			inline void setIsStatic(bool _isStatic) { isStatic = _isStatic; }
-			virtual void fixPosition(UIElementBase* = nullptr);
+			virtual void fixPosition();
 			virtual bool checkIfCollides(glm::vec2);
 			virtual void checkIfMouseHoverThis(glm::vec2);
 			virtual bool checkForMouseClickOnThis(bool, bool, glm::vec2);

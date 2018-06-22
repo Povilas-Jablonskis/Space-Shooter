@@ -10,7 +10,7 @@ namespace Engine
 		public:
 			~Enemy();
 			Enemy(float, float, glm::vec2, glm::vec2, glm::vec4);
-			void addBullet(std::shared_ptr<BaseGameObject>);
+			void addBullet(std::shared_ptr<BaseGameObject>, glm::vec2);
 			bool update(float);
 	};
 }

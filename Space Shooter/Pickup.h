@@ -9,6 +9,7 @@ namespace Engine
 	{
 		public:
 			Pickup(float, float, glm::vec2, glm::vec2, glm::vec4);
+			bool update(float);
 			std::function<bool(std::shared_ptr<BaseGameObject>)> effect;
 	};
 }
