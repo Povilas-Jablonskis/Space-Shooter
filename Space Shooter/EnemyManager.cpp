@@ -37,6 +37,7 @@ namespace Engine
 				}
 			}
 
+			_enemy->setValue(std::stoi(brewery_node->first_attribute("value")->value()));
 			enemies.push_back(std::move(enemy(brewery_node->first_attribute("name")->value(), std::move(_enemy))));
 		}
 	}

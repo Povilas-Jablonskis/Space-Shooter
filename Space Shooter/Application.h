@@ -28,6 +28,7 @@ namespace Engine
 {
 	typedef std::pair<std::string, std::shared_ptr<UIElementBase>> uiPlayerElement;
 	typedef std::pair<std::string, std::vector<std::shared_ptr<UIElementBase>>> menu;
+	typedef std::pair<std::string, std::function<void()>> playerModel;
 
 	class Application : public Observer
 	{
@@ -41,8 +42,6 @@ namespace Engine
 			void addExplosionToList(std::shared_ptr<Explosion> explosion) { explosions.push_back(explosion); };
 			inline std::shared_ptr<FontManager> getFontManager() { return fontManager; };
 			inline std::shared_ptr<InputManager> getInputManager() { return inputManager; };
-			std::shared_ptr<UIElementBase> getPlayerUIElement(std::string);
-			void erasePlayerUIElement(std::string);
 			std::shared_ptr<menu> getMenu(std::string);
 
 			void render();
@@ -75,11 +74,16 @@ namespace Engine
 
 			int currentLevel;
 
+			int characterSelectionIndex;
+			std::vector<playerModel> playerModels;
+
 			std::vector<std::shared_ptr<BaseGameObject>> meteors;
 			std::vector<std::shared_ptr<BaseGameObject>> pickups;
 			std::vector<std::shared_ptr<Enemy>> enemies;
 			std::vector<std::shared_ptr<Explosion>> explosions;
-			std::vector<uiPlayerElement> playerUI;
+			std::vector<std::shared_ptr<UIElementBase>> playerHealth;
+			std::vector<std::shared_ptr<UIElementBase>> scoreBoard;
+			std::vector<uiPlayerElement> notifications;
 			std::vector<std::shared_ptr<menu>> gameMenu;
 			std::shared_ptr<menu> currentMenu;
 

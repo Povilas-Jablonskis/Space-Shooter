@@ -35,10 +35,13 @@ namespace Engine
 			std::function<void()> onDeath;
 			inline void setNeedsToBeRemoved(bool boolean) { needsToBeRemoved = boolean; };
 			inline bool getNeedsToBeRemoved() const { return needsToBeRemoved; }
+			inline int getValue() { return value; }
+			inline void setValue(int _value) { value = _value; }
 		protected:
 			bool needsToBeRemoved;
 			std::vector<animation> animations;
 			glm::vec2 velocity;
+			int value;
 	};
 }
 #endif

@@ -22,7 +22,6 @@ namespace Engine
 		{
 			needsToBeRemoved = false;
 			respawn();
-			return false;
 		}
 
 		BaseGameObject::updateAnimation(dt);
@@ -67,24 +66,16 @@ namespace Engine
 			notify(ObserverEvent::BULLETDESTROYED, params);
 
 			auto entity = dynamic_cast<Entity*>(collider.get());
+			setScore(getScore() + collider->getValue());
 			if (entity != nullptr && !entity->getNeedsToBeRemoved())
 			{
 				if (entity->getAddon("shield") != nullptr)
-				{
-					setScore(getScore() + 50);
 					entity->getAddon("shield")->setNeedsToBeRemoved(true);
-				}
 				else
-				{
-					setScore(getScore() + 100);
 					entity->setNeedsToBeRemoved(true);
-				}
 			}
 			else
-			{
-				setScore(getScore() + 100);
 				collider->setNeedsToBeRemoved(true);
-			}
 		};
 		Entity::addBullet(bullet, offset);
 	}
@@ -97,6 +88,6 @@ namespace Engine
 		else
 			notify(ObserverEvent::PLAYERDIED, std::map<std::string, BaseGameObject*>());
 		setVelocity(startVelocity);
-		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_X) / 2.0f, 0.0f));
+		setPosition(glm::vec2((float)glutGet(GLUT_WINDOW_WIDTH) / 2.0f, 0.0f));
 	}
 }

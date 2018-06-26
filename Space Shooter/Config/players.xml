@@ -1,0 +1,56 @@
+<Players>
+	<Player name="playerShip1_blue.png" spriteName="playerShip1_blue.png" healthIcon="playerLife1_blue.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserBlue04.png"/>
+			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+	<Player name="playerShip2_blue.png" spriteName="playerShip2_blue.png" healthIcon="playerLife2_blue.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserBlue05.png"/>
+			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+	<Player name="playerShip3_blue.png" spriteName="playerShip3_blue.png" healthIcon="playerLife3_blue.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserBlue14.png"/>
+			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+	<Player name="playerShip1_green.png" spriteName="playerShip1_green.png" healthIcon="playerLife1_green.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserGreen08.png"/>
+			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+	<Player name="playerShip2_green.png" spriteName="playerShip2_green.png" healthIcon="playerLife2_green.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserGreen09.png"/>
+			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+	<Player name="playerShip3_green.png" spriteName="playerShip3_green.png" healthIcon="playerLife3_green.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserGreen07.png"/>
+			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+	<Player name="playerShip1_red.png" spriteName="playerShip1_red.png" healthIcon="playerLife1_red.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserRed04.png"/>
+			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+	<Player name="playerShip2_red.png" spriteName="playerShip2_red.png" healthIcon="playerLife2_red.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserRed05.png"/>
+			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+	<Player name="playerShip3_red.png" spriteName="playerShip3_red.png" healthIcon="playerLife3_red.png">
+		<Animations>
+			<Sprite name="shoot" spriteName="laserRed14.png"/>
+			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
+		</Animations>
+	</Player>
+</Players>
