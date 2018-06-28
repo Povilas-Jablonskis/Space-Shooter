@@ -17,8 +17,6 @@ namespace Engine
 		dt = 1.0f / 60.0f;
 		t = 0.0f;
 
-		currentLevel = 0;
-
 		srand((int)time(NULL));
 
 		onNotify = [this](ObserverEvent _event, std::map<std::string, BaseGameObject*> params)
@@ -53,59 +51,12 @@ namespace Engine
 				case PLAYERDIED:
 				{
 					soundEngine->play2D("Sounds/sfx_lose.ogg", GL_FALSE);
+					break;
 				}
 			}
 		};
 
-		rapidxml::xml_document<> doc;
-		rapidxml::xml_node<> * root_node;
-		// Read the xml file into a vector
-		std::ifstream theFile("Config/players.xml");
-		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
-		buffer.push_back('\0');
-		// Parse the buffer using the xml file parsing library into doc 
-		doc.parse<0>(&buffer[0]);
-		// Find our root node
-		root_node = doc.first_node("Players");
-		// Iterate over the brewerys
-		for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->next_sibling("Player"))
-		{
-			std::string healthIcon = std::string(brewery_node->first_attribute("healthIcon")->value());
-			std::string spriteName = std::string(brewery_node->first_attribute("spriteName")->value());
-			std::map<std::string, std::string> sprites;
-			std::map<std::string, std::string> animations;
-
-			for (auto beer_node = brewery_node->first_node("Animations"); beer_node; beer_node = beer_node->next_sibling("Animations"))
-			{
-				for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
-				{
-					sprites.insert(std::pair<std::string, std::string>(beer_node2->first_attribute("name")->value(), beer_node2->first_attribute("spriteName")->value()));
-				}
-
-				for (auto beer_node2 = beer_node->first_node("Animation"); beer_node2; beer_node2 = beer_node2->next_sibling("Animation"))
-				{
-					animations.insert(std::pair<std::string, std::string>(beer_node2->first_attribute("name")->value(), beer_node2->first_attribute("animationName")->value()));
-				}
-			}
-
-			auto _effect = [this, sprites, spriteName, animations, healthIcon]()
-			{
-				for (auto sprite : sprites)
-				{
-					player->addAnimation(sprite.first, std::move(spriteSheetManager->getSpriteSheet("main")->getSprite(sprite.second)));
-				}
-
-				for (auto animation : animations)
-				{
-					player->addAnimation(animation.first, std::move(spriteSheetManager->getSpriteSheet("main")->getAnimation(animation.second)));
-				}
-
-				player->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName));
-				player->setHealthIcon(healthIcon);
-			};
-			playerModels.push_back(std::move(playerModel(std::string(brewery_node->first_attribute("name")->value()), std::move(_effect))));
-		}
-
+		loadPlayerModels();
 		loadConfig();
 		spriteSheetManager->loadSpriteSheetsFromConfig();
 		effectManager->loadEffectsFromConfig(spriteSheetManager, soundEngine);
@@ -119,7 +70,7 @@ namespace Engine
 
 	Application::~Application()
 	{
-		enemies.clear();
+		enemiesColumns.clear();
 		explosions.clear();
 		notifications.clear();
 		scoreBoard.clear();
@@ -128,21 +79,6 @@ namespace Engine
 		meteors.clear();
 
 		saveConfig();
-	}
-
-	void Application::removeEnemyFromList(std::vector<std::shared_ptr<Enemy>>::iterator* it)
-	{
-		if (*it != enemies.end())
-			*it = enemies.erase(*it);
-
-		if (enemies.size() == 0)
-		{
-			Timer::windowsTimer([this]{ startNewLevel(); }, 2000);
-
-			auto option = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
-			option->setIsStatic(true);
-			notifications.push_back(std::move(uiPlayerElement("Level completed", option)));
-		}
 	}
 
 	void Application::updatePlayerHealth()
@@ -180,7 +116,7 @@ namespace Engine
 	void Application::resetScene()
 	{
 		explosions.clear();
-		enemies.clear();
+		enemiesColumns.clear();
 		pickups.clear();
 		meteors.clear();
 		notifications.clear();
@@ -199,6 +135,8 @@ namespace Engine
 		};
 		playerModels[characterSelectionIndex].second();
 		player->addObserver(this);
+
+		currentLevel = 0;
 
 		initScene();
 		updatePlayerHealth();
@@ -255,7 +193,7 @@ namespace Engine
 			setState(GameState::NOTSTARTEDYET);
 		};
 		pauseMenu->second.push_back(std::move(option));
-		option = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(48.0f, 55.0f));
+		option = std::make_shared<Text>("End Game", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(45.0f, 55.0f));
 		option->onMouseReleaseFunc = [this]()
 		{
 			#if _DEBUG
@@ -423,7 +361,7 @@ namespace Engine
 		currentMenu = getMenu("Main Menu");
 	}
 
-	void Application::initScene()
+	bool Application::initScene()
 	{
 		size_t i = 0;
 		rapidxml::xml_document<> doc;
@@ -442,15 +380,21 @@ namespace Engine
 			if (i == currentLevel)
 			{
 				std::string::size_type sz;
-				for (auto beer_node = brewery_node->first_node("Enemy"); beer_node; beer_node = beer_node->next_sibling("Enemy"))
+				for (auto beer_node = brewery_node->first_node("Column"); beer_node; beer_node = beer_node->next_sibling("Column"))
 				{
-					float positionX = std::stof(beer_node->first_attribute("positionX")->value(), &sz);
-					float positionY = std::stof(beer_node->first_attribute("positionY")->value(), &sz);
+					auto enemyColumn = std::make_shared<EnemyColumn>(glm::vec2(std::stof(beer_node->first_attribute("maxPositionX")->value(), &sz), std::stof(beer_node->first_attribute("maxPositionY")->value(), &sz)));
+					for (auto beer_node2 = beer_node->first_node("Enemy"); beer_node2; beer_node2 = beer_node2->next_sibling("Enemy"))
+					{
+						float positionX = std::stof(beer_node2->first_attribute("positionX")->value(), &sz);
+						float positionY = std::stof(beer_node2->first_attribute("positionY")->value(), &sz);
 
-					auto enemy = enemyManager->getEnemy(beer_node->first_attribute("name")->value());
-					enemy->setPosition(glm::vec2(positionX, positionY));
-					enemy->addObserver(this);
-					enemies.push_back(std::move(enemy));
+						auto enemy = enemyManager->getEnemy(beer_node2->first_attribute("name")->value());
+						enemy->setPosition(glm::vec2(positionX, positionY));
+						enemy->setVelocity(glm::vec2(std::stof(beer_node->first_attribute("velocityX")->value(), &sz), std::stof(beer_node->first_attribute("velocityY")->value(), &sz)));
+						enemy->addObserver(this);
+						enemyColumn->addEnemy(std::move(enemy));
+					}
+					enemiesColumns.push_back(std::move(enemyColumn));
 				}
 				for (auto beer_node = brewery_node->first_node("Meteor"); beer_node; beer_node = beer_node->next_sibling("Meteor"))
 				{
@@ -484,8 +428,62 @@ namespace Engine
 					meteor->setValue(100);
 					meteors.push_back(std::move(meteor));
 				}
+				return true;
 			}
 			i++;
+		}
+		return false;
+	}
+
+	void Application::loadPlayerModels()
+	{
+		rapidxml::xml_document<> doc;
+		rapidxml::xml_node<> * root_node;
+		// Read the xml file into a vector
+		std::ifstream theFile("Config/players.xml");
+		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
+		buffer.push_back('\0');
+		// Parse the buffer using the xml file parsing library into doc 
+		doc.parse<0>(&buffer[0]);
+		// Find our root node
+		root_node = doc.first_node("Players");
+		// Iterate over the brewerys
+		for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->next_sibling("Player"))
+		{
+			std::string healthIcon = std::string(brewery_node->first_attribute("healthIcon")->value());
+			std::string spriteName = std::string(brewery_node->first_attribute("spriteName")->value());
+			std::map<std::string, std::string> sprites;
+			std::map<std::string, std::string> animations;
+
+			for (auto beer_node = brewery_node->first_node("Animations"); beer_node; beer_node = beer_node->next_sibling("Animations"))
+			{
+				for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
+				{
+					sprites.insert(std::pair<std::string, std::string>(beer_node2->first_attribute("name")->value(), beer_node2->first_attribute("spriteName")->value()));
+				}
+
+				for (auto beer_node2 = beer_node->first_node("Animation"); beer_node2; beer_node2 = beer_node2->next_sibling("Animation"))
+				{
+					animations.insert(std::pair<std::string, std::string>(beer_node2->first_attribute("name")->value(), beer_node2->first_attribute("animationName")->value()));
+				}
+			}
+
+			auto _effect = [this, sprites, spriteName, animations, healthIcon]()
+			{
+				for (auto sprite : sprites)
+				{
+					player->addAnimation(sprite.first, std::move(spriteSheetManager->getSpriteSheet("main")->getSprite(sprite.second)));
+				}
+
+				for (auto animation : animations)
+				{
+					player->addAnimation(animation.first, std::move(spriteSheetManager->getSpriteSheet("main")->getAnimation(animation.second)));
+				}
+
+				player->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName));
+				player->setHealthIcon(healthIcon);
+			};
+			playerModels.push_back(std::move(playerModel(std::string(brewery_node->first_attribute("name")->value()), std::move(_effect))));
 		}
 	}
 
@@ -599,7 +597,7 @@ namespace Engine
 	{
 		notifications.clear();
 		currentLevel++;
-		initScene();
+		if (!initScene()) player->onDeath();
 	}
 
 	void Application::render()
@@ -626,12 +624,22 @@ namespace Engine
 
 			if (getState() != GameState::NOTSTARTEDYET && getState() != GameState::PAUSED)
 			{
-				for (auto it = enemies.begin(); it != enemies.end();)
+				for (auto it = enemiesColumns.begin(); it != enemiesColumns.end();)
 				{
 					if ((*it)->update(dt))
-						removeEnemyFromList(&it);
+					{
+						it = enemiesColumns.erase(it);
+						if (enemiesColumns.size() == 0)
+						{
+							Timer::windowsTimer([this] { startNewLevel(); }, 2000);
+
+							auto option = std::make_shared<Text>("Level completed!", 32, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(40.0f, 55.0f));
+							option->setIsStatic(true);
+							notifications.push_back(std::move(uiPlayerElement("Level completed", option)));
+						}
+					}
 					else
-						it++;
+						++it;
 				}
 
 				for (auto it = explosions.begin(); it != explosions.end();)
@@ -672,16 +680,20 @@ namespace Engine
 				else if (player->getPosition(1) <= 0.0f)
 					player->setPosition(1, 0.0f);
 
-				for (auto it = enemies.begin(); it != enemies.end(); it++)
+				for (size_t i = 0; i < enemiesColumns.size(); i++)
 				{
-					auto playerBulletList = player->getBulletsList();
-					auto enemyBulletList = (*it)->getBulletsList();
-					for (auto it2 = playerBulletList->begin(); it2 != playerBulletList->end(); it2++)
+					auto enemies = enemiesColumns[i]->getEnemies();
+					for (auto it = enemies->begin(); it != enemies->end(); it++)
 					{
-						collisionManager->checkCollision(*it2, enemyBulletList, *it);
+						auto playerBulletList = player->getBulletsList();
+						auto enemyBulletList = (*it)->getBulletsList();
+						for (auto it2 = playerBulletList->begin(); it2 != playerBulletList->end(); it2++)
+						{
+							collisionManager->checkCollision(*it2, enemyBulletList, *it);
+						}
+						collisionManager->checkCollision(player, (*it)->getBulletsList(), *it);
+						collisionManager->checkCollision(*it, playerBulletList, player);
 					}
-					collisionManager->checkCollision(player, (*it)->getBulletsList(), *it);
-					collisionManager->checkCollision(*it, playerBulletList, player);
 				}
 
 				for (auto it = meteors.begin(); it != meteors.end(); it++)
@@ -691,7 +703,11 @@ namespace Engine
 				}
 
 				collisionManager->checkCollision(player, &meteors);
-				collisionManager->checkCollision(player, &enemies);
+				for (size_t i = 0; i < enemiesColumns.size(); i++)
+				{
+					auto enemies = enemiesColumns[i]->getEnemies();
+					collisionManager->checkCollision(player, enemies);
+				}
 				collisionManager->checkCollision(player, &pickups);
 			}
 
@@ -718,13 +734,17 @@ namespace Engine
 				it->second->draw(renderer);
 			}
 			//Render enemies
-			for (auto it = enemies.begin(); it != enemies.end(); it++)
+			for (size_t i = 0; i < enemiesColumns.size(); i++)
 			{
-				auto addons = (*it)->getAddons();
-				(*it)->draw(renderer);
-				for (auto it2 = addons->begin(); it2 != addons->end(); it2++)
+				auto enemies = enemiesColumns[i]->getEnemies();
+				for (auto it = enemies->begin(); it != enemies->end(); it++)
 				{
-					it2->second->draw(renderer);
+					auto addons = (*it)->getAddons();
+					(*it)->draw(renderer);
+					for (auto it2 = addons->begin(); it2 != addons->end(); it2++)
+					{
+						it2->second->draw(renderer);
+					}
 				}
 			}
 			//Render pickups
@@ -738,12 +758,16 @@ namespace Engine
 				explosion->draw(renderer);
 			}
 			//Render bullets
-			for (auto it = enemies.begin(); it != enemies.end(); it++)
+			for (size_t i = 0; i < enemiesColumns.size(); i++)
 			{
-				auto enemyBulletList = (*it)->getBulletsList();
-				for (auto it2 = enemyBulletList->begin(); it2 != enemyBulletList->end(); it2++)
+				auto enemies = enemiesColumns[i]->getEnemies();
+				for (auto it = enemies->begin(); it != enemies->end(); it++)
 				{
-					(*it2)->draw(renderer);
+					auto enemyBulletList = (*it)->getBulletsList();
+					for (auto it2 = enemyBulletList->begin(); it2 != enemyBulletList->end(); it2++)
+					{
+						(*it2)->draw(renderer);
+					}
 				}
 			}
 

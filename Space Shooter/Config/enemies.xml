@@ -1,89 +1,89 @@
 <Enemies>
-	<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" shootingMode="defaultShooting" value="100">
+	<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" shootingMode="defaultShooting" delayBetweenShoots="1.0" value="100">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserBlue04.png"/>
 			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" shootingMode="doubleShooting" value="150">
+	<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" shootingMode="doubleShooting" delayBetweenShoots="2.0" value="150">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserBlue05.png"/>
 			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyBlue3" spriteName="enemyBlue3.png" shootingMode="doubleShooting" value="200">
+	<Enemy name="enemyBlue3" spriteName="enemyBlue3.png" shootingMode="doubleShooting" delayBetweenShoots="2.0" value="200">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserBlue14.png"/>
 			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyBlue4" spriteName="enemyBlue4.png" shootingMode="halfCircleShooting" value="100">
+	<Enemy name="enemyBlue4" spriteName="enemyBlue4.png" shootingMode="halfCircleShooting" delayBetweenShoots="2.0" value="100">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserBlue15.png"/>
 			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyBlue5" spriteName="enemyBlue5.png" shootingMode="defaultShooting" value="150">
+	<Enemy name="enemyBlue5" spriteName="enemyBlue5.png" shootingMode="defaultShooting" delayBetweenShoots="1.0" value="150">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserBlue15.png"/>
 			<Animation name="explosion" animationName="blueExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyGreen1" spriteName="enemyGreen1.png" shootingMode="defaultShooting" value="200">
+	<Enemy name="enemyGreen1" spriteName="enemyGreen1.png" shootingMode="defaultShooting" delayBetweenShoots="1.0" value="200">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserGreen08.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyGreen2" spriteName="enemyGreen2.png" shootingMode="doubleShooting" value="100">
+	<Enemy name="enemyGreen2" spriteName="enemyGreen2.png" shootingMode="doubleShooting" delayBetweenShoots="2.0" value="100">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserGreen09.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyGreen3" spriteName="enemyGreen3.png" shootingMode="doubleShooting" value="150">
+	<Enemy name="enemyGreen3" spriteName="enemyGreen3.png" shootingMode="doubleShooting" delayBetweenShoots="2.0" value="150">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserGreen06.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyGreen4" spriteName="enemyGreen4.png" shootingMode="halfCircleShooting" value="200">
+	<Enemy name="enemyGreen4" spriteName="enemyGreen4.png" shootingMode="halfCircleShooting" delayBetweenShoots="2.0" value="200">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserGreen07.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyGreen5" spriteName="enemyGreen5.png" shootingMode="defaultShooting" value="100">
+	<Enemy name="enemyGreen5" spriteName="enemyGreen5.png" shootingMode="defaultShooting" delayBetweenShoots="1.0" value="100">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserGreen07.png"/>
 			<Animation name="explosion" animationName="greenExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyRed1" spriteName="enemyRed1.png" shootingMode="defaultShooting" value="150">
+	<Enemy name="enemyRed1" spriteName="enemyRed1.png" shootingMode="defaultShooting" delayBetweenShoots="1.0" value="150">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserRed14.png"/>
 			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyRed2" spriteName="enemyRed2.png" shootingMode="doubleShooting" value="200">
+	<Enemy name="enemyRed2" spriteName="enemyRed2.png" shootingMode="doubleShooting" delayBetweenShoots="2.0" value="200">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserRed15.png"/>
 			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyRed3" spriteName="enemyRed3.png" shootingMode="doubleShooting" value="100">
+	<Enemy name="enemyRed3" spriteName="enemyRed3.png" shootingMode="doubleShooting" delayBetweenShoots="2.0" value="100">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserRed04.png"/>
 			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyRed4" spriteName="enemyRed4.png" shootingMode="halfCircleShooting" value="150">
+	<Enemy name="enemyRed4" spriteName="enemyRed4.png" shootingMode="halfCircleShooting" delayBetweenShoots="2.0" value="150">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserRed05.png"/>
 			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>
 		</Animations>
 	</Enemy>
-	<Enemy name="enemyRed5" spriteName="enemyRed5.png" shootingMode="defaultShooting" value="200">
+	<Enemy name="enemyRed5" spriteName="enemyRed5.png" shootingMode="defaultShooting" delayBetweenShoots="1.0" value="200">
 		<Animations>
 			<Sprite name="shoot" spriteName="laserRed05.png"/>
 			<Animation name="explosion" animationName="redExplosionSpriteSheet"/>

@@ -20,7 +20,7 @@
 
 #include "UIElementBase.h"
 #include "Player.h"
-#include "Enemy.h"
+#include "EnemyColumn.h"
 #include "Explosion.h"
 #include "Observer.h"
 
@@ -38,7 +38,6 @@ namespace Engine
 			std::string virtualKeyCodeToString(SHORT);
 			inline GameState getState() const { return gameState; }
 			inline void setState(GameState state) { gameState = state; }
-			void removeEnemyFromList(std::vector<std::shared_ptr<Enemy>>::iterator*);
 			void addExplosionToList(std::shared_ptr<Explosion> explosion) { explosions.push_back(explosion); };
 			inline std::shared_ptr<FontManager> getFontManager() { return fontManager; };
 			inline std::shared_ptr<InputManager> getInputManager() { return inputManager; };
@@ -53,13 +52,14 @@ namespace Engine
 			void specialKeyInput(int, int, int);
 			void specialKeyInputUp(int, int, int);
 
+			void loadPlayerModels();
 			void saveConfig();
 			void loadConfig();
 			void startNewLevel();
 			void updatePlayerHealth();
 			void updatePlayerScore();
 			void resetScene();
-			void initScene();
+			bool initScene();
 			void initGameUI();
 		private:
 			irrklang::ISoundEngine* soundEngine;
@@ -74,12 +74,12 @@ namespace Engine
 
 			int currentLevel;
 
-			int characterSelectionIndex;
+			size_t characterSelectionIndex;
 			std::vector<playerModel> playerModels;
 
 			std::vector<std::shared_ptr<BaseGameObject>> meteors;
 			std::vector<std::shared_ptr<BaseGameObject>> pickups;
-			std::vector<std::shared_ptr<Enemy>> enemies;
+			std::vector<std::shared_ptr<EnemyColumn>> enemiesColumns;
 			std::vector<std::shared_ptr<Explosion>> explosions;
 			std::vector<std::shared_ptr<UIElementBase>> playerHealth;
 			std::vector<std::shared_ptr<UIElementBase>> scoreBoard;
