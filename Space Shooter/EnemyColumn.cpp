@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-	EnemyColumn::EnemyColumn(glm::vec2 _maxPosition) : maxPosition(_maxPosition)
+	EnemyColumn::EnemyColumn(glm::vec2 _minPosition, glm::vec2 _maxPosition) : minPosition(_minPosition), maxPosition(_maxPosition)
 	{
 
 	}
@@ -19,52 +19,29 @@ namespace Engine
 
 		if (enemies.size() > 0)
 		{
-			float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-			float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 			auto first = enemies.front();
 			auto last = enemies.back();
 
-			if (last->getPosition(0) + last->getSize(0) >= windowWidth)
+			// Collision x-axis?
+			bool collisionX = first->getPosition(0) > minPosition.x &&
+				maxPosition.x >= last->getPosition(0) + last->getSize(0);
+			// Collision y-axis?
+			bool collisionY = last->getPosition(1) > maxPosition.y &&
+				minPosition.y >= last->getPosition(1) + last->getSize(1);
+
+			if (!collisionY)
 			{
 				for (auto it = enemies.begin(); it != enemies.end(); it++)
 				{
-					(*it)->setVelocity(0, (*it)->getVelocity().x * -1.0f);
-				}
-			}
-			else if (last->getPosition(0) + last->getSize(0) >= maxPosition.x)
-			{
-				for (auto it = enemies.begin(); it != enemies.end(); it++)
-				{
-					(*it)->setVelocity(0, (*it)->getVelocity().x * -1.0f);
-				}
-			}
-			else if (first->getPosition(0) <= 0.0f)
-			{
-				for (auto it = enemies.begin(); it != enemies.end(); it++)
-				{
-					(*it)->setVelocity(0, (*it)->getVelocity().x * -1.0f);
+					(*it)->setVelocity(1, (*it)->getVelocity().y * -1.0f);
 				}
 			}
 
-			if (first->getPosition(1) + first->getSize(1) >= windowHeigth)
+			if (!collisionX)
 			{
 				for (auto it = enemies.begin(); it != enemies.end(); it++)
 				{
-					(*it)->setVelocity(1, (*it)->getVelocity().y * -1.0f);
-				}
-			}
-			else if (first->getPosition(1) + first->getSize(1) <= maxPosition.y)
-			{
-				for (auto it = enemies.begin(); it != enemies.end(); it++)
-				{
-					(*it)->setVelocity(1, (*it)->getVelocity().y * -1.0f);
-				}
-			}
-			else if (first->getPosition(1) <= 0.0f)
-			{
-				for (auto it = enemies.begin(); it != enemies.end(); it++)
-				{
-					(*it)->setVelocity(1, (*it)->getVelocity().y * -1.0f);
+					(*it)->setVelocity(0, (*it)->getVelocity().x * -1.0f);
 				}
 			}
 		}

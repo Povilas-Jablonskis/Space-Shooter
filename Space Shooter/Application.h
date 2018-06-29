@@ -74,7 +74,7 @@ namespace Engine
 
 			int currentLevel;
 
-			size_t characterSelectionIndex;
+			int characterSelectionIndex;
 			std::vector<playerModel> playerModels;
 
 			std::vector<std::shared_ptr<BaseGameObject>> meteors;

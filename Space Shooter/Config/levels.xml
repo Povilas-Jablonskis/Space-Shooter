@@ -1,12 +1,12 @@
 <Levels>
 	<Level>
-		<Column maxPositionX="320.0f" maxPositionY="300.0f" velocityX="-100.0f" velocityY="-50.0f">
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="320.0f" maxPositionY="300.0f" velocityX="-100.0f" velocityY="-50.0f">
 			<Enemy name="enemyBlue1" positionX="32.0f" positionY="400.0f"/>
 			<Enemy name="enemyBlue1" positionX="96.0f" positionY="400.0f"/>
 			<Enemy name="enemyBlue1" positionX="160.0f" positionY="400.0f"/>
 			<Enemy name="enemyBlue1" positionX="224.0f" positionY="400.0f"/>
 		</Column>
-		<Column maxPositionX="640.0f" maxPositionY="300.0f" velocityX="100.0f" velocityY="50.0f">
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="640.0f" maxPositionY="300.0f" velocityX="100.0f" velocityY="50.0f">
 			<Enemy name="enemyBlue2" positionX="288.0f" positionY="336.0f"/>
 			<Enemy name="enemyBlue2" positionX="352.0f" positionY="336.0f"/>
 			<Enemy name="enemyBlue2" positionX="416.0f" positionY="336.0f"/>
@@ -16,11 +16,11 @@
 		<Meteor name="meteorBrown_med" positionX="256.0f" positionY="150.0f"/>
 	</Level>
 	<Level>
-		<Column maxPositionX="320.0f" maxPositionY="300.0f" velocityX="-100.0f" velocityY="-50.0f">
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="320.0f" maxPositionY="300.0f" velocityX="-100.0f" velocityY="-50.0f">
 			<Enemy name="enemyGreen2" positionX="32.0f" positionY="400.0f"/>
 			<Enemy name="enemyRed2" positionX="96.0f" positionY="400.0f"/>
 		</Column>
-		<Column maxPositionX="640.0f" maxPositionY="300.0f" velocityX="100.0f" velocityY="50.0f">
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="640.0f" maxPositionY="300.0f" velocityX="100.0f" velocityY="50.0f">
 			<Enemy name="enemyBlue2" positionX="192.0f" positionY="336.0f"/>
 			<Enemy name="enemyBlue1" positionX="224.0f" positionY="336.0f"/>
 			<Enemy name="enemyBlue2" positionX="256.0f" positionY="336.0f"/>

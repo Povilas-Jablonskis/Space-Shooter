@@ -23,6 +23,10 @@
 			<Sprite name="shield2.png"/>
 			<Sprite name="shield3.png"/>
 		</Sprites>
+		<Sprites name="exhaustSpriteSheet" loop="1" delay="0.15">
+			<Sprite name="fire02.png"/>
+			<Sprite name="fire03.png"/>
+		</Sprites>
 		<Sprites name="meteorBrown_med" loop="1" delay="0.15">
 			<Sprite name="meteorBrown_med1.png"/>
 			<Sprite name="meteorBrown_med3.png"/>

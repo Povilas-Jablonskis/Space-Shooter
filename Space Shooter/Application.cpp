@@ -338,7 +338,7 @@ namespace Engine
 		{
 			soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
 
-			currentMenu = getMenu("Options");
+			currentMenu = getMenu("Main Menu");
 		};
 		characterSelection->second.push_back(std::move(option));
 		option = std::make_shared<Text>("Start", 18, glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), fontManager->getFont("kenvector_future_thin"), glm::vec2(29.0f, 20.0f));
@@ -382,7 +382,7 @@ namespace Engine
 				std::string::size_type sz;
 				for (auto beer_node = brewery_node->first_node("Column"); beer_node; beer_node = beer_node->next_sibling("Column"))
 				{
-					auto enemyColumn = std::make_shared<EnemyColumn>(glm::vec2(std::stof(beer_node->first_attribute("maxPositionX")->value(), &sz), std::stof(beer_node->first_attribute("maxPositionY")->value(), &sz)));
+					auto enemyColumn = std::make_shared<EnemyColumn>(glm::vec2(std::stof(beer_node->first_attribute("minPositionX")->value(), &sz), std::stof(beer_node->first_attribute("minPositionY")->value(), &sz)), glm::vec2(std::stof(beer_node->first_attribute("maxPositionX")->value(), &sz), std::stof(beer_node->first_attribute("maxPositionY")->value(), &sz)));
 					for (auto beer_node2 = beer_node->first_node("Enemy"); beer_node2; beer_node2 = beer_node2->next_sibling("Enemy"))
 					{
 						float positionX = std::stof(beer_node2->first_attribute("positionX")->value(), &sz);
@@ -481,6 +481,13 @@ namespace Engine
 				}
 
 				player->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName));
+				auto shield = std::make_shared<Addon>(5.0f, 12.0f, glm::vec2(5.0f, -14.0f));
+				shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("exhaustSpriteSheet"));
+				player->addAddon(std::move(addon("exhaust", std::move(shield))));
+
+				shield = std::make_shared<Addon>(5.0f, 12.0f, glm::vec2(20.0f, -14.0f));
+				shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("exhaustSpriteSheet"));
+				player->addAddon(std::move(addon("exhaust2", std::move(shield))));
 				player->setHealthIcon(healthIcon);
 			};
 			playerModels.push_back(std::move(playerModel(std::string(brewery_node->first_attribute("name")->value()), std::move(_effect))));
