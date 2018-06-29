@@ -27,4 +27,37 @@
 			<Enemy name="enemyBlue1" positionX="288.0f" positionY="336.0f"/>
 		</Column>
 	</Level>
+	<Level>
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="640.0f" maxPositionY="300.0f" velocityX="100.0f" velocityY="50.0f">
+			<Enemy name="enemyGreen2" positionX="192.0f" positionY="336.0f"/>
+			<Enemy name="enemyGreen4" positionX="256.0f" positionY="336.0f"/>
+			<Enemy name="enemyGreen3" positionX="320.0f" positionY="336.0f"/>
+		</Column>
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="640.0f" maxPositionY="300.0f" velocityX="200.0f" velocityY="50.0f">
+			<Enemy name="enemyRed1" positionX="192.0f" positionY="336.0f"/>
+			<Enemy name="enemyRed1" positionX="256.0f" positionY="336.0f"/>
+			<Enemy name="enemyRed1" positionX="320.0f" positionY="336.0f"/>
+		</Column>
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="640.0f" maxPositionY="300.0f" velocityX="-200.0f" velocityY="50.0f">
+			<Enemy name="enemyRed1" positionX="192.0f" positionY="336.0f"/>
+			<Enemy name="enemyRed1" positionX="256.0f" positionY="336.0f"/>
+			<Enemy name="enemyRed1" positionX="320.0f" positionY="336.0f"/>
+		</Column>
+	</Level>
+	<Level>
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="640.0f" maxPositionY="300.0f" velocityX="-100.0f" velocityY="-50.0f">
+			<Enemy name="enemyGreen2" positionX="32.0f" positionY="400.0f"/>
+			<Enemy name="enemyBlue2" positionX="96.0f" positionY="400.0f"/>
+			<Enemy name="enemyRed2" positionX="160.0f" positionY="400.0f"/>
+		</Column>
+		<Column minPositionX="0.0f" minPositionY="480.0f" maxPositionX="640.0f" maxPositionY="300.0f" velocityX="100.0f" velocityY="50.0f">
+			<Enemy name="enemyRed2" positionX="32.0f" positionY="400.0f"/>
+			<Enemy name="enemyBlue2" positionX="96.0f" positionY="400.0f"/>
+			<Enemy name="enemyGreen2" positionX="160.0f" positionY="400.0f"/>
+		</Column>
+		<Column minPositionX="352.0f" minPositionY="480.0f" maxPositionX="640.0f" maxPositionY="300.0f" velocityX="100.0f" velocityY="50.0f">
+			<Enemy name="enemyGreen1" positionX="416.0f" positionY="400.0f"/>
+			<Enemy name="enemyGreen2" positionX="480.0f" positionY="400.0f"/>
+		</Column>
+	</Level>
 </Levels>
