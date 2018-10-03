@@ -3,7 +3,7 @@
 
 namespace Engine
 {
-	void EnemyManager::loadEnemiesFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<EffectManager> effectManager)
+	void EnemyManager::loadEnemiesFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<PickupManager> pickupManager)
 	{
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
@@ -23,9 +23,9 @@ namespace Engine
 			std::string shootingMode = brewery_node->first_attribute("shootingMode")->value();
 			auto sprite = spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName);
 			float delayBetweenShoots = std::stof(brewery_node->first_attribute("delayBetweenShoots")->value(), &sz);
-			auto _enemy = std::make_shared<Enemy>(32.0f, 32.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f));
+			auto _enemy = std::make_shared<Entity>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 			_enemy->applyAnimation(sprite);
-			effectManager->getEffect(shootingMode)(_enemy);
+			pickupManager->getPickup(shootingMode)->onCollision(_enemy);
 			_enemy->setDelayBetweenShoots(delayBetweenShoots);
 			_enemy->setValue(std::stoi(brewery_node->first_attribute("value")->value()));
 
@@ -33,32 +33,42 @@ namespace Engine
 			{
 				for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
 				{
-					_enemy->addAnimation(beer_node2->first_attribute("name")->value(), std::move(spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node2->first_attribute("spriteName")->value())));
+					_enemy->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node2->first_attribute("spriteName")->value()));
 				}
 				for (auto beer_node2 = beer_node->first_node("Animation"); beer_node2; beer_node2 = beer_node2->next_sibling("Animation"))
 				{
-					_enemy->addAnimation(beer_node2->first_attribute("name")->value(), std::move(spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node2->first_attribute("animationName")->value())));
+					_enemy->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node2->first_attribute("animationName")->value()));
 				}
 			}
 
-			enemies.push_back(std::move(enemy(brewery_node->first_attribute("name")->value(), std::move(_enemy))));
+			enemies.push_back(enemy(brewery_node->first_attribute("name")->value(), std::move(_enemy)));
 		}
 	}
 
-	std::shared_ptr<Enemy> EnemyManager::getEnemy(std::string index)
+	std::shared_ptr<Entity> EnemyManager::getEnemy(std::string index)
 	{
 		for (auto enemy : enemies)
 		{
 			if (enemy.first == index)
-				return std::make_shared<Enemy>(*enemy.second);
+			{
+				return std::make_shared<Entity>(*enemy.second);
+			}
 		}
 
 		return nullptr;
 	}
 
-	std::shared_ptr<Enemy> EnemyManager::getRandomEnemy()
+	std::shared_ptr<Entity> EnemyManager::getRandomEnemy()
 	{
 		int randIndex = rand() % enemies.size();
-		return std::make_shared<Enemy>(*enemies[randIndex].second);
+		for (size_t i = 0; i < enemies.size(); i++)
+		{
+			if (i == randIndex)
+			{
+				return std::make_shared<Entity>(*enemies[i].second);
+			}
+		}
+
+		return nullptr;
 	}
 }

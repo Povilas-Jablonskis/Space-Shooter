@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{823D7DB9-2636-4368-A430-45BE95004360}</ProjectGuid>
     <RootNamespace>SpaceShooter</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -72,23 +72,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Addon.cpp" />
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BaseGameObject.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
-    <ClCompile Include="EffectManager.cpp" />
-    <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="EnemyColumn.cpp" />
-    <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Observer.cpp" />
-    <ClCompile Include="Pickup.cpp" />
-    <ClCompile Include="PickupManager.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
@@ -101,26 +93,18 @@
     <ClCompile Include="UIElementBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Addon.h" />
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="BaseGameObject.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CollisionManager.h" />
-    <ClInclude Include="EffectManager.h" />
-    <ClInclude Include="Enemy.h" />
-    <ClInclude Include="EnemyColumn.h" />
-    <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="ObserverEvent.h" />
-    <ClInclude Include="Explosion.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="GameState.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Observer.h" />
-    <ClInclude Include="Pickup.h" />
-    <ClInclude Include="PickupManager.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />

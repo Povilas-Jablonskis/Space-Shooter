@@ -5,7 +5,7 @@
 #include <freetype/ftglyph.h>
 #include FT_FREETYPE_H
 #include <memory>
-#include <map>
+#include <vector>
 #include <iostream>
 
 #include "Character.h"
@@ -18,11 +18,12 @@ namespace Engine
 	{
 		public:
 			Font(FT_Face);
-			std::map<GLchar, Character>* getCharacterList() { return &characters; }
+			std::vector<character>* getCharacterList() { return &characters; }
+			Character getCharacter(GLchar);
 		private:
 			FT_Face face;
 			void LoadCharacters();
-			std::map<GLchar, Character> characters;
+			std::vector<character> characters;
 	};
 }
 #endif

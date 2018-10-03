@@ -62,7 +62,7 @@ namespace Engine
 		glDeleteVertexArrays(1, &vao);
 	}
 
-	GLuint Renderer::getShaderProgram(const std::string& name) const
+	GLuint Renderer::getShaderProgram(std::string name)
 	{
 		for (auto shader : shaders)
 		{
@@ -73,7 +73,7 @@ namespace Engine
 		return -1;
 	}
 
-	void Renderer::addShader(const std::string& name, std::shared_ptr<Shader> _shader)
+	void Renderer::addShader(std::string name, std::shared_ptr<Shader> _shader)
 	{
 		for (auto theShader : shaders)
 		{
@@ -81,6 +81,6 @@ namespace Engine
 				return;
 		}
 
-		shaders.push_back(std::move(shader(name, _shader)));
+		shaders.push_back(shader(name, _shader));
 	}
 }

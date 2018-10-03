@@ -1,11 +1,10 @@
 #include "PickupManager.h"
-#include "Player.h"
+#include "Entity.h"
 #include <fstream>
-#include <map>
 
 namespace Engine
 {
-	void PickupManager::loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager, std::shared_ptr<EffectManager> effectManager, irrklang::ISoundEngine* soundEngine)
+	void PickupManager::loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager> spriteSheetManager)
 	{
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
@@ -24,42 +23,126 @@ namespace Engine
 			std::string name = brewery_node->first_attribute("name")->value();
 			auto spriteName = brewery_node->first_attribute("spriteName")->value();
 			auto sprite = spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName);
-			auto _pickup = std::make_shared<Pickup>(22.0f, 21.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+			auto _pickup = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 			_pickup->applyAnimation(sprite);
-			_pickup->effect = effectManager->getEffect(name);
-			_pickup->onDeath = [soundEngine, pickupSound]()
+
+			for (auto brewery_node2 = brewery_node->first_node("ShootingEffect"); brewery_node2; brewery_node2 = brewery_node2->next_sibling("ShootingEffect"))
 			{
-				soundEngine->play2D(pickupSound.c_str(), GL_FALSE);
-			};
-			pickups.push_back(std::move(pickup(name, std::move(_pickup))));
+				std::string explosionSound = brewery_node2->first_attribute("explosionSound")->value();
+				std::string::size_type sz;
+				float delayBetweenShoots = std::stof(brewery_node2->first_attribute("delayBetweenShoots")->value(), &sz);
+				std::vector<glm::vec2> bulletPositions;
+
+				auto bulletOffset = glm::vec2(1.0f, 1.0f);
+
+				for (auto brewery_node3 = brewery_node2->first_node("Array"); brewery_node3; brewery_node3 = brewery_node3->next_sibling("Array"))
+				{
+					bulletOffset.x = 1.0f;
+					for (auto brewery_node4 = brewery_node3->first_node("Element"); brewery_node4; brewery_node4 = brewery_node4->next_sibling("Element"))
+					{
+						int value = std::stoi(brewery_node4->value());
+						if (value == 1)
+						{
+							bulletPositions.push_back(bulletOffset);
+						}
+						bulletOffset.x += 1.0f;
+					}
+					bulletOffset.y += 2.0f;
+				}
+
+				_pickup->onCollision = [explosionSound, bulletPositions, delayBetweenShoots, pickupSound, _pickup](std::shared_ptr<BaseGameObject> collider)
+				{
+					auto entity = dynamic_cast<Entity*>(collider.get());
+
+					_pickup->setNeedsToBeRemoved(true);
+
+					entity->setDelayBetweenShoots(delayBetweenShoots);
+					entity->setDelayBetweenShootsTimer(0.0f);
+
+					entity->shootingMode = [explosionSound, bulletPositions, delayBetweenShoots](Entity* entity)
+					{
+						auto params = std::vector<std::pair<std::string, BaseGameObject*>>();
+						params.push_back(std::pair<std::string, BaseGameObject*>(entity->getShootingSound(), nullptr));
+						entity->notify(ObserverEvent::BULLETSHOT, params);
+
+						for (auto bulletPosition : bulletPositions)
+						{
+							auto bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 200.0f) * entity->getShootingDirection(), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+							bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
+							bullet->setScale(0.5f);
+							bullet->onUpdate = [bullet]()
+							{
+								float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+								float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+
+								//Collision detection
+								if (bullet->getPosition(0) + bullet->getWidth() >= windowWidth || bullet->getPosition(0) <= 0.0f)
+									bullet->setNeedsToBeRemoved(true);
+
+								if (bullet->getPosition(1) + bullet->getHeight() >= windowHeigth || bullet->getPosition(1) <= 0.0f)
+									bullet->setNeedsToBeRemoved(true);
+							};
+
+							auto _bulletPosition = entity->getShootingPosition();
+							_bulletPosition.x -= (bullet->getWidth() / 2.0f);
+							_bulletPosition += glm::vec2(bullet->getWidth() * bulletPosition.x, bullet->getHeight() * bulletPosition.y) * entity->getShootingDirection();
+
+							bullet->setPosition(_bulletPosition);
+
+							entity->addBullet(std::move(bullet));
+						}
+					};
+					return true;
+				};
+			}
+
+			for (auto brewery_node2 = brewery_node->first_node("Shield"); brewery_node2; brewery_node2 = brewery_node2->next_sibling("Shield"))
+			{
+				std::string loseSound = brewery_node2->first_attribute("loseSound")->value();
+
+				_pickup->onCollision = [loseSound, spriteSheetManager, _pickup](std::shared_ptr<BaseGameObject> collider)
+				{
+					auto entity = dynamic_cast<Entity*>(collider.get());
+
+					_pickup->setNeedsToBeRemoved(true);
+
+					auto shield = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+					shield->setScale(0.5f);
+					shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("shield3.png"));
+					shield->onUpdate = [shield, entity, spriteSheetManager]()
+					{
+						shield->setPosition(entity->getPosition() + glm::vec2(((shield->getWidth() - entity->getWidth()) * -1.0f) / 2.0f, ((shield->getHeight() - entity->getHeight()) * -1.0f) / 2.0f));
+					};
+					entity->addAddon(addon("shield", std::move(shield)));
+					return true;
+				};
+			}
+			pickups.push_back(pickup(name, std::move(_pickup)));
 		}
 	}
 
-	std::shared_ptr<Pickup> PickupManager::getPickup(std::string index)
+	std::shared_ptr<BaseGameObject> PickupManager::getPickup(std::string index)
 	{
 		for (auto pickup : pickups)
 		{
 			if (pickup.first == index)
 			{
-				auto _pickup = std::make_shared<Pickup>(*pickup.second);
-				_pickup->onCollision = [_pickup](std::shared_ptr<BaseGameObject> collider)
-				{
-					if(_pickup->effect(collider)) _pickup->setNeedsToBeRemoved(true);
-				};
-				return _pickup;
+				return std::make_shared<BaseGameObject>(*pickup.second);
 			}
 		}
 		return nullptr;
 	}
 
-	std::shared_ptr<Pickup> PickupManager::getRandomPickup()
+	std::shared_ptr<BaseGameObject> PickupManager::getRandomPickup()
 	{
 		int randIndex = rand() % pickups.size();
-		auto _pickup = std::make_shared<Pickup>(*pickups[randIndex].second);
-		_pickup->onCollision = [_pickup](std::shared_ptr<BaseGameObject> collider)
+		for(size_t i = 0; i < pickups.size(); i++)
 		{
-			if (_pickup->effect(collider)) _pickup->setNeedsToBeRemoved(true);
-		};
-		return _pickup;
+			if (i == randIndex)
+			{
+				return std::make_shared<BaseGameObject>(*pickups[i].second);
+			}
+		}
+		return nullptr;
 	}
 }

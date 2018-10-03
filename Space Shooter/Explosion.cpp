@@ -18,12 +18,4 @@ namespace Engine
 		auto sprites = theAnimation->getAnimation();
 		return (!theAnimation->getLoopStatus() && currentFrame >= (sprites->size() - 1) && animComplete);
 	}
-
-	void Explosion::applyAnimation(std::shared_ptr<Animation> _animation)
-	{
-		RenderObject::applyAnimation(_animation);
-
-		if (theAnimation != nullptr)
-			theAnimation->setDelay(0.1f);
-	}
 }

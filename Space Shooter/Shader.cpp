@@ -5,7 +5,7 @@
 
 namespace Engine
 {
-	Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
+	Shader::Shader(std::string vertex_path, std::string fragment_path)
 	{
 		loadShader(vertex_path, fragment_path);
 	}
@@ -15,7 +15,7 @@ namespace Engine
 		glDeleteProgram(program);
 	}
 
-	std::string Shader::readShaderFile(const std::string& path)
+	std::string Shader::readShaderFile(std::string path)
 	{
 		std::string content;
 		std::ifstream fs(path);
@@ -24,7 +24,7 @@ namespace Engine
 		if (fs.is_open())
 		{
 			while (fs.get(buffer))
-				content.push_back(std::move(buffer));
+				content.push_back(buffer);
 			fs.close();
 		}
 		else
@@ -38,10 +38,10 @@ namespace Engine
 		return content;
 	}
 
-	void Shader::loadShader(const std::string& vertex_path, const std::string& fragment_path)
+	void Shader::loadShader(std::string vertex_path, std::string fragment_path)
 	{
-		std::string vertShaderStr = readShaderFile("Shaders/" + vertex_path);
-		std::string fragShaderStr = readShaderFile("Shaders/" + fragment_path);
+		auto vertShaderStr = readShaderFile("Shaders/" + vertex_path);
+		auto fragShaderStr = readShaderFile("Shaders/" + fragment_path);
 		const char *vertexShaderSource = vertShaderStr.c_str();
 		const char *fragmentShaderSource = fragShaderStr.c_str();
 		GLint isCompiled = 0;

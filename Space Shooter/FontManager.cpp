@@ -33,7 +33,7 @@ namespace Engine
 		}
 	}
 
-	void FontManager::loadFont(const std::string& _path, const std::string& _name)
+	void FontManager::loadFont(std::string _path, std::string _name)
 	{
 		for (auto face : faces)
 		{
@@ -48,11 +48,10 @@ namespace Engine
 				std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
 			#endif
 		}
-		auto tempFont = std::make_shared<Font>(face);
-		faces.push_back(std::move(font(_name, std::move(tempFont))));
+		faces.push_back(font(_name, std::move(std::make_shared<Font>(face))));
 	}
 
-	std::shared_ptr<Font> FontManager::getFont(const std::string& name)
+	std::shared_ptr<Font> FontManager::getFont(std::string name)
 	{
 		for (auto face : faces)
 		{

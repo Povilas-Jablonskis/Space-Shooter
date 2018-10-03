@@ -24,10 +24,10 @@ namespace Engine
 
 			// Collision x-axis?
 			bool collisionX = first->getPosition(0) > minPosition.x &&
-				maxPosition.x >= last->getPosition(0) + last->getSize(0);
+				maxPosition.x >= last->getPosition(0) + last->getWidth();
 			// Collision y-axis?
 			bool collisionY = last->getPosition(1) > maxPosition.y &&
-				minPosition.y >= last->getPosition(1) + last->getSize(1);
+				minPosition.y >= last->getPosition(1) + last->getHeight();
 
 			if (!collisionY)
 			{

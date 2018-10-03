@@ -1,18 +1,17 @@
 #include "BaseGameObject.h"
-#include "Player.h"
-#include "Enemy.h"
+#include <string>
 
 namespace Engine
 {
 	BaseGameObject::BaseGameObject(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
 		: RenderObject(_width, _height, _position, _color), velocity(_velocity), needsToBeRemoved(false), value(0)
 	{
-		onDeath = []()
+		onUpdate = []()
 		{
 
 		};
 
-		onCollision = [this](std::shared_ptr<BaseGameObject> collider)
+		onCollision = [](std::shared_ptr<BaseGameObject> collider)
 		{
 			
 		};
@@ -25,12 +24,22 @@ namespace Engine
 
 	bool BaseGameObject::update(float _dt)
 	{
-		if (getNeedsToBeRemoved()) onDeath();
+		onUpdate();
 
 		position.x += velocity.x * _dt;
 		position.y += velocity.y * _dt;
 		updateAnimation(_dt);
 		return getNeedsToBeRemoved();
+	}
+
+	void BaseGameObject::applyAnimation(std::shared_ptr<Animation> _animation)
+	{
+		if (_animation == nullptr || _animation == theAnimation) return;
+
+		RenderObject::applyAnimation(_animation);
+
+		setWidth(theAnimation->getAnimation()->at(getCurrentFrame()).z);
+		setHeight(theAnimation->getAnimation()->at(getCurrentFrame()).w);
 	}
 
 	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> _animation)
@@ -41,7 +50,7 @@ namespace Engine
 				return;
 		}
 
-		animations.push_back(std::move(animation(index, _animation)));
+		animations.push_back(animation(index, _animation));
 	}
 
 	std::shared_ptr<Animation> BaseGameObject::getAnimationByIndex(std::string index)

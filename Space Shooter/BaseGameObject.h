@@ -8,7 +8,7 @@
 #include <memory>
 
 #include "RenderObject.h"
-#include "Addon.h"
+#include "Subject.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -19,11 +19,12 @@
 namespace Engine
 {
 	class Entity;
-	class BaseGameObject : public RenderObject
+	class BaseGameObject : public RenderObject, public Subject
 	{
 		public:
 			~BaseGameObject();
 			BaseGameObject(float, float, glm::vec2, glm::vec2, glm::vec4);
+			std::function<void()> onUpdate;
 			virtual bool update(float);
 			std::function<void(std::shared_ptr<BaseGameObject>)> onCollision;
 			void addAnimation(std::string, std::shared_ptr<Animation>);
@@ -32,11 +33,11 @@ namespace Engine
 			inline void setVelocity(int index, float _velocity) { velocity[index] = _velocity; };
 			inline float getVelocity(int index) { return velocity[index]; };
 			inline glm::vec2 getVelocity() { return velocity; };
-			std::function<void()> onDeath;
-			inline void setNeedsToBeRemoved(bool boolean) { needsToBeRemoved = boolean; };
-			inline bool getNeedsToBeRemoved() const { return needsToBeRemoved; }
+			void setNeedsToBeRemoved(bool boolean) { needsToBeRemoved = boolean; };
+			inline bool getNeedsToBeRemoved() { return needsToBeRemoved; }
 			inline int getValue() { return value; }
 			inline void setValue(int _value) { value = _value; }
+			void applyAnimation(std::shared_ptr<Animation>);
 		protected:
 			bool needsToBeRemoved;
 			std::vector<animation> animations;

@@ -1,7 +1,7 @@
 #ifndef _collisionManagerH
 #define _collisionManagerH
 
-#include "BaseGameObject.h"
+#include "Entity.h"
 #include "Bullet.h"
 
 namespace Engine

@@ -9,6 +9,7 @@ namespace Engine
 	{
 		public:
 			Addon(float, float, glm::vec2);
+			std::function<void()> onUpdate;
 			bool update(float, glm::vec2);
 			inline void setNeedsToBeRemoved(bool boolean) { needsToBeRemoved = boolean; };
 			inline bool getNeedsToBeRemoved() const { return needsToBeRemoved; }

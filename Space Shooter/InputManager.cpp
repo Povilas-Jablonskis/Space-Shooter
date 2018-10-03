@@ -6,7 +6,7 @@ namespace Engine
 	{
 		pressedkeys = new bool[pressedKeyCount];
 		resetInput();
-		setCurrentEditedKeyBinding(currentEditedKeyBinding(keyBindings.end(), nullptr));
+		theCurrentEditedKeyBinding = currentEditedKeyBinding(keyBindings.end(), nullptr);
 	}
 
 	void InputManager::resetInput()
@@ -15,7 +15,7 @@ namespace Engine
 		setLastLeftMouseState(false);
 		setRightMouseState(false);
 		setLastRightMouseState(false);
-		for (int i = 0; i < pressedKeyCount; i++)
+		for (auto i = 0; i < pressedKeyCount; i++)
 		{
 			setKey(i, false);
 		}
@@ -44,14 +44,14 @@ namespace Engine
 
 	void InputManager::fixInput()
 	{
-		for (int i = 0; i < pressedKeyCount; i++)
+		for (auto i = 0; i < pressedKeyCount; i++)
 		{
 			if (!GetAsyncKeyState(i) && pressedkeys[i])
 				pressedkeys[i] = false;
 		}
 	}
 
-	void InputManager::setKeyBinding(const std::string& key, int value)
+	void InputManager::setKeyBinding(std::string key, int value)
 	{
 		for (auto keyBinding : keyBindings)
 		{
@@ -59,10 +59,10 @@ namespace Engine
 				return;
 		}
 
-		keyBindings.push_back(std::move(keybinding(key, value)));
+		keyBindings.push_back(keybinding(key, value));
 	}
 
-	int InputManager::getKeyBinding(const std::string& key)
+	int InputManager::getKeyBinding(std::string key)
 	{
 		for (auto keyBinding : keyBindings)
 		{
@@ -73,13 +73,25 @@ namespace Engine
 		return -1;
 	}
 
-	void InputManager::updatePlayerInput(Player* player, float dt)
+	void InputManager::updatePlayerInput(std::shared_ptr<Player> player, float dt)
 	{
 		player->setDelayBetweenShootsTimer(player->getDelayBetweenShootsTimer() + dt);
 		if (player->getDelayBetweenShootsTimer() > player->getDelayBetweenShoots() && getKey(getKeyBinding("Attack")))
 		{
 			player->setDelayBetweenShootsTimer(0.0f);
-			player->shootingMode(player);
+			player->shootingMode();
+		}
+
+		if (getKey(getKeyBinding("Move Left")) || getKey(getKeyBinding("Move Right")) || getKey(getKeyBinding("Move Back")))
+		{
+			player->getAddon("leftExhaust")->applyAnimation(player->getAnimationByIndex("movingExhaust"));
+			player->getAddon("rightExhaust")->applyAnimation(player->getAnimationByIndex("movingExhaust"));
+		}
+		
+		if (!getKey(getKeyBinding("Move Left")) && !getKey(getKeyBinding("Move Right")) && !getKey(getKeyBinding("Move Back")))
+		{
+			player->getAddon("leftExhaust")->applyAnimation(player->getAnimationByIndex("noMovingExhaust"));
+			player->getAddon("rightExhaust")->applyAnimation(player->getAnimationByIndex("noMovingExhaust"));
 		}
 
 		if (getKey(getKeyBinding("Move Left")))

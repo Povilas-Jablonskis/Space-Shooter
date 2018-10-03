@@ -4,13 +4,13 @@
 
 namespace Engine
 {
-	Text::Text(const std::string& _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
-		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), fontSize(_fontsize), text(_text), font(_font), needUpdate(true)
+	Text::Text(std::string _text, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
+		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), text(_text), font(_font), needUpdate(true)
 	{
 	}
 
-	Text::Text(const char _text, int _fontsize, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
-		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), fontSize(_fontsize), text(""), font(_font), needUpdate(true)
+	Text::Text(const char _text, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
+		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), text(""), font(_font), needUpdate(true)
 	{
 		text += _text;
 	}
@@ -36,7 +36,7 @@ namespace Engine
 
 	bool Text::checkIfCollides(glm::vec2 colCoordinates)
 	{
-		if (colCoordinates.x >= bbox[0] && colCoordinates.x <= bbox[1] && colCoordinates.y <= bbox[2] && colCoordinates.y >= bbox[3])
+		if (colCoordinates.x >= bbox.x && colCoordinates.x <= bbox.y && colCoordinates.y <= bbox.z && colCoordinates.y >= bbox.a)
 			return true;
 		return false;
 	}
@@ -48,16 +48,15 @@ namespace Engine
 		cachedCharacters.clear();
 		needUpdate = false;
 
-		bbox[0] = position.x;
-		bbox[3] = position.y;
+		bbox.x = position.x;
+		bbox.a = position.y;
 
 		auto lastPosition = position;
 		std::vector<int> tempVector;
-		auto cache = font->getCharacterList();
 
 		for (auto c = text.begin(); c != text.end(); c++)
 		{
-			Character ch = (*cache)[*c];
+			auto ch = font->getCharacter(*c);
 
 			GLfloat xpos = position.x + ch.Bearing.x;
 			GLfloat ypos = position.y - (ch.Size.y - ch.Bearing.y);
@@ -69,38 +68,48 @@ namespace Engine
 			// Update VBO for each character
 
 			std::vector<cachedCharacter> textVector;
-
-			GLfloat tempVertices[4][6] = 
-			{
-				xpos, ypos + h, 0.0, 0.0,
-				xpos, ypos, 0.0, 1.0,
-				xpos + w, ypos, 1.0, 1.0,
-
-				xpos, ypos + h, 0.0, 0.0,
-				xpos + w, ypos, 1.0, 1.0,
-				xpos + w, ypos + h, 1.0, 0.0
-			};
-
 			std::vector<GLfloat> vertices;
-		
-			for (size_t i = 0; i < 4; i++)
-			{
-				for (size_t i2 = 0; i2 < 6; i2++)
-				{
-					vertices.push_back(tempVertices[i][i2]);
-				}
-			}
+			vertices.push_back(xpos);
+			vertices.push_back(ypos + h);
+			vertices.push_back(0.0);
+			vertices.push_back(0.0);
 
-			cachedCharacters.push_back(std::move(cachedCharacter
+			vertices.push_back(xpos);
+			vertices.push_back(ypos);
+			vertices.push_back(0.0);
+			vertices.push_back(1.0);
+
+			vertices.push_back(xpos + w);
+			vertices.push_back(ypos);
+			vertices.push_back(1.0);
+			vertices.push_back(1.0);
+
+
+			vertices.push_back(xpos);
+			vertices.push_back(ypos + h);
+			vertices.push_back(0.0);
+			vertices.push_back(0.0);
+
+			vertices.push_back(xpos + w);
+			vertices.push_back(ypos);
+			vertices.push_back(1.0);
+			vertices.push_back(1.0);
+
+			vertices.push_back(xpos + w);
+			vertices.push_back(ypos + h);
+			vertices.push_back(1.0);
+			vertices.push_back(0.0);
+
+			cachedCharacters.push_back(cachedCharacter
 			(
 				ch.TextureID,
-				std::move(vertices)
-			)));
+				vertices
+			));
 			position.x += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 
-		bbox[1] = position.x;
-		bbox[2] = position.y + (tempVector.size() == 0 ? 0.0f : (float)*std::max_element(std::begin(tempVector), std::end(tempVector)));
+		bbox.y = position.x;
+		bbox.z = position.y + (tempVector.size() == 0 ? 0.0f : (float)*std::max_element(std::begin(tempVector), std::end(tempVector)));
 		position = lastPosition;
 	}
 
@@ -119,8 +128,8 @@ namespace Engine
 	{
 		if (getColor(3) == 0.0f || getFont() == nullptr) return;
 		auto program = renderer->getShaderProgram("textshader");
-		int offsetLocation = glGetUniformLocation(program, "color");
-		int offsetLocation2 = glGetUniformLocation(program, "projection");
+		auto offsetLocation = glGetUniformLocation(program, "color");
+		auto offsetLocation2 = glGetUniformLocation(program, "projection");
 		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
 		glBindVertexArray(renderer->getTextVAO());
 		glUseProgram(program);

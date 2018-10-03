@@ -15,12 +15,12 @@ namespace Engine
 		public:
 			~Renderer();
 			Renderer();
-			void addShader(const std::string& name, std::shared_ptr<Shader> shader);
+			void addShader(std::string name, std::shared_ptr<Shader> shader);
 			inline std::vector<shader>* getShaders() { return &shaders; }
-			inline GLuint getVAO() const { return vao; }
-			GLuint getShaderProgram(const std::string&) const;
-			inline GLuint getTextVBO() const { return textVBO; }
-			inline GLuint getTextVAO() const { return textVAO; }
+			inline GLuint getVAO()  { return vao; }
+			GLuint getShaderProgram(std::string);
+			inline GLuint getTextVBO()  { return textVBO; }
+			inline GLuint getTextVAO()  { return textVAO; }
 		private:
 			GLuint vbo, vao, ebo;
 			GLuint textVBO;

@@ -24,12 +24,12 @@ namespace Engine
 	{
 		public:
 			~Text();
-			Text(const std::string&, int, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
-			Text(const char, int, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
+			Text(std::string, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
+			Text(const char, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
 			void update(float);
-			inline std::shared_ptr<Font> getFont() const { return font; }
+			inline std::shared_ptr<Font> getFont()  { return font; }
 			inline std::vector<cachedCharacter> getCachedCharacters() { return cachedCharacters; }
-			inline std::string getText() const { return text; }
+			inline std::string getText()  { return text; }
 			inline void setText(std::string newtext) { needUpdate = true; text = newtext; }
 			inline void setText(char newtext) { needUpdate = true; text = newtext; }
 			inline void setPosition(glm::vec2 _position) { needUpdate = true; position = _position; }
@@ -42,7 +42,6 @@ namespace Engine
 		private:
 			bool needUpdate;
 			std::string text;
-			int fontSize;
 			std::vector<cachedCharacter> cachedCharacters;
 			std::shared_ptr<Font> font;
 			SHORT leftButtonClicked;

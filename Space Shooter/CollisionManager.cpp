@@ -1,16 +1,15 @@
 #include "CollisionManager.h"
-#include "Player.h"
 
 namespace Engine
 {
 	bool CollisionManager::checkCollision(std::shared_ptr<RenderObject> object, std::shared_ptr<RenderObject> collider) // AABB - AABB collision
 	{
 		// Collision x-axis?
-		bool collisionX = object->getPosition(0) + object->getSize(0) >= collider->getPosition(0) && 
-			collider->getPosition(0) + collider->getSize(0) >= object->getPosition(0);
+		bool collisionX = object->getPosition(0) + object->getWidth() >= collider->getPosition(0) && 
+			collider->getPosition(0) + collider->getWidth() >= object->getPosition(0);
 		// Collision y-axis?
-		bool collisionY = object->getPosition(1) + object->getSize(1) >= collider->getPosition(1) &&
-			collider->getPosition(1) + collider->getSize(1) >= object->getPosition(1);
+		bool collisionY = object->getPosition(1) + object->getHeight() >= collider->getPosition(1) &&
+			collider->getPosition(1) + collider->getHeight() >= object->getPosition(1);
 		// Collision only if on both axes
 		if (collisionX && collisionY)
 			return true;
@@ -21,8 +20,8 @@ namespace Engine
 	{
 		if (object->getNeedsToBeRemoved() || parent->getNeedsToBeRemoved()) return false;
 
-		float windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-		float windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+		auto windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
+		auto windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
 		for (auto it = bulletList->begin(); it != bulletList->end();)
 		{
@@ -31,7 +30,7 @@ namespace Engine
 				++it;
 				continue;
 			}
-			if ((*it)->getPosition(1) > windowHeigth || ((*it)->getPosition(1) + (*it)->getSize(1)) < 0.0f || (*it)->getPosition(0) > windowWidth || (*it)->getPosition(0) < 0.0f)
+			if ((*it)->getPosition(1) > windowHeigth || ((*it)->getPosition(1) + (*it)->getHeight()) < 0.0f || (*it)->getPosition(0) > windowWidth || (*it)->getPosition(0) < 0.0f)
 			{
 				it = bulletList->erase(it);
 				continue;

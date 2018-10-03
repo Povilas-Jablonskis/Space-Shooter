@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Player.h"
+#include <string>
 
 namespace Engine
 {
@@ -26,31 +27,11 @@ namespace Engine
 
 	void Enemy::addBullet(std::shared_ptr<BaseGameObject> bullet, glm::vec2 offset)
 	{
-		bullet->setPosition(glm::vec2(position.x + (width / 2.0f) - (bullet->getSize(0) / 2.0f), position.y - (height / 2.0f)));
+		bullet->setPosition(glm::vec2(position.x + (getWidth() / 2.0f) - (bullet->getWidth() / 2.0f), position.y - (getHeight() / 2.0f)));
 		bullet->setPosition(bullet->getPosition() - offset);
 		bullet->setVelocity(1, -200.0f);
 		bullet->setRotationAngle(3.14159265358979323846f);
-		bullet->onCollision = [this, bullet](std::shared_ptr<BaseGameObject> collider)
-		{
-			bullet->setNeedsToBeRemoved(true);
-
-			auto params = std::map<std::string, BaseGameObject*>();
-			params["bullet"] = bullet.get();
-			params["parent"] = this;
-			params["collider"] = collider.get();
-			notify(ObserverEvent::BULLETDESTROYED, params);
-
-			auto entity = dynamic_cast<Entity*>(collider.get());
-			if (entity != nullptr && !entity->getNeedsToBeRemoved())
-			{
-				if (entity->getAddon("shield") != nullptr)
-					entity->getAddon("shield")->setNeedsToBeRemoved(true);
-				else
-					entity->setNeedsToBeRemoved(true);
-			}
-			else
-				collider->setNeedsToBeRemoved(true);
-		};
+		bullet->setScale(0.5f);
 		Entity::addBullet(bullet, offset);
 	}
 
@@ -96,7 +77,7 @@ namespace Engine
 		if (getDelayBetweenShootsTimer() > getDelayBetweenShoots())
 		{
 			setDelayBetweenShootsTimer(0.0f);
-			shootingMode(this);
+			shootingMode.second(this);
 		}
 
 		auto bullets = getBulletsList();
@@ -112,7 +93,7 @@ namespace Engine
 
 		for (auto it = addons->begin(); it != addons->end();)
 		{
-			if ((*it).second->update(dt, position))
+			if ((*it).second->update(dt))
 				it = addons->erase(it);
 			else
 				++it;

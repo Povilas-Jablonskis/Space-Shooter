@@ -7,7 +7,7 @@ namespace Engine
 
 	}
 
-	void Animation::loadFromFile(const std::string& _path)
+	void Animation::loadFromFile(std::string _path)
 	{
 		glGenTextures(1, &spriteSheetTexture);
 
@@ -30,7 +30,7 @@ namespace Engine
 		sprites.push_back(glm::vec4(width, height, width, height));
 	}
 
-	int Animation::getSpriteSheetSize(int index) const
+	int Animation::getSpriteSheetSize(int index)
 	{
 		switch (index)
 		{

@@ -7,6 +7,23 @@ namespace Engine
 		LoadCharacters();
 	}
 
+	Character Font::getCharacter(GLchar index)
+	{
+		for (auto item : characters)
+		{
+			if (item.first == index)
+				return item.second;
+		}
+
+		return Character 
+		{
+			0,
+			glm::ivec2(0, 0),
+			glm::ivec2(0, 0),
+			0
+		};;
+	}
+
 	void Font::LoadCharacters()
 	{
 		FT_Set_Pixel_Sizes(face, 0, 12);
@@ -51,7 +68,7 @@ namespace Engine
 				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
 				face->glyph->advance.x
 			};
-			characters.insert(character(c, std::move(_character)));
+			characters.push_back(character(c, _character));
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

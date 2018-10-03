@@ -34,7 +34,7 @@ namespace Engine
 				std::vector<glm::vec4> sprites;
 				for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
 				{
-					sprites.push_back(std::move(spriteSheet->getSpriteAsVector(beer_node2->first_attribute("name")->value())));
+					sprites.push_back(spriteSheet->getSpriteAsVector(beer_node2->first_attribute("name")->value()));
 				}
 
 				spriteSheet->makeAnimation(beer_node->first_attribute("name")->value(), sprites);
@@ -46,17 +46,17 @@ namespace Engine
 		}
 	}
 
-	void SpriteSheetManager::loadSpriteSheet(const std::string& name, std::shared_ptr<SpriteSheet> _spriteSheet)
+	void SpriteSheetManager::loadSpriteSheet(std::string name, std::shared_ptr<SpriteSheet> _spriteSheet)
 	{
 		for (auto spriteSheet : spriteSheets)
 		{
 			if (spriteSheet.first == name)
 				return;
 		}
-		spriteSheets.push_back(std::move(spriteSheet(name, _spriteSheet)));
+		spriteSheets.push_back(spriteSheet(name, _spriteSheet));
 	}
 
-	std::shared_ptr<SpriteSheet> SpriteSheetManager::getSpriteSheet(const std::string& name)
+	std::shared_ptr<SpriteSheet> SpriteSheetManager::getSpriteSheet(std::string name)
 	{
 		for (auto spriteSheet : spriteSheets)
 		{

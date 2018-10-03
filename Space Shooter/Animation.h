@@ -14,14 +14,14 @@ namespace Engine
 		public:
 			Animation(GLuint, int, int);
 			inline void setDelay(float _delay) { delay = _delay; }
-			inline float getDelay() const { return delay; }
+			inline float getDelay() { return delay; }
 			inline void setLoopStatus(bool _status) { loop = _status; }
-			inline bool getLoopStatus() const { return loop; }
+			inline bool getLoopStatus() { return loop; }
 			inline void addSprite(glm::vec4 sprite) { sprites.push_back(sprite); }
 			inline std::vector<glm::vec4>* getAnimation() { return &sprites; }
-			GLuint getSpriteSheetTexture() const { return spriteSheetTexture; }
-			int getSpriteSheetSize(int) const;
-			void loadFromFile(const std::string&);
+			GLuint getSpriteSheetTexture() { return spriteSheetTexture; }
+			int getSpriteSheetSize(int);
+			void loadFromFile(std::string);
 		private:
 			int spriteSheetWidth;
 			int spriteSheetHeigth;

@@ -8,20 +8,19 @@
 
 #include <irrKlang.h>
 
-#include "Pickup.h"
+#include "BaseGameObject.h"
 #include "SpriteSheetManager.h"
-#include "EffectManager.h"
 
 namespace Engine
 {
-	typedef std::pair<std::string, std::shared_ptr<Pickup>> pickup;
+	typedef std::pair<std::string, std::shared_ptr<BaseGameObject>> pickup;
 
 	class PickupManager
 	{
 		public:
-			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>, std::shared_ptr<EffectManager>, irrklang::ISoundEngine*);
-			std::shared_ptr<Pickup> getPickup(std::string);
-			std::shared_ptr<Pickup> getRandomPickup();
+			void loadPickupsFromConfig(std::shared_ptr<SpriteSheetManager>);
+			std::shared_ptr<BaseGameObject> getPickup(std::string);
+			std::shared_ptr<BaseGameObject> getRandomPickup();
 		private:
 			std::vector<pickup> pickups;
 	};

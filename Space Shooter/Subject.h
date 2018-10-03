@@ -2,7 +2,6 @@
 #define _subjectH
 
 #include <vector>
-#include <map>
 #include <memory>
 #include <functional>
 #include <algorithm>
@@ -16,7 +15,7 @@ namespace Engine
 	{
 		public:
 			void addObserver(Observer*);
-			void notify(ObserverEvent, std::map<std::string, BaseGameObject*>);
+			void notify(ObserverEvent, std::vector<std::pair<std::string, BaseGameObject*>>);
 		private:
 			std::vector<Observer*> observers;
 	};

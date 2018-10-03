@@ -2,7 +2,6 @@
 #include "Entity.h"
 #include "Player.h"
 #include <fstream>
-#include <map>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -27,10 +26,10 @@ namespace Engine
 			for (auto beer_node = brewery_node->first_node("ShootingEffect"); beer_node; beer_node = beer_node->next_sibling("ShootingEffect"))
 			{
 				std::string explosionSound = beer_node->first_attribute("explosionSound")->value();
-				auto list = std::map<std::string, std::function<void(Entity*)>>();
-				list["NORMAL"] = [explosionSound, soundEngine](Entity* entity)
+				auto list = std::vector<std::pair<std::string, std::function<void(Entity*)>>>();
+				list.push_back(shootingPair("NORMAL", [explosionSound, soundEngine](Entity* entity)
 				{
-					auto bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					auto bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					bullet->addAnimation("explosion", std::move(entity->getAnimationByIndex("explosion")));
 					bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
 					bullet->onDeath = [explosionSound, soundEngine]()
@@ -38,11 +37,11 @@ namespace Engine
 						soundEngine->play2D(explosionSound.c_str(), GL_FALSE);
 					};
 					entity->addBullet(std::move(bullet), glm::vec2(0.0f, 0.0f));
-				};
+				}));
 
-				list["DOUBLE"] = [explosionSound, soundEngine](Entity* entity)
+				list.push_back(shootingPair("DOUBLE", [explosionSound, soundEngine](Entity* entity)
 				{
-					auto bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					auto bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					bullet->addAnimation("explosion", std::move(entity->getAnimationByIndex("explosion")));
 					bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
 					bullet->onDeath = [explosionSound, soundEngine]()
@@ -51,20 +50,20 @@ namespace Engine
 					};
 					entity->addBullet(std::move(bullet), glm::vec2(0.0f, 0.0f));
 
-					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					bullet->addAnimation("explosion", std::move(entity->getAnimationByIndex("explosion")));
 					bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
 					bullet->onDeath = [explosionSound, soundEngine]()
 					{
 						soundEngine->play2D(explosionSound.c_str(), GL_FALSE);
 					};
-					entity->addBullet(std::move(bullet), glm::vec2(0.0f, bullet->getSize(1) * 2.0f));
-				};
+					entity->addBullet(std::move(bullet), glm::vec2(0.0f, bullet->getHeight() * 2.0f));
+				}));
 
-				list["HALFCIRCLE"] = [explosionSound, soundEngine](Entity* entity)
+				list.push_back(shootingPair("HALFCIRCLE", [explosionSound, soundEngine](Entity* entity)
 				{
 					//Middle
-					auto bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					auto bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
 					bullet->addAnimation("explosion", std::move(entity->getAnimationByIndex("explosion")));
 					bullet->onDeath = [explosionSound, soundEngine]()
@@ -74,54 +73,62 @@ namespace Engine
 					entity->addBullet(std::move(bullet), glm::vec2(0.0f, 0.0f));
 
 					//Right side
-					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					bullet->addAnimation("explosion", std::move(entity->getAnimationByIndex("explosion")));
 					bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
 					bullet->onDeath = [explosionSound, soundEngine]()
 					{
 						soundEngine->play2D(explosionSound.c_str(), GL_FALSE);
 					};
-					entity->addBullet(std::move(bullet), glm::vec2((bullet->getSize(0) * 2.0f), 0.0f));
+					entity->addBullet(std::move(bullet), glm::vec2((bullet->getWidth() * 2.0f), 0.0f));
 
-					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					bullet->addAnimation("explosion", std::move(entity->getAnimationByIndex("explosion")));
 					bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
 					bullet->onDeath = [explosionSound, soundEngine]()
 					{
 						soundEngine->play2D(explosionSound.c_str(), GL_FALSE);
 					};
-					entity->addBullet(std::move(bullet), glm::vec2((bullet->getSize(0) * 4.0f), bullet->getSize(1) * -1.0f));
+					entity->addBullet(std::move(bullet), glm::vec2((bullet->getWidth() * 4.0f), bullet->getHeight() * -1.0f));
 
 					//Left side
-					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					bullet->addAnimation("explosion", std::move(entity->getAnimationByIndex("explosion")));
 					bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
 					bullet->onDeath = [explosionSound, soundEngine]()
 					{
 						soundEngine->play2D(explosionSound.c_str(), GL_FALSE);
 					};
-					entity->addBullet(std::move(bullet), glm::vec2((bullet->getSize(0) * 2.0f) * -1.0f, 0.0f));
+					entity->addBullet(std::move(bullet), glm::vec2((bullet->getWidth() * 2.0f) * -1.0f, 0.0f));
 
-					bullet = std::make_shared<BaseGameObject>(9.0f, 20.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 69.0f, 0.0f, 1.0f));
+					bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					bullet->addAnimation("explosion", std::move(entity->getAnimationByIndex("explosion")));
 					bullet->applyAnimation(entity->getAnimationByIndex("shoot"));
 					bullet->onDeath = [explosionSound, soundEngine]()
 					{
 						soundEngine->play2D(explosionSound.c_str(), GL_FALSE);
 					};
-					entity->addBullet(std::move(bullet), glm::vec2((bullet->getSize(0) * 4.0f) * -1.0f, bullet->getSize(1) * -1.0f));
-				};
+					entity->addBullet(std::move(bullet), glm::vec2((bullet->getWidth() * 4.0f) * -1.0f, bullet->getHeight() * -1.0f));
+				}));
 
 				std::string::size_type sz;
-				std::string shootingMode = std::string(beer_node->first_attribute("shootingMode")->value());
+				std::string shootingModeStr = std::string(beer_node->first_attribute("shootingMode")->value());
 				float delayBetweenShoots = std::stof(beer_node->first_attribute("delayBetweenShoots")->value(), &sz);
 
-				auto _effect = [soundEngine, shootingMode = list[shootingMode], delayBetweenShoots](std::shared_ptr<BaseGameObject> collider)
+				auto _effect = [soundEngine, shootingModeStr, list, delayBetweenShoots](std::shared_ptr<BaseGameObject> collider)
 				{
 					auto entity = dynamic_cast<Entity*>(collider.get());
 
 					entity->setDelayBetweenShoots(delayBetweenShoots);
-					entity->shootingMode = shootingMode;
+
+					for (auto shootingMode : list)
+					{
+						if (shootingMode.first == shootingModeStr)
+						{
+							entity->shootingMode = shootingMode;
+							break;
+						}
+					}
 					return true;
 				};
 				effects.push_back(std::move(effect(brewery_node->first_attribute("name")->value(), std::move(_effect))));
@@ -135,8 +142,13 @@ namespace Engine
 				{
 					auto entity = dynamic_cast<Entity*>(collider.get());
 
-					auto shield = std::make_shared<Addon>(48.0f, 48.0f, glm::vec2(-8.0f, -8.0f));
-					shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getAnimation("shieldSpriteSheet"));
+					auto shield = std::make_shared<BaseGameObject>(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+					shield->setScale(0.5f);
+					shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("shield3.png"));
+					shield->onUpdate = [shield, collider, spriteSheetManager]()
+					{
+						shield->setPosition(collider->getPosition() + glm::vec2(((shield->getWidth() - collider->getWidth()) * -1.0f) / 2.0f, ((shield->getHeight() - collider->getHeight()) * -1.0f) / 2.0f));
+					};
 					shield->onDeath= [soundEngine, loseSound]()
 					{
 						soundEngine->play2D(loseSound.c_str(), GL_FALSE);

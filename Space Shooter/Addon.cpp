@@ -9,10 +9,16 @@ namespace Engine
 		{
 
 		};
+
+		onUpdate = []()
+		{
+
+		};
 	}
 
 	bool Addon::update(float dt, glm::vec2 playerPosition)
 	{
+		onUpdate();
 		if (getNeedsToBeRemoved()) onDeath();
 
 		position = playerPosition + positionOffset;

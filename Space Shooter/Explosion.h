@@ -10,7 +10,6 @@ namespace Engine
 		public:
 			Explosion(float, float, glm::vec2);
 			bool update(float);
-			void applyAnimation(std::shared_ptr<Animation>);
 		};
 }
 #endif

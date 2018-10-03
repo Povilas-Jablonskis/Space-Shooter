@@ -11,20 +11,20 @@ namespace Engine
 			~Player();
 			Player(float, float, glm::vec2, glm::vec2, glm::vec4);
 			bool update(float);
-			inline int getHealth() const { return health; }
-			inline void setHealth(int _health) { health = _health; notify(ObserverEvent::HEALTHCHANGED, std::map<std::string, BaseGameObject*>()); }
-			inline int getScore() const { return score; }
-			inline void setScore(int _score) { score = _score; notify(ObserverEvent::SCORECHANGED, std::map<std::string, BaseGameObject*>()); }
-			void addBullet(std::shared_ptr<BaseGameObject>, glm::vec2);
-			inline std::string getHealthIcon() { return healthIcon; }
-			inline void setHealthIcon(std::string _icon) { healthIcon = _icon; }
+			glm::vec2 getStartVelocity() { return startVelocity; }
+			glm::vec2 getStartPosition() { return startPosition; }
+			inline int getLives()  { return lives; }
+			inline void setLives(int _lives) { lives = _lives; notify(ObserverEvent::LIVES_CHANGED, std::vector<std::pair<std::string, BaseGameObject*>>()); }
+			inline int getScore()  { return score; }
+			inline void setScore(int _score) { score = _score; notify(ObserverEvent::SCORE_CHANGED, std::vector<std::pair<std::string, BaseGameObject*>>()); }
+			inline std::string getLivesIcon() { return livesIcon; }
+			inline void setLivesIcon(std::string _icon) { livesIcon = _icon; }
 		private:
-			void respawn();
-			std::string healthIcon;
+			std::string livesIcon;
 			glm::vec2 startVelocity;
+			glm::vec2 startPosition;
 			int score;
-			int startHealth;
-			int health;
+			int lives;
 	};
 }
 #endif

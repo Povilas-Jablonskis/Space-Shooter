@@ -8,7 +8,7 @@ namespace Engine
 		glDeleteTextures(1, &texture);
 	}
 
-	void SpriteSheet::loadSpriteSheet(const std::string& _path)
+	void SpriteSheet::loadSpriteSheet(std::string _path)
 	{
 		if (_path.size() == 0) return;
 
@@ -26,10 +26,10 @@ namespace Engine
 		SOIL_free_image_data(image);
 		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 
-		sprites.push_back(std::move(sprite("wholeSpriteSheet", glm::vec4(width, height, width, height))));
+		sprites.push_back(sprite("wholeSpriteSheet", glm::vec4(width, height, width, height)));
 	}
 
-	void SpriteSheet::loadSpritesFromXml(const std::string& _path)
+	void SpriteSheet::loadSpritesFromXml(std::string _path)
 	{
 		if (_path.size() == 0) return;
 
@@ -47,11 +47,11 @@ namespace Engine
 		for (auto brewery_node = root_node->first_node(); brewery_node; brewery_node = brewery_node->next_sibling())
 		{
 			auto animation = glm::vec4(atof(brewery_node->first_attribute("x")->value()), atof(brewery_node->first_attribute("y")->value()), atof(brewery_node->first_attribute("width")->value()), atof(brewery_node->first_attribute("height")->value()));
-			sprites.push_back(std::move(sprite(brewery_node->first_attribute("name")->value(), animation)));
+			sprites.push_back(sprite(brewery_node->first_attribute("name")->value(), animation));
 		}
 	}
 
-	std::shared_ptr<Animation> SpriteSheet::getSprite(const std::string& index)
+	std::shared_ptr<Animation> SpriteSheet::getSprite(std::string index)
 	{
 		for (auto sprite : sprites)
 		{
@@ -66,7 +66,7 @@ namespace Engine
 		return nullptr;
 	}
 
-	glm::vec4 SpriteSheet::getSpriteAsVector(const std::string& index)
+	glm::vec4 SpriteSheet::getSpriteAsVector(std::string index)
 	{
 		for (auto sprite : sprites)
 		{
@@ -76,23 +76,7 @@ namespace Engine
 		return glm::vec4(0.0, 0.0, 0.0, 0.0);
 	}
 
-	int SpriteSheet::getSize(int index) const
-	{
-		switch (index)
-		{
-			case 0:
-			{
-				return width;
-			}
-			case 1:
-			{
-				return height;
-			}
-		}
-		return NULL;
-	}
-
-	void SpriteSheet::makeAnimation(const std::string& index, std::vector<std::string> indexes)
+	void SpriteSheet::makeAnimation(std::string index, std::vector<std::string> indexes)
 	{
 		for (auto animation : animations)
 		{
@@ -114,10 +98,10 @@ namespace Engine
 			}
 		}
 
-		animations.push_back(std::move(animation(index, _animation)));
+		animations.push_back(animation(index, _animation));
 	}
 
-	void SpriteSheet::makeAnimation(const std::string& index, std::vector<glm::vec4> sprites)
+	void SpriteSheet::makeAnimation(std::string index, std::vector<glm::vec4> sprites)
 	{
 		for (auto animation : animations)
 		{
@@ -132,10 +116,10 @@ namespace Engine
 			_animation->addSprite(sprite);
 		}
 
-		animations.push_back(std::move(animation(index, _animation)));
+		animations.push_back(animation(index, _animation));
 	}
 
-	std::shared_ptr<Animation> SpriteSheet::getAnimation(const std::string& index)
+	std::shared_ptr<Animation> SpriteSheet::getAnimation(std::string index)
 	{
 		for (auto animation : animations)
 		{

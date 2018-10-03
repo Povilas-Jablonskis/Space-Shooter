@@ -25,7 +25,8 @@ namespace Engine
 
 		};
 
-		fixPosition();
+		if (_positionPerc != glm::vec2(0.0f, 0.0f))
+			fixPosition();
 	}
 
 	void UIElementBase::update(float dt)

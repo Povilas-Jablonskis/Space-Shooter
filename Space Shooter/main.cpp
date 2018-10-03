@@ -5,22 +5,34 @@ std::shared_ptr<Application> application;
 
 void motionFunc(int x, int y)
 {
-	application->motionFunc(x, y);
+	glm::vec2 lastMousePosition = glm::vec2(x, y);
+	lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+	lastMousePosition.y = std::abs(lastMousePosition.y);
+	application->motionFunc(lastMousePosition);
 }
 
 void processMouseClick(int button, int state, int x, int y)
 {
-	application->processMouseClick(button, state, x, y);
+	glm::vec2 lastMousePosition = glm::vec2(x, y);
+	lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+	lastMousePosition.y = std::abs(lastMousePosition.y);
+	application->processMouseClick(button, state, lastMousePosition);
 }
 
 void keyboardInput(unsigned char c, int x, int y)
 {
-	application->keyboardInput(c, x, y);
+	glm::vec2 lastMousePosition = glm::vec2(x, y);
+	lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+	lastMousePosition.y = std::abs(lastMousePosition.y);
+	application->keyboardInput(c, lastMousePosition);
 }
 
 void keyboardInputUp(unsigned char c, int x, int y)
 {
-	application->keyboardInputUp(c, x, y);
+	glm::vec2 lastMousePosition = glm::vec2(x, y);
+	lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+	lastMousePosition.y = std::abs(lastMousePosition.y);
+	application->keyboardInputUp(c, lastMousePosition);
 }
 
 void display(void)
@@ -35,19 +47,25 @@ void resize(int width, int height)
 
 void specialKeyInput(int key, int x, int y)
 {
-	application->specialKeyInput(key, x, y);
+	glm::vec2 lastMousePosition = glm::vec2(x, y);
+	lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+	lastMousePosition.y = std::abs(lastMousePosition.y);
+	application->specialKeyInput(key, lastMousePosition);
 }
 
 void specialKeyInputUp(int key, int x, int y)
 {
-	application->specialKeyInputUp(key, x, y);
+	glm::vec2 lastMousePosition = glm::vec2(x, y);
+	lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
+	lastMousePosition.y = std::abs(lastMousePosition.y);
+	application->specialKeyInputUp(key, lastMousePosition);
 }
 
 int main(int argc, char *argv[])
 {
 	glutInit(&argc, argv);
-	glutInitWindowSize(640, 480);
-	glutInitWindowPosition(400, 300);
+	glutInitWindowSize(1024, 768);
+	glutInitWindowPosition(0, 0);
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutCreateWindow("Space Shooter");
 
