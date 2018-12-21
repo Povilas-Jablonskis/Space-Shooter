@@ -1,333 +1,427 @@
 <Levels>
 	<Level>
-		<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" value="100" positionX="32.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue1.png" value="100" positionX="32.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" value="100" positionX="96.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue1.png" value="100" positionX="96.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" value="100" positionX="160.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue1.png" value="100" positionX="160.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" value="100" positionX="224.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue1.png" value="100" positionX="224.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
 
-		<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" value="150" positionX="288.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue2.png" value="150" positionX="288.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" value="150" positionX="352.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue2.png" value="150" positionX="352.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" value="150" positionX="416.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue2.png" value="150" positionX="416.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" value="150" positionX="480.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue2.png" value="150" positionX="480.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
 
-		<Meteor name="meteorBrown_med1.png" positionX="320.0" positionY="640.0" velocityX="5.0" velocityY="-50.0"/>
-		<Meteor name="meteorBrown_med1.png" positionX="256.0" positionY="640.0" velocityX="-5.0" velocityY="-50.0"/>
+		<Meteor spriteName="meteorBrown_med1.png" positionX="320.0" positionY="640.0" velocityX="5.0" velocityY="-50.0" explosionSound="Sounds/explosions/6.wav"/>
+		<Meteor spriteName="meteorBrown_med1.png" positionX="256.0" positionY="640.0" velocityX="-5.0" velocityY="-50.0" explosionSound="Sounds/explosions/6.wav"/>
 
-		<Pickup name="doubleShooting" pickupSound="Sounds/sfx_shieldUp.ogg" spriteName="bold_silver.png" positionX="416.0" positionY="336.0" velocityX="0.0" velocityY="-30.0">
+		<Pickup spriteName="bold_silver.png" positionX="416.0" positionY="336.0" velocityX="0.0" velocityY="-30.0" pickupSound="Sounds/sfx_shieldUp.ogg">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="1.0"/>
-				<Shoot velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="2.0"/>
+				<Bullet spriteName="laserBlue13.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue10.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue13.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="2.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue10.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
 		</Pickup>
 
-		<Pickup name="halfCircleShooting" pickupSound="Sounds/sfx_shieldUp.ogg" spriteName="bolt_gold.png" positionX="512.0" positionY="336.0" velocityX="0.0" velocityY="-30.0">
+		<Pickup spriteName="bolt_gold.png" positionX="512.0" positionY="336.0" velocityX="0.0" velocityY="-30.0" pickupSound="Sounds/sfx_shieldUp.ogg">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="200.0" offsetX="-1.0" offsetY="0.5"/>
-				<Shoot velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="1.0"/>
-				<Shoot velocityX="0.0" velocityY="200.0" offsetX="1.0" offsetY="0.5"/>
+				<Bullet spriteName="laserBlue13.png" velocityX="0.0" velocityY="200.0" offsetX="-1.0" offsetY="0.5">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue10.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue13.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue10.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue13.png" velocityX="0.0" velocityY="200.0" offsetX="1.0" offsetY="0.5">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue10.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
 		</Pickup>
 
-		<Pickup name="shield" pickupSound="Sounds/sfx_shieldUp.ogg" spriteName="shield_silver.png" positionX="288.0" positionY="400.0" velocityX="0.0" velocityY="-30.0">
+		<Pickup spriteName="shield_silver.png" positionX="288.0" positionY="400.0" velocityX="0.0" velocityY="-30.0" pickupSound="Sounds/sfx_shieldUp.ogg">
 			<Shield spriteName="shield3.png"/>
 		</Pickup>
 	</Level>
 	<Level>
-		<Enemy name="enemyGreen2" spriteName="enemyGreen2.png" value="100" positionX="32.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyGreen2.png" value="100" positionX="32.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserGreen02.png"/>
-				<Sprite name="explosion" spriteName="laserGreen15.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyRed2" spriteName="enemyRed2.png" value="200" positionX="96.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed2.png" value="200" positionX="96.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
 		</Enemy>
 
-		<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" value="150" positionX="160.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue2.png" value="150" positionX="160.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
-			</ShootingEffect>				<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+			</ShootingEffect>				
 		</Enemy>
-		<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" value="100" positionX="224.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue1.png" value="100" positionX="224.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" value="150" positionX="288.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue2.png" value="150" positionX="288.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue1" spriteName="enemyBlue1.png" value="100" positionX="352.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue1.png" value="100" positionX="352.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
 	</Level>
 	<Level>
-		<Enemy name="enemyGreen2" spriteName="enemyGreen2.png" value="100" positionX="192.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyGreen2.png" value="100" positionX="192.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
-			</ShootingEffect>				<Animations>
-				<Sprite name="shoot" spriteName="laserGreen02.png"/>
-				<Sprite name="explosion" spriteName="laserGreen15.png"/>
-			</Animations>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+			</ShootingEffect>				
 		</Enemy>
-		<Enemy name="enemyGreen3" spriteName="enemyGreen3.png" value="150" positionX="256.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyGreen3.png" value="150" positionX="256.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserGreen02.png"/>
-				<Sprite name="explosion" spriteName="laserGreen15.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyGreen4" spriteName="enemyGreen4.png" value="200" positionX="320.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyGreen4.png" value="200" positionX="320.0" positionY="336.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="2.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserGreen02.png"/>
-				<Sprite name="explosion" spriteName="laserGreen15.png"/>
-			</Animations>
 		</Enemy>
 
-		<Enemy name="enemyRed1" spriteName="enemyRed1.png" value="150" positionX="192.0" positionY="272.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed1.png" value="150" positionX="192.0" positionY="272.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyRed1" spriteName="enemyRed1.png" value="150" positionX="256.0" positionY="272.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed1.png" value="150" positionX="256.0" positionY="272.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyRed1" spriteName="enemyRed1.png" value="150" positionX="320.0" positionY="272.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed1.png" value="150" positionX="320.0" positionY="272.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
 		</Enemy>
 
-		<Enemy name="enemyRed1" spriteName="enemyRed1.png" value="150" positionX="192.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed1.png" value="150" positionX="192.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyRed1" spriteName="enemyRed1.png" value="150" positionX="256.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed1.png" value="150" positionX="256.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyRed1" spriteName="enemyRed1.png" value="150" positionX="320.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed1.png" value="150" positionX="320.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
 		</Enemy>
 	</Level>
 	<Level>
-		<Enemy name="enemyGreen2" spriteName="enemyGreen2.png" value="100" positionX="32.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyGreen2.png" value="100" positionX="32.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserGreen02.png"/>
-				<Sprite name="explosion" spriteName="laserGreen15.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" value="150" positionX="96.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue2.png" value="150" positionX="96.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyRed2" spriteName="enemyRed2.png" value="200" positionX="160.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed2.png" value="200" positionX="160.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
-		</Enemy>
-
-		<Enemy name="enemyRed2" spriteName="enemyRed2.png" value="200" positionX="32.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
-			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
-			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserRed12.png"/>
-				<Sprite name="explosion" spriteName="laserRed09.png"/>
-			</Animations>
-		</Enemy>
-		<Enemy name="enemyBlue2" spriteName="enemyBlue2.png" value="150" positionX="96.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
-			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
-			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserBlue12.png"/>
-				<Sprite name="explosion" spriteName="laserBlue09.png"/>
-			</Animations>
-		</Enemy>
-		<Enemy name="enemyGreen2" spriteName="enemyGreen2.png" value="100" positionX="160.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
-			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
-			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserGreen02.png"/>
-				<Sprite name="explosion" spriteName="laserGreen15.png"/>
-			</Animations>
 		</Enemy>
 
-		<Enemy name="enemyGreen1" spriteName="enemyGreen1.png" value="200" positionX="416.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyRed2.png" value="200" positionX="32.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserRed12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserRed09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserGreen02.png"/>
-				<Sprite name="explosion" spriteName="laserGreen15.png"/>
-			</Animations>
 		</Enemy>
-		<Enemy name="enemyGreen2" spriteName="enemyGreen2.png" value="100" positionX="480.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+		<Enemy spriteName="enemyBlue2.png" value="150" positionX="96.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0"/>
-				<Shoot velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0"/>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserBlue12.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserBlue09.png"/>
+					</Animations>
+				</Bullet>
 			</ShootingEffect>
-			<Animations>
-				<Sprite name="shoot" spriteName="laserGreen02.png"/>
-				<Sprite name="explosion" spriteName="laserGreen15.png"/>
-			</Animations>
+		</Enemy>
+		<Enemy spriteName="enemyGreen2.png" value="100" positionX="160.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+			</ShootingEffect>
+		</Enemy>
+
+		<Enemy spriteName="enemyGreen1.png" value="200" positionX="416.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+			</ShootingEffect>
+		</Enemy>
+		<Enemy spriteName="enemyGreen2.png" value="100" positionX="480.0" positionY="400.0" velocityX="200.0" velocityY="0.0">
+			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="0.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+				<Bullet spriteName="laserGreen02.png" velocityX="0.0" velocityY="-200.0" offsetX="0.0" offsetY="-1.0">
+					<Animations>
+						<Sprite name="explosion" spriteName="laserGreen15.png"/>
+					</Animations>
+				</Bullet>
+			</ShootingEffect>
 		</Enemy>
 	</Level>
 </Levels>

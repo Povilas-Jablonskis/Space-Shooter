@@ -29,6 +29,8 @@ namespace Engine
 			std::function<void(std::shared_ptr<BaseGameObject>)> onCollision;
 			void addAnimation(std::string, std::shared_ptr<Animation>);
 			std::shared_ptr<Animation> getAnimationByIndex(std::string);
+			virtual inline void setLives(int _lives) { lives = _lives; }
+			inline int getLives() { return lives; }
 			inline void setVelocity(glm::vec2 _velocity) { velocity = _velocity; };
 			inline void setVelocity(int index, float _velocity) { velocity[index] = _velocity; };
 			inline float getVelocity(int index) { return velocity[index]; };
@@ -37,12 +39,16 @@ namespace Engine
 			inline bool getNeedsToBeRemoved() { return needsToBeRemoved; }
 			inline int getValue() { return value; }
 			inline void setValue(int _value) { value = _value; }
+			inline std::string getExplosionSound() { return explosionSound; }
+			inline void setExplosionSound(std::string _explosionSound) { explosionSound = _explosionSound; }
 			void applyAnimation(std::shared_ptr<Animation>);
 		protected:
+			std::string explosionSound;
 			bool needsToBeRemoved;
 			std::vector<animation> animations;
 			glm::vec2 velocity;
 			int value;
+			int lives;
 	};
 }
 #endif

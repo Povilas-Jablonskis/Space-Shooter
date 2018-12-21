@@ -1,28 +1,20 @@
 #ifndef _bulletH
 #define _bulletH
 
-#include <iostream>
-#include <vector>
-#include "GL/glew.h"
-#include "GL/freeglut.h"
-#include <memory>
-
-#include "BaseGameObject.h"
-
-#include "gtc/matrix_transform.hpp"
-#include "gtc/type_ptr.hpp"
-#include "gtx/rotate_vector.hpp"
 #include <vec2.hpp>
-#include <vec4.hpp>
+#include <string>>
+#include <vector>
 
 namespace Engine
 {
-	class Bullet : public BaseGameObject
+	struct Bullet
 	{
-		public:
-			Bullet(float, float, glm::vec2, glm::vec2, glm::vec4);
-			void onCollision(Entity*, Entity*);
-			void onCollision(BaseGameObject*, Entity*);
+		glm::vec2 positionOffset;
+		glm::vec2 velocity;
+		std::string spriteName;
+		std::string explosionSound;
+		std::vector<std::pair<std::string, std::string>> sprites;
+		std::vector<std::pair<std::string, std::string>> animations;
 	};
 }
 #endif

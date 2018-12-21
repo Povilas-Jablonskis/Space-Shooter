@@ -14,6 +14,7 @@
 #include "SpriteSheet.h"
 #include "CollisionManager.h"
 #include "SpriteSheetManager.h"
+#include "MenuManager.h"
 
 #include "UIElementBase.h"
 #include "Player.h"
@@ -22,7 +23,6 @@
 namespace Engine
 {
 	typedef std::pair<std::string, std::shared_ptr<UIElementBase>> uiPlayerElement;
-	typedef std::pair<std::string, std::vector<std::shared_ptr<UIElementBase>>> menu;
 
 	class Application : public Observer
 	{
@@ -30,8 +30,10 @@ namespace Engine
 			~Application();
 			Application();
 			std::string virtualKeyCodeToString(SHORT);
-			std::shared_ptr<menu> getMenu(std::string);
 
+			inline void setGameState(GameState _state) { lastGameState = getGameState(); gameState = _state; onNotify(ObserverEvent::GAMESTATE_CHANGED, std::vector<std::pair<std::string, BaseGameObject*>>()); }
+			inline GameState getGameState() { return gameState; }
+			inline GameState getLastGameState() { return lastGameState; }
 			void render();
 			void keyboardInput(unsigned char, glm::vec2);
 			void keyboardInputUp(unsigned char, glm::vec2);
@@ -45,10 +47,8 @@ namespace Engine
 			void loadPlayerModel();
 			void saveConfig();
 			void loadConfig();
-			void startNewLevel();
 			void updatePlayerLives();
 			void updatePlayerScore();
-			void resetScene();
 			void initScene();
 			void initGameUI();
 		private:
@@ -57,7 +57,6 @@ namespace Engine
 			std::shared_ptr<Player> player;
 			std::shared_ptr<BaseGameObject> background;
 
-			float t;
 			float dt;
 			float currentTime;
 			float accumulator;
@@ -71,17 +70,18 @@ namespace Engine
 			std::vector<std::shared_ptr<BaseGameObject>> pickups;
 			std::vector<std::shared_ptr<Entity>> enemies;
 			std::vector<std::shared_ptr<BaseGameObject>> explosions;
+
 			std::vector<std::shared_ptr<UIElementBase>> playerLives;
 			std::vector<std::shared_ptr<UIElementBase>> scoreBoard;
 			std::vector<uiPlayerElement> notifications;
-			std::vector<std::shared_ptr<menu>> gameMenu;
-			std::shared_ptr<menu> currentMenu;
 
+			std::shared_ptr<MenuManager> menuManager;
 			std::shared_ptr<SpriteSheetManager> spriteSheetManager;
 			std::shared_ptr<CollisionManager> collisionManager;
 			std::shared_ptr<Renderer> renderer;
 			std::shared_ptr<InputManager> inputManager;
 			std::shared_ptr<FontManager> fontManager;
+			GameState lastGameState;
 			GameState gameState;
 	};
 }

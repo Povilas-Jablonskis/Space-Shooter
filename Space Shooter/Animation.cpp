@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-	Animation::Animation(GLuint _spriteSheetTexture, int width, int heigth) : loop(false), delay(1.0f / 60.f), spriteSheetTexture(_spriteSheetTexture), spriteSheetHeigth(heigth), spriteSheetWidth(width)
+	Animation::Animation(GLuint _spriteSheetTexture, int width, int heigth) : spriteSheetTexture(_spriteSheetTexture), spriteSheetHeigth(heigth), spriteSheetWidth(width)
 	{
 
 	}

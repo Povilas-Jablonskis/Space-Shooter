@@ -77,30 +77,31 @@ namespace Engine
 
 	}
 
-	void UIElementBase::checkIfMouseHoverThis(glm::vec2 lastMousePosition)
+	bool UIElementBase::checkIfMouseHoverThis(glm::vec2 lastMousePosition)
 	{
-		if (color.a == 0.0f) return;
+		if (color.a == 0.0f) return false;
 		
 		if (checkIfCollides(lastMousePosition))
 		{
 			if (!gotMousedHovered)
 			{
-				if(!isStatic)
-					onHoverEnterFuncDefaults();
+				if(!isStatic) onHoverEnterFuncDefaults();
 				onHoverEnterFunc();
 				gotMousedHovered = true;
+				return true;
 			}
 		}
 		else
 		{
 			if (gotMousedHovered)
 			{
-				if (!isStatic)
-					onHoverExitFuncDefaults();
+				if (!isStatic) onHoverExitFuncDefaults();
 				onHoverExitFunc();
 				gotMousedHovered = false;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	bool UIElementBase::checkForMouseClickOnThis(bool leftMouseState, bool lastLeftMouseState, glm::vec2 lastMousePosition)
@@ -108,10 +109,16 @@ namespace Engine
 		if (color.a == 0.0f || !checkIfCollides(lastMousePosition)) return false;
 
 		if (!lastLeftMouseState && leftMouseState)
+		{
 			onMouseClickFunc();
+			return true;
+		}
 		else if (lastLeftMouseState && !leftMouseState)
+		{
 			onMouseReleaseFunc();
+			return true;
+		}
 
-		return true;
+		return false;
 	}
 }

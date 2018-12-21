@@ -26,7 +26,7 @@ namespace Engine
 			inline void setIsStatic(bool _isStatic) { isStatic = _isStatic; }
 			virtual void fixPosition();
 			virtual bool checkIfCollides(glm::vec2);
-			virtual void checkIfMouseHoverThis(glm::vec2);
+			virtual bool checkIfMouseHoverThis(glm::vec2);
 			virtual bool checkForMouseClickOnThis(bool, bool, glm::vec2);
 			std::function<void()> onHoverEnterFunc;
 			std::function<void()> onHoverExitFunc;

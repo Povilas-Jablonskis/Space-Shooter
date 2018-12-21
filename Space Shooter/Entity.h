@@ -2,18 +2,18 @@
 #define _entityH
 
 #include "BaseGameObject.h"
-#include "Bullet.h"
 
 namespace Engine
 {
 	typedef std::pair<std::string, std::shared_ptr<BaseGameObject>> addon;
 
+	class Application;
 	class Entity : public BaseGameObject
 	{
 		public:
 			Entity(float, float, glm::vec2, glm::vec2, glm::vec4);
 			inline std::vector<std::shared_ptr<BaseGameObject>>* getBulletsList() { return &bullets; }
-			void addBullet(glm::vec2, glm::vec2, std::string, std::string);
+			void addBullet(std::shared_ptr<BaseGameObject>);
 			virtual bool update(float);
 			inline void clearBullets() { bullets.clear(); }
 			inline float getDelayBetweenShootsTimer() { return delayBetweenShootsTimer; }

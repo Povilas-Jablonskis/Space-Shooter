@@ -10,7 +10,7 @@ namespace Engine
 		PLAYER_DIED,
 		OBJECT_DESTROYED,
 		BULLET_SHOT,
-		PICKUP_PICKED_UP
+		GAMESTATE_CHANGED
 	};
 }
 #endif

@@ -11,17 +11,29 @@ namespace Engine
 	}
 
 	Player::Player(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: Entity(_width, _height, _position, _velocity, _color), lives(0), score(0), startPosition(_position), startVelocity(_velocity)
+		: Entity(_width, _height, _position, _velocity, _color), score(0), startPosition(_position), startVelocity(_velocity)
 	{
-		
+		onCollision = [this](std::shared_ptr<BaseGameObject> collider)
+		{
+			
+		};
 	}
 
 	bool Player::update(float dt)
 	{
 		if (getNeedsToBeRemoved())
 		{
-			notify(ObserverEvent::PLAYER_DIED, std::vector<std::pair<std::string, BaseGameObject*>>());
-			setNeedsToBeRemoved(false);
+			setLives(getLives() - 1);
+			setVelocity(getStartVelocity());
+			setPosition(getStartPosition());
+			if (getLives() < 1)
+			{
+				notify(ObserverEvent::PLAYER_DIED, std::vector<std::pair<std::string, BaseGameObject*>>());
+			}
+			else
+			{
+				setNeedsToBeRemoved(false);
+			}
 		}
 
 		updateAnimation(dt);

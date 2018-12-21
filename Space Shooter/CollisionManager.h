@@ -2,7 +2,6 @@
 #define _collisionManagerH
 
 #include "Entity.h"
-#include "Bullet.h"
 
 namespace Engine
 {

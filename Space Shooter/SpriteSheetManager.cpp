@@ -38,8 +38,6 @@ namespace Engine
 				}
 
 				spriteSheet->makeAnimation(beer_node->first_attribute("name")->value(), sprites);
-				spriteSheet->getAnimation(beer_node->first_attribute("name")->value())->setLoopStatus(std::stoi(beer_node->first_attribute("loop")->value()));
-				spriteSheet->getAnimation(beer_node->first_attribute("name")->value())->setDelay(std::stof(beer_node->first_attribute("delay")->value()));
 			}
 
 			loadSpriteSheet(brewery_node->first_attribute("name")->value(), std::move(spriteSheet));

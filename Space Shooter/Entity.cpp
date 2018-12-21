@@ -1,4 +1,5 @@
 #include "Entity.h"
+#include "Application.h"
 
 namespace Engine
 {
@@ -11,29 +12,13 @@ namespace Engine
 		};
 	}
 
-	void Entity::addBullet(glm::vec2 bulletPosition, glm::vec2 velocity, std::string explosionSound, std::string shootingSound)
-	{ 
-		auto bullet = std::make_shared<BaseGameObject>(0.0f, 0.0f, bulletPosition, velocity, glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
-		bullet->applyAnimation(getAnimationByIndex("shoot"));
-		bullet->addAnimation("explosion", getAnimationByIndex("explosion"));
-		bullet->setScale(0.5f);
-		bullet->onUpdate = [bullet]()
-		{
-			auto windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-			auto windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
-
-			//Collision detection
-			if (bullet->getPosition(0) + bullet->getWidth() >= windowWidth || bullet->getPosition(0) <= 0.0f)
-				bullet->setNeedsToBeRemoved(true);
-
-			if (bullet->getPosition(1) + bullet->getHeight() >= windowHeigth || bullet->getPosition(1) <= 0.0f)
-				bullet->setNeedsToBeRemoved(true);
-		};
-		bullet->onCollision = [bullet, explosionSound, this](std::shared_ptr<BaseGameObject> collider)
+	void Entity::addBullet(std::shared_ptr<BaseGameObject> _bullet)
+	{
+		_bullet->onCollision = [_bullet, this](std::shared_ptr<BaseGameObject> collider)
 		{
 			auto entity = dynamic_cast<Entity*>(collider.get());
 
-			bullet->setNeedsToBeRemoved(true);
+			_bullet->setNeedsToBeRemoved(true);
 
 			if (entity != nullptr)
 			{
@@ -43,29 +28,15 @@ namespace Engine
 				}
 				else
 				{
-					auto params = std::vector<std::pair<std::string, BaseGameObject*>>();
-					params.push_back(std::pair<std::string, BaseGameObject*>(explosionSound, nullptr));
-					params.push_back(std::pair<std::string, BaseGameObject*>("collider", collider.get()));
-					notify(ObserverEvent::OBJECT_DESTROYED, params);
-
 					entity->setNeedsToBeRemoved(true);
 				}
 			}
 			else
 			{
-				auto params = std::vector<std::pair<std::string, BaseGameObject*>>();
-				params.push_back(std::pair<std::string, BaseGameObject*>(explosionSound, nullptr));
-				params.push_back(std::pair<std::string, BaseGameObject*>("collider", collider.get()));
-				notify(ObserverEvent::OBJECT_DESTROYED, params);
-
 				collider->setNeedsToBeRemoved(true);
 			}
 		};
-		bullets.push_back(bullet);
-
-		auto params = std::vector<std::pair<std::string, BaseGameObject*>>();
-		params.push_back(std::pair<std::string, BaseGameObject*>(shootingSound, nullptr));
-		notify(ObserverEvent::BULLET_SHOT, params);
+		bullets.push_back(_bullet);
 	}
 
 	bool Entity::update(float dt)

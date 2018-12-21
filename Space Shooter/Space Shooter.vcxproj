@@ -80,6 +80,7 @@
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MenuManager.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="Character.h" />
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="MenuManager.h" />
     <ClInclude Include="ObserverEvent.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />
@@ -113,7 +115,6 @@
     <ClInclude Include="SpriteSheetManager.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="Text.h" />
-    <ClInclude Include="Timer.h" />
     <ClInclude Include="UIElementBase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

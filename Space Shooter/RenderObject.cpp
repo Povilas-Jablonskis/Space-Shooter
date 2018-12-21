@@ -18,19 +18,14 @@ namespace Engine
 		if (sprites->size() > 1)
 		{
 			animTimer += dt;
-			if (animTimer > theAnimation->getDelay())
+			if (animTimer > (1.0f / 60.f))
 			{
 				animTimer = 0;
 				currentFrame++;
 				if (currentFrame >= sprites->size())
 				{
-					if (theAnimation->getLoopStatus())
-						currentFrame = 0;
-					else
-					{
-						currentFrame = (sprites->size() - 1);
-						animComplete = true;
-					}
+					currentFrame = (sprites->size() - 1);
+					animComplete = true;
 				}
 			}
 

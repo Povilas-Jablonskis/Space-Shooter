@@ -13,7 +13,6 @@ namespace Engine
 			bool update(float);
 			glm::vec2 getStartVelocity() { return startVelocity; }
 			glm::vec2 getStartPosition() { return startPosition; }
-			inline int getLives()  { return lives; }
 			inline void setLives(int _lives) { lives = _lives; notify(ObserverEvent::LIVES_CHANGED, std::vector<std::pair<std::string, BaseGameObject*>>()); }
 			inline int getScore()  { return score; }
 			inline void setScore(int _score) { score = _score; notify(ObserverEvent::SCORE_CHANGED, std::vector<std::pair<std::string, BaseGameObject*>>()); }
@@ -24,7 +23,6 @@ namespace Engine
 			glm::vec2 startVelocity;
 			glm::vec2 startPosition;
 			int score;
-			int lives;
 	};
 }
 #endif
