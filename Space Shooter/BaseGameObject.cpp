@@ -4,15 +4,15 @@
 
 namespace Engine
 {
-	BaseGameObject::BaseGameObject(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: RenderObject(_width, _height, _position, _color), lives(1), velocity(_velocity), explosionSound(""), needsToBeRemoved(false), value(0)
+	BaseGameObject::BaseGameObject(glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
+		: RenderObject(0.0f, 0.0f, _position, _color), lives(1), velocity(_velocity), explosionSound(""), needsToBeRemoved(false), value(0)
 	{
-		onUpdate = []()
+		onUpdateFunc = []()
 		{
 
 		};
 
-		onCollision = [this](std::shared_ptr<BaseGameObject> collider)
+		onCollisionFunc = [this](std::shared_ptr<BaseGameObject> collider)
 		{
 			auto entity = dynamic_cast<Entity*>(collider.get());
 
@@ -36,20 +36,13 @@ namespace Engine
 		};
 	}
 
-	BaseGameObject::~BaseGameObject()
-	{
-		animations.clear();
-	}
-
 	bool BaseGameObject::update(float _dt)
 	{
-		onUpdate();
+		onUpdateFunc();
 
 		if (getNeedsToBeRemoved())
 		{
-			auto params = std::vector<std::pair<std::string, BaseGameObject*>>();
-			params.push_back(std::pair<std::string, BaseGameObject*>("collider", this));
-			notify(ObserverEvent::OBJECT_DESTROYED, params);
+			notify(ObserverEvent::OBJECT_DESTROYED, this);
 
 			setLives(getLives() - 1);
 			if (getLives() > 0)
@@ -58,20 +51,10 @@ namespace Engine
 			}
 		}
 
-		position.x += velocity.x * _dt;
-		position.y += velocity.y * _dt;
+		setPosition(getPosition() + (velocity * _dt));
+
 		updateAnimation(_dt);
 		return getNeedsToBeRemoved();
-	}
-
-	void BaseGameObject::applyAnimation(std::shared_ptr<Animation> _animation)
-	{
-		if (_animation == nullptr || _animation == theAnimation) return;
-
-		RenderObject::applyAnimation(_animation);
-
-		setWidth(theAnimation->getAnimation()->at(getCurrentFrame()).z);
-		setHeight(theAnimation->getAnimation()->at(getCurrentFrame()).w);
 	}
 
 	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> _animation)

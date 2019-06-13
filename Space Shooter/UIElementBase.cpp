@@ -2,9 +2,13 @@
 
 namespace Engine
 {
-	UIElementBase::UIElementBase(float _width, float _height, glm::vec2 _position, glm::vec4 _color, glm::vec2 _positionPerc) :
-		RenderObject(_width, _height, _position, _color), gotMousedHovered(false), isStatic(false), positionPercents(_positionPerc), originalWidth(width), originalHeigth(height)
+	UIElementBase::UIElementBase(glm::vec4 _color, glm::vec2 _positionPerc, std::shared_ptr<UIInputComponent> input) :
+		RenderObject(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), _color), gotMousedHovered(false), active(true), positionPercents(_positionPerc), inputComponent(input)
 	{
+		setScale(1.0f);
+		setOriginalWidth(0.0f);
+		setOriginalHeight(0.0f);
+
 		onHoverEnterFunc = []()
 		{
 
@@ -24,43 +28,45 @@ namespace Engine
 		{
 
 		};
-
-		if (_positionPerc != glm::vec2(0.0f, 0.0f))
-			fixPosition();
 	}
 
-	void UIElementBase::update(float dt)
+
+	void UIElementBase::update(float dt, std::shared_ptr<InputManager> inputManager)
 	{
-		if (color.a == 0.0f) return;
+		if (!isActive()) return;
 
 		updateAnimation(dt);
+		fixPosition();
+		inputComponent->update(this, inputManager);
 	}
 
 	void UIElementBase::fixPosition()
 	{
-		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+		float windowWidth = (float)glutGet(GLUT_WINDOW_WIDTH);
+		float windowHeight = (float)glutGet(GLUT_WINDOW_HEIGHT);
 
 		if (positionPercents == glm::vec2(0.0f, 0.0f))
 		{
-			width = temPos.x;
-			height = temPos.y;
+			setPosition(glm::vec2(0.0f, 0.0f));
+			setWidth(windowWidth);
+			setHeight(windowHeight);
 			return;
 		}
-		position.x = temPos.x * (positionPercents.x / 100.0f);
-		position.y = temPos.y * (positionPercents.y / 100.0f);
 
-		width = originalWidth * (temPos.x / (float)glutGet(GLUT_INIT_WINDOW_WIDTH));
-		height = originalHeigth * (temPos.y / (float)(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
+		setPosition(glm::vec2(windowWidth * (positionPercents.x / 100.0f), windowHeight * (positionPercents.y / 100.0f)));
+
+		setWidth((getOriginalWidth() * windowWidth) / (float)glutGet(GLUT_INIT_WINDOW_WIDTH));
+		setHeight((getOriginalHeight() * windowHeight) / (float)glutGet(GLUT_INIT_WINDOW_HEIGHT));
 	}
 
 	bool UIElementBase::checkIfCollides(glm::vec2 colCoordinates)
 	{
 		// Collision x-axis?
-		bool collisionX = position.x + width >= colCoordinates.x &&
-			colCoordinates.x >= position.x;
+		bool collisionX = getPosition().x + getWidth() >= colCoordinates.x &&
+			colCoordinates.x >= getPosition().x;
 		// Collision y-axis?
-		bool collisionY = position.y + height >= colCoordinates.y &&
-			colCoordinates.y >= position.y;
+		bool collisionY = getPosition().y + getHeight() >= colCoordinates.y &&
+			colCoordinates.y >= getPosition().y;
 		// Collision only if on both axes
 		if (collisionX && collisionY)
 			return true;
@@ -75,50 +81,5 @@ namespace Engine
 	void UIElementBase::onHoverExitFuncDefaults()
 	{
 
-	}
-
-	bool UIElementBase::checkIfMouseHoverThis(glm::vec2 lastMousePosition)
-	{
-		if (color.a == 0.0f) return false;
-		
-		if (checkIfCollides(lastMousePosition))
-		{
-			if (!gotMousedHovered)
-			{
-				if(!isStatic) onHoverEnterFuncDefaults();
-				onHoverEnterFunc();
-				gotMousedHovered = true;
-				return true;
-			}
-		}
-		else
-		{
-			if (gotMousedHovered)
-			{
-				if (!isStatic) onHoverExitFuncDefaults();
-				onHoverExitFunc();
-				gotMousedHovered = false;
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool UIElementBase::checkForMouseClickOnThis(bool leftMouseState, bool lastLeftMouseState, glm::vec2 lastMousePosition)
-	{
-		if (color.a == 0.0f || !checkIfCollides(lastMousePosition)) return false;
-
-		if (!lastLeftMouseState && leftMouseState)
-		{
-			onMouseClickFunc();
-			return true;
-		}
-		else if (lastLeftMouseState && !leftMouseState)
-		{
-			onMouseReleaseFunc();
-			return true;
-		}
-
-		return false;
 	}
 }

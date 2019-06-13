@@ -5,14 +5,14 @@
 
 namespace Engine
 {
-	Shader::Shader(std::string vertex_path, std::string fragment_path)
-	{
-		loadShader(vertex_path, fragment_path);
-	}
-
 	Shader::~Shader()
 	{
 		glDeleteProgram(program);
+	}
+
+	Shader::Shader(std::string vertex_path, std::string fragment_path)
+	{
+		loadShader(vertex_path, fragment_path);
 	}
 
 	std::string Shader::readShaderFile(std::string path)

@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "Animation.h"
-#include "Renderer.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -34,10 +33,8 @@ namespace Engine
 			inline bool getAnimationStatus()  { return animComplete; }
 			inline void setAnimTimer(float _timer) { animTimer = _timer; }
 			inline float getAnimTimer()  { return animTimer; }
-			inline float getColor(int index) const{ return color[index]; }
-			inline float getPosition(int index)  { return position[index]; }
+			inline glm::vec4 getColor() const { return color; }
 			inline glm::vec2 getPosition()  { return position; }
-			inline float getRotationAxis(int index)  { return rotationAxis[index]; }
 			inline glm::vec3 getRotationAxis()  { return rotationAxis; }
 			inline float getRotationAngle()  { return rotationAngle; }
 			inline std::shared_ptr<Animation> getAnimation() { return theAnimation; }
@@ -51,10 +48,13 @@ namespace Engine
 			inline float getHeight()  { return height * scale; };
 			inline void setWidth(float _width) { width = _width; }
 			inline void setHeight(float _height) { height = _height; }
+			inline float getOriginalWidth() { return originalWidth; };
+			inline float getOriginalHeight() { return originalHeigth; };
+			inline void setOriginalWidth(float _width) { originalWidth = _width; }
+			inline void setOriginalHeight(float _height) { originalHeigth = _height; }
 			void updateAnimation(float);
 			void applyAnimation(std::shared_ptr<Animation>);
-			virtual void draw(std::shared_ptr<Renderer>);
-		protected:
+		private:
 			size_t currentFrame;
 			bool animComplete;
 			float animTimer;
@@ -66,7 +66,8 @@ namespace Engine
 			float width;
 			float height;
 			glm::vec4 color;
-			glm::vec4 bbox;
+			float originalWidth;
+			float originalHeigth;
 		};
 }
 #endif

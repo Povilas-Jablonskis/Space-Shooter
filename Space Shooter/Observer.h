@@ -12,9 +12,8 @@ namespace Engine
 	class Observer
 	{
 		public:
-			Observer();
-			std::function<void(ObserverEvent, std::vector<std::pair<std::string, BaseGameObject*>>)> onNotify;
-			BaseGameObject* getParameter(std::vector<std::pair<std::string, BaseGameObject*>>, std::string);
+			virtual void onNotify(ObserverEvent) = 0;
+			virtual void onNotify(ObserverEvent, BaseGameObject*) = 0;
 	};
 }
 #endif

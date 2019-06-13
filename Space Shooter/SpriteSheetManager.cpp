@@ -4,11 +4,6 @@
 
 namespace Engine
 {
-	SpriteSheetManager::~SpriteSheetManager()
-	{
-		spriteSheets.clear();
-	}
-
 	void SpriteSheetManager::loadSpriteSheetsFromConfig()
 	{
 		rapidxml::xml_document<> doc;
@@ -42,6 +37,9 @@ namespace Engine
 
 			loadSpriteSheet(brewery_node->first_attribute("name")->value(), std::move(spriteSheet));
 		}
+
+		theFile.close();
+		doc.clear();
 	}
 
 	void SpriteSheetManager::loadSpriteSheet(std::string name, std::shared_ptr<SpriteSheet> _spriteSheet)

@@ -94,8 +94,8 @@
 			</ShootingEffect>
 		</Enemy>
 
-		<Meteor spriteName="meteorBrown_med1.png" positionX="320.0" positionY="640.0" velocityX="5.0" velocityY="-50.0" explosionSound="Sounds/explosions/6.wav"/>
-		<Meteor spriteName="meteorBrown_med1.png" positionX="256.0" positionY="640.0" velocityX="-5.0" velocityY="-50.0" explosionSound="Sounds/explosions/6.wav"/>
+		<Meteor spriteName="meteorBrown_big1.png" positionX="320.0" positionY="640.0" velocityX="5.0" velocityY="-50.0" explosionSound="Sounds/explosions/6.wav"/>
+		<Meteor spriteName="meteorBrown_big1.png" positionX="256.0" positionY="640.0" velocityX="-5.0" velocityY="-50.0" explosionSound="Sounds/explosions/6.wav"/>
 
 		<Pickup spriteName="bold_silver.png" positionX="416.0" positionY="336.0" velocityX="0.0" velocityY="-30.0" pickupSound="Sounds/sfx_shieldUp.ogg">
 			<ShootingEffect explosionSound="Sounds/explosions/6.wav" shootingSound="Sounds/sfx_laser1.ogg" delayBetweenShoots="1.0">

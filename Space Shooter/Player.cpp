@@ -10,16 +10,16 @@ namespace Engine
 		clearBullets();
 	}
 
-	Player::Player(float _width, float _height, glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: Entity(_width, _height, _position, _velocity, _color), score(0), startPosition(_position), startVelocity(_velocity)
+	Player::Player(glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, std::shared_ptr<InputComponent> input)
+		: Entity(_position, _velocity, _color, input), score(0), startPosition(_position), startVelocity(_velocity)
 	{
-		onCollision = [this](std::shared_ptr<BaseGameObject> collider)
+		onCollisionFunc = [this](std::shared_ptr<BaseGameObject> collider)
 		{
 			
 		};
 	}
 
-	bool Player::update(float dt)
+	bool Player::update(float dt, std::shared_ptr<InputManager> inputManager)
 	{
 		if (getNeedsToBeRemoved())
 		{
@@ -28,28 +28,30 @@ namespace Engine
 			setPosition(getStartPosition());
 			if (getLives() < 1)
 			{
-				notify(ObserverEvent::PLAYER_DIED, std::vector<std::pair<std::string, BaseGameObject*>>());
+				notify(ObserverEvent::PLAYER_DIED);
 			}
-			else
-			{
-				setNeedsToBeRemoved(false);
-			}
+
+			setNeedsToBeRemoved(false);
 		}
 
+		getInputComponent()->update(this, inputManager, dt);
+
 		updateAnimation(dt);
+
+		setPosition(1, getPosition().y + ((getVelocity().y * dt) / 2.0f));
 
 		auto windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 		auto windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
 
 		//Collision detection
-		if (getPosition(0) + getWidth() >= windowWidth)
+		if (getPosition().x + getWidth() >= windowWidth)
 			setPosition(0, 0.0f);
-		else if (getPosition(0) <= 0.0f)
+		else if (getPosition().x <= 0.0f)
 			setPosition(0, windowWidth - getWidth());
 
-		if (getPosition(1) + getHeight() >= windowHeigth)
+		if (getPosition().y + getHeight() >= windowHeigth)
 			setPosition(1, 0.0f);
-		else if (getPosition(1) <= 0.0f)
+		else if (getPosition().y <= 0.0f)
 			setPosition(1, 0.0f);
 
 		auto bullets = getBulletsList();

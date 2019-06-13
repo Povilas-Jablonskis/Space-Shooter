@@ -8,54 +8,50 @@
 #include <irrKlang.h>
 
 #include "Renderer.h"
-#include "FontManager.h"
 #include "GameState.h"
-#include "InputManager.h"
 #include "SpriteSheet.h"
 #include "CollisionManager.h"
 #include "SpriteSheetManager.h"
 #include "MenuManager.h"
-
-#include "UIElementBase.h"
 #include "Player.h"
 #include "Observer.h"
 
 namespace Engine
 {
-	typedef std::pair<std::string, std::shared_ptr<UIElementBase>> uiPlayerElement;
+	typedef std::pair<std::string, std::shared_ptr<Text>> uiPlayerElement;
 
 	class Application : public Observer
 	{
 		public:
 			~Application();
 			Application();
-			std::string virtualKeyCodeToString(SHORT);
 
-			inline void setGameState(GameState _state) { lastGameState = getGameState(); gameState = _state; onNotify(ObserverEvent::GAMESTATE_CHANGED, std::vector<std::pair<std::string, BaseGameObject*>>()); }
+			void onNotify(ObserverEvent);
+			void onNotify(ObserverEvent, BaseGameObject*);
+
+			inline void setGameState(GameState _state) { lastGameState = getGameState(); gameState = _state; onNotify(ObserverEvent::GAMESTATE_CHANGED); }
 			inline GameState getGameState() { return gameState; }
 			inline GameState getLastGameState() { return lastGameState; }
+
 			void render();
-			void keyboardInput(unsigned char, glm::vec2);
-			void keyboardInputUp(unsigned char, glm::vec2);
-			void resize(int, int);
-			void motionFunc(glm::vec2);
-			void processMouseClick(int, int, glm::vec2);
-			void specialKeyInput(int, glm::vec2);
-			void specialKeyInputUp(int, glm::vec2);
 
 			void loadPlayerModels();
 			void loadPlayerModel();
-			void saveConfig();
-			void loadConfig();
+			void savePlayerConfig();
+			void loadPlayerConfig();
 			void updatePlayerLives();
 			void updatePlayerScore();
-			void initScene();
-			void initGameUI();
+			void initLevel();
+			void initGameMenu();
+
+			inline irrklang::ISoundEngine* getSoundEngine() { return soundEngine; }
+			inline std::shared_ptr<InputManager> getInputManager() { return inputManager; }
+			inline std::shared_ptr<MenuManager> getMenuManager() { return menuManager; }
 		private:
 			irrklang::ISoundEngine* soundEngine;
 
 			std::shared_ptr<Player> player;
-			std::shared_ptr<BaseGameObject> background;
+			std::shared_ptr<UIElementBase> background;
 
 			float dt;
 			float currentTime;
@@ -75,12 +71,14 @@ namespace Engine
 			std::vector<std::shared_ptr<UIElementBase>> scoreBoard;
 			std::vector<uiPlayerElement> notifications;
 
+			std::shared_ptr<ConfigurationManager> configurationManager;
 			std::shared_ptr<MenuManager> menuManager;
 			std::shared_ptr<SpriteSheetManager> spriteSheetManager;
 			std::shared_ptr<CollisionManager> collisionManager;
-			std::shared_ptr<Renderer> renderer;
 			std::shared_ptr<InputManager> inputManager;
-			std::shared_ptr<FontManager> fontManager;
+
+			std::shared_ptr<Renderer> renderer;
+
 			GameState lastGameState;
 			GameState gameState;
 	};

@@ -3,16 +3,19 @@
 
 namespace Engine
 {
-	void Subject::addObserver(Observer* observer)
-	{
-		observers.push_back(observer);
-	}
-
-	void Subject::notify(ObserverEvent _event, std::vector<std::pair<std::string, BaseGameObject*>> params)
+	void Subject::notify(ObserverEvent _event)
 	{
 		for (auto observer : observers)
 		{
-			observer->onNotify(_event, params);
+			observer->onNotify(_event);
+		}
+	}
+
+	void Subject::notify(ObserverEvent _event, BaseGameObject* obj)
+	{
+		for (auto observer : observers)
+		{
+			observer->onNotify(_event, obj);
 		}
 	}
 }

@@ -18,7 +18,7 @@ namespace Engine
 					if ((*it)->getNeedsToBeRemoved()) continue;
 					if (checkCollision(object, *it))
 					{
-						(*it)->onCollision(object);
+						(*it)->onCollisionFunc(object);
 						return true;
 					}
 				}

@@ -4,34 +4,26 @@
 
 namespace Engine
 {
-	Text::Text(std::string _text, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
-		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), text(_text), font(_font), needUpdate(true)
+	Text::Text(std::string _text, glm::vec4 _color, glm::vec2 _positionPerc, std::shared_ptr<UIInputComponent> input) :
+		UIElementBase(_color, _positionPerc, input), leftButtonClicked(0), text(_text), needUpdate(true), keyBindingInputComponent(nullptr)
 	{
+		
 	}
 
-	Text::Text(const char _text, glm::vec2 _position, glm::vec4 _color, std::shared_ptr<Font> _font, glm::vec2 _positionPerc) :
-		UIElementBase(0, 0, _position, _color, _positionPerc), leftButtonClicked(0), text(""), font(_font), needUpdate(true)
+	Text::Text(std::string _text, glm::vec4 _color, glm::vec2 _positionPerc, std::shared_ptr<UIInputComponent> input, std::shared_ptr<KeyBindingInputComponent> kbInput) :
+		UIElementBase(_color, _positionPerc, input), leftButtonClicked(0), text(_text), needUpdate(true), keyBindingInputComponent(kbInput)
 	{
-		text += _text;
-	}
 
-	Text::~Text()
-	{
-		cachedCharacters.clear();
 	}
 
 	void Text::onHoverEnterFuncDefaults()
 	{
-		color.r = 0.0f;
-		color.g = 0.0f;
-		color.b = 0.0f;
+		changeColor(glm::vec4(0.0f, 0.0f, 0.0f, getColor().a));
 	}
 
 	void Text::onHoverExitFuncDefaults()
 	{
-		color.r = 255.0f;
-		color.g = 160.0f;
-		color.b = 122.0f;
+		changeColor(glm::vec4(255.0f, 160.0f, 122.0f, getColor().a));
 	}
 
 	bool Text::checkIfCollides(glm::vec2 colCoordinates)
@@ -41,25 +33,33 @@ namespace Engine
 		return false;
 	}
 
-	void Text::update(float dt)
+	void Text::update(float dt, std::shared_ptr<ConfigurationManager> configurationManager, std::shared_ptr<InputManager> inputManager)
 	{
-		if (color.a == 0.0f || font == nullptr || !needUpdate) return;
+		if (!needUpdate) return;
 
 		cachedCharacters.clear();
 		needUpdate = false;
 
-		bbox.x = position.x;
-		bbox.a = position.y;
+		fixPosition();
+		getUIInputComponent()->update(this, inputManager);
 
-		auto lastPosition = position;
+		if (keyBindingInputComponent != nullptr)
+		{
+			keyBindingInputComponent->update(this, inputManager);
+		}
+
+		bbox.x = getPosition().x;
+		bbox.a = getPosition().y;
+
+		auto lastPosition = getPosition();
 		std::vector<int> tempVector;
 
 		for (auto c = text.begin(); c != text.end(); c++)
 		{
-			auto ch = font->getCharacter(*c);
+			auto ch = configurationManager->getInterfaceFont()->getCharacter(*c);
 
-			GLfloat xpos = position.x + ch.Bearing.x;
-			GLfloat ypos = position.y - (ch.Size.y - ch.Bearing.y);
+			GLfloat xpos = getPosition().x + ch.Bearing.x;
+			GLfloat ypos = getPosition().y - (ch.Size.y - ch.Bearing.y);
 
 			tempVector.push_back(ch.Size.y);
 
@@ -105,53 +105,23 @@ namespace Engine
 				ch.TextureID,
 				vertices
 			));
-			position.x += (ch.Advance >> 6); // Bitshift by 6 to get value in pixels (2^6 = 64)
+			setPosition(0, getPosition().x + (ch.Advance >> 6)); // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 
-		bbox.y = position.x;
-		bbox.z = position.y + (tempVector.size() == 0 ? 0.0f : (float)*std::max_element(std::begin(tempVector), std::end(tempVector)));
-		position = lastPosition;
+		bbox.y = getPosition().x;
+		bbox.z = getPosition().y + (tempVector.size() == 0 ? 0.0f : (float)*std::max_element(std::begin(tempVector), std::end(tempVector)));
+		setPosition(lastPosition);
 	}
 
 	void Text::fixPosition()
 	{
-		glm::vec2 temPos = glm::vec2((float)(glutGet(GLUT_WINDOW_WIDTH)), (float)(glutGet(GLUT_WINDOW_HEIGHT)));
+		float windowWidth = (float)glutGet(GLUT_WINDOW_WIDTH);
+		float windowHeight = (float)glutGet(GLUT_WINDOW_HEIGHT);
 
-		if (positionPercents == glm::vec2(0.0f, 0.0f))
-			return;
-
-		setPosition(0, temPos.x * (positionPercents.x / 100.0f));
-		setPosition(1, temPos.y * (positionPercents.y / 100.0f));
-	}
-
-	void Text::draw(std::shared_ptr<Renderer> renderer)
-	{
-		if (getColor(3) == 0.0f || getFont() == nullptr) return;
-		auto program = renderer->getShaderProgram("textshader");
-		auto offsetLocation = glGetUniformLocation(program, "color");
-		auto offsetLocation2 = glGetUniformLocation(program, "projection");
-		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
-		glBindVertexArray(renderer->getTextVAO());
-		glUseProgram(program);
-		if (getColor(3) == 0.0f || getFont() == nullptr) return;
-
-		glUniform4f(offsetLocation, getColor(0) / 255.0f, getColor(1) / 255.0f, getColor(2) / 255.0f, getColor(3));
-		glUniformMatrix4fv(offsetLocation2, 1, GL_FALSE, glm::value_ptr(projection));
-
-		auto cache = getCachedCharacters();
-
-		for (auto it = cache.begin(); it != cache.end(); it++)
+		if (getPositionPercents() != glm::vec2(0.0f, 0.0f))
 		{
-			// Render glyph texture over quad
-			glBindTexture(GL_TEXTURE_2D, it->first);
-			// Update content of VBO memory
-			glBindBuffer(GL_ARRAY_BUFFER, renderer->getTextVBO());
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it->second[0]);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			// Render quad
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			setPosition(0, windowWidth * (getPositionPercents().x / 100.0f));
+			setPosition(1, windowHeight * (getPositionPercents().y / 100.0f));
 		}
-		glUseProgram(0);
-		glBindVertexArray(0);
 	}
 }

@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "RenderObject.h"
+#include "UIInputComponent.h"
 
 #include "gtc/matrix_transform.hpp"
 #include "gtc/type_ptr.hpp"
@@ -21,25 +22,28 @@ namespace Engine
 	class UIElementBase : public RenderObject
 	{
 		public:
-			UIElementBase(float, float, glm::vec2, glm::vec4, glm::vec2);
-			virtual void update(float);
-			inline void setIsStatic(bool _isStatic) { isStatic = _isStatic; }
+			UIElementBase(glm::vec4, glm::vec2, std::shared_ptr<UIInputComponent>);
+			virtual void update(float, std::shared_ptr<InputManager>);
 			virtual void fixPosition();
 			virtual bool checkIfCollides(glm::vec2);
-			virtual bool checkIfMouseHoverThis(glm::vec2);
-			virtual bool checkForMouseClickOnThis(bool, bool, glm::vec2);
 			std::function<void()> onHoverEnterFunc;
 			std::function<void()> onHoverExitFunc;
 			std::function<void()> onMouseClickFunc;
 			std::function<void()> onMouseReleaseFunc;
 			virtual void onHoverEnterFuncDefaults();
 			virtual void onHoverExitFuncDefaults();
-		protected:
-			float originalWidth;
-			float originalHeigth;
+			inline void disable() { active = false; }
+			inline void enable() { active = true; }
+			inline bool isActive() { return active; }
+			inline void setMousedHovered(bool boolean) { gotMousedHovered = boolean; }
+			inline bool isMousedHovered() { return gotMousedHovered; }
+			inline glm::vec2 getPositionPercents() { return positionPercents; }
+			inline std::shared_ptr<UIInputComponent> getUIInputComponent() { return inputComponent; }
+		private:
+			bool active;
 			glm::vec2 positionPercents;
-			bool isStatic;
 			bool gotMousedHovered;
+			std::shared_ptr<UIInputComponent> inputComponent;
 	};
 }
 #endif

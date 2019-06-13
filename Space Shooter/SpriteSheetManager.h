@@ -10,7 +10,6 @@ namespace Engine
 	class SpriteSheetManager
 	{
 		public:
-			~SpriteSheetManager();
 			void loadSpriteSheetsFromConfig();
 			std::shared_ptr<SpriteSheet> getSpriteSheet(std::string);
 		private:

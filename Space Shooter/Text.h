@@ -10,8 +10,8 @@
 #include <functional>
 
 #include "UIElementBase.h"
-#include "Font.h"
-#include "SpriteManager.h"
+#include "ConfigurationManager.h"
+#include "KeyBindingInputComponent.h"
 
 #include <vec2.hpp>
 #include <vec4.hpp>
@@ -23,28 +23,25 @@ namespace Engine
 	class Text : public UIElementBase
 	{
 		public:
-			~Text();
-			Text(std::string, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
-			Text(const char, glm::vec2, glm::vec4, std::shared_ptr<Font>, glm::vec2);
-			void update(float);
-			inline std::shared_ptr<Font> getFont()  { return font; }
-			inline std::vector<cachedCharacter> getCachedCharacters() { return cachedCharacters; }
-			inline std::string getText()  { return text; }
-			inline void setText(std::string newtext) { needUpdate = true; text = newtext; }
-			inline void setText(char newtext) { needUpdate = true; text = newtext; }
-			inline void setPosition(glm::vec2 _position) { needUpdate = true; position = _position; }
-			inline void setPosition(int index, float _position) { needUpdate = true; position[index] = _position; }
+			Text(std::string, glm::vec4, glm::vec2, std::shared_ptr<UIInputComponent>);
+			Text(std::string, glm::vec4, glm::vec2, std::shared_ptr<UIInputComponent>, std::shared_ptr<KeyBindingInputComponent>);
+			void update(float, std::shared_ptr<ConfigurationManager>, std::shared_ptr<InputManager>);
+			void fixPosition();
 			bool checkIfCollides(glm::vec2);
 			void onHoverEnterFuncDefaults();
 			void onHoverExitFuncDefaults();
-			void fixPosition();
-			void draw(std::shared_ptr<Renderer>);
+			inline std::vector<cachedCharacter> getCachedCharacters() { return cachedCharacters; }
+			inline std::string getText()  { return text; }
+			inline void setText(std::string newtext) { needUpdate = true; text = newtext; }
+			inline void setPosition(glm::vec2 _position) { RenderObject::setPosition(_position); needUpdate = true; }
+			inline void setPosition(int index, float _position) { RenderObject::setPosition(index, _position); needUpdate = true; }
 		private:
 			bool needUpdate;
 			std::string text;
 			std::vector<cachedCharacter> cachedCharacters;
-			std::shared_ptr<Font> font;
 			SHORT leftButtonClicked;
+			glm::vec4 bbox;
+			std::shared_ptr<KeyBindingInputComponent> keyBindingInputComponent;
 	};
 }
 #endif

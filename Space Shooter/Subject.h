@@ -10,12 +10,12 @@
 
 namespace Engine
 {
-	class BaseGameObject;
 	class Subject
 	{
 		public:
-			void addObserver(Observer*);
-			void notify(ObserverEvent, std::vector<std::pair<std::string, BaseGameObject*>>);
+			inline void addObserver(Observer* observer) { observers.push_back(observer); }
+			void notify(ObserverEvent);
+			void notify(ObserverEvent, BaseGameObject*);
 		private:
 			std::vector<Observer*> observers;
 	};

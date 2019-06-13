@@ -18,22 +18,19 @@
 
 namespace Engine
 {
-	class Entity;
 	class BaseGameObject : public RenderObject, public Subject
 	{
 		public:
-			~BaseGameObject();
-			BaseGameObject(float, float, glm::vec2, glm::vec2, glm::vec4);
-			std::function<void()> onUpdate;
+			BaseGameObject(glm::vec2, glm::vec2, glm::vec4);
+			std::function<void()> onUpdateFunc;
 			virtual bool update(float);
-			std::function<void(std::shared_ptr<BaseGameObject>)> onCollision;
+			std::function<void(std::shared_ptr<BaseGameObject>)> onCollisionFunc;
 			void addAnimation(std::string, std::shared_ptr<Animation>);
 			std::shared_ptr<Animation> getAnimationByIndex(std::string);
 			virtual inline void setLives(int _lives) { lives = _lives; }
 			inline int getLives() { return lives; }
 			inline void setVelocity(glm::vec2 _velocity) { velocity = _velocity; };
 			inline void setVelocity(int index, float _velocity) { velocity[index] = _velocity; };
-			inline float getVelocity(int index) { return velocity[index]; };
 			inline glm::vec2 getVelocity() { return velocity; };
 			void setNeedsToBeRemoved(bool boolean) { needsToBeRemoved = boolean; };
 			inline bool getNeedsToBeRemoved() { return needsToBeRemoved; }
@@ -41,8 +38,7 @@ namespace Engine
 			inline void setValue(int _value) { value = _value; }
 			inline std::string getExplosionSound() { return explosionSound; }
 			inline void setExplosionSound(std::string _explosionSound) { explosionSound = _explosionSound; }
-			void applyAnimation(std::shared_ptr<Animation>);
-		protected:
+		private:
 			std::string explosionSound;
 			bool needsToBeRemoved;
 			std::vector<animation> animations;

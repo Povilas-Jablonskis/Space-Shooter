@@ -1,11 +1,11 @@
 #ifndef _menuManagerH
 #define _menuManagerH
 
-#include "UIElementBase.h"
+#include "Menu.h"
 
 namespace Engine
 {
-	typedef std::pair<std::string, std::vector<std::shared_ptr<UIElementBase>>> menu;
+	typedef std::pair<std::string, std::shared_ptr<Menu>> menu;
 
 	class MenuManager
 	{

@@ -10,7 +10,7 @@ namespace Engine
 
 	void SpriteSheet::loadSpriteSheet(std::string _path)
 	{
-		if (_path.size() == 0) return;
+		if (_path.empty()) return;
 
 		glGenTextures(1, &texture);
 
@@ -31,7 +31,7 @@ namespace Engine
 
 	void SpriteSheet::loadSpritesFromXml(std::string _path)
 	{
-		if (_path.size() == 0) return;
+		if (_path.empty()) return;
 
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
@@ -49,6 +49,9 @@ namespace Engine
 			auto animation = glm::vec4(atof(brewery_node->first_attribute("x")->value()), atof(brewery_node->first_attribute("y")->value()), atof(brewery_node->first_attribute("width")->value()), atof(brewery_node->first_attribute("height")->value()));
 			sprites.push_back(sprite(brewery_node->first_attribute("name")->value(), animation));
 		}
+
+		theFile.close();
+		doc.clear();
 	}
 
 	std::shared_ptr<Animation> SpriteSheet::getSprite(std::string index)
