@@ -1,9 +1,12 @@
-#include "UIElementBase.h"
+#include "UIElementBase.hpp"
+#include "UIInputComponent.hpp"
+
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 
 namespace Engine
 {
-	UIElementBase::UIElementBase(glm::vec4 _color, glm::vec2 _positionPerc, std::shared_ptr<UIInputComponent> input) :
-		RenderObject(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), _color), gotMousedHovered(false), active(true), positionPercents(_positionPerc), inputComponent(input)
+	UIElementBase::UIElementBase(const glm::vec4& color, const glm::vec2& positionPerc) : RenderObject(0.0f, 0.0f, glm::vec2(0.0f, 0.0f), color), m_positionPercents(positionPerc)
 	{
 		setScale(1.0f);
 		setOriginalWidth(0.0f);
@@ -31,21 +34,24 @@ namespace Engine
 	}
 
 
-	void UIElementBase::update(float dt, std::shared_ptr<InputManager> inputManager)
+	void UIElementBase::update(float dt, const std::unique_ptr<InputManager>& inputManager)
 	{
-		if (!isActive()) return;
+		if (!isActive())
+		{
+			return;
+		}
 
 		updateAnimation(dt);
 		fixPosition();
-		inputComponent->update(this, inputManager);
+		getUIInputComponent()->update(this, inputManager);
 	}
 
 	void UIElementBase::fixPosition()
 	{
-		float windowWidth = (float)glutGet(GLUT_WINDOW_WIDTH);
-		float windowHeight = (float)glutGet(GLUT_WINDOW_HEIGHT);
+		float windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+		float windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
-		if (positionPercents == glm::vec2(0.0f, 0.0f))
+		if (getPositionPercents() == glm::vec2(0.0f, 0.0f))
 		{
 			setPosition(glm::vec2(0.0f, 0.0f));
 			setWidth(windowWidth);
@@ -53,13 +59,13 @@ namespace Engine
 			return;
 		}
 
-		setPosition(glm::vec2(windowWidth * (positionPercents.x / 100.0f), windowHeight * (positionPercents.y / 100.0f)));
+		setPosition(glm::vec2(windowWidth * (getPositionPercents().x / 100.0f), windowHeight * (getPositionPercents().y / 100.0f)));
 
-		setWidth((getOriginalWidth() * windowWidth) / (float)glutGet(GLUT_INIT_WINDOW_WIDTH));
-		setHeight((getOriginalHeight() * windowHeight) / (float)glutGet(GLUT_INIT_WINDOW_HEIGHT));
+		setWidth((getOriginalWidth() * windowWidth) / static_cast<float>(glutGet(GLUT_INIT_WINDOW_WIDTH)));
+		setHeight((getOriginalHeight() * windowHeight) / static_cast<float>(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
 	}
 
-	bool UIElementBase::checkIfCollides(glm::vec2 colCoordinates)
+	bool UIElementBase::checkIfCollides(const glm::vec2& colCoordinates) const
 	{
 		// Collision x-axis?
 		bool collisionX = getPosition().x + getWidth() >= colCoordinates.x &&
@@ -68,9 +74,7 @@ namespace Engine
 		bool collisionY = getPosition().y + getHeight() >= colCoordinates.y &&
 			colCoordinates.y >= getPosition().y;
 		// Collision only if on both axes
-		if (collisionX && collisionY)
-			return true;
-		return false;
+		return collisionX && collisionY;
 	}
 
 	void UIElementBase::onHoverEnterFuncDefaults()

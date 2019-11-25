@@ -1,6 +1,5 @@
-#include "SpriteSheetManager.h"
-#include <fstream>
-#include "rapidxml.hpp"
+#include "SpriteSheetManager.hpp"
+#include "SpriteSheet.hpp"
 
 namespace Engine
 {
@@ -20,7 +19,6 @@ namespace Engine
 		for (auto brewery_node = root_node->first_node("Spritesheet"); brewery_node; brewery_node = brewery_node->next_sibling("Spritesheet"))
 		{
 			auto spriteSheet = std::make_shared<SpriteSheet>();
-
 			spriteSheet->loadSpriteSheet(brewery_node->first_attribute("spriteSheetName")->value());
 			spriteSheet->loadSpritesFromXml(brewery_node->first_attribute("spriteSheetNameXml")->value());
 
@@ -35,30 +33,33 @@ namespace Engine
 				spriteSheet->makeAnimation(beer_node->first_attribute("name")->value(), sprites);
 			}
 
-			loadSpriteSheet(brewery_node->first_attribute("name")->value(), std::move(spriteSheet));
+			loadSpriteSheet(brewery_node->first_attribute("name")->value(), spriteSheet);
 		}
 
 		theFile.close();
 		doc.clear();
 	}
 
-	void SpriteSheetManager::loadSpriteSheet(std::string name, std::shared_ptr<SpriteSheet> _spriteSheet)
+	void SpriteSheetManager::loadSpriteSheet(const std::string& name, const std::shared_ptr<SpriteSheet>& t_spriteSheet)
 	{
-		for (auto spriteSheet : spriteSheets)
+		auto spriteSheets = getSpriteSheets();
+
+		for (auto spriteSheet : *spriteSheets)
 		{
 			if (spriteSheet.first == name)
+			{
 				return;
+			}
 		}
-		spriteSheets.push_back(spriteSheet(name, _spriteSheet));
+
+		spriteSheets->push_back(spriteSheet(name, t_spriteSheet));
 	}
 
-	std::shared_ptr<SpriteSheet> SpriteSheetManager::getSpriteSheet(std::string name)
+	std::shared_ptr<SpriteSheet> SpriteSheetManager::getSpriteSheet(const std::string& name)
 	{
-		for (auto spriteSheet : spriteSheets)
-		{
-			if (spriteSheet.first == name)
-				return spriteSheet.second;
-		}
-		return nullptr;
+		auto spriteSheets = *getSpriteSheets();
+		auto it = std::find_if(spriteSheets.begin(), spriteSheets.end(), [name](auto keyname) { return keyname.first == name; });
+
+		return it != spriteSheets.end() ? it->second : nullptr;
 	}
 }

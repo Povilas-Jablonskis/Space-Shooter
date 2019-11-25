@@ -1,21 +1,25 @@
-#include "Subject.h"
-#include "BaseGameObject.h"
+#include "Subject.hpp"
+#include "Observer.hpp"
 
 namespace Engine
 {
-	void Subject::notify(ObserverEvent _event)
+	void Subject::notify(ObserverEvent event)
 	{
+		auto observers = getObservers();
+
 		for (auto observer : observers)
 		{
-			observer->onNotify(_event);
+			observer->onNotify(event);
 		}
 	}
 
-	void Subject::notify(ObserverEvent _event, BaseGameObject* obj)
+	void Subject::notify(ObserverEvent event, BaseGameObject* obj)
 	{
+		auto observers = getObservers();
+
 		for (auto observer : observers)
 		{
-			observer->onNotify(_event, obj);
+			observer->onNotify(event, obj);
 		}
 	}
 }

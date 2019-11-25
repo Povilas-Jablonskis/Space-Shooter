@@ -1,9 +1,11 @@
-#include "Entity.h"
+#include "Entity.hpp"
+#include "InputComponent.hpp"
+
+#include <algorithm>
 
 namespace Engine
 {
-	Entity::Entity(glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: BaseGameObject(_position, _velocity, _color), delayBetweenShoots(0.0f), delayBetweenShootsTimer(0.0f), inputComponent(nullptr)
+	Entity::Entity(const glm::vec2& position, const glm::vec2& velocity, const glm::vec4& color) : BaseGameObject(position, velocity, color)
 	{
 		shootingModeFunc = []()
 		{
@@ -11,22 +13,13 @@ namespace Engine
 		};
 	}
 
-	Entity::Entity(glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color, std::shared_ptr<InputComponent> input)
-		: BaseGameObject(_position, _velocity, _color), delayBetweenShoots(0.0f), delayBetweenShootsTimer(0.0f), inputComponent(input)
+	void Entity::addBullet(const std::shared_ptr<BaseGameObject>& bullet)
 	{
-		shootingModeFunc = []()
-		{
-
-		};
-	}
-
-	void Entity::addBullet(std::shared_ptr<BaseGameObject> _bullet)
-	{
-		_bullet->onCollisionFunc = [_bullet, this](std::shared_ptr<BaseGameObject> collider)
+		bullet->onCollisionFunc = [bullet, this](const std::shared_ptr<BaseGameObject>& collider)
 		{
 			auto entity = dynamic_cast<Entity*>(collider.get());
 
-			_bullet->setNeedsToBeRemoved(true);
+			bullet->setNeedsToBeRemoved(true);
 
 			if (entity != nullptr)
 			{
@@ -44,7 +37,7 @@ namespace Engine
 				collider->setNeedsToBeRemoved(true);
 			}
 		};
-		bullets.push_back(_bullet);
+		getBulletsList()->push_back(bullet);
 	}
 
 	bool Entity::update(float dt)
@@ -64,43 +57,51 @@ namespace Engine
 		for (auto it = bullets->begin(); it != bullets->end();)
 		{
 			if ((*it)->update(dt))
+			{
 				it = bullets->erase(it);
+			}
 			else
+			{
 				++it;
+			}
 		}
 
 		for (auto it = addons->begin(); it != addons->end();)
 		{
 			if ((*it).second->update(dt))
+			{
 				it = addons->erase(it);
+			}
 			else
+			{
 				++it;
+			}
 		}
 
 		return getNeedsToBeRemoved();
 	}
 
-	std::shared_ptr<BaseGameObject> Entity::getAddon(std::string index)
+	std::shared_ptr<BaseGameObject> Entity::getAddon(const std::string& index)
 	{
-		for (auto it = addons.begin(); it != addons.end(); it++)
-		{
-			if (it->first == index)
-				return it->second;
-		}
-		return nullptr;
+		auto addons = getAddons();
+		auto it = std::find_if(addons->begin(), addons->end(), [index](auto idx) { return idx.first == index; });
+
+		return it != addons->end() ? it->second : nullptr;
 	}
 
-	void Entity::addAddon(addon _addon)
+	void Entity::addAddon(addon addon)
 	{
-		for (auto it = addons.begin(); it != addons.end(); it++)
+		auto addons = getAddons();
+
+		for (auto it = addons->begin(); it != addons->end(); ++it)
 		{
-			if (it->first == _addon.first)
+			if (it->first == addon.first)
 			{
-				addons.erase(it);
+				addons->erase(it);
 				break;
 			}
 		}
 
-		addons.push_back(_addon);
+		addons->push_back(addon);
 	}
 }

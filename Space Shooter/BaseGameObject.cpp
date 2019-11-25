@@ -1,18 +1,19 @@
-#include "BaseGameObject.h"
-#include "Entity.h"
-#include <string>
+#include "BaseGameObject.hpp"
+#include "Entity.hpp"
+#include "Observer.hpp"
+
+#include <algorithm>
 
 namespace Engine
 {
-	BaseGameObject::BaseGameObject(glm::vec2 _position, glm::vec2 _velocity, glm::vec4 _color)
-		: RenderObject(0.0f, 0.0f, _position, _color), lives(1), velocity(_velocity), explosionSound(""), needsToBeRemoved(false), value(0)
+	BaseGameObject::BaseGameObject(const glm::vec2& position, const glm::vec2& velocity, const glm::vec4& color) : RenderObject(0.0f, 0.0f, position, color), m_velocity(velocity)
 	{
 		onUpdateFunc = []()
 		{
 
 		};
 
-		onCollisionFunc = [this](std::shared_ptr<BaseGameObject> collider)
+		onCollisionFunc = [this](const std::shared_ptr<BaseGameObject>& collider)
 		{
 			auto entity = dynamic_cast<Entity*>(collider.get());
 
@@ -36,7 +37,7 @@ namespace Engine
 		};
 	}
 
-	bool BaseGameObject::update(float _dt)
+	bool BaseGameObject::update(float dt)
 	{
 		onUpdateFunc();
 
@@ -51,30 +52,32 @@ namespace Engine
 			}
 		}
 
-		setPosition(getPosition() + (velocity * _dt));
+		setPosition(getPosition() + (getVelocity() * dt));
 
-		updateAnimation(_dt);
+		updateAnimation(dt);
 		return getNeedsToBeRemoved();
 	}
 
-	void BaseGameObject::addAnimation(std::string index, std::shared_ptr<Animation> _animation)
+	void BaseGameObject::addAnimation(const std::string& index, const std::shared_ptr<Animation>& t_animation)
 	{
-		for (auto it = animations.begin(); it != animations.end(); it++)
+		auto animations = getAnimations();
+
+		for (auto it = animations->begin(); it != animations->end(); ++it)
 		{
 			if (it->first == index)
+			{
 				return;
+			}
 		}
 
-		animations.push_back(animation(index, _animation));
+		animations->push_back(animation(index, t_animation));
 	}
 
-	std::shared_ptr<Animation> BaseGameObject::getAnimationByIndex(std::string index)
+	std::shared_ptr<Animation> BaseGameObject::getAnimationByIndex(const std::string& index)
 	{
-		for (auto animation : animations)
-		{
-			if (animation.first == index)
-				return animation.second;
-		}
-		return nullptr;
+		auto animations = *getAnimations();
+		auto it = std::find_if(animations.begin(), animations.end(), [index](auto idx) { return idx.first == index; });
+
+		return it != animations.end() ? it->second : nullptr;
 	}
 }

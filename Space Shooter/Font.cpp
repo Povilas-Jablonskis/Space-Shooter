@@ -1,42 +1,33 @@
-#include "Font.h"
+#include "Font.hpp"
 
 namespace Engine
 {
-	Font::Font(FT_Face _face) : face(_face)
+	Font::Font(const FT_Face& face) : m_face(face)
 	{
-		LoadCharacters();
+		loadCharacters();
 	}
 
 	Character Font::getCharacter(GLchar index)
 	{
-		for (auto item : characters)
-		{
-			if (item.first == index)
-				return item.second;
-		}
+		auto characters = getCharacterList();
+		auto it = std::find_if(characters.begin(), characters.end(), [index](auto idx) { return idx.first == index; });
 
-		return Character 
-		{
-			0,
-			glm::ivec2(0, 0),
-			glm::ivec2(0, 0),
-			0
-		};;
+		return it != characters.end() ? it->second : Character{ 0, glm::ivec2(0, 0), glm::ivec2(0, 0), 0 };
 	}
 
-	void Font::LoadCharacters()
+	void Font::loadCharacters()
 	{
-		FT_Set_Pixel_Sizes(face, 0, 12);
+		FT_Set_Pixel_Sizes(m_face, 0, 12);
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
-		for (GLubyte c = 0; c < 128; c++)
+		for (GLubyte c = 0; c < 128; ++c)
 		{
 			// Load character glyph 
-			if (FT_Load_Char(face, c, FT_LOAD_RENDER))
+			if (FT_Load_Char(m_face, c, FT_LOAD_RENDER))
 			{
 				#if _DEBUG
-					std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
+					std::cout << "ERROR::FREETYTPE: Failed to load Glyph\n";
 				#endif
 				continue;
 			}
@@ -49,12 +40,12 @@ namespace Engine
 				GL_TEXTURE_2D,
 				0,
 				GL_RED,
-				face->glyph->bitmap.width,
-				face->glyph->bitmap.rows,
+				getFace()->glyph->bitmap.width,
+				getFace()->glyph->bitmap.rows,
 				0,
 				GL_RED,
 				GL_UNSIGNED_BYTE,
-				face->glyph->bitmap.buffer
+				getFace()->glyph->bitmap.buffer
 				);
 			// Set texture options
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -64,11 +55,11 @@ namespace Engine
 			// Now store character for later use
 			Character _character = {
 				texture,
-				glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-				glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-				face->glyph->advance.x
+				glm::ivec2(getFace()->glyph->bitmap.width, getFace()->glyph->bitmap.rows),
+				glm::ivec2(getFace()->glyph->bitmap_left, getFace()->glyph->bitmap_top),
+				getFace()->glyph->advance.x
 			};
-			characters.push_back(character(c, _character));
+			m_characters.push_back(character(c, _character));
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

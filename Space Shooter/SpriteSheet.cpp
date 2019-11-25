@@ -1,42 +1,48 @@
-#include "SpriteSheet.h"
-#include <fstream>
+#include "SpriteSheet.hpp"
+#include "Animation.hpp"
 
 namespace Engine
 {
 	SpriteSheet::~SpriteSheet()
 	{
-		glDeleteTextures(1, &texture);
+		glDeleteTextures(1, &m_texture);
 	}
 
-	void SpriteSheet::loadSpriteSheet(std::string _path)
+	void SpriteSheet::loadSpriteSheet(const std::string& path)
 	{
-		if (_path.empty()) return;
+		if (path.empty())
+		{
+			return;
+		}
 
-		glGenTextures(1, &texture);
+		glGenTextures(1, &m_texture);
 
-		glBindTexture(GL_TEXTURE_2D, texture); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
+		glBindTexture(GL_TEXTURE_2D, m_texture); // All upcoming GL_TEXTURE_2D operations now have effect on our texture object
 		// Set our texture parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// Set texture wrapping to GL_REPEAT
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		// Set texture filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		unsigned char* image = SOIL_load_image(_path.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		unsigned char* image = SOIL_load_image(path.c_str(), &m_width, &m_height, 0, SOIL_LOAD_RGBA);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 		SOIL_free_image_data(image);
 		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
 
-		sprites.push_back(sprite("wholeSpriteSheet", glm::vec4(width, height, width, height)));
+		m_sprites.push_back(sprite("wholeSpriteSheet", glm::vec4(m_width, m_height, m_width, m_height)));
 	}
 
-	void SpriteSheet::loadSpritesFromXml(std::string _path)
+	void SpriteSheet::loadSpritesFromXml(const std::string& path)
 	{
-		if (_path.empty()) return;
+		if (path.empty())
+		{
+			return;
+		}
 
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
 		// Read the xml file into a vector
-		std::ifstream theFile(_path);
+		std::ifstream theFile(path);
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
@@ -47,20 +53,22 @@ namespace Engine
 		for (auto brewery_node = root_node->first_node(); brewery_node; brewery_node = brewery_node->next_sibling())
 		{
 			auto animation = glm::vec4(atof(brewery_node->first_attribute("x")->value()), atof(brewery_node->first_attribute("y")->value()), atof(brewery_node->first_attribute("width")->value()), atof(brewery_node->first_attribute("height")->value()));
-			sprites.push_back(sprite(brewery_node->first_attribute("name")->value(), animation));
+			m_sprites.push_back(sprite(brewery_node->first_attribute("name")->value(), animation));
 		}
 
 		theFile.close();
 		doc.clear();
 	}
 
-	std::shared_ptr<Animation> SpriteSheet::getSprite(std::string index)
+	std::shared_ptr<Animation> SpriteSheet::getSprite(const std::string& index)
 	{
+		auto sprites = getSprites();
+
 		for (auto sprite : sprites)
 		{
 			if (sprite.first == index)
 			{
-				std::shared_ptr<Animation> animation = std::make_shared<Animation>(texture, width, height);
+				auto animation = std::make_shared<Animation>(m_texture, getWidth(), getHeight());
 				animation->addSprite(sprite.second);
 				return animation;
 			}
@@ -69,25 +77,28 @@ namespace Engine
 		return nullptr;
 	}
 
-	glm::vec4 SpriteSheet::getSpriteAsVector(std::string index)
+	glm::vec4 SpriteSheet::getSpriteAsVector(const std::string& index)
 	{
-		for (auto sprite : sprites)
-		{
-			if (sprite.first == index)
-				return sprite.second;
-		}
-		return glm::vec4(0.0, 0.0, 0.0, 0.0);
+		auto sprites = getSprites();
+		auto it = std::find_if(sprites.begin(), sprites.end(), [index](auto idx) { return idx.first == index; });
+
+		return it != sprites.end() ? it->second : glm::vec4(0.0, 0.0, 0.0, 0.0);
 	}
 
-	void SpriteSheet::makeAnimation(std::string index, std::vector<std::string> indexes)
+	void SpriteSheet::makeAnimation(const std::string& index, const std::vector<std::string>& indexes)
 	{
+		auto animations = getAnimations();
+
 		for (auto animation : animations)
 		{
 			if (animation.first == index)
+			{
 				return;
+			}
 		}
 
-		std::shared_ptr<Animation> _animation = std::make_shared<Animation>(texture, width, height);
+		auto _animation = std::make_shared<Animation>(getTexture(), getWidth(), getHeight());
+		auto sprites = getSprites();
 
 		for (auto _index : indexes)
 		{
@@ -101,35 +112,36 @@ namespace Engine
 			}
 		}
 
-		animations.push_back(animation(index, _animation));
+		m_animations.push_back(animation(index, _animation));
 	}
 
-	void SpriteSheet::makeAnimation(std::string index, std::vector<glm::vec4> sprites)
+	void SpriteSheet::makeAnimation(const std::string& index, const std::vector<glm::vec4>& sprites)
 	{
+		auto animations = getAnimations();
+
 		for (auto animation : animations)
 		{
 			if (animation.first == index)
+			{
 				return;
+			}
 		}
 
-		std::shared_ptr<Animation> _animation = std::make_shared<Animation>(texture, width, height);
+		auto _animation = std::make_shared<Animation>(getTexture(), getWidth(), getHeight());
 
 		for (auto sprite : sprites)
 		{
 			_animation->addSprite(sprite);
 		}
 
-		animations.push_back(animation(index, _animation));
+		m_animations.push_back(animation(index, _animation));
 	}
 
-	std::shared_ptr<Animation> SpriteSheet::getAnimation(std::string index)
+	std::shared_ptr<Animation> SpriteSheet::getAnimation(const std::string& index)
 	{
-		for (auto animation : animations)
-		{
-			if (animation.first == index)
-				return animation.second;
-		}
+		auto animations = getAnimations();
+		auto it = std::find_if(animations.begin(), animations.end(), [index](auto idx) { return idx.first == index; });
 
-		return nullptr;
+		return it != animations.end() ? it->second : nullptr;
 	}
 }

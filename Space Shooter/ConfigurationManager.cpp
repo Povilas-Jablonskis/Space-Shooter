@@ -1,11 +1,12 @@
-#include "ConfigurationManager.h"
+#include "ConfigurationManager.hpp"
+#include "Font.hpp"
 
 namespace Engine
 {
 	ConfigurationManager::~ConfigurationManager()
 	{
-		auto characterList = interfaceFont->getCharacterList();
-		for (auto it2 = characterList->begin(); it2 != characterList->end(); ++it2)
+		auto characterList = getInterfaceFont()->getCharacterList();
+		for (auto it2 = characterList.begin(); it2 != characterList.end(); ++it2)
 		{
 			glDeleteTextures(1, &it2->second.TextureID);
 		}
@@ -18,7 +19,7 @@ namespace Engine
 		if (FT_Init_FreeType(&library))
 		{
 			#if _DEBUG
-				std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+				std::cout << "ERROR::FREETYPE: Could not init FreeType Library\n";
 			#endif
 		}
 
@@ -26,11 +27,11 @@ namespace Engine
 		if (FT_New_Face(library, "Fonts/kenvector_future_thin.ttf", 0, &face))
 		{
 			#if _DEBUG
-				std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
+				std::cout << "ERROR::FREETYPE: Failed to load font\n";
 			#endif
 		}
 
-		interfaceFont = std::make_shared<Font>(std::move(face));
+		setInterfaceFont(std::make_shared<Font>(face));
 
 		// We Don't Need The Face Information Now That The Display
 		// Lists Have Been Created, So We Free The Assosiated Resources.

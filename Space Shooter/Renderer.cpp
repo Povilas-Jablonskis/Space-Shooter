@@ -1,4 +1,6 @@
-#include "Renderer.h"
+#include "Renderer.hpp"
+#include "Shader.hpp"
+#include "Text.hpp"
 
 namespace Engine
 {
@@ -6,13 +8,13 @@ namespace Engine
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glDeleteBuffers(1, &textVBO);
-		glDeleteBuffers(1, &vbo);
-		glDeleteBuffers(1, &ebo);
+		glDeleteBuffers(1, &m_textVBO);
+		glDeleteBuffers(1, &m_vbo);
+		glDeleteBuffers(1, &m_ebo);
 
 		glBindVertexArray(0);
-		glDeleteVertexArrays(1, &textVAO);
-		glDeleteVertexArrays(1, &vao);
+		glDeleteVertexArrays(1, &m_textVAO);
+		glDeleteVertexArrays(1, &m_vao);
 	}
 
 	Renderer::Renderer()
@@ -31,15 +33,15 @@ namespace Engine
 			1.0f, 0.0f,		1.0f, 0.0f  // Bottom Right
 		};
 
-		glGenBuffers(1, &textVBO);
-		glGenVertexArrays(1, &textVAO);
-		glGenVertexArrays(1, &vao);
-		glGenBuffers(1, &vbo);
-		glGenBuffers(1, &ebo);
+		glGenBuffers(1, &m_textVBO);
+		glGenVertexArrays(1, &m_textVAO);
+		glGenVertexArrays(1, &m_vao);
+		glGenBuffers(1, &m_vbo);
+		glGenBuffers(1, &m_ebo);
 
-		glBindVertexArray(textVAO);
+		glBindVertexArray(m_textVAO);
 
-		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, m_textVBO);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
 
 		glEnableVertexAttribArray(0);
@@ -50,12 +52,12 @@ namespace Engine
 		glBindVertexArray(0);
 
 		// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
-		glBindVertexArray(vao);
+		glBindVertexArray(m_vao);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
@@ -66,115 +68,59 @@ namespace Engine
 		glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 	}
 
-	GLuint Renderer::getShaderProgram(std::string name)
+	GLuint Renderer::getShaderProgram(const std::string& name)
 	{
-		for (auto shader : shaders)
-		{
-			if (shader.first == name)
-				return shader.second->getShader();
-		}
+		auto it = std::find_if(getShaders().begin(), getShaders().end(), [name](auto shaderName) { return shaderName.first == name; });
 
-		return -1;
+		return it != getShaders().end() ? it->second->getShader() : -1;
 	}
 
-	void Renderer::addShader(std::string name, std::shared_ptr<Shader> _shader)
+	void Renderer::addShader(const std::string& name, const std::shared_ptr<Shader>& t_shader)
 	{
-		for (auto theShader : shaders)
+		for (auto it = getShaders().begin(); it != getShaders().end(); ++it)
 		{
-			if (theShader.first == name)
+			if (it->first == name)
+			{
 				return;
+			}
 		}
 
-		shaders.push_back(shader(name, _shader));
+		m_shaders.push_back(shader(name, t_shader));
 	}
 
-	void Renderer::draw(std::shared_ptr<Text> text, GLuint program)
+	void Renderer::draw(const std::vector<std::shared_ptr<Text>>& texts)
 	{
-		auto offsetLocation = glGetUniformLocation(program, "color");
-		auto offsetLocation2 = glGetUniformLocation(program, "projection");
-		glm::mat4 projection = glm::ortho(0.0f, (float)glutGet(GLUT_WINDOW_WIDTH), 0.0f, (float)glutGet(GLUT_WINDOW_HEIGHT), 0.0f, 1.0f);
-
-		glUniform4f(offsetLocation, text->getColor().x / 255.0f, text->getColor().y / 255.0f, text->getColor().z / 255.0f, text->getColor().a);
-		glUniformMatrix4fv(offsetLocation2, 1, GL_FALSE, glm::value_ptr(projection));
-
-		auto cache = text->getCachedCharacters();
-
-		for (auto it = cache.begin(); it != cache.end(); it++)
+		for (auto it = texts.begin(); it != texts.end(); ++it)
 		{
-			// Render glyph texture over quad
-			glBindTexture(GL_TEXTURE_2D, it->first);
-			// Update content of VBO memory
-			glBindBuffer(GL_ARRAY_BUFFER, getTextVBO());
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it->second[0]);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			// Render quad
-			glDrawArrays(GL_TRIANGLES, 0, 6);
+			draw(*it);
 		}
 	}
 
-	void Renderer::draw(std::vector<std::shared_ptr<Text>> texts)
-	{
-		auto program = getShaderProgram("textshader");
-		glBindVertexArray(getTextVAO());
-		glUseProgram(program);
-			for (auto text : texts)
-			{
-				draw(text, program);
-			}
-		glUseProgram(0);
-		glBindVertexArray(0);
-	}
-
-	void Renderer::draw(std::shared_ptr<Menu> menu)
-	{
-		auto program = getShaderProgram("shader");
-		auto program2 = getShaderProgram("textshader");
-
-		auto uiElements = menu->getElements();
-		auto texts = menu->getTexts();
-
-		glBindVertexArray(getTextVAO());
-		glUseProgram(program2);
-			for (auto text : texts)
-			{
-				draw(text, program2);
-			}
-		glUseProgram(0);
-		glBindVertexArray(0);
-
-		glBindVertexArray(getVAO());
-		glUseProgram(program);
-			for (auto uiElement : uiElements)
-			{
-				draw(uiElement, program);
-			}
-		glUseProgram(0);
-		glBindVertexArray(0);
-	}
-
-	void Renderer::draw(std::vector<addon> addons)
-	{
-		auto program = getShaderProgram("shader");
-
-		glBindVertexArray(getVAO());
-		glUseProgram(program);
-			for (auto addon : addons)
-			{
-				draw(addon.second, program);
-			}
-		glUseProgram(0);
-		glBindVertexArray(0);
-	}
-
-	void Renderer::draw(std::vector<uiPlayerElement> notifications)
+	void Renderer::draw(const std::shared_ptr<Text>& text)
 	{
 		auto program = getShaderProgram("textshader");
 
 		glBindVertexArray(getTextVAO());
 		glUseProgram(program);
-			for (auto notification : notifications)
+			auto offsetLocation = glGetUniformLocation(program, "color");
+			auto offsetLocation2 = glGetUniformLocation(program, "projection");
+			glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)), 0.0f, static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)), 0.0f, 1.0f);
+
+			glUniform4f(offsetLocation, text->getColor().x / 255.0f, text->getColor().y / 255.0f, text->getColor().z / 255.0f, text->getColor().a);
+			glUniformMatrix4fv(offsetLocation2, 1, GL_FALSE, glm::value_ptr(projection));
+
+			auto cache = text->getCachedCharacters();
+
+			for (auto it = cache.begin(); it != cache.end(); ++it)
 			{
-				draw(notification.second, program);
+				// Render glyph texture over quad
+				glBindTexture(GL_TEXTURE_2D, it->first);
+				// Update content of VBO memory
+				glBindBuffer(GL_ARRAY_BUFFER, getTextVBO());
+				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it->second[0]);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				// Render quad
+				glDrawArrays(GL_TRIANGLES, 0, 6);
 			}
 		glUseProgram(0);
 		glBindVertexArray(0);

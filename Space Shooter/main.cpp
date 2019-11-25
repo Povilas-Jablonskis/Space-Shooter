@@ -1,112 +1,32 @@
-#include "Application.h"
+#include "Application.hpp"
+#include "InputManager.hpp"
+
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+#include <iostream>
+
 using namespace Engine;
 
-std::shared_ptr<Application> application;
+std::unique_ptr<Application> application;
 
 void motionFunc(int x, int y)
 {
-	glm::vec2 lastMousePosition = glm::vec2(x, y);
-	lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
-	lastMousePosition.y = std::abs(lastMousePosition.y);
-	application->getInputManager()->setLastMousePosition(lastMousePosition);
+	application->getInputManager()->motionFunc(x, y);
 }
 
 void processMouseClick(int button, int state, int x, int y)
 {
-	glm::vec2 lastMousePosition = glm::vec2(x, y);
-	lastMousePosition.y -= glutGet(GLUT_WINDOW_HEIGHT);
-	lastMousePosition.y = std::abs(lastMousePosition.y);
-
-	if (button == GLUT_LEFT_BUTTON)
-	{
-		application->getInputManager()->setLeftMouseState(state == GLUT_DOWN ? true : false);
-		application->getInputManager()->setLastMousePosition(lastMousePosition);
-	}
-	else if (button == GLUT_RIGHT_BUTTON)
-	{
-		application->getInputManager()->setRightMouseState(state == GLUT_DOWN ? true : false);
-		application->getInputManager()->setLastMousePosition(lastMousePosition);
-	}
+	application->getInputManager()->processMouseClick(button, state, x, y);
 }
 
 void keyboardInput(unsigned char c, int x, int y)
 {
-	auto key = VkKeyScan(c);
-	if (!application->getInputManager()->getKey(key))
-	{
-		switch (c)
-		{
-			case 27:
-			{
-				if (application->getGameState() == GameState::ENDED)
-				{
-					application->initGameMenu();
-					application->setGameState(GameState::IN_MENU);
-				}
-				else if (application->getGameState() == GameState::IN_PAUSED_MENU)
-				{
-					application->getMenuManager()->getMenus()->clear();
-					application->setGameState(GameState::STARTED);
-				}
-				else if (application->getGameState() == GameState::STARTED)
-				{
-					application->getMenuManager()->getMenus()->clear();
-
-					auto pauseMenu = std::make_shared<menu>("Pause Menu", std::make_shared<Menu>());
-
-					//Pause Menu
-					auto option = std::make_shared<Text>("Go To Main Menu", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f), std::make_shared<UIInputComponent>());
-					option->onMouseReleaseFunc = []()
-					{
-						application->getSoundEngine()->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
-
-						application->initGameMenu();
-						application->setGameState(GameState::IN_MENU);
-					};
-					pauseMenu->second->addText(std::move(option));
-
-					option = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 57.0f), std::make_shared<UIInputComponent>());
-					option->onMouseReleaseFunc = []()
-					{
-						#if _DEBUG
-							std::cout << "exiting" << std::endl;
-							getchar();
-						#endif
-						exit(0);
-					};
-					pauseMenu->second->addText(std::move(option));
-
-					application->getMenuManager()->addMenu(std::move(pauseMenu));
-					application->setGameState(GameState::IN_PAUSED_MENU);
-				}
-				else if (application->getGameState() == GameState::IN_MENU)
-				{
-					if (!application->getInputManager()->getCurrentlyEditedKeyBinding().empty()) break;
-
-					auto menus = application->getMenuManager()->getMenus();
-					if (menus->size() > 1)
-					{
-						application->getSoundEngine()->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
-						menus->pop_back();
-					}
-				}
-				break;
-			}
-		}
-
-		application->getInputManager()->setKey(key, true);
-		application->getInputManager()->setLastKey(key, false);
-	}
+	application->getInputManager()->keyboardInput(c, x, y, application->getMenuManager(), application->getSoundEngine(), application->getLevelManager(), application->getGameStateManager(), application->getSpritesheetManager());
 }
 
 void keyboardInputUp(unsigned char c, int x, int y)
 {
-	auto key = VkKeyScan(c);
-	if (application->getInputManager()->getKey(key))
-	{
-		application->getInputManager()->setKey(key, false);
-		application->getInputManager()->setLastKey(key, true);
-	}
+	application->getInputManager()->keyboardInputUp(c, x, y);
 }
 
 void display(void)
@@ -139,94 +59,12 @@ void resize(int width, int height)
 
 void specialKeyInput(int key, int x, int y)
 {
-	switch (key)
-	{
-		case GLUT_KEY_UP:
-		{
-			if (application->getInputManager()->getKey(VK_UP))
-			{
-				application->getInputManager()->setKey(VK_UP, false);
-				application->getInputManager()->setLastKey(VK_UP, true);
-			}
-			break;
-		}
-		case GLUT_KEY_DOWN:
-		{
-			if (application->getInputManager()->getKey(VK_DOWN))
-			{
-				application->getInputManager()->setKey(VK_DOWN, false);
-				application->getInputManager()->setLastKey(VK_DOWN, true);
-			}
-			break;
-		}
-		case GLUT_KEY_LEFT:
-		{
-			if (application->getInputManager()->getKey(VK_LEFT))
-			{
-				application->getInputManager()->setKey(VK_LEFT, false);
-				application->getInputManager()->setLastKey(VK_LEFT, true);
-			}
-			break;
-		}
-		case GLUT_KEY_RIGHT:
-		{
-			if (application->getInputManager()->getKey(VK_RIGHT))
-			{
-				application->getInputManager()->setKey(VK_RIGHT, false);
-				application->getInputManager()->setLastKey(VK_RIGHT, true);
-			}
-			break;
-		}
-	}
-
+	application->getInputManager()->specialKeyInput(key, x, y);
 }
 
 void specialKeyInputUp(int key, int x, int y)
 {
-	auto c = 0;
-	switch (key)
-	{
-		case GLUT_KEY_UP:
-		{
-			c = VK_UP;
-			if (!application->getInputManager()->getKey(VK_UP))
-			{
-				application->getInputManager()->setKey(VK_UP, true);
-				application->getInputManager()->setLastKey(VK_UP, false);
-			}
-			break;
-		}
-		case GLUT_KEY_DOWN:
-		{
-			c = VK_DOWN;
-			if (!application->getInputManager()->getKey(VK_DOWN))
-			{
-				application->getInputManager()->setKey(VK_DOWN, true);
-				application->getInputManager()->setLastKey(VK_DOWN, false);
-			}
-			break;
-		}
-		case GLUT_KEY_LEFT:
-		{
-			c = VK_LEFT;
-			if (!application->getInputManager()->getKey(VK_LEFT))
-			{
-				application->getInputManager()->setKey(VK_LEFT, true);
-				application->getInputManager()->setLastKey(VK_LEFT, false);
-			}
-			break;
-		}
-		case GLUT_KEY_RIGHT:
-		{
-			c = VK_RIGHT;
-			if (!application->getInputManager()->getKey(VK_RIGHT))
-			{
-				application->getInputManager()->setKey(VK_RIGHT, true);
-				application->getInputManager()->setLastKey(VK_RIGHT, false);
-			}
-			break;
-		}
-	}
+	application->getInputManager()->specialKeyInputUp(key, x, y);
 }
 
 int main(int argc, char *argv[])
@@ -245,7 +83,7 @@ int main(int argc, char *argv[])
 	if (GLEW_OK != err)
 	{
 		#if _DEBUG
-			std::cout << "ERROR::GLEW: " << glewGetErrorString(err) << std::endl;
+			std::cout << "ERROR::GLEW: " << glewGetErrorString(err) << "\n";
 		#endif
 	}
 
@@ -264,7 +102,7 @@ int main(int argc, char *argv[])
 	glutSpecialFunc(specialKeyInput);
 	glutSpecialUpFunc(specialKeyInputUp);
 
-	application = std::make_shared<Application>();
+	application = std::make_unique<Application>();
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);
 	glutMainLoop();

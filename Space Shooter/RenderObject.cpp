@@ -1,54 +1,55 @@
-#include "RenderObject.h"
+#include "RenderObject.hpp"
+#include "Animation.hpp"
 
 namespace Engine
 {
-	RenderObject::RenderObject(float _width, float _height, glm::vec2 _position, glm::vec4 _color)
-		: width(_width), height(_height), position(_position), color(_color), theAnimation(nullptr), animComplete(false), animTimer(0.0f), currentFrame(0), scale(0.5f), rotationAngle(0.0f), rotationAxis(glm::vec3(0.0, 0.0, 1.0))
+	RenderObject::RenderObject(float width, float height, const glm::vec2& position, const glm::vec4& color) : m_width(width), m_height(height), m_position(position), m_color(color)
 	{
 		
 	}
 
 	void RenderObject::updateAnimation(float dt)
 	{
-		if (theAnimation == nullptr) return;
+		if (getAnimation() == nullptr) return;
 
-		auto sprites = theAnimation->getAnimation();
+		auto sprites = getAnimation()->getAnimation();
 
-		if (sprites->size() > 1)
+		if (!sprites.empty())
 		{
-			animTimer += dt;
-			if (animTimer > (1.0f / 60.f))
+			setAnimTimer(getAnimTimer() + dt);
+
+			if (getAnimTimer() > (1.0f / 60.f))
 			{
-				animTimer = 0;
-				currentFrame++;
-				if (currentFrame >= sprites->size())
+				setAnimTimer(0);
+				setCurrentFrame(getCurrentFrame() + 1);
+				if (getCurrentFrame() >= sprites.size())
 				{
-					currentFrame = (sprites->size() - 1);
-					animComplete = true;
+					setCurrentFrame(sprites.size() - 1);
+					setAnimationStatus(true);
 				}
 			}
 
-			setOriginalWidth(theAnimation->getAnimation()->at(getCurrentFrame()).z);
-			setOriginalHeight(theAnimation->getAnimation()->at(getCurrentFrame()).w);
+			setOriginalWidth(getAnimation()->getAnimation().at(getCurrentFrame()).z);
+			setOriginalHeight(getAnimation()->getAnimation().at(getCurrentFrame()).w);
 
-			setWidth(theAnimation->getAnimation()->at(getCurrentFrame()).z);
-			setHeight(theAnimation->getAnimation()->at(getCurrentFrame()).w);
+			setWidth(getAnimation()->getAnimation().at(getCurrentFrame()).z);
+			setHeight(getAnimation()->getAnimation().at(getCurrentFrame()).w);
 		}
 	}
 
-	void RenderObject::applyAnimation(std::shared_ptr<Animation> _animation)
+	void RenderObject::applyAnimation(const std::shared_ptr<Animation>& t_animation)
 	{
-		if (_animation == nullptr || _animation == theAnimation) return;
+		if (t_animation == nullptr || t_animation == getAnimation()) return;
 
-		theAnimation = _animation;
-		animTimer = 0.0;
-		animComplete = false;
-		currentFrame = 0;
+		setAnimation(t_animation);
+		setAnimTimer(0);
+		setAnimationStatus(false);
+		setCurrentFrame(0);
 
-		setOriginalWidth(theAnimation->getAnimation()->at(getCurrentFrame()).z);
-		setOriginalHeight(theAnimation->getAnimation()->at(getCurrentFrame()).w);
+		setOriginalWidth(t_animation->getAnimation().at(getCurrentFrame()).z);
+		setOriginalHeight(t_animation->getAnimation().at(getCurrentFrame()).w);
 
-		setWidth(theAnimation->getAnimation()->at(getCurrentFrame()).z);
-		setHeight(theAnimation->getAnimation()->at(getCurrentFrame()).w);
+		setWidth(t_animation->getAnimation().at(getCurrentFrame()).z);
+		setHeight(t_animation->getAnimation().at(getCurrentFrame()).w);
 	}
 }

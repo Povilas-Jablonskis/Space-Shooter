@@ -1,19 +1,31 @@
-#include "Text.h"
-#include <cctype>
-#include <algorithm>
+#include "Text.hpp"
+#include "ConfigurationManager.hpp"
+#include "UIInputComponent.hpp"
+#include "Font.hpp"
+#include "KeyBindingInputComponent.hpp"
 
 namespace Engine
 {
-	Text::Text(std::string _text, glm::vec4 _color, glm::vec2 _positionPerc, std::shared_ptr<UIInputComponent> input) :
-		UIElementBase(_color, _positionPerc, input), leftButtonClicked(0), text(_text), needUpdate(true), keyBindingInputComponent(nullptr)
+	Text::Text(const std::string& text, const glm::vec4& color, const glm::vec2& positionPerc, const std::shared_ptr<KeyBindingInputComponent>& kbInput) : UIElementBase(color, positionPerc), m_text(text), m_keyBindingInputComponent(kbInput)
+	{
+
+	}
+
+	Text::Text(const std::string& text, const glm::vec4& color, const glm::vec2& positionPerc) : UIElementBase(color, positionPerc), m_text(text), m_keyBindingInputComponent(nullptr)
 	{
 		
 	}
 
-	Text::Text(std::string _text, glm::vec4 _color, glm::vec2 _positionPerc, std::shared_ptr<UIInputComponent> input, std::shared_ptr<KeyBindingInputComponent> kbInput) :
-		UIElementBase(_color, _positionPerc, input), leftButtonClicked(0), text(_text), needUpdate(true), keyBindingInputComponent(kbInput)
-	{
+	void Text::setPosition(const glm::vec2& position)
+	{ 
+		RenderObject::setPosition(position);
+		m_needUpdate = true; 
+	}
 
+	void Text::setPosition(int index, float position)
+	{ 
+		RenderObject::setPosition(index, position);
+		m_needUpdate = true;
 	}
 
 	void Text::onHoverEnterFuncDefaults()
@@ -26,35 +38,34 @@ namespace Engine
 		changeColor(glm::vec4(255.0f, 160.0f, 122.0f, getColor().a));
 	}
 
-	bool Text::checkIfCollides(glm::vec2 colCoordinates)
+	bool Text::checkIfCollides(const glm::vec2& colCoordinates)
 	{
-		if (colCoordinates.x >= bbox.x && colCoordinates.x <= bbox.y && colCoordinates.y <= bbox.z && colCoordinates.y >= bbox.a)
-			return true;
-		return false;
+		return colCoordinates.x >= getBoundaryBox().x && colCoordinates.x <= getBoundaryBox().y && colCoordinates.y <= getBoundaryBox().z && colCoordinates.y >= getBoundaryBox().a;
 	}
 
-	void Text::update(float dt, std::shared_ptr<ConfigurationManager> configurationManager, std::shared_ptr<InputManager> inputManager)
+	void Text::update(float dt, const std::unique_ptr<ConfigurationManager>& configurationManager, const std::unique_ptr<InputManager>& inputManager)
 	{
-		if (!needUpdate) return;
+		if (!doesItNeedUpdate()) return;
 
-		cachedCharacters.clear();
-		needUpdate = false;
+		m_cachedCharacters.clear();
+		setNeedUpdate(false);
 
 		fixPosition();
 		getUIInputComponent()->update(this, inputManager);
 
-		if (keyBindingInputComponent != nullptr)
+		if (getKeyBindingInputComponent() != nullptr)
 		{
-			keyBindingInputComponent->update(this, inputManager);
+			getKeyBindingInputComponent()->update(this, inputManager);
 		}
 
-		bbox.x = getPosition().x;
-		bbox.a = getPosition().y;
+		changeBoundaryBox(getPosition().x, 0);
+		changeBoundaryBox(getPosition().y, 3);
 
 		auto lastPosition = getPosition();
 		std::vector<int> tempVector;
+		auto text = getText();
 
-		for (auto c = text.begin(); c != text.end(); c++)
+		for (auto c = text.begin(); c != text.end(); ++c)
 		{
 			auto ch = configurationManager->getInterfaceFont()->getCharacter(*c);
 
@@ -63,8 +74,8 @@ namespace Engine
 
 			tempVector.push_back(ch.Size.y);
 
-			GLfloat w = (GLfloat)ch.Size.x;
-			GLfloat h = (GLfloat)ch.Size.y;
+			GLfloat w = static_cast<GLfloat>(ch.Size.x);
+			GLfloat h = static_cast<GLfloat>(ch.Size.y);
 			// Update VBO for each character
 
 			std::vector<cachedCharacter> textVector;
@@ -100,7 +111,7 @@ namespace Engine
 			vertices.push_back(1.0);
 			vertices.push_back(0.0);
 
-			cachedCharacters.push_back(cachedCharacter
+			m_cachedCharacters.push_back(cachedCharacter
 			(
 				ch.TextureID,
 				vertices
@@ -108,15 +119,15 @@ namespace Engine
 			setPosition(0, getPosition().x + (ch.Advance >> 6)); // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 
-		bbox.y = getPosition().x;
-		bbox.z = getPosition().y + (tempVector.size() == 0 ? 0.0f : (float)*std::max_element(std::begin(tempVector), std::end(tempVector)));
+		changeBoundaryBox(getPosition().x, 1);
+		changeBoundaryBox(getPosition().y + (tempVector.empty() ? 0.0f : static_cast<float>(*std::max_element(std::begin(tempVector), std::end(tempVector)))), 2);
 		setPosition(lastPosition);
 	}
 
 	void Text::fixPosition()
 	{
-		float windowWidth = (float)glutGet(GLUT_WINDOW_WIDTH);
-		float windowHeight = (float)glutGet(GLUT_WINDOW_HEIGHT);
+		float windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+		float windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 		if (getPositionPercents() != glm::vec2(0.0f, 0.0f))
 		{
