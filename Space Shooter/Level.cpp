@@ -359,91 +359,80 @@ namespace Engine
 
 	bool Level::update(float dt, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<InputManager>& inputManager, const std::unique_ptr<CollisionManager>& collisionManager)
 	{
-		auto newTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
-		auto frameTime = (newTime - m_currentTime) / 1000.0f;
-		m_currentTime = newTime;
-
-		m_accumulator += frameTime;
-
-		while (m_accumulator >= dt)
+		if (gameStateManager->getGameState() != GameState::IN_MENU && gameStateManager->getGameState() != GameState::IN_PAUSED_MENU)
 		{
-			if (gameStateManager->getGameState() != GameState::IN_MENU && gameStateManager->getGameState() != GameState::IN_PAUSED_MENU)
+			m_player->update(dt, inputManager);
+
+			for (auto it = m_enemies.begin(); it != m_enemies.end();)
 			{
-				m_player->update(dt, inputManager);
-
-				for (auto it = m_enemies.begin(); it != m_enemies.end();)
+				if ((*it)->update(dt))
 				{
-					if ((*it)->update(dt))
-					{
-						it = m_enemies.erase(it);
-					}
-					else
-					{
-						++it;
-					}
+					it = m_enemies.erase(it);
 				}
-
-				for (auto it = m_explosions.begin(); it != m_explosions.end();)
+				else
 				{
-					if ((*it)->update(dt))
-					{
-						it = m_explosions.erase(it);
-					}
-					else
-					{
-						++it;
-					}
-				}
-
-				for (auto it = m_pickups.begin(); it != m_pickups.end();)
-				{
-					if ((*it)->update(dt))
-					{
-						it = m_pickups.erase(it);
-					}
-					else
-					{
-						++it;
-					}
-				}
-
-				for (auto it = m_meteors.begin(); it != m_meteors.end();)
-				{
-					if ((*it)->update(dt))
-					{
-						it = m_meteors.erase(it);
-					}
-					else
-					{
-						++it;
-					}
+					++it;
 				}
 			}
 
-			if (gameStateManager->getGameState() == GameState::STARTED)
+			for (auto it = m_explosions.begin(); it != m_explosions.end();)
 			{
-				for (auto it = m_enemies.begin(); it != m_enemies.end(); ++it)
+				if ((*it)->update(dt))
 				{
-					auto playerBulletList = m_player->getBulletsList();
-					for (auto it2 = playerBulletList->begin(); it2 != playerBulletList->end(); ++it2)
-					{
-						collisionManager->checkCollision(*it2, (*it)->getBulletsList());
-					}
-					collisionManager->checkCollision(m_player, (*it)->getBulletsList());
-					collisionManager->checkCollision(*it, m_player->getBulletsList());
+					it = m_explosions.erase(it);
 				}
-
-				for (auto it = m_meteors.begin(); it != m_meteors.end(); ++it)
+				else
 				{
-					collisionManager->checkCollision(*it, m_player->getBulletsList());
+					++it;
 				}
-
-				collisionManager->checkCollision(m_player, &m_meteors);
-				collisionManager->checkCollision(m_player, &m_enemies);
-				collisionManager->checkCollision(m_player, &m_pickups);
 			}
 
-			m_accumulator -= dt;
+			for (auto it = m_pickups.begin(); it != m_pickups.end();)
+			{
+				if ((*it)->update(dt))
+				{
+					it = m_pickups.erase(it);
+				}
+				else
+				{
+					++it;
+				}
+			}
+
+			for (auto it = m_meteors.begin(); it != m_meteors.end();)
+			{
+				if ((*it)->update(dt))
+				{
+					it = m_meteors.erase(it);
+				}
+				else
+				{
+					++it;
+				}
+			}
+		}
+
+		if (gameStateManager->getGameState() == GameState::STARTED)
+		{
+			for (auto it = m_enemies.begin(); it != m_enemies.end(); ++it)
+			{
+				auto playerBulletList = m_player->getBulletsList();
+				for (auto it2 = playerBulletList->begin(); it2 != playerBulletList->end(); ++it2)
+				{
+					collisionManager->checkCollision(*it2, (*it)->getBulletsList());
+				}
+				collisionManager->checkCollision(m_player, (*it)->getBulletsList());
+				collisionManager->checkCollision(*it, m_player->getBulletsList());
+			}
+
+			for (auto it = m_meteors.begin(); it != m_meteors.end(); ++it)
+			{
+				collisionManager->checkCollision(*it, m_player->getBulletsList());
+			}
+
+			collisionManager->checkCollision(m_player, &m_meteors);
+			collisionManager->checkCollision(m_player, &m_enemies);
+			collisionManager->checkCollision(m_player, &m_pickups);
 		}
 
 		return m_meteors.empty() && m_enemies.empty() && m_pickups.empty();

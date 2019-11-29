@@ -3,8 +3,6 @@
 
 #include <rapidxml.hpp>
 #include <string>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
 #include <irrKlang.h>
 #include <vector>
 #include <memory>
@@ -39,9 +37,6 @@ namespace Engine
 			void onNotify(ObserverEvent, BaseGameObject*);
 		private:
 			inline const std::unique_ptr<UIManager>& getUIManager() const { return m_uiManager; }
-
-			float m_currentTime{ static_cast<float>(glutGet(GLUT_ELAPSED_TIME)) };
-			float m_accumulator{ 0.0f };
 
 			std::unique_ptr<UIManager> m_uiManager{ std::make_unique<UIManager>() };
 

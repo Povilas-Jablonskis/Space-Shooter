@@ -51,6 +51,8 @@ namespace Engine
 			std::unique_ptr<Renderer> m_renderer{ std::make_unique<Renderer>() };
 
 			irrklang::ISoundEngine* m_soundEngine{ irrklang::createIrrKlangDevice() };
+
+			const float m_dt{ 1.0f / 60.0f };
 	};
 }
 #endif

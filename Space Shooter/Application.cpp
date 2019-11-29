@@ -100,15 +100,13 @@ namespace Engine
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		float dt = 1.0f / 60.0f;
-
-		getLevelManager()->renderCurrentLevel(dt, getGameStateManager(), getInputManager(), getCollisionManager(), getRenderer(), getConfigurationManager(), getSpritesheetManager());
+		getLevelManager()->renderCurrentLevel(m_dt, getGameStateManager(), getInputManager(), getCollisionManager(), getRenderer(), getConfigurationManager(), getSpritesheetManager());
 		
 		auto menus = getMenuManager()->getMenus();
 
 		if (!menus->empty() && (getGameStateManager()->getGameState() == GameState::IN_MENU || getGameStateManager()->getGameState() == GameState::IN_PAUSED_MENU))
 		{
-			getMenuManager()->renderCurrentMenu(getRenderer(), dt, getConfigurationManager(), getInputManager());
+			getMenuManager()->renderCurrentMenu(getRenderer(), m_dt, getConfigurationManager(), getInputManager());
 		}
 
 		glutSwapBuffers();

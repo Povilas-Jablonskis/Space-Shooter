@@ -7,6 +7,7 @@
 #include "CollisionManager.hpp"
 
 #include <fstream>
+#include <iostream>
 
 namespace Engine
 {
@@ -32,19 +33,36 @@ namespace Engine
 
 		theFile.close();
 		doc.clear();
+
+		m_accumulator = 0;
 	}
 
 	void LevelManager::renderCurrentLevel(float dt, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<InputManager>& inputManager, const std::unique_ptr<CollisionManager>& collisionManager, const std::unique_ptr<Renderer>& renderer, const std::unique_ptr<ConfigurationManager>& configurationManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
+		auto newTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
+		auto frameTime = (newTime - m_currentTime) / 1000.0f;
+		m_currentTime = newTime;
+
+		m_accumulator += frameTime;
+
+		while (m_accumulator >= dt)
+		{
+			if (!m_levels.empty())
+			{
+				bool updateStatus = updateStatus = getCurrentLevel()->update(dt, gameStateManager, inputManager, collisionManager);
+
+				if (updateStatus && m_levels.size() > 1)
+				{
+					newLevel();
+				}
+			}
+
+			m_accumulator -= dt;
+		}
+
 		if (!m_levels.empty())
 		{
-			bool updateStatus = getCurrentLevel()->update(dt, gameStateManager, inputManager, collisionManager);
 			getCurrentLevel()->render(dt, gameStateManager, inputManager, collisionManager, renderer, configurationManager, spriteSheetManager);
-
-			if (updateStatus && m_levels.size() > 1)
-			{
-				newLevel();
-			}
 		}
 	}
 }
