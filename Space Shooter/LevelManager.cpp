@@ -1,6 +1,5 @@
 #include "LevelManager.hpp"
 #include "SpriteSheetManager.hpp"
-#include "Level.hpp"
 #include "GameStateManager.hpp"
 #include "Renderer.hpp"
 #include "ConfigurationManager.hpp"
@@ -11,10 +10,8 @@
 
 namespace Engine
 {
-	void LevelManager::initGameLevels(const std::unique_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
+	LevelManager::LevelManager(const std::unique_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
 	{
-		m_levels.clear();
-
 		rapidxml::xml_document<> doc;
 		rapidxml::xml_node<> * root_node;
 		// Read the xml file into a vector
@@ -28,7 +25,7 @@ namespace Engine
 		// Iterate over the brewerys
 		for (auto brewery_node = root_node->first_node("Level"); brewery_node; brewery_node = brewery_node->next_sibling("Level"))
 		{
-			m_levels.push_back(std::make_shared<Level>(brewery_node, spriteSheetManager, soundEngine, t_characterSelectionIndex));
+			m_levels.push(std::make_unique<Level>(brewery_node, spriteSheetManager, soundEngine, t_characterSelectionIndex));
 		}
 
 		theFile.close();
@@ -49,7 +46,7 @@ namespace Engine
 		{
 			if (!m_levels.empty())
 			{
-				bool updateStatus = updateStatus = getCurrentLevel()->update(dt, gameStateManager, inputManager, collisionManager);
+				bool updateStatus = getCurrentLevel()->update(dt, gameStateManager, inputManager, collisionManager);
 
 				if (updateStatus && m_levels.size() > 1)
 				{

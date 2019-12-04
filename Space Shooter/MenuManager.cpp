@@ -38,7 +38,7 @@ namespace Engine
 		doc.clear();
 	}
 
-	void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::unique_ptr<LevelManager>& levelManager, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
 		getMenus()->clear();
 
@@ -47,7 +47,7 @@ namespace Engine
 
 		//Main Menu
 		auto option = std::make_shared<Text>("Start Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f));
-		option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &levelManager, &spriteSheetManager, playerModels]()
+		option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &spriteSheetManager, playerModels]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 
@@ -100,11 +100,11 @@ namespace Engine
 			};
 			characterSelection->addText(option);
 			option = std::make_shared<Text>("Start", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(25.0f, 20.0f));
-			option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &levelManager, &spriteSheetManager]()
+			option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &spriteSheetManager]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 
-				levelManager->initGameLevels(spriteSheetManager, soundEngine, getCharacterSelectionIndex());
+				m_levelManager = std::make_unique<LevelManager>(spriteSheetManager, soundEngine, getCharacterSelectionIndex());
 				getMenus()->clear();
 
 				gameStateManager->setGameState(GameState::STARTED);
@@ -242,11 +242,11 @@ namespace Engine
 		addMenu(mainMenu);
 	}
 
-	void MenuManager::escapeAction(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::unique_ptr<LevelManager>& levelManager, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void MenuManager::escapeAction(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
 		if (gameStateManager->getGameState() == GameState::ENDED)
 		{
-			initGameMenus(soundEngine, inputManager, levelManager, gameStateManager, spriteSheetManager);
+			initGameMenus(soundEngine, inputManager, gameStateManager, spriteSheetManager);
 			gameStateManager->setGameState(GameState::IN_MENU);
 		}
 		else if (gameStateManager->getGameState() == GameState::IN_PAUSED_MENU)
@@ -262,11 +262,11 @@ namespace Engine
 
 			//Pause Menu
 			auto option = std::make_shared<Text>("Go To Main Menu", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f));
-			option->onMouseReleaseFunc = [this, soundEngine, inputManager, &levelManager, &gameStateManager, &spriteSheetManager]()
+			option->onMouseReleaseFunc = [this, soundEngine, inputManager, &gameStateManager, &spriteSheetManager]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
 
-				initGameMenus(soundEngine, inputManager, levelManager, gameStateManager, spriteSheetManager);
+				initGameMenus(soundEngine, inputManager, gameStateManager, spriteSheetManager);
 				gameStateManager->setGameState(GameState::IN_MENU);
 			};
 			pauseMenu->addText(option);

@@ -11,7 +11,6 @@
 namespace Engine
 {
 	class MenuManager;
-	class LevelManager;
 	class SpriteSheetManager;
 	class GameStateManager;
 
@@ -44,7 +43,7 @@ namespace Engine
 			inline const std::string& getCurrentlyEditedKeyBinding() const { return m_currentlyEditedKeyBinding; }
 			inline void setCurrentlyEditedKeyBinding(const std::string& str) { m_currentlyEditedKeyBinding = str; }
 
-			void keyboardInput(unsigned char, int, int, const std::unique_ptr<MenuManager>&, irrklang::ISoundEngine*, const std::unique_ptr<LevelManager>&, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<SpriteSheetManager>&);
+			void keyboardInput(unsigned char, int, int, const std::unique_ptr<MenuManager>&, irrklang::ISoundEngine*, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<SpriteSheetManager>&);
 			void motionFunc(int, int);
 			void processMouseClick(int, int, int, int);
 			void keyboardInputUp(unsigned char, int, int);

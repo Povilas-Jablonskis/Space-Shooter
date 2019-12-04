@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "Observer.hpp"
+#include "UIManager.hpp"
 
 namespace Engine
 {
@@ -18,7 +19,6 @@ namespace Engine
 	class ConfigurationManager;
 	class SpriteSheetManager;
 	class CollisionManager;
-	class UIManager;
 	class Player;
 	class Entity;
 	class Renderer;
@@ -27,7 +27,6 @@ namespace Engine
 	class Level : public Observer
 	{
 		public:
-			~Level();
 			Level(rapidxml::xml_node<char>*, const std::unique_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);
 
 			bool update(float, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<InputManager>&, const std::unique_ptr<CollisionManager>&);

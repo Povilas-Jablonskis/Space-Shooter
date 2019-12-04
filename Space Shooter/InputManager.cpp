@@ -1,6 +1,5 @@
 #include "InputManager.hpp"
 #include "MenuManager.hpp"
-#include "LevelManager.hpp"
 #include "SpriteSheetManager.hpp"
 #include "GameStateManager.hpp"
 
@@ -126,7 +125,7 @@ namespace Engine
 		}
 	}
 
-	void InputManager::keyboardInput(unsigned char c, int x, int y, const std::unique_ptr<MenuManager>& menuManager, irrklang::ISoundEngine* soundEngine, const std::unique_ptr<LevelManager>& levelManager, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void InputManager::keyboardInput(unsigned char c, int x, int y, const std::unique_ptr<MenuManager>& menuManager, irrklang::ISoundEngine* soundEngine, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
 		auto key = VkKeyScan(c);
 		if (!getKey(key))
@@ -135,7 +134,7 @@ namespace Engine
 			{
 				case 27: // escape
 				{
-					menuManager->escapeAction(soundEngine, this, levelManager, gameStateManager, spriteSheetManager);
+					menuManager->escapeAction(soundEngine, this, gameStateManager, spriteSheetManager);
 					break;
 				}
 			}

@@ -13,7 +13,6 @@ namespace Engine
 	class SpriteSheetManager;
 	class Renderer;
 	class GameStateManager;
-	class LevelManager;
 
 	class Application
 	{
@@ -38,7 +37,6 @@ namespace Engine
 			inline const std::unique_ptr<CollisionManager>& getCollisionManager() const { return m_collisionManager; }
 			inline const std::unique_ptr<Renderer>& getRenderer() const { return m_renderer; }
 			inline const std::unique_ptr<GameStateManager>& getGameStateManager() const { return m_gameStateManager; }
-			inline const std::unique_ptr<LevelManager>& getLevelManager() const { return m_levelManager; }
 		private:
 			std::unique_ptr<ConfigurationManager> m_configurationManager{ std::make_unique<ConfigurationManager>() };
 			std::unique_ptr<MenuManager> m_menuManager{ std::make_unique<MenuManager>() };
@@ -46,7 +44,6 @@ namespace Engine
 			std::unique_ptr<CollisionManager> m_collisionManager{ std::make_unique<CollisionManager>() };
 			std::unique_ptr<InputManager> m_inputManager{ std::make_unique<InputManager>() };
 			std::unique_ptr<GameStateManager> m_gameStateManager{ std::make_unique<GameStateManager>() };
-			std::unique_ptr<LevelManager> m_levelManager{ std::make_unique<LevelManager>() };
 
 			std::unique_ptr<Renderer> m_renderer{ std::make_unique<Renderer>() };
 

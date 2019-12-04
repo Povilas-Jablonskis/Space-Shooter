@@ -2,8 +2,8 @@
 #include "Renderer.hpp"
 #include "SpriteSheetManager.hpp"
 #include "MenuManager.hpp"
-#include "InputManager.hpp"
 #include "LevelManager.hpp"
+#include "InputManager.hpp"
 #include "GameStateManager.hpp"
 #include "CollisionManager.hpp"
 #include "ConfigurationManager.hpp"
@@ -29,7 +29,7 @@ namespace Engine
 		loadPlayerConfig();
 		getSpritesheetManager()->loadSpriteSheetsFromConfig();
 		getMenuManager()->loadPlayerModels(getSpritesheetManager());
-		getMenuManager()->initGameMenus(getSoundEngine(), getInputManager().get(), getLevelManager(), getGameStateManager(), getSpritesheetManager());
+		getMenuManager()->initGameMenus(getSoundEngine(), getInputManager().get(), getGameStateManager(), getSpritesheetManager());
 	}
 
 	void Application::savePlayerConfig()
@@ -100,9 +100,12 @@ namespace Engine
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		getLevelManager()->renderCurrentLevel(m_dt, getGameStateManager(), getInputManager(), getCollisionManager(), getRenderer(), getConfigurationManager(), getSpritesheetManager());
-		
 		auto menus = getMenuManager()->getMenus();
+
+		if (getMenuManager()->getLevelManager())
+		{
+			getMenuManager()->getLevelManager()->renderCurrentLevel(m_dt, getGameStateManager(), getInputManager(), getCollisionManager(), getRenderer(), getConfigurationManager(), getSpritesheetManager());
+		}
 
 		if (!menus->empty() && (getGameStateManager()->getGameState() == GameState::IN_MENU || getGameStateManager()->getGameState() == GameState::IN_PAUSED_MENU))
 		{

@@ -7,15 +7,9 @@
 #include "CollisionManager.hpp"
 #include "SpriteSheet.hpp"
 #include "Renderer.hpp"
-#include "UIManager.hpp"
 
 namespace Engine
 {
-	Level::~Level()
-	{
-
-	}
-
 	Level::Level(rapidxml::xml_node<char>* t_xml_node, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
 	{
 		m_background = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(0.0f, 0.0f));
@@ -435,7 +429,7 @@ namespace Engine
 			collisionManager->checkCollision(m_player, &m_pickups);
 		}
 
-		return m_meteors.empty() && m_enemies.empty() && m_pickups.empty();
+		return m_meteors.empty() && m_enemies.empty();
 	}
 
 	void Level::render(float dt, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<InputManager>& inputManager, const std::unique_ptr<CollisionManager>& collisionManager, const std::unique_ptr<Renderer>& renderer, const std::unique_ptr<ConfigurationManager>& configurationManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
