@@ -1,12 +1,14 @@
 #ifndef baseGameObjectH
 #define baseGameObjectH
 
+#include <vector>
+#include <memory>
+
 #include "RenderObject.hpp"
-#include "Subject.hpp"
 
 namespace Engine
 {
-	class BaseGameObject : public RenderObject, public Subject
+	class BaseGameObject : public RenderObject
 	{
 		public:
 			BaseGameObject(const glm::vec2&, const glm::vec2&, const glm::vec4&);

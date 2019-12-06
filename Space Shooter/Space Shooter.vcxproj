@@ -90,7 +90,6 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="SpriteSheetManager.cpp" />
-    <ClCompile Include="Subject.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="UIElementBase.cpp" />
@@ -111,14 +110,12 @@
     <ClInclude Include="MenuManager.hpp" />
     <ClInclude Include="Font.hpp" />
     <ClInclude Include="InputComponent.hpp" />
-    <ClInclude Include="Observer.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="RenderObject.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="SpriteSheet.hpp" />
     <ClInclude Include="SpriteSheetManager.hpp" />
-    <ClInclude Include="Subject.hpp" />
     <ClInclude Include="Text.hpp" />
     <ClInclude Include="Menu.hpp" />
     <ClInclude Include="UIElementBase.hpp" />

@@ -10,6 +10,8 @@
 #include "KeyBindingInputComponent.hpp"
 #include "Text.hpp"
 
+#include <rapidxml.hpp>
+
 namespace Engine
 {
 	void MenuManager::loadPlayerModels(const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)

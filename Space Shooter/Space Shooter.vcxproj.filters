@@ -69,9 +69,6 @@
     <ClCompile Include="SpriteSheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Subject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -146,9 +143,6 @@
     <ClInclude Include="Menu.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Observer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Player.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -162,9 +156,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SpriteSheet.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Subject.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Text.hpp">

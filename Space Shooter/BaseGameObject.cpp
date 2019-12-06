@@ -1,6 +1,5 @@
 #include "BaseGameObject.hpp"
 #include "Entity.hpp"
-#include "Observer.hpp"
 
 #include <algorithm>
 
@@ -43,8 +42,6 @@ namespace Engine
 
 		if (getNeedsToBeRemoved())
 		{
-			notify(ObserverEvent::OBJECT_DESTROYED, this);
-
 			setLives(getLives() - 1);
 			if (getLives() > 0)
 			{

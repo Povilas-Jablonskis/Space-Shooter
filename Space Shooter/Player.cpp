@@ -1,6 +1,5 @@
 #include "Player.hpp"
 #include "InputComponent.hpp"
-#include "Observer.hpp"
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -25,7 +24,6 @@ namespace Engine
 			if (getLives() < 1)
 			{
 				setLives(0);
-				notify(ObserverEvent::PLAYER_DIED);
 			}
 
 			setNeedsToBeRemoved(false);
