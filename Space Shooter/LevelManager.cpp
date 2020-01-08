@@ -61,7 +61,7 @@ namespace Engine
 
 					m_player = std::make_shared<Player>(glm::vec2(static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)) / 2.0f, 0.0f), glm::vec2(velocityX, velocityY), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 					m_player->setLivesIcon(livesIcon);
-					m_player->setScore(0);
+					m_player->setValue(0);
 					m_player->setLives(lives);
 					m_player->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName));
 
@@ -102,7 +102,7 @@ namespace Engine
 								_bulletPosition += glm::vec2(m_player->getWidth() * _bullet->getPosition().x, m_player->getHeight() * _bullet->getPosition().y);
 								_bullet->setPosition(_bulletPosition);
 
-								_bullet->onUpdateFunc = [soundEngine, _bullet]()
+								_bullet->onUpdateFunc = [this, soundEngine, _bullet]()
 								{
 									if (_bullet->getNeedsToBeRemoved())
 									{
@@ -116,17 +116,18 @@ namespace Engine
 											return;
 										}
 
-										_bullet->setNeedsToBeRemoved(false);
-										_bullet->applyAnimation(_bullet->getAnimationByIndex("explosion"));
-										_bullet->onUpdateFunc = [_bullet]()
+										auto explosion = std::make_shared<BaseGameObject>(_bullet->getPosition(), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+										explosion->applyAnimation(_bullet->getAnimationByIndex("explosion"));
+										explosion->onUpdateFunc = [explosion]()
 										{
-											_bullet->changeColor(_bullet->getColor().a - 0.05f, 3);
+											explosion->changeColor(explosion->getColor().a - 0.05f, 3);
 
-											if (_bullet->getColor().a <= 0.0f)
+											if (explosion->getColor().a <= 0.0f)
 											{
-												_bullet->setNeedsToBeRemoved(true);
+												explosion->setNeedsToBeRemoved(true);
 											}
 										};
+										getCurrentLevel()->addExplosion(explosion);
 									}
 									else
 									{
@@ -186,7 +187,7 @@ namespace Engine
 
 				if (updateStatus && m_levels.size() > 1)
 				{
-					newLevel();
+					m_levels.pop();
 				}
 			}
 

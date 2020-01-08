@@ -21,8 +21,7 @@ namespace Engine
 	class LevelManager
 	{
 		public:
-			LevelManager(const std::unique_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);
-			inline void newLevel() { m_levels.pop(); }
+			LevelManager(const std::unique_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);			
 			inline const std::unique_ptr<Level>& getCurrentLevel() const { return m_levels.front(); }
 			void renderCurrentLevel(float, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<InputManager>&, const std::unique_ptr<CollisionManager>&, const std::unique_ptr<Renderer>&, const std::unique_ptr<ConfigurationManager>&, const std::unique_ptr<SpriteSheetManager>&);
 		private:

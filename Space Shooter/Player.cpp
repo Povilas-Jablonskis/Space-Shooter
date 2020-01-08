@@ -8,10 +8,7 @@ namespace Engine
 {
 	Player::Player(const glm::vec2& position, const glm::vec2& velocity, const glm::vec4& color) : Entity(position, velocity, color), m_startPosition(position), m_startVelocity(velocity)
 	{
-		onCollisionFunc = [this](const std::shared_ptr<BaseGameObject>& collider)
-		{
-			
-		};
+
 	}
 
 	bool Player::update(float dt, const std::unique_ptr<InputManager>& inputManager)

@@ -55,7 +55,7 @@ namespace Engine
 					bullets.push_back(bullet);
 				}
 
-				enemy->shootingModeFunc = [soundEngine, shootingSound, bullets, enemy, explosionSound]()
+				enemy->shootingModeFunc = [this, soundEngine, shootingSound, bullets, enemy, explosionSound]()
 				{
 					for (auto bullet : bullets)
 					{
@@ -64,9 +64,9 @@ namespace Engine
 						_bulletPosition += glm::vec2(enemy->getWidth() * _bullet->getPosition().x, enemy->getHeight() * _bullet->getPosition().y);
 						_bullet->setPosition(_bulletPosition);
 						
-						_bullet->onUpdateFunc = [soundEngine, _bullet]()
+						_bullet->onUpdateFunc = [this, soundEngine, _bullet]()
 						{
-							if (_bullet->getNeedsToBeRemoved())
+							if (_bullet->getNeedsToBeRemoved() && _bullet->getLives() <= 1)
 							{
 								if (!_bullet->getExplosionSound().empty())
 								{
@@ -78,17 +78,18 @@ namespace Engine
 									return;
 								}
 
-								_bullet->setNeedsToBeRemoved(false);
-								_bullet->applyAnimation(_bullet->getAnimationByIndex("explosion"));
-								_bullet->onUpdateFunc = [_bullet]()
+								auto explosion = std::make_shared<BaseGameObject>(_bullet->getPosition(), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+								explosion->applyAnimation(_bullet->getAnimationByIndex("explosion"));
+								explosion->onUpdateFunc = [explosion]()
 								{
-									_bullet->changeColor(_bullet->getColor().a - 0.05f, 3);
+									explosion->changeColor(explosion->getColor().a - 0.05f, 3);
 
-									if (_bullet->getColor().a <= 0.0f)
+									if (explosion->getColor().a <= 0.0f)
 									{
-										_bullet->setNeedsToBeRemoved(true);
+										explosion->setNeedsToBeRemoved(true);
 									}
 								};
+								addExplosion(explosion);
 							}
 							else
 							{
@@ -124,7 +125,7 @@ namespace Engine
 				}
 			}
 
-			enemy->onUpdateFunc = [enemy, this]()
+			enemy->onUpdateFunc = [enemy]()
 			{
 				auto windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
 				auto windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
@@ -202,7 +203,7 @@ namespace Engine
 
 					pickup->setNeedsToBeRemoved(true);
 
-					entity->shootingModeFunc = [soundEngine, bullets, explosionSound, shootingSound, entity]()
+					entity->shootingModeFunc = [this, soundEngine, bullets, explosionSound, shootingSound, entity]()
 					{
 						for (auto bullet : bullets)
 						{
@@ -211,9 +212,9 @@ namespace Engine
 							_bulletPosition += glm::vec2(entity->getWidth() * _bullet->getPosition().x, entity->getHeight() * _bullet->getPosition().y);
 							_bullet->setPosition(_bulletPosition);
 
-							_bullet->onUpdateFunc = [soundEngine, _bullet]()
+							_bullet->onUpdateFunc = [this, soundEngine, _bullet]()
 							{
-								if (_bullet->getNeedsToBeRemoved())
+								if (_bullet->getNeedsToBeRemoved() && _bullet->getLives() <= 1)
 								{
 									if (!_bullet->getExplosionSound().empty())
 									{
@@ -225,17 +226,18 @@ namespace Engine
 										return;
 									}
 
-									_bullet->setNeedsToBeRemoved(false);
-									_bullet->applyAnimation(_bullet->getAnimationByIndex("explosion"));
-									_bullet->onUpdateFunc = [_bullet]()
+									auto explosion = std::make_shared<BaseGameObject>(_bullet->getPosition(), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+									explosion->applyAnimation(_bullet->getAnimationByIndex("explosion"));
+									explosion->onUpdateFunc = [explosion]()
 									{
-										_bullet->changeColor(_bullet->getColor().a - 0.05f, 3);
+										explosion->changeColor(explosion->getColor().a - 0.05f, 3);
 
-										if (_bullet->getColor().a <= 0.0f)
+										if (explosion->getColor().a <= 0.0f)
 										{
-											_bullet->setNeedsToBeRemoved(true);
+											explosion->setNeedsToBeRemoved(true);
 										}
 									};
+									addExplosion(explosion);
 								}
 								else
 								{
@@ -266,7 +268,7 @@ namespace Engine
 			{
 				std::string spriteName = beer_node2->first_attribute("spriteName")->value();
 
-				pickup->onCollisionFunc = [&spriteSheetManager, spriteName, pickup, this](const std::shared_ptr<BaseGameObject>& collider)
+				pickup->onCollisionFunc = [&spriteSheetManager, spriteName, pickup](const std::shared_ptr<BaseGameObject>& collider)
 				{
 					auto entity = dynamic_cast<Entity*>(collider.get());
 
@@ -336,6 +338,18 @@ namespace Engine
 					++it;
 				}
 			}
+
+			for (auto it = m_explosions.begin(); it != m_explosions.end();)
+			{
+				if ((*it)->update(dt))
+				{
+					it = m_explosions.erase(it);
+				}
+				else
+				{
+					++it;
+				}
+			}
 		}
 
 		if (gameStateManager->getGameState() == GameState::STARTED)
@@ -356,7 +370,7 @@ namespace Engine
 			collisionManager->checkCollision(player, &m_pickups);
 		}
 
-		return m_meteors.empty() && m_enemies.empty();
+		return m_enemies.empty();
 	}
 
 	void Level::render(float dt, const std::shared_ptr<Player>& player, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<InputManager>& inputManager, const std::unique_ptr<CollisionManager>& collisionManager, const std::unique_ptr<Renderer>& renderer, const std::unique_ptr<ConfigurationManager>& configurationManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
@@ -368,6 +382,8 @@ namespace Engine
 			renderer->draw(m_background);
 			//Render m_meteors
 			renderer->draw(m_meteors);
+			//Render m_explosions
+			renderer->draw(m_explosions);
 			//Render m_player & his addons
 			renderer->draw(player);
 			for (auto it = player->getAddons()->begin(); it != player->getAddons()->end(); ++it)
@@ -394,7 +410,7 @@ namespace Engine
 			renderer->draw(*player->getBulletsList());
 			//Render & Update UI elements
 			getUIManager()->updatePlayerLives(spriteSheetManager, player->getLivesIcon(), player->getLives());
-			getUIManager()->updatePlayerScore(spriteSheetManager, player->getScore());
+			getUIManager()->updatePlayerScore(spriteSheetManager, player->getValue());
 
 			getUIManager()->render(dt, gameStateManager, inputManager, renderer, configurationManager);
 		}

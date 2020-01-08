@@ -31,6 +31,8 @@ namespace Engine
 
 			bool update(float, const std::shared_ptr<Player>&, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<InputManager>&, const std::unique_ptr<CollisionManager>&);
 			void render(float, const std::shared_ptr<Player>&, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<InputManager>&, const std::unique_ptr<CollisionManager>&, const std::unique_ptr<Renderer>&, const std::unique_ptr<ConfigurationManager>&, const std::unique_ptr<SpriteSheetManager>&);
+		
+			inline void addExplosion(const std::shared_ptr<BaseGameObject>& _explosion) { m_explosions.push_back(_explosion); }
 		private:
 			inline const std::unique_ptr<UIManager>& getUIManager() const { return m_uiManager; }
 
@@ -39,6 +41,7 @@ namespace Engine
 			std::vector<std::shared_ptr<BaseGameObject>> m_meteors;
 			std::vector<std::shared_ptr<BaseGameObject>> m_pickups;
 			std::vector<std::shared_ptr<Entity>> m_enemies;
+			std::vector<std::shared_ptr<BaseGameObject>> m_explosions;
 			std::shared_ptr<UIElementBase> m_background;
 	};
 }
