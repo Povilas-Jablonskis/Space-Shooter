@@ -1,7 +1,7 @@
 #ifndef applicationH
 #define applicationH
 
-#include <irrKlang.h>
+#include <irrKlang/irrKlang.h>
 #include <memory>
 
 namespace Engine

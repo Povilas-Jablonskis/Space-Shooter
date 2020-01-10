@@ -7,7 +7,7 @@
 #include "CollisionManager.hpp"
 #include "Player.hpp"
 
-#include <rapidxml.hpp>
+#include "rapidxml/rapidxml.hpp"
 #include <fstream>
 #include <iostream>
 

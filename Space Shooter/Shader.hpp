@@ -4,8 +4,8 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
 
 namespace Engine
 {

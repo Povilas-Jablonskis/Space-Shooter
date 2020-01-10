@@ -1,8 +1,8 @@
 #include "Application.hpp"
 #include "InputManager.hpp"
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
 #include <iostream>
 
 using namespace Engine;

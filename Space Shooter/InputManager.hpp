@@ -1,8 +1,8 @@
 #ifndef inputManagerH
 #define inputManagerH
 
-#include <irrKlang.h>
-#include "vec2.hpp"
+#include <irrKlang/irrKlang.h>
+#include "glm/vec2.hpp"
 #include <Windows.h>
 #include <algorithm>
 #include <vector>

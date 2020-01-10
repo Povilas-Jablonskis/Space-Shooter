@@ -10,7 +10,7 @@
 #include "KeyBindingInputComponent.hpp"
 #include "Text.hpp"
 
-#include <rapidxml.hpp>
+#include "rapidxml/rapidxml.hpp"
 
 namespace Engine
 {

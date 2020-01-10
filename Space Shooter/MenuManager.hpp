@@ -1,7 +1,7 @@
 #ifndef menuManagerH
 #define menuManagerH
 
-#include <irrKlang.h>
+#include <irrKlang/irrKlang.h>
 #include <vector>
 #include <memory>
 

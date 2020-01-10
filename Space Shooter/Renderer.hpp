@@ -1,9 +1,7 @@
 #ifndef rendererH
 #define rendererH
 
-#include "gtc/matrix_transform.hpp"
-#include "gtc/type_ptr.hpp"
-#include "gtx/rotate_vector.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include <string>
 #include <vector>
 #include <memory>
@@ -64,7 +62,7 @@ namespace Engine
 
 					auto sprites = t->getAnimation()->getAnimation();
 
-					glm::mat4 model;
+					glm::mat4 model(1.f);
 					model = glm::translate(model, glm::vec3(t->getPosition(), 0.0f));
 
 					model = glm::translate(model, glm::vec3(0.5f * t->getWidth(), 0.5f * t->getHeight(), 0.0f));

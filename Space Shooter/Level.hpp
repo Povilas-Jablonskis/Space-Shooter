@@ -1,9 +1,9 @@
 #ifndef levelH
 #define levelH
 
-#include <rapidxml.hpp>
+#include <rapidxml/rapidxml.hpp>
 #include <string>
-#include <irrKlang.h>
+#include <irrKlang/irrKlang.h>
 #include <vector>
 #include <memory>
 

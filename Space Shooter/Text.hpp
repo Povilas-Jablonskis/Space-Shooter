@@ -2,10 +2,10 @@
 #define textH
 
 #include <algorithm>
-#include <vec2.hpp>
-#include <vec4.hpp>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
 #include <vector>
 
 #include "UIElementBase.hpp"

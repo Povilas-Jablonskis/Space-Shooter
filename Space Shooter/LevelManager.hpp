@@ -1,8 +1,8 @@
 #ifndef levelManagerH
 #define levelManagerH
 
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
 #include <memory>
 #include <queue>
 

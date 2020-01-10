@@ -1,11 +1,11 @@
 #ifndef spriteSheetH
 #define spriteSheetH
 
-#include <vec4.hpp>
-#include <GL/glew.h>
-#include <GL/freeglut.h>
+#include <glm/vec4.hpp>
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
 #include <fstream>
-#include <rapidxml.hpp>
+#include "rapidxml/rapidxml.hpp"
 #include <algorithm>
 #include <vector>
 #include <memory>

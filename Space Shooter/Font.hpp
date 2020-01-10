@@ -2,11 +2,10 @@
 #define fontH
 
 #include <ft2build.h>
-#include <freetype/ftglyph.h>
 #include FT_FREETYPE_H
-#include <GL/glew.h>
-#include <GL/freeglut.h>
-#include <vec2.hpp>
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
+#include <glm/vec2.hpp>
 #include <iostream>
 #include <vector>
 #include <algorithm>
