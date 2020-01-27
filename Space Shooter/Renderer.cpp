@@ -4,19 +4,6 @@
 
 namespace Engine
 {
-	Renderer::~Renderer()
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		glDeleteBuffers(1, &m_textVBO);
-		glDeleteBuffers(1, &m_vbo);
-		glDeleteBuffers(1, &m_ebo);
-
-		glBindVertexArray(0);
-		glDeleteVertexArrays(1, &m_textVAO);
-		glDeleteVertexArrays(1, &m_vao);
-	}
-
 	Renderer::Renderer()
 	{
 		GLuint indices[] =

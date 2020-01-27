@@ -17,7 +17,7 @@ namespace Engine
 			std::function<void(const std::shared_ptr<BaseGameObject>&)> onCollisionFunc;
 			void addAnimation(const std::string&, const std::shared_ptr<Animation>&);
 			std::shared_ptr<Animation> getAnimationByIndex(const std::string&);
-			virtual inline void setLives(int lives) { m_lives = lives; }
+			inline void setLives(int lives) { m_lives = lives; }
 			inline int getLives() const { return m_lives; }
 			inline void setVelocity(const glm::vec2& velocity) { m_velocity = velocity; };
 			inline void setVelocity(int index, float velocity) { m_velocity[index] = velocity; };

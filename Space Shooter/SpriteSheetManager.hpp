@@ -9,6 +9,7 @@
 namespace Engine
 {
 	class SpriteSheet;
+
 	typedef std::pair<std::string, std::shared_ptr<SpriteSheet>> spriteSheet;
 
 	class SpriteSheetManager

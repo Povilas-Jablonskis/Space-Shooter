@@ -22,6 +22,7 @@ namespace Engine
 	class Player;
 	class Entity;
 	class Renderer;
+
 	typedef std::pair<std::string, std::shared_ptr<Text>> uiPlayerElement;
 
 	class Level

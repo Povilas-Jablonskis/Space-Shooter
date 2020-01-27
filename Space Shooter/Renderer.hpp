@@ -18,12 +18,7 @@ namespace Engine
 	class Renderer
 	{
 		public:
-			~Renderer();
 			Renderer();
-			Renderer(const Renderer &) = default;
-			Renderer& operator=(const Renderer&) = default;
-			Renderer(Renderer&&) = default;
-			Renderer& operator=(Renderer&&) = default;
 			void addShader(const std::string&, const std::shared_ptr<Shader>&);
 			inline const std::vector<shader>& getShaders() const { return m_shaders; }
 			inline GLuint getVAO() const { return m_vao; }

@@ -18,9 +18,7 @@ namespace Engine
 		// Iterate over the brewerys
 		for (auto brewery_node = root_node->first_node("Spritesheet"); brewery_node; brewery_node = brewery_node->next_sibling("Spritesheet"))
 		{
-			auto spriteSheet = std::make_shared<SpriteSheet>();
-			spriteSheet->loadSpriteSheet(brewery_node->first_attribute("spriteSheetName")->value());
-			spriteSheet->loadSpritesFromXml(brewery_node->first_attribute("spriteSheetNameXml")->value());
+			auto spriteSheet = std::make_shared<SpriteSheet>(brewery_node->first_attribute("spriteSheetName")->value(), brewery_node->first_attribute("spriteSheetNameXml")->value());
 
 			for (auto beer_node = brewery_node->first_node("Sprites"); beer_node; beer_node = beer_node->next_sibling("Sprites"))
 			{

@@ -3,15 +3,6 @@
 
 namespace Engine
 {
-	ConfigurationManager::~ConfigurationManager()
-	{
-		auto characterList = getInterfaceFont()->getCharacterList();
-		for (auto it2 = characterList.begin(); it2 != characterList.end(); ++it2)
-		{
-			glDeleteTextures(1, &it2->second.TextureID);
-		}
-	}
-
 	ConfigurationManager::ConfigurationManager()
 	{
 		FT_Library library;

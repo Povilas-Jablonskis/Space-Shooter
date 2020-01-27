@@ -24,7 +24,6 @@ namespace Engine
 			void updatePlayerScore(const std::unique_ptr<SpriteSheetManager>&, int);
 			void render(float, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<InputManager>&, const std::unique_ptr<Renderer>&, const std::unique_ptr<ConfigurationManager>&);
 		private:
-
 			std::vector<std::shared_ptr<UIElementBase>> m_playerLives;
 			std::vector<std::shared_ptr<UIElementBase>> m_scoreBoard;
 

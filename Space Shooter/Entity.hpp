@@ -6,6 +6,7 @@
 namespace Engine
 {
 	class InputComponent;
+
 	typedef std::pair<std::string, std::shared_ptr<BaseGameObject>> addon;
 
 	class Entity : public BaseGameObject
@@ -14,7 +15,7 @@ namespace Engine
 			Entity(const glm::vec2&, const glm::vec2&, const glm::vec4&);
 			inline std::vector<std::shared_ptr<BaseGameObject>>* getBulletsList() { return &m_bullets; }
 			void addBullet(const std::shared_ptr<BaseGameObject>&);
-			virtual bool update(float);
+			bool update(float);
 			inline void clearBullets() { m_bullets.clear(); }
 			inline float getDelayBetweenShootsTimer() const { return m_delayBetweenShootsTimer; }
 			inline void setDelayBetweenShootsTimer(float delayBetweenShootsTimer) { m_delayBetweenShootsTimer = delayBetweenShootsTimer; }

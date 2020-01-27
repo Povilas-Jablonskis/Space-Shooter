@@ -12,12 +12,7 @@ namespace Engine
 	class Shader
 	{
 		public:
-			~Shader();
 			Shader(const std::string&, const std::string&);
-			Shader(const Shader &) = default;
-			Shader& operator=(const Shader&) = default;
-			Shader(Shader&&) = default;
-			Shader& operator=(Shader&&) = default;
 			void loadShader(const std::string&, const std::string&);
 			std::string readShaderFile(const std::string&) const;
 			inline GLuint getShader() const { return m_program; }

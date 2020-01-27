@@ -3,9 +3,10 @@
 
 namespace Engine
 {
-	SpriteSheet::~SpriteSheet()
+	SpriteSheet::SpriteSheet(const std::string& spriteSheetName, const std::string& spriteSheetNameXml)
 	{
-		glDeleteTextures(1, &m_texture);
+		loadSpriteSheet(spriteSheetName);
+		loadSpritesFromXml(spriteSheetNameXml);
 	}
 
 	void SpriteSheet::loadSpriteSheet(const std::string& path)

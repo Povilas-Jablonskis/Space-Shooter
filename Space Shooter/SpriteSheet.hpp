@@ -20,14 +20,7 @@ namespace Engine
 	class SpriteSheet
 	{
 		public:
-			~SpriteSheet();
-			SpriteSheet() = default;
-			SpriteSheet(const SpriteSheet &) = default;
-			SpriteSheet& operator=(const SpriteSheet&) = default;
-			SpriteSheet(SpriteSheet&&) = default;
-			SpriteSheet& operator=(SpriteSheet&&) = default;
-			void loadSpriteSheet(const std::string&);
-			void loadSpritesFromXml(const std::string&);
+			SpriteSheet(const std::string&, const std::string&);
 			std::shared_ptr<Animation> getSprite(const std::string&);
 			glm::vec4 getSpriteAsVector(const std::string&);
 			std::shared_ptr<Animation> getAnimation(const std::string&);
@@ -39,6 +32,8 @@ namespace Engine
 			void makeAnimation(const std::string&, const std::vector<glm::vec4>&);
 			inline GLuint getTexture() const { return m_texture; }
 		private:
+			void loadSpriteSheet(const std::string&);
+			void loadSpritesFromXml(const std::string&);
 			inline const std::vector<sprite>& getSprites() const { return m_sprites; }
 			inline const std::vector<animation>& getAnimations() const { return m_animations; }
 

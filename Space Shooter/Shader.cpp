@@ -2,11 +2,6 @@
 
 namespace Engine
 {
-	Shader::~Shader()
-	{
-		glDeleteProgram(m_program);
-	}
-
 	Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
 	{
 		loadShader(vertex_path, fragment_path);
