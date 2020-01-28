@@ -3,8 +3,6 @@
 
 #include <irrKlang/irrKlang.h>
 #include "glm/vec2.hpp"
-#include <Windows.h>
-#include <algorithm>
 #include <vector>
 #include <memory>
 
@@ -20,37 +18,37 @@ namespace Engine
 	class InputManager
 	{
 		public:
-			inline bool getLeftMouseState() const { return m_leftMouseClick; }
-			inline bool getRightMouseState() const { return m_rightMouseClick; }
-			inline void setLeftMouseState(bool boolean) { m_leftMouseClick = boolean; }
-			inline void setRightMouseState(bool boolean) { m_rightMouseClick = boolean; }
-			inline bool getLastLeftMouseState() const { return m_lastLeftMouseClick; }
-			inline bool getLastRightMouseState() const { return m_lastRightMouseClick; }
-			inline void setLastLeftMouseState(bool boolean) { m_lastLeftMouseClick = boolean; }
-			inline void setLastRightMouseState(bool boolean) { m_lastRightMouseClick = boolean; }
-			inline void setLastMousePosition(const glm::vec2& position) { m_lastMousePosition = position; }
-			inline const glm::vec2& getLastMousePosition() const { return m_lastMousePosition; }
+			bool getLeftMouseState() const { return m_leftMouseClick; }
+			bool getRightMouseState() const { return m_rightMouseClick; }
+			void setLeftMouseState(const bool boolean) { m_leftMouseClick = boolean; }
+			void setRightMouseState(const bool boolean) { m_rightMouseClick = boolean; }
+			bool getLastLeftMouseState() const { return m_lastLeftMouseClick; }
+			bool getLastRightMouseState() const { return m_lastRightMouseClick; }
+			void setLastLeftMouseState(const bool boolean) { m_lastLeftMouseClick = boolean; }
+			void setLastRightMouseState(const bool boolean) { m_lastRightMouseClick = boolean; }
+			void setLastMousePosition(const glm::vec2& position) { m_lastMousePosition = position; }
+			const glm::vec2& getLastMousePosition() const { return m_lastMousePosition; }
 			bool getKey(char);
 			bool getKey(const std::string&);
 			void setKey(char, bool);
 			bool getLastKey(char);
 			bool getLastKey(const std::string&);
 			void setLastKey(char, bool);
-			inline std::vector<keyState>* getLastKeys() { return &m_lastKeyStates; }
-			inline std::vector<keyState>* getKeys() { return &m_keyStates; }
-			inline std::vector<keyBinding>* getKeyBindings() { return &m_keyBindings; }
-			void setKeyBinding(keyBinding);
-			inline const std::string& getCurrentlyEditedKeyBinding() const { return m_currentlyEditedKeyBinding; }
-			inline void setCurrentlyEditedKeyBinding(const std::string& str) { m_currentlyEditedKeyBinding = str; }
+			std::vector<keyState>* getLastKeys() { return &m_lastKeyStates; }
+			std::vector<keyState>* getKeys() { return &m_keyStates; }
+			std::vector<keyBinding>* getKeyBindings() { return &m_keyBindings; }
+			void setKeyBinding(const keyBinding&);
+			const std::string& getCurrentlyEditedKeyBinding() const { return m_currentlyEditedKeyBinding; }
+			void setCurrentlyEditedKeyBinding(const std::string& str) { m_currentlyEditedKeyBinding = str; }
 
-			void keyboardInput(unsigned char, int, int, const std::unique_ptr<MenuManager>&, irrklang::ISoundEngine*, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<SpriteSheetManager>&);
+			void keyboardInput(unsigned char, int, int, const std::shared_ptr<MenuManager>&, irrklang::ISoundEngine*, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<SpriteSheetManager>&);
 			void motionFunc(int, int);
 			void processMouseClick(int, int, int, int);
 			void keyboardInputUp(unsigned char, int, int);
 			void specialKeyInput(int, int, int);
 			void specialKeyInputUp(int, int, int);
 
-			static const std::string virtualKeyCodeToString(int);
+			static std::string virtualKeyCodeToString(int);
 		private:
 			glm::vec2 m_lastMousePosition{ glm::vec2(0.0f, 0.0f) };
 			bool m_lastLeftMouseClick{ false };

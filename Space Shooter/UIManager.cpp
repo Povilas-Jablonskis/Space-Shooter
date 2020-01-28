@@ -8,35 +8,35 @@
 
 namespace Engine
 {
-	void UIManager::render(float dt, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<InputManager>& inputManager, const std::unique_ptr<Renderer>& renderer, const std::unique_ptr<ConfigurationManager>& configurationManager)
+	void UIManager::render(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<ConfigurationManager>& configurationManager)
 	{
 		//Render & Update UI elements
-		for (auto it = m_playerLives.begin(); it != m_playerLives.end(); ++it)
+		for (auto& m_playerLive : m_playerLives)
 		{
-			(*it)->update(dt, inputManager);
+			m_playerLive->update(dt, inputManager);
 		}
 
 		renderer->draw(m_playerLives);
 
-		for (auto it = m_scoreBoard.begin(); it != m_scoreBoard.end(); ++it)
+		for (auto& it : m_scoreBoard)
 		{
-			(*it)->update(dt, inputManager);
+			it->update(dt, inputManager);
 		}
 
 		renderer->draw(m_scoreBoard);
 
-		for (auto it = m_notifications.begin(); it != m_notifications.end(); ++it)
+		for (auto& m_notification : m_notifications)
 		{
-			(*it).second->update(dt, configurationManager, inputManager);
+			m_notification.second->update(configurationManager, inputManager);
 		}
 
-		for (auto it = m_notifications.begin(); it != m_notifications.end(); ++it)
+		for (auto& m_notification : m_notifications)
 		{
-			renderer->draw((*it).second);
+			renderer->draw(m_notification.second);
 		}
 	}
 
-	void UIManager::updatePlayerLives(const std::unique_ptr<SpriteSheetManager>& spriteSheetManager, const std::string& icon, int lives)
+	void UIManager::updatePlayerLives(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, const std::string& icon, const int lives)
 	{
 		m_playerLives.clear();
 
@@ -52,7 +52,7 @@ namespace Engine
 
 		for (auto it = str.begin(); it != str.end(); ++it)
 		{
-			auto i = std::distance(str.begin(), it);
+			const auto i = std::distance(str.begin(), it);
 			std::string str2(1, str[i]);
 			auto option = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(12.0f + (4 * (i + 1)), 91.0f));
 			option->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + str2 + ".png"));
@@ -60,7 +60,7 @@ namespace Engine
 		}
 	}
 
-	void UIManager::updatePlayerScore(const std::unique_ptr<SpriteSheetManager>& spriteSheetManager, int score)
+	void UIManager::updatePlayerScore(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, const int score)
 	{
 		m_scoreBoard.clear();
 
@@ -68,7 +68,7 @@ namespace Engine
 
 		for (auto it = str.begin(); it != str.end(); ++it)
 		{
-			auto i = std::distance(str.begin(), it);
+			const auto i = std::distance(str.begin(), it);
 			std::string str2(1, str[i]);
 			auto option = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(70.0f + (4 * (i + 1)), 91.0f));
 			option->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + str2 + ".png"));

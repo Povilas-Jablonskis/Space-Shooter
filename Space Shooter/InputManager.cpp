@@ -3,6 +3,7 @@
 #include "SpriteSheetManager.hpp"
 #include "GameStateManager.hpp"
 
+#include <algorithm>
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
 
@@ -11,7 +12,7 @@ namespace Engine
 	bool InputManager::getKey(char key) 
 	{ 
 		auto keyStates = *getKeys();
-		auto it = std::find_if(keyStates.begin(), keyStates.end(), [key](auto kb) { return kb.first == key; });
+		const auto it = std::find_if(keyStates.begin(), keyStates.end(), [key](auto kb) { return kb.first == key; });
 
 		return it != keyStates.end() ? it->second : false;
 	}
@@ -19,7 +20,7 @@ namespace Engine
 	bool InputManager::getLastKey(char key)
 	{
 		auto lastKeyStates = *getLastKeys();
-		auto it = std::find_if(lastKeyStates.begin(), lastKeyStates.end(), [key](auto kb) { return kb.first == key; });
+		const auto it = std::find_if(lastKeyStates.begin(), lastKeyStates.end(), [key](auto kb) { return kb.first == key; });
 
 		return it != lastKeyStates.end() ? it->second : false;
 	}
@@ -27,7 +28,7 @@ namespace Engine
 	bool InputManager::getKey(const std::string& key)
 	{
 		auto keyBindings = *getKeyBindings();
-		auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb.first == key; });
+		const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb.first == key; });
 
 		return kb != keyBindings.end() ? getKey(kb->second) : false;
 	}
@@ -35,24 +36,20 @@ namespace Engine
 	bool InputManager::getLastKey(const std::string& key)
 	{
 		auto keyBindings = *getKeyBindings();
-		auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb.first == key; });
+		const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb.first == key; });
 
 		return kb != keyBindings.end() ? getLastKey(kb->second) : false;
 	}
 
-	void InputManager::setKeyBinding(keyBinding pair)
+	void InputManager::setKeyBinding(const keyBinding& pair)
 	{
 		auto keyBindings = getKeyBindings();
-		for (auto it = keyBindings->begin(); it != keyBindings->end();)
+		for (auto it = keyBindings->begin(); it != keyBindings->end(); ++it)
 		{
 			if ((*it).first == pair.first)
 			{
 				keyBindings->erase(it);
 				break;
-			}
-			else
-			{
-				++it;
 			}
 		}
 
@@ -62,16 +59,12 @@ namespace Engine
 	void InputManager::setKey(char key, bool boolean)
 	{
 		auto keyStates = getKeys();
-		for (auto it = keyStates->begin(); it != keyStates->end();)
+		for (auto it = keyStates->begin(); it != keyStates->end(); ++it)
 		{
 			if ((*it).first == key)
 			{
 				keyStates->erase(it);
 				break;
-			}
-			else
-			{
-				++it;
 			}
 		}
 
@@ -81,33 +74,29 @@ namespace Engine
 	void InputManager::setLastKey(char key, bool boolean)
 	{
 		auto lastKeyStates = getLastKeys();
-		for (auto it = lastKeyStates->begin(); it != lastKeyStates->end();)
+		for (auto it = lastKeyStates->begin(); it != lastKeyStates->end(); ++it)
 		{
 			if ((*it).first == key)
 			{
 				lastKeyStates->erase(it);
 				break;
 			}
-			else
-			{
-				++it;
-			}
 		}
 
 		lastKeyStates->push_back(keyState(key, boolean));
 	}
 
-	void InputManager::motionFunc(int x, int y)
+	void InputManager::motionFunc(const int x, const int y)
 	{
-		glm::vec2 lastMousePosition = glm::vec2(x, y);
+		auto lastMousePosition = glm::vec2(x, y);
 		lastMousePosition.y -= static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 		lastMousePosition.y = std::abs(lastMousePosition.y);
 		setLastMousePosition(lastMousePosition);
 	}
 
-	void InputManager::processMouseClick(int button, int state, int x, int y)
+	void InputManager::processMouseClick(const int button, const int state, const int x, const int y)
 	{
-		glm::vec2 lastMousePosition = glm::vec2(x, y);
+		auto lastMousePosition = glm::vec2(x, y);
 		lastMousePosition.y -= static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 		lastMousePosition.y = std::abs(lastMousePosition.y);
 
@@ -125,9 +114,9 @@ namespace Engine
 		}
 	}
 
-	void InputManager::keyboardInput(unsigned char c, int x, int y, const std::unique_ptr<MenuManager>& menuManager, irrklang::ISoundEngine* soundEngine, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void InputManager::keyboardInput(unsigned char c, int x, int y, const std::shared_ptr<MenuManager>& menuManager, irrklang::ISoundEngine* soundEngine, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
-		auto key = VkKeyScan(c);
+		const auto key = VkKeyScan(c);
 		if (!getKey(key))
 		{
 			switch (c)
@@ -145,9 +134,9 @@ namespace Engine
 	}
 
 
-	void InputManager::keyboardInputUp(unsigned char c, int x, int y)
+	void InputManager::keyboardInputUp(const unsigned char c, int x, int y)
 	{
-		auto key = VkKeyScan(c);
+		const auto key = VkKeyScan(c);
 		if (getKey(key))
 		{
 			setKey(key, false);
@@ -155,7 +144,7 @@ namespace Engine
 		}
 	}
 
-	void InputManager::specialKeyInput(int key, int x, int y)
+	void InputManager::specialKeyInput(const int key, int x, int y)
 	{
 		switch (key)
 		{
@@ -198,7 +187,7 @@ namespace Engine
 		}
 	}
 
-	void InputManager::specialKeyInputUp(int key, int x, int y)
+	void InputManager::specialKeyInputUp(const int key, int x, int y)
 	{
 		auto c = 0;
 		switch (key)
@@ -246,7 +235,7 @@ namespace Engine
 		}
 	}
 
-	const std::string InputManager::virtualKeyCodeToString(int virtualKey)
+	std::string InputManager::virtualKeyCodeToString(const int virtualKey)
 	{
 		auto scanCode = MapVirtualKey(virtualKey, MAPVK_VK_TO_VSC);
 

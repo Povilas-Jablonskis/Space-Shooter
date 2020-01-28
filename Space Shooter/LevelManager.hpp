@@ -21,15 +21,15 @@ namespace Engine
 	class LevelManager
 	{
 		public:
-			LevelManager(const std::unique_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);			
-			inline const std::unique_ptr<Level>& getCurrentLevel() const { return m_levels.front(); }
-			void renderCurrentLevel(float, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<InputManager>&, const std::unique_ptr<CollisionManager>&, const std::unique_ptr<Renderer>&, const std::unique_ptr<ConfigurationManager>&, const std::unique_ptr<SpriteSheetManager>&);
+			LevelManager(const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);
+			const std::shared_ptr<Level>& getCurrentLevel() const { return m_levels.front(); }
+			void renderCurrentLevel(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<SpriteSheetManager>&);
 		private:
 			std::shared_ptr<Player> m_player{ nullptr };
 
 			float m_currentTime{ static_cast<float>(glutGet(GLUT_ELAPSED_TIME)) };
 			float m_accumulator{ 0.0f };
-			std::queue<std::unique_ptr<Level>> m_levels;
+			std::queue<std::shared_ptr<Level>> m_levels;
 	};
 }
 #endif

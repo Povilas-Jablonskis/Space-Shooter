@@ -6,12 +6,12 @@
 
 namespace Engine
 {
-	Player::Player(const glm::vec2& position, const glm::vec2& velocity, const glm::vec4& color) : Entity(position, velocity, color), m_startPosition(position), m_startVelocity(velocity)
+	Player::Player(const glm::vec2& position, const glm::vec2& velocity, const glm::vec4& color) : Entity(position, velocity, color), m_startVelocity(velocity), m_startPosition(position)
 	{
 
 	}
 
-	bool Player::update(float dt, const std::unique_ptr<InputManager>& inputManager)
+	bool Player::update(const float dt, const std::shared_ptr<InputManager>& inputManager)
 	{
 		if (getNeedsToBeRemoved())
 		{
@@ -32,8 +32,8 @@ namespace Engine
 
 		setPosition(1, getPosition().y + ((getVelocity().y * dt) / 2.0f));
 
-		auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
-		auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
+		const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+		const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 		//Collision detection
 		if (getPosition().x + getWidth() >= windowWidth)

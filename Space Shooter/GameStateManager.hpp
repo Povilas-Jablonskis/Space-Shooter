@@ -14,12 +14,12 @@ namespace Engine
 	class GameStateManager
 	{
 		public:
-			inline void setGameState(GameState state) { m_lastGameState = getGameState(); m_gameState = state; }
-			inline GameState getGameState() const { return m_gameState; }
-			inline GameState getLastGameState() const { return m_lastGameState; }
+			void setGameState(const GameState state) { m_lastGameState = getGameState(); m_gameState = state; }
+			GameState getGameState() const { return m_gameState; }
+			GameState getLastGameState() const { return m_lastGameState; }
 		private:
-			GameState m_lastGameState{ GameState::IN_MENU };
-			GameState m_gameState{ GameState::IN_MENU };
+			GameState m_lastGameState{ IN_MENU };
+			GameState m_gameState{ IN_MENU };
 	};
 }
 #endif

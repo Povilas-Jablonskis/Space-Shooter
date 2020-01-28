@@ -11,10 +11,11 @@ namespace Engine
 	class KeyBindingInputComponent
 	{
 		public:
-			KeyBindingInputComponent(const std::string&);
-			void update(Text*, const std::unique_ptr<InputManager>&);
+			explicit KeyBindingInputComponent(std::string);
+			void update(Text*, const std::shared_ptr<InputManager>&) const;
 		private:
-			inline const std::string& getKeyBinding() const { return m_keyBinding; }
+			void savePlayerConfig(const std::shared_ptr<InputManager>&) const;
+			const std::string& getKeyBinding() const { return m_keyBinding; }
 
 			std::string m_keyBinding;
 	};

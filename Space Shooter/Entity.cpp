@@ -15,7 +15,7 @@ namespace Engine
 
 	void Entity::addBullet(const std::shared_ptr<BaseGameObject>& bullet)
 	{
-		bullet->onCollisionFunc = [bullet, this](const std::shared_ptr<BaseGameObject>& collider)
+		bullet->onCollisionFunc = [bullet](const std::shared_ptr<BaseGameObject>& collider)
 		{
 			auto entity = dynamic_cast<Entity*>(collider.get());
 
@@ -40,7 +40,7 @@ namespace Engine
 		getBulletsList()->push_back(bullet);
 	}
 
-	bool Entity::update(float dt)
+	bool Entity::update(const float dt)
 	{
 		BaseGameObject::update(dt);
 
@@ -84,12 +84,12 @@ namespace Engine
 	std::shared_ptr<BaseGameObject> Entity::getAddon(const std::string& index)
 	{
 		auto addons = getAddons();
-		auto it = std::find_if(addons->begin(), addons->end(), [index](auto idx) { return idx.first == index; });
+		const auto it = std::find_if(addons->begin(), addons->end(), [index](auto idx) { return idx.first == index; });
 
 		return it != addons->end() ? it->second : nullptr;
 	}
 
-	void Entity::addAddon(addon addon)
+	void Entity::addAddon(const addon& addon)
 	{
 		auto addons = getAddons();
 

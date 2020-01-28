@@ -1,7 +1,6 @@
 #ifndef spriteSheetManagerH
 #define spriteSheetManagerH
 
-#include <algorithm>
 #include <string>
 #include <memory>
 #include <vector>
@@ -18,7 +17,7 @@ namespace Engine
 			void loadSpriteSheetsFromConfig();
 			std::shared_ptr<SpriteSheet> getSpriteSheet(const std::string&);
 		private:
-			inline std::vector<spriteSheet>* getSpriteSheets() { return &m_spriteSheets; }
+			std::vector<spriteSheet>* getSpriteSheets() { return &m_spriteSheets; }
 
 			void loadSpriteSheet(const std::string&, const std::shared_ptr<SpriteSheet>&);
 			std::vector<spriteSheet> m_spriteSheets;

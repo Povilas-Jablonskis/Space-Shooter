@@ -10,16 +10,31 @@
 #include "KeyBindingInputComponent.hpp"
 #include "Text.hpp"
 
-#include "rapidxml/rapidxml.hpp"
+#include <fstream>
+#include "rapidxml/rapidxml_print.hpp"
 
 namespace Engine
 {
-	void MenuManager::loadPlayerModels(const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void MenuManager::savePlayerConfig(irrklang::ISoundEngine* soundEngine) const
+	{
+		rapidxml::xml_document<> doc;
+
+		auto volume = doc.allocate_node(rapidxml::node_element, "Volume");
+		const auto attribute_value = doc.allocate_string(std::to_string(soundEngine->getSoundVolume()).c_str());
+		volume->append_attribute(doc.allocate_attribute("value", attribute_value));
+		doc.append_node(volume);
+
+		std::ofstream file_stored("Config/soundSettings.xml");
+		file_stored << doc;
+		file_stored.close();
+		doc.clear();
+	}
+	
+	void MenuManager::loadPlayerModels(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
 		m_playerModels.clear();
 
 		rapidxml::xml_document<> doc;
-		rapidxml::xml_node<> * root_node;
 		// Read the xml file into a vector
 		std::ifstream theFile("Config/players.xml");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
@@ -27,7 +42,7 @@ namespace Engine
 		// Parse the buffer using the xml file parsing library into doc 
 		doc.parse<0>(&buffer[0]);
 		// Find our root node
-		root_node = doc.first_node("Players");
+		rapidxml::xml_node<>* root_node = doc.first_node("Players");
 		// Iterate over the brewerys
 		for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->next_sibling("Player"))
 		{
@@ -40,7 +55,7 @@ namespace Engine
 		doc.clear();
 	}
 
-	void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
 		getMenus()->clear();
 
@@ -106,10 +121,10 @@ namespace Engine
 			{
 				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
 
-				m_levelManager = std::make_unique<LevelManager>(spriteSheetManager, soundEngine, getCharacterSelectionIndex());
+				m_levelManager = std::make_shared<LevelManager>(spriteSheetManager, soundEngine, getCharacterSelectionIndex());
 				getMenus()->clear();
 
-				gameStateManager->setGameState(GameState::STARTED);
+				gameStateManager->setGameState(STARTED);
 			};
 			characterSelection->addText(option);
 
@@ -133,8 +148,8 @@ namespace Engine
 
 				//Controls
 				const auto keybindings = *inputManager->getKeyBindings();
-				float i = 0.0f;
-				for (auto keybinding : keybindings)
+				auto i = 0.0f;
+				for (const auto& keybinding : keybindings)
 				{
 					auto option = std::make_shared<Text>(keybinding.first + " :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f - (3.0f * i)));
 					option->disable();
@@ -181,27 +196,29 @@ namespace Engine
 				auto uniqueOption = std::make_shared<Text>(std::to_string(static_cast<int>(soundEngine->getSoundVolume() * 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(32.0f, 60.0f));
 				uniqueOption->disable();
 				option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(29.0f, 60.0f));
-				option->onMouseReleaseFunc = [soundEngine, uniqueOption]()
+				option->onMouseReleaseFunc = [soundEngine, uniqueOption, this]()
 				{
 					soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
 
-					auto vol = soundEngine->getSoundVolume() - 0.01f;
+					const auto vol = soundEngine->getSoundVolume() - 0.01f;
 					if (vol >= 0.0f)
 					{
 						soundEngine->setSoundVolume(vol);
 						uniqueOption->setText(std::to_string(static_cast<int>(vol * 100.f)));
+						savePlayerConfig(soundEngine);
 					}
 				};
 				sounds->addText(option);
 				option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(36.0f, 60.0f));
-				option->onMouseReleaseFunc = [soundEngine, uniqueOption]()
+				option->onMouseReleaseFunc = [soundEngine, uniqueOption, this]()
 				{
 					soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
-					auto vol = soundEngine->getSoundVolume() + 0.01f;
+					const auto vol = soundEngine->getSoundVolume() + 0.01f;
 					if (vol <= 1.0f)
 					{
 						soundEngine->setSoundVolume(vol);
 						uniqueOption->setText(std::to_string(static_cast<int>(vol * 100.f)));
+						savePlayerConfig(soundEngine);
 					}
 				};
 				sounds->addText(option);
@@ -244,19 +261,19 @@ namespace Engine
 		addMenu(mainMenu);
 	}
 
-	void MenuManager::escapeAction(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void MenuManager::escapeAction(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
-		if (gameStateManager->getGameState() == GameState::ENDED)
+		if (gameStateManager->getGameState() == ENDED)
 		{
 			initGameMenus(soundEngine, inputManager, gameStateManager, spriteSheetManager);
-			gameStateManager->setGameState(GameState::IN_MENU);
+			gameStateManager->setGameState(IN_MENU);
 		}
-		else if (gameStateManager->getGameState() == GameState::IN_PAUSED_MENU)
+		else if (gameStateManager->getGameState() == IN_PAUSED_MENU)
 		{
 			getMenus()->clear();
-			gameStateManager->setGameState(GameState::STARTED);
+			gameStateManager->setGameState(STARTED);
 		}
-		else if (gameStateManager->getGameState() == GameState::STARTED)
+		else if (gameStateManager->getGameState() == STARTED)
 		{
 			getMenus()->clear();
 
@@ -269,7 +286,7 @@ namespace Engine
 				soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
 
 				initGameMenus(soundEngine, inputManager, gameStateManager, spriteSheetManager);
-				gameStateManager->setGameState(GameState::IN_MENU);
+				gameStateManager->setGameState(IN_MENU);
 			};
 			pauseMenu->addText(option);
 
@@ -285,9 +302,9 @@ namespace Engine
 			pauseMenu->addText(option);
 
 			addMenu(pauseMenu);
-			gameStateManager->setGameState(GameState::IN_PAUSED_MENU);
+			gameStateManager->setGameState(IN_PAUSED_MENU);
 		}
-		else if (gameStateManager->getGameState() == GameState::IN_MENU)
+		else if (gameStateManager->getGameState() == IN_MENU)
 		{
 			if (!inputManager->getCurrentlyEditedKeyBinding().empty())
 			{
@@ -303,30 +320,27 @@ namespace Engine
 		}
 	}
 
-	void MenuManager::renderCurrentMenu(const std::unique_ptr<Renderer>& renderer, float dt, const std::unique_ptr<ConfigurationManager>& configurationManager, const std::unique_ptr<InputManager>& inputManager)
+	void MenuManager::renderCurrentMenu(const std::shared_ptr<Renderer>& renderer, const float dt, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<InputManager>& inputManager)
 	{
 		auto back = getMenus()->back();
-		auto uiElements = back->getElements();
-		auto texts = back->getTexts();
+		const auto uiElements = back->getElements();
+		const auto texts = back->getTexts();
 
-		for (auto it = texts->begin(); it != texts->end(); ++it)
+		for (auto& text : *texts)
 		{
-			(*it)->update(dt, configurationManager, inputManager);
+			text->update(configurationManager, inputManager);
 		}
 
-		for (auto it = uiElements->begin(); it != uiElements->end(); ++it)
+		for (auto& uiElement : *uiElements)
 		{
-			(*it)->update(dt, inputManager);
+			uiElement->update(dt, inputManager);
 		}
 
-		for (auto it = texts->begin(); it != texts->end(); ++it)
-		{
-			renderer->draw(*it);
-		}
+		renderer->draw(*texts);
 
-		for (auto it = uiElements->begin(); it != uiElements->end(); ++it)
+		for (auto& uiElement : *uiElements)
 		{
-			renderer->draw(*it);
+			renderer->draw(uiElement);
 		}
 	}
 }

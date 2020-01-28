@@ -28,16 +28,16 @@ namespace Engine
 	class Level
 	{
 		public:
-			Level(rapidxml::xml_node<char>*, const std::unique_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);
+			Level(rapidxml::xml_node<char>*, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);
 
-			bool update(float, const std::shared_ptr<Player>&, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<InputManager>&, const std::unique_ptr<CollisionManager>&);
-			void render(float, const std::shared_ptr<Player>&, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<InputManager>&, const std::unique_ptr<CollisionManager>&, const std::unique_ptr<Renderer>&, const std::unique_ptr<ConfigurationManager>&, const std::unique_ptr<SpriteSheetManager>&);
-		
-			inline void addExplosion(const std::shared_ptr<BaseGameObject>& _explosion) { m_explosions.push_back(_explosion); }
+			bool update(float, const std::shared_ptr<Player>&, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&);
+			void render(float, const std::shared_ptr<Player>&, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<SpriteSheetManager>&);
+
+			void addExplosion(const std::shared_ptr<BaseGameObject>& _explosion) { m_explosions.push_back(_explosion); }
 		private:
-			inline const std::unique_ptr<UIManager>& getUIManager() const { return m_uiManager; }
+			const std::shared_ptr<UIManager>& getUIManager() const { return m_uiManager; }
 
-			std::unique_ptr<UIManager> m_uiManager{ std::make_unique<UIManager>() };
+			std::shared_ptr<UIManager> m_uiManager{ std::make_shared<UIManager>() };
 
 			std::vector<std::shared_ptr<BaseGameObject>> m_meteors;
 			std::vector<std::shared_ptr<BaseGameObject>> m_pickups;

@@ -19,23 +19,24 @@ namespace Engine
 	class MenuManager
 	{
 		public:
-			inline std::vector<std::shared_ptr<Menu>>* getMenus() { return &m_menus; }
-			inline int getCharacterSelectionIndex() const { return m_characterSelectionIndex; }
-			inline void setCharacterSelectionIndex(int t_setCharacterSelectionIndex) { m_characterSelectionIndex = t_setCharacterSelectionIndex; }
+			std::vector<std::shared_ptr<Menu>>* getMenus() { return &m_menus; }
+			int getCharacterSelectionIndex() const { return m_characterSelectionIndex; }
+			void setCharacterSelectionIndex(const int t_setCharacterSelectionIndex) { m_characterSelectionIndex = t_setCharacterSelectionIndex; }
 
-			inline const std::unique_ptr<LevelManager>& getLevelManager() const { return m_levelManager; }
+			const std::shared_ptr<LevelManager>& getLevelManager() const { return m_levelManager; }
 
-			void renderCurrentMenu(const std::unique_ptr<Renderer>&, float, const std::unique_ptr<ConfigurationManager>&, const std::unique_ptr<InputManager>&);
+			void renderCurrentMenu(const std::shared_ptr<Renderer>&, float, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<InputManager>&);
 
-			void loadPlayerModels(const std::unique_ptr<SpriteSheetManager>&);
-			void initGameMenus(irrklang::ISoundEngine*, InputManager*, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<SpriteSheetManager>&);
+			void loadPlayerModels(const std::shared_ptr<SpriteSheetManager>&);
+			void initGameMenus(irrklang::ISoundEngine*, InputManager*, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<SpriteSheetManager>&);
 
-			void escapeAction(irrklang::ISoundEngine*, InputManager*, const std::unique_ptr<GameStateManager>&, const std::unique_ptr<SpriteSheetManager>&);
+			void escapeAction(irrklang::ISoundEngine*, InputManager*, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<SpriteSheetManager>&);
 		private:
-			inline void addMenu(const std::shared_ptr<Menu>& t_menu) { m_menus.push_back(t_menu); }
-			inline const std::vector<std::shared_ptr<Animation>>& getPlayerModels() const { return m_playerModels; }
+			void savePlayerConfig(irrklang::ISoundEngine*) const;
+			void addMenu(const std::shared_ptr<Menu>& t_menu) { m_menus.push_back(t_menu); }
+			const std::vector<std::shared_ptr<Animation>>& getPlayerModels() const { return m_playerModels; }
 
-			std::unique_ptr<LevelManager> m_levelManager{ nullptr };
+			std::shared_ptr<LevelManager> m_levelManager{ nullptr };
 
 			std::vector<std::shared_ptr<Menu>> m_menus;
 			int m_characterSelectionIndex{ 0 };

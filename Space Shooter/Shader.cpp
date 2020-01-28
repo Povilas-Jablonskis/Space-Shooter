@@ -1,5 +1,8 @@
 #include "Shader.hpp"
 
+#include <fstream>
+#include <iostream>
+
 namespace Engine
 {
 	Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
@@ -34,20 +37,20 @@ namespace Engine
 
 	void Shader::loadShader(const std::string& vertex_path, const std::string& fragment_path)
 	{
-		auto vertShaderStr = readShaderFile(vertex_path);
-		auto fragShaderStr = readShaderFile(fragment_path);
-		const char *vertexShaderSource = vertShaderStr.c_str();
-		const char *fragmentShaderSource = fragShaderStr.c_str();
-		GLint isCompiled = 0;
+		const auto vertShaderStr = readShaderFile(vertex_path);
+		const auto fragShaderStr = readShaderFile(fragment_path);
+		auto vertexShaderSource = vertShaderStr.c_str();
+		auto fragmentShaderSource = fragShaderStr.c_str();
+		auto isCompiled = 0;
 
 		// Vertex shader
-		GLint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-		glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+		const GLint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
 		glCompileShader(vertexShader);
 		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
 		if (isCompiled == GL_FALSE)
 		{
-			GLint maxLength = 0;
+			auto maxLength = 0;
 			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
 
 			// The maxLength includes the NULL character
@@ -64,13 +67,13 @@ namespace Engine
 		}
 
 		// Fragment shader
-		GLint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-		glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+		const GLint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+		glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
 		glCompileShader(fragmentShader);
 		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
 		if (isCompiled == GL_FALSE)
 		{
-			GLint maxLength = 0;
+			auto maxLength = 0;
 			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
 
 			// The maxLength includes the NULL character

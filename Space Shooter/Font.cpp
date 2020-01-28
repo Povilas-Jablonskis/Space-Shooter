@@ -1,5 +1,8 @@
 #include "Font.hpp"
 
+#include <iostream>
+#include <algorithm>
+
 namespace Engine
 {
 	Font::Font(const FT_Face& face) : m_face(face)
@@ -7,10 +10,10 @@ namespace Engine
 		loadCharacters();
 	}
 
-	Character Font::getCharacter(GLchar index)
+	Character Font::getCharacter(GLchar index) const
 	{
 		auto characters = getCharacterList();
-		auto it = std::find_if(characters.begin(), characters.end(), [index](auto idx) { return idx.first == index; });
+		const auto it = std::find_if(characters.begin(), characters.end(), [index](auto idx) { return idx.first == index; });
 
 		return it != characters.end() ? it->second : Character{ 0, glm::ivec2(0, 0), glm::ivec2(0, 0), 0 };
 	}
@@ -59,7 +62,7 @@ namespace Engine
 				glm::ivec2(getFace()->glyph->bitmap_left, getFace()->glyph->bitmap_top),
 				getFace()->glyph->advance.x
 			};
-			m_characters.push_back(character(c, _character));
+			m_characters.emplace_back(c, _character);
 		}
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}

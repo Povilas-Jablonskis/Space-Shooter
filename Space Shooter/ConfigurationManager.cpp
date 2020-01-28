@@ -1,6 +1,8 @@
 #include "ConfigurationManager.hpp"
 #include "Font.hpp"
 
+#include <iostream>
+
 namespace Engine
 {
 	ConfigurationManager::ConfigurationManager()

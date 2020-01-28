@@ -34,7 +34,7 @@ namespace Engine
 	}
 
 
-	void UIElementBase::update(float dt, const std::unique_ptr<InputManager>& inputManager)
+	void UIElementBase::update(const float dt, const std::shared_ptr<InputManager>& inputManager)
 	{
 		if (!isActive())
 		{
@@ -48,8 +48,8 @@ namespace Engine
 
 	void UIElementBase::fixPosition()
 	{
-		float windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
-		float windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
+		const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+		const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 		if (getPositionPercents() == glm::vec2(0.0f, 0.0f))
 		{
@@ -68,10 +68,10 @@ namespace Engine
 	bool UIElementBase::checkIfCollides(const glm::vec2& colCoordinates) const
 	{
 		// Collision x-axis?
-		bool collisionX = getPosition().x + getWidth() >= colCoordinates.x &&
+		const auto collisionX = getPosition().x + getWidth() >= colCoordinates.x &&
 			colCoordinates.x >= getPosition().x;
 		// Collision y-axis?
-		bool collisionY = getPosition().y + getHeight() >= colCoordinates.y &&
+		const auto collisionY = getPosition().y + getHeight() >= colCoordinates.y &&
 			colCoordinates.y >= getPosition().y;
 		// Collision only if on both axes
 		return collisionX && collisionY;

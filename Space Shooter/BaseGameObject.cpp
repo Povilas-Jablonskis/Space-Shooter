@@ -36,7 +36,7 @@ namespace Engine
 		};
 	}
 
-	bool BaseGameObject::update(float dt)
+	bool BaseGameObject::update(const float dt)
 	{
 		onUpdateFunc();
 
@@ -59,9 +59,9 @@ namespace Engine
 	{
 		auto animations = getAnimations();
 
-		for (auto it = animations->begin(); it != animations->end(); ++it)
+		for (auto& animation : *animations)
 		{
-			if (it->first == index)
+			if (animation.first == index)
 			{
 				return;
 			}
@@ -73,7 +73,7 @@ namespace Engine
 	std::shared_ptr<Animation> BaseGameObject::getAnimationByIndex(const std::string& index)
 	{
 		auto animations = *getAnimations();
-		auto it = std::find_if(animations.begin(), animations.end(), [index](auto idx) { return idx.first == index; });
+		const auto it = std::find_if(animations.begin(), animations.end(), [index](auto idx) { return idx.first == index; });
 
 		return it != animations.end() ? it->second : nullptr;
 	}

@@ -9,11 +9,10 @@
 
 #include "rapidxml/rapidxml.hpp"
 #include <fstream>
-#include <iostream>
 
 namespace Engine
 {
-	LevelManager::LevelManager(const std::unique_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
+	LevelManager::LevelManager(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
 	{
 		{
 			rapidxml::xml_document<> doc;
@@ -29,7 +28,7 @@ namespace Engine
 			// Iterate over the brewerys
 			for (auto brewery_node = root_node->first_node("Level"); brewery_node; brewery_node = brewery_node->next_sibling("Level"))
 			{
-				m_levels.push(std::make_unique<Level>(brewery_node, spriteSheetManager, soundEngine, t_characterSelectionIndex));
+				m_levels.push(std::make_shared<Level>(brewery_node, spriteSheetManager, soundEngine, t_characterSelectionIndex));
 			}
 
 			theFile.close();
@@ -93,11 +92,11 @@ namespace Engine
 							bullets.push_back(bullet);
 						}
 
-						m_player->shootingModeFunc = [soundEngine, bullets, explosionSound, shootingSound, &spriteSheetManager, this]()
+						m_player->shootingModeFunc = [soundEngine, bullets, explosionSound, shootingSound, this]()
 						{
-							for (auto bullet : bullets)
+							for (const auto& bullet : bullets)
 							{
-								auto _bullet = std::make_shared<BaseGameObject>(*bullet.get());
+								auto _bullet = std::make_shared<BaseGameObject>(*bullet);
 								auto _bulletPosition = glm::vec2(m_player->getPosition().x + (m_player->getWidth() / 2.0f) - (_bullet->getWidth() / 2.0f), m_player->getPosition().y + (m_player->getHeight() / 2.0f));
 								_bulletPosition += glm::vec2(m_player->getWidth() * _bullet->getPosition().x, m_player->getHeight() * _bullet->getPosition().y);
 								_bullet->setPosition(_bulletPosition);
@@ -131,8 +130,8 @@ namespace Engine
 									}
 									else
 									{
-										auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
-										auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
+										const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+										const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 										//Collision detection
 										if (_bullet->getPosition().y > windowHeight || (_bullet->getPosition().y + _bullet->getHeight()) < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
@@ -171,10 +170,10 @@ namespace Engine
 		}
 	}
 
-	void LevelManager::renderCurrentLevel(float dt, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<InputManager>& inputManager, const std::unique_ptr<CollisionManager>& collisionManager, const std::unique_ptr<Renderer>& renderer, const std::unique_ptr<ConfigurationManager>& configurationManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void LevelManager::renderCurrentLevel(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager, const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
-		auto newTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
-		auto frameTime = (newTime - m_currentTime) / 1000.0f;
+		const auto newTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
+		const auto frameTime = (newTime - m_currentTime) / 1000.0f;
 		m_currentTime = newTime;
 
 		m_accumulator += frameTime;
@@ -183,7 +182,7 @@ namespace Engine
 		{
 			if (!m_levels.empty())
 			{
-				bool updateStatus = getCurrentLevel()->update(dt, m_player, gameStateManager, inputManager, collisionManager);
+				const auto updateStatus = getCurrentLevel()->update(dt, m_player, gameStateManager, inputManager, collisionManager);
 
 				if (updateStatus && m_levels.size() > 1)
 				{

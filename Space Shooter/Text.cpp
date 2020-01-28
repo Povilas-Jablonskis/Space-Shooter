@@ -4,14 +4,24 @@
 #include "Font.hpp"
 #include "KeyBindingInputComponent.hpp"
 
+#include <algorithm>
+#include <utility>
+
 namespace Engine
 {
-	Text::Text(const std::string& text, const glm::vec4& color, const glm::vec2& positionPerc, const std::shared_ptr<KeyBindingInputComponent>& kbInput) : UIElementBase(color, positionPerc), m_text(text), m_keyBindingInputComponent(kbInput)
+	Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPerc,
+	           std::shared_ptr<KeyBindingInputComponent> kbInput) : UIElementBase(color, positionPerc), m_text(
+		                                                                std
+		                                                                ::
+		                                                                move(
+			                                                                text)), m_keyBindingInputComponent(
+		                                                                std::move(kbInput))
 	{
 
 	}
 
-	Text::Text(const std::string& text, const glm::vec4& color, const glm::vec2& positionPerc) : UIElementBase(color, positionPerc), m_text(text), m_keyBindingInputComponent(nullptr)
+	Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPerc) : UIElementBase(color, positionPerc), m_text(
+		                                                                                      std::move(text)), m_keyBindingInputComponent(nullptr)
 	{
 		
 	}
@@ -22,7 +32,7 @@ namespace Engine
 		m_needUpdate = true; 
 	}
 
-	void Text::setPosition(int index, float position)
+	void Text::setPosition(const int index, const float position)
 	{ 
 		RenderObject::setPosition(index, position);
 		m_needUpdate = true;
@@ -38,12 +48,12 @@ namespace Engine
 		changeColor(glm::vec4(255.0f, 160.0f, 122.0f, getColor().a));
 	}
 
-	bool Text::checkIfCollides(const glm::vec2& colCoordinates)
+	bool Text::checkIfCollides(const glm::vec2& colCoordinates) const
 	{
 		return colCoordinates.x >= getBoundaryBox().x && colCoordinates.x <= getBoundaryBox().y && colCoordinates.y <= getBoundaryBox().z && colCoordinates.y >= getBoundaryBox().a;
 	}
 
-	void Text::update(float dt, const std::unique_ptr<ConfigurationManager>& configurationManager, const std::unique_ptr<InputManager>& inputManager)
+	void Text::update(const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<InputManager>& inputManager)
 	{
 		if (!doesItNeedUpdate()) return;
 
@@ -61,21 +71,21 @@ namespace Engine
 		changeBoundaryBox(getPosition().x, 0);
 		changeBoundaryBox(getPosition().y, 3);
 
-		auto lastPosition = getPosition();
+		const auto lastPosition = getPosition();
 		std::vector<int> tempVector;
 		auto text = getText();
 
-		for (auto c = text.begin(); c != text.end(); ++c)
+		for (std::_String_iterator<std::_String_val<std::_Simple_types<char>>>::value_type& c : text)
 		{
-			auto ch = configurationManager->getInterfaceFont()->getCharacter(*c);
+			auto ch = configurationManager->getInterfaceFont()->getCharacter(c);
 
-			GLfloat xpos = getPosition().x + ch.Bearing.x;
-			GLfloat ypos = getPosition().y - (ch.Size.y - ch.Bearing.y);
+			auto xpos = getPosition().x + ch.Bearing.x;
+			auto ypos = getPosition().y - (ch.Size.y - ch.Bearing.y);
 
 			tempVector.push_back(ch.Size.y);
 
-			GLfloat w = static_cast<GLfloat>(ch.Size.x);
-			GLfloat h = static_cast<GLfloat>(ch.Size.y);
+			const auto w = static_cast<GLfloat>(ch.Size.x);
+			const auto h = static_cast<GLfloat>(ch.Size.y);
 			// Update VBO for each character
 
 			std::vector<cachedCharacter> textVector;
@@ -111,11 +121,10 @@ namespace Engine
 			vertices.push_back(1.0);
 			vertices.push_back(0.0);
 
-			m_cachedCharacters.push_back(cachedCharacter
-			(
+			m_cachedCharacters.emplace_back(
 				ch.TextureID,
 				vertices
-			));
+			);
 			setPosition(0, getPosition().x + (ch.Advance >> 6)); // Bitshift by 6 to get value in pixels (2^6 = 64)
 		}
 
@@ -126,8 +135,8 @@ namespace Engine
 
 	void Text::fixPosition()
 	{
-		float windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
-		float windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
+		const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+		const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 		if (getPositionPercents() != glm::vec2(0.0f, 0.0f))
 		{

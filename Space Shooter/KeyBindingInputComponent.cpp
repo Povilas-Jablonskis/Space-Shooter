@@ -2,14 +2,44 @@
 #include "Text.hpp"
 #include "InputManager.hpp"
 
+#include <algorithm>
+#include "rapidxml/rapidxml_print.hpp"
+#include <fstream>
+#include <utility>
+
 namespace Engine
 {
-	KeyBindingInputComponent::KeyBindingInputComponent(const std::string& kb) : m_keyBinding(kb)
+	KeyBindingInputComponent::KeyBindingInputComponent(std::string kb) : m_keyBinding(std::move(kb))
 	{
 
 	}
 
-	void KeyBindingInputComponent::update(Text* uiElement, const std::unique_ptr<InputManager>& inputManager)
+	void KeyBindingInputComponent::savePlayerConfig(const std::shared_ptr<InputManager>& inputManager) const
+	{
+		const auto keyBindings = *inputManager->getKeyBindings();
+		rapidxml::xml_document<> doc;
+
+		auto KeyBindings = doc.allocate_node(rapidxml::node_element, "KeyBindings");
+
+		for (const auto& keyBinding : keyBindings)
+		{
+			auto KeyBinding = doc.allocate_node(rapidxml::node_element, "KeyBinding");
+			auto attribute_value = doc.allocate_string(keyBinding.first.c_str());
+			KeyBinding->append_attribute(doc.allocate_attribute("key", attribute_value));
+			attribute_value = doc.allocate_string(std::to_string(keyBinding.second).c_str());
+			KeyBinding->append_attribute(doc.allocate_attribute("value", attribute_value));
+			KeyBindings->append_node(KeyBinding);
+		}
+
+		doc.append_node(KeyBindings);
+
+		std::ofstream file_stored("Config/keyBindingSettings.xml");
+		file_stored << doc;
+		file_stored.close();
+		doc.clear();
+	}
+	
+	void KeyBindingInputComponent::update(Text* uiElement, const std::shared_ptr<InputManager>& inputManager) const
 	{
 		if (inputManager->getCurrentlyEditedKeyBinding() != getKeyBinding())
 		{
@@ -40,6 +70,8 @@ namespace Engine
 
 					inputManager->setKeyBinding(keyBinding(getKeyBinding(), key.first));
 					inputManager->setCurrentlyEditedKeyBinding("");
+
+					savePlayerConfig(inputManager);
 					break;
 				}
 			}

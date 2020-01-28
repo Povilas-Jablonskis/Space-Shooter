@@ -7,29 +7,29 @@
 
 using namespace Engine;
 
-std::unique_ptr<Application> application;
+std::shared_ptr<Application> application;
 
-void motionFunc(int x, int y)
+void motionFunc(const int x, const int y)
 {
 	application->getInputManager()->motionFunc(x, y);
 }
 
-void processMouseClick(int button, int state, int x, int y)
+void processMouseClick(const int button, const int state, const int x, const int y)
 {
 	application->getInputManager()->processMouseClick(button, state, x, y);
 }
 
-void keyboardInput(unsigned char c, int x, int y)
+void keyboardInput(const unsigned char c, const int x, const int y)
 {
 	application->getInputManager()->keyboardInput(c, x, y, application->getMenuManager(), application->getSoundEngine(), application->getGameStateManager(), application->getSpritesheetManager());
 }
 
-void keyboardInputUp(unsigned char c, int x, int y)
+void keyboardInputUp(const unsigned char c, const int x, const int y)
 {
 	application->getInputManager()->keyboardInputUp(c, x, y);
 }
 
-void display(void)
+void display()
 {
 	application->render();
 }
@@ -57,12 +57,12 @@ void resize(int width, int height)
 	glOrtho(0.0f, width, 0.0f, height, 0.0f, 1.0f);
 }
 
-void specialKeyInput(int key, int x, int y)
+void specialKeyInput(const int key, const int x, const int y)
 {
 	application->getInputManager()->specialKeyInput(key, x, y);
 }
 
-void specialKeyInputUp(int key, int x, int y)
+void specialKeyInputUp(const int key, const int x, const int y)
 {
 	application->getInputManager()->specialKeyInputUp(key, x, y);
 }
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
 	glewExperimental = true;
 
-	GLenum err = glewInit();
+	const auto err = glewInit();
 	if (GLEW_OK != err)
 	{
 		#if _DEBUG
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 	glutSpecialFunc(specialKeyInput);
 	glutSpecialUpFunc(specialKeyInputUp);
 
-	application = std::make_unique<Application>();
+	application = std::make_shared<Application>();
 
 	glClearColor(52.0f / 255.0f, 40.0f / 255.0f, 44.0f / 255.0f, 1.0f);
 	glutMainLoop();

@@ -3,16 +3,16 @@
 
 namespace Engine
 {
-	RenderObject::RenderObject(float width, float height, const glm::vec2& position, const glm::vec4& color) : m_width(width), m_height(height), m_position(position), m_color(color)
+	RenderObject::RenderObject(const float width, const float height, const glm::vec2& position, const glm::vec4& color) : m_position(position), m_width(width), m_height(height), m_color(color)
 	{
 		
 	}
 
-	void RenderObject::updateAnimation(float dt)
+	void RenderObject::updateAnimation(const float dt)
 	{
 		if (getAnimation() == nullptr) return;
 
-		auto sprites = getAnimation()->getAnimation();
+		const auto sprites = getAnimation()->getAnimation();
 
 		if (!sprites.empty())
 		{

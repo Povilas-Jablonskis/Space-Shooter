@@ -4,7 +4,7 @@
 
 namespace Engine
 {
-	void InputComponent::update(Entity* entity, const std::unique_ptr<InputManager>& inputManager, float dt)
+	void InputComponent::update(Entity* entity, const std::shared_ptr<InputManager>& inputManager, const float dt) const
 	{
 		entity->setDelayBetweenShootsTimer(entity->getDelayBetweenShootsTimer() + dt);
 		if (entity->getDelayBetweenShootsTimer() > entity->getDelayBetweenShoots() && inputManager->getKey("Attack"))

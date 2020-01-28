@@ -2,10 +2,8 @@
 #define animationH
 
 #include <glew/glew.h>
-#include <freeglut/freeglut.h>
 #include <glm/vec4.hpp>
 #include <vector>
-#include <Simple OpenGL Image Library/SOIL.h>
 
 namespace Engine
 {
@@ -13,15 +11,15 @@ namespace Engine
 	{
 		public:
 			Animation(GLuint, int, int);
-			inline void addSprite(const glm::vec4& sprite) { m_sprites.push_back(sprite); }
-			inline const std::vector<glm::vec4>& getAnimation() const { return m_sprites; }
-			inline GLuint getSpriteSheetTexture() const { return m_spriteSheetTexture; }
-			inline int getSpriteSheetWidth() const { return m_spriteSheetWidth; };
-			inline int getSpriteSheetHeight() const { return m_spriteSheetHeight; };
+			void addSprite(const glm::vec4& sprite) { m_sprites.push_back(sprite); }
+			const std::vector<glm::vec4>& getAnimation() const { return m_sprites; }
+			GLuint getSpriteSheetTexture() const { return m_spriteSheetTexture; }
+			int getSpriteSheetWidth() const { return m_spriteSheetWidth; };
+			int getSpriteSheetHeight() const { return m_spriteSheetHeight; };
 			void loadFromFile(const std::string&);
 		private:
-			inline void setSpriteSheetWidth(int t_spriteSheetWidth) { m_spriteSheetWidth = t_spriteSheetWidth; };
-			inline void setSpriteSheetHeight(int t_spriteSheetHeight) { m_spriteSheetHeight = t_spriteSheetHeight; };
+			void setSpriteSheetWidth(int t_spriteSheetWidth) { m_spriteSheetWidth = t_spriteSheetWidth; };
+			void setSpriteSheetHeight(int t_spriteSheetHeight) { m_spriteSheetHeight = t_spriteSheetHeight; };
 
 			int m_spriteSheetWidth;
 			int m_spriteSheetHeight;

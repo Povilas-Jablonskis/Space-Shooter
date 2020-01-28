@@ -17,19 +17,19 @@ namespace Engine
 			std::function<void(const std::shared_ptr<BaseGameObject>&)> onCollisionFunc;
 			void addAnimation(const std::string&, const std::shared_ptr<Animation>&);
 			std::shared_ptr<Animation> getAnimationByIndex(const std::string&);
-			inline void setLives(int lives) { m_lives = lives; }
-			inline int getLives() const { return m_lives; }
-			inline void setVelocity(const glm::vec2& velocity) { m_velocity = velocity; };
-			inline void setVelocity(int index, float velocity) { m_velocity[index] = velocity; };
-			inline const glm::vec2& getVelocity() const { return m_velocity; };
-			inline void setNeedsToBeRemoved(bool boolean) { m_needsToBeRemoved = boolean; };
-			inline bool getNeedsToBeRemoved() const { return m_needsToBeRemoved; }
-			inline int getValue() const { return m_value; }
-			inline void setValue(int value) { m_value = value; }
-			inline const std::string& getExplosionSound() const { return m_explosionSound; }
-			inline void setExplosionSound(const std::string& explosionSound) { m_explosionSound = explosionSound; }
+			void setLives(const int lives) { m_lives = lives; }
+			int getLives() const { return m_lives; }
+			void setVelocity(const glm::vec2& velocity) { m_velocity = velocity; };
+			void setVelocity(const int index, const float velocity) { m_velocity[index] = velocity; };
+			const glm::vec2& getVelocity() const { return m_velocity; };
+			void setNeedsToBeRemoved(const bool boolean) { m_needsToBeRemoved = boolean; };
+			bool getNeedsToBeRemoved() const { return m_needsToBeRemoved; }
+			int getValue() const { return m_value; }
+			void setValue(const int value) { m_value = value; }
+			const std::string& getExplosionSound() const { return m_explosionSound; }
+			void setExplosionSound(const std::string& explosionSound) { m_explosionSound = explosionSound; }
 		private:
-			inline std::vector<animation>* getAnimations() { return &m_animations; }
+			std::vector<animation>* getAnimations() { return &m_animations; }
 
 			std::string m_explosionSound;
 			bool m_needsToBeRemoved{ false };

@@ -11,7 +11,7 @@ namespace Engine
 	class InputComponent
 	{
 		public:
-			void update(Entity*, const std::unique_ptr<InputManager>&, float);
+			void update(Entity*, const std::shared_ptr<InputManager>&, float) const;
 	};
 }
 #endif

@@ -10,7 +10,7 @@
 
 namespace Engine
 {
-	Level::Level(rapidxml::xml_node<char>* t_xml_node, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
+	Level::Level(rapidxml::xml_node<char>* t_xml_node, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
 	{
 		m_background = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(0.0f, 0.0f));
 		m_background->applyAnimation(spriteSheetManager->getSpriteSheet("background")->getSprite("wholeSpriteSheet"));
@@ -57,9 +57,9 @@ namespace Engine
 
 				enemy->shootingModeFunc = [this, soundEngine, shootingSound, bullets, enemy, explosionSound]()
 				{
-					for (auto bullet : bullets)
+					for (const auto& bullet : bullets)
 					{
-						auto _bullet = std::make_shared<BaseGameObject>(*bullet.get());
+						auto _bullet = std::make_shared<BaseGameObject>(*bullet);
 						auto _bulletPosition = glm::vec2(enemy->getPosition().x + (enemy->getWidth() / 2.0f) - (_bullet->getWidth() / 2.0f), enemy->getPosition().y - (enemy->getHeight() / 2.0f));
 						_bulletPosition += glm::vec2(enemy->getWidth() * _bullet->getPosition().x, enemy->getHeight() * _bullet->getPosition().y);
 						_bullet->setPosition(_bulletPosition);
@@ -93,8 +93,8 @@ namespace Engine
 							}
 							else
 							{
-								auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
-								auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
+								const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+								const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 								//Collision detection
 								if (_bullet->getPosition().y > windowHeight || (_bullet->getPosition().y + _bullet->getHeight()) < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
@@ -127,14 +127,14 @@ namespace Engine
 
 			enemy->onUpdateFunc = [enemy]()
 			{
-				auto windowWidth = (float)(glutGet(GLUT_WINDOW_WIDTH));
-				auto windowHeigth = (float)(glutGet(GLUT_WINDOW_HEIGHT));
+				const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+				const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 				//Collision detection
 				if (enemy->getPosition().x + enemy->getWidth() >= windowWidth || enemy->getPosition().x <= 0.0f)
 					enemy->setVelocity(0, enemy->getVelocity().x * -1.0f);
 
-				if (enemy->getPosition().y + enemy->getHeight() >= windowHeigth || enemy->getPosition().y <= 0.0f)
+				if (enemy->getPosition().y + enemy->getHeight() >= windowHeight || enemy->getPosition().y <= 0.0f)
 					enemy->setVelocity(1, enemy->getVelocity().y * -1.0f);
 			};
 
@@ -205,9 +205,9 @@ namespace Engine
 
 					entity->shootingModeFunc = [this, soundEngine, bullets, explosionSound, shootingSound, entity]()
 					{
-						for (auto bullet : bullets)
+						for (const auto& bullet : bullets)
 						{
-							auto _bullet = std::make_shared<BaseGameObject>(*bullet.get());
+							auto _bullet = std::make_shared<BaseGameObject>(*bullet);
 							auto _bulletPosition = glm::vec2(entity->getPosition().x + (entity->getWidth() / 2.0f) - (_bullet->getWidth() / 2.0f), entity->getPosition().y + (entity->getHeight() / 2.0f));
 							_bulletPosition += glm::vec2(entity->getWidth() * _bullet->getPosition().x, entity->getHeight() * _bullet->getPosition().y);
 							_bullet->setPosition(_bulletPosition);
@@ -241,8 +241,8 @@ namespace Engine
 								}
 								else
 								{
-									auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
-									auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
+									const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+									const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 									//Collision detection
 									if (_bullet->getPosition().y > windowHeight || (_bullet->getPosition().y + _bullet->getHeight()) < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
@@ -297,9 +297,9 @@ namespace Engine
 		}
 	}
 
-	bool Level::update(float dt, const std::shared_ptr<Player>& player, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<InputManager>& inputManager, const std::unique_ptr<CollisionManager>& collisionManager)
+	bool Level::update(const float dt, const std::shared_ptr<Player>& player, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager)
 	{
-		if (gameStateManager->getGameState() != GameState::IN_MENU && gameStateManager->getGameState() != GameState::IN_PAUSED_MENU)
+		if (gameStateManager->getGameState() != IN_MENU && gameStateManager->getGameState() != IN_PAUSED_MENU)
 		{
 			player->update(dt, inputManager);
 
@@ -352,17 +352,17 @@ namespace Engine
 			}
 		}
 
-		if (gameStateManager->getGameState() == GameState::STARTED)
+		if (gameStateManager->getGameState() == STARTED)
 		{
-			for (auto it = m_enemies.begin(); it != m_enemies.end(); ++it)
+			for (auto& m_enemie : m_enemies)
 			{
-				collisionManager->checkCollision(player, (*it)->getBulletsList());
-				collisionManager->checkCollision(*it, player->getBulletsList());
+				collisionManager->checkCollision(player, m_enemie->getBulletsList());
+				collisionManager->checkCollision(m_enemie, player->getBulletsList());
 			}
 
-			for (auto it = m_meteors.begin(); it != m_meteors.end(); ++it)
+			for (auto& m_meteor : m_meteors)
 			{
-				collisionManager->checkCollision(*it, player->getBulletsList());
+				collisionManager->checkCollision(m_meteor, player->getBulletsList());
 			}
 
 			collisionManager->checkCollision(player, &m_meteors);
@@ -373,9 +373,9 @@ namespace Engine
 		return m_enemies.empty();
 	}
 
-	void Level::render(float dt, const std::shared_ptr<Player>& player, const std::unique_ptr<GameStateManager>& gameStateManager, const std::unique_ptr<InputManager>& inputManager, const std::unique_ptr<CollisionManager>& collisionManager, const std::unique_ptr<Renderer>& renderer, const std::unique_ptr<ConfigurationManager>& configurationManager, const std::unique_ptr<SpriteSheetManager>& spriteSheetManager)
+	void Level::render(const float dt, const std::shared_ptr<Player>& player, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager, const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
-		if (gameStateManager->getGameState() != GameState::IN_MENU && gameStateManager->getGameState() != GameState::IN_PAUSED_MENU)
+		if (gameStateManager->getGameState() != IN_MENU && gameStateManager->getGameState() != IN_PAUSED_MENU)
 		{
 			//Render m_background
 			m_background->update(dt, inputManager);
@@ -386,25 +386,25 @@ namespace Engine
 			renderer->draw(m_explosions);
 			//Render m_player & his addons
 			renderer->draw(player);
-			for (auto it = player->getAddons()->begin(); it != player->getAddons()->end(); ++it)
+			for (auto& it : *player->getAddons())
 			{
-				renderer->draw(it->second);
+				renderer->draw(it.second);
 			}
 			//Render m_enemies & their addons
 			renderer->draw(m_enemies);
-			for (auto it = m_enemies.begin(); it != m_enemies.end(); ++it)
+			for (auto& m_enemie : m_enemies)
 			{
-				for (auto it2 = (*it)->getAddons()->begin(); it2 != (*it)->getAddons()->end(); ++it2)
+				for (auto& it2 : *m_enemie->getAddons())
 				{
-					renderer->draw(it2->second);
+					renderer->draw(it2.second);
 				}
 			}
 			//Render m_pickups
 			renderer->draw(m_pickups);
 			//Render m_enemies bullets
-			for (auto it = m_enemies.begin(); it != m_enemies.end(); ++it)
+			for (auto& m_enemie : m_enemies)
 			{
-				renderer->draw(*(*it)->getBulletsList());
+				renderer->draw(*m_enemie->getBulletsList());
 			}
 			//Render m_player's bullets
 			renderer->draw(*player->getBulletsList());

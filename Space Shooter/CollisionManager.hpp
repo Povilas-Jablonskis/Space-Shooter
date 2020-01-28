@@ -2,6 +2,7 @@
 #define collisionManagerH
 
 #include <vector>
+#include <memory>
 
 namespace Engine
 {
@@ -12,10 +13,10 @@ namespace Engine
 			bool checkCollision(const std::shared_ptr<T>& object, const std::shared_ptr<T2>& collider) const
 			{
 				// Collision x-axis?
-				bool collisionX = object->getPosition().x + object->getWidth() >= collider->getPosition().x &&
+				const bool collisionX = object->getPosition().x + object->getWidth() >= collider->getPosition().x &&
 					collider->getPosition().x + collider->getWidth() >= object->getPosition().x;
 				// Collision y-axis?
-				bool collisionY = object->getPosition().y + object->getHeight() >= collider->getPosition().y &&
+				const bool collisionY = object->getPosition().y + object->getHeight() >= collider->getPosition().y &&
 					collider->getPosition().y + collider->getHeight() >= object->getPosition().y;
 				// Collision only if on both axes
 				return collisionX && collisionY;
@@ -29,16 +30,16 @@ namespace Engine
 					return false;
 				}
 
-				for (auto it = colliderList->begin(); it != colliderList->end(); ++it)
+				for (auto& collider : *colliderList)
 				{
-					if ((*it)->getNeedsToBeRemoved())
+					if (collider->getNeedsToBeRemoved())
 					{
 						continue;
 					}
 
-					if (checkCollision(object, *it))
+					if (checkCollision(object, collider))
 					{
-						(*it)->onCollisionFunc(object);
+						collider->onCollisionFunc(object);
 						return true;
 					}
 				}

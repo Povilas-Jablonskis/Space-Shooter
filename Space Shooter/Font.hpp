@@ -4,11 +4,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <glew/glew.h>
-#include <freeglut/freeglut.h>
 #include <glm/vec2.hpp>
-#include <iostream>
 #include <vector>
-#include <algorithm>
 
 namespace Engine
 {
@@ -25,11 +22,11 @@ namespace Engine
 	class Font
 	{
 		public:
-			Font(const FT_Face&);
-			Character getCharacter(GLchar);
-			inline const std::vector<character>& getCharacterList() const { return m_characters; }
+			explicit Font(const FT_Face&);
+			Character getCharacter(GLchar) const;
+			const std::vector<character>& getCharacterList() const { return m_characters; }
 		private:
-			inline const FT_Face& getFace() const { return m_face; }
+			const FT_Face& getFace() const { return m_face; }
 
 			FT_Face m_face;
 			void loadCharacters();
