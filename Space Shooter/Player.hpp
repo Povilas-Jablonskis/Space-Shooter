@@ -11,6 +11,7 @@ namespace Engine
 	{
 		public:
 			Player(const glm::vec2&, const glm::vec2&, const glm::vec4&);
+			using BaseGameObject::update;
 			bool update(float, const std::shared_ptr<InputManager>&);
 			const glm::vec2& getStartVelocity() const { return m_startVelocity; }
 			const glm::vec2& getStartPosition() const { return m_startPosition; }

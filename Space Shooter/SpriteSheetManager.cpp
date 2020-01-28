@@ -3,21 +3,22 @@
 
 #include <fstream>
 #include "rapidxml/rapidxml.hpp"
+#include <algorithm>
 
 namespace Engine
 {
 	void SpriteSheetManager::loadSpriteSheetsFromConfig()
 	{
-		rapidxml::xml_document<> doc;
+		auto doc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
 		std::ifstream theFile("Config/spritesheets.xml");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
-		doc.parse<0>(&buffer[0]);
+		doc->parse<0>(&buffer[0]);
 		// Find our root node
-		rapidxml::xml_node<>* root_node = doc.first_node("Spritesheets");
-		// Iterate over the brewerys
+		rapidxml::xml_node<>* root_node = doc->first_node("Spritesheets");
+		// Iterate over the breweries
 		for (auto brewery_node = root_node->first_node("Spritesheet"); brewery_node; brewery_node = brewery_node->next_sibling("Spritesheet"))
 		{
 			auto spriteSheet = std::make_shared<SpriteSheet>(brewery_node->first_attribute("spriteSheetName")->value(), brewery_node->first_attribute("spriteSheetNameXml")->value());
@@ -37,7 +38,8 @@ namespace Engine
 		}
 
 		theFile.close();
-		doc.clear();
+		doc->clear();
+		delete doc;
 	}
 
 	void SpriteSheetManager::loadSpriteSheet(const std::string& name, const std::shared_ptr<SpriteSheet>& t_spriteSheet)

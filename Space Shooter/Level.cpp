@@ -60,7 +60,7 @@ namespace Engine
 					for (const auto& bullet : bullets)
 					{
 						auto _bullet = std::make_shared<BaseGameObject>(*bullet);
-						auto _bulletPosition = glm::vec2(enemy->getPosition().x + (enemy->getWidth() / 2.0f) - (_bullet->getWidth() / 2.0f), enemy->getPosition().y - (enemy->getHeight() / 2.0f));
+						auto _bulletPosition = glm::vec2(enemy->getPosition().x + enemy->getWidth() / 2.0f - _bullet->getWidth() / 2.0f, enemy->getPosition().y - enemy->getHeight() / 2.0f);
 						_bulletPosition += glm::vec2(enemy->getWidth() * _bullet->getPosition().x, enemy->getHeight() * _bullet->getPosition().y);
 						_bullet->setPosition(_bulletPosition);
 						
@@ -97,7 +97,7 @@ namespace Engine
 								const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 								//Collision detection
-								if (_bullet->getPosition().y > windowHeight || (_bullet->getPosition().y + _bullet->getHeight()) < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
+								if (_bullet->getPosition().y > windowHeight || _bullet->getPosition().y + _bullet->getHeight() < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
 								{
 									_bullet->setNeedsToBeRemoved(true);
 								}
@@ -151,7 +151,7 @@ namespace Engine
 			{
 				meteor->setRotationAngle(meteor->getRotationAngle() + 0.05f);
 
-				if (meteor->getRotationAngle() >= (3.14159265358979323846f * 2.0f))
+				if (meteor->getRotationAngle() >= 3.14159265358979323846f * 2.0f)
 				{
 					meteor->setRotationAngle(0.0f);
 				}
@@ -208,7 +208,7 @@ namespace Engine
 						for (const auto& bullet : bullets)
 						{
 							auto _bullet = std::make_shared<BaseGameObject>(*bullet);
-							auto _bulletPosition = glm::vec2(entity->getPosition().x + (entity->getWidth() / 2.0f) - (_bullet->getWidth() / 2.0f), entity->getPosition().y + (entity->getHeight() / 2.0f));
+							auto _bulletPosition = glm::vec2(entity->getPosition().x + entity->getWidth() / 2.0f - _bullet->getWidth() / 2.0f, entity->getPosition().y + entity->getHeight() / 2.0f);
 							_bulletPosition += glm::vec2(entity->getWidth() * _bullet->getPosition().x, entity->getHeight() * _bullet->getPosition().y);
 							_bullet->setPosition(_bulletPosition);
 
@@ -245,7 +245,7 @@ namespace Engine
 									const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 									//Collision detection
-									if (_bullet->getPosition().y > windowHeight || (_bullet->getPosition().y + _bullet->getHeight()) < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
+									if (_bullet->getPosition().y > windowHeight || _bullet->getPosition().y + _bullet->getHeight() < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
 									{
 										_bullet->setNeedsToBeRemoved(true);
 									}
@@ -266,9 +266,9 @@ namespace Engine
 
 			for (auto beer_node2 = beer_node->first_node("Shield"); beer_node2; beer_node2 = beer_node2->next_sibling("Shield"))
 			{
-				std::string spriteName = beer_node2->first_attribute("spriteName")->value();
+				std::string shieldSpriteName = beer_node2->first_attribute("spriteName")->value();
 
-				pickup->onCollisionFunc = [&spriteSheetManager, spriteName, pickup](const std::shared_ptr<BaseGameObject>& collider)
+				pickup->onCollisionFunc = [&spriteSheetManager, shieldSpriteName, pickup](const std::shared_ptr<BaseGameObject>& collider)
 				{
 					auto entity = dynamic_cast<Entity*>(collider.get());
 
@@ -276,7 +276,7 @@ namespace Engine
 
 					auto shield = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.7f));
 
-					shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName));
+					shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(shieldSpriteName));
 					shield->onUpdateFunc = [shield, entity]()
 					{
 						shield->changeColor(shield->getColor().a - 0.05f, 3);
@@ -286,7 +286,7 @@ namespace Engine
 							shield->changeColor(0.7f, 3);
 						}
 
-						shield->setPosition(entity->getPosition() + glm::vec2(((shield->getWidth() - entity->getWidth()) * -1.0f) / 2.0f, ((shield->getHeight() - entity->getHeight()) * -1.0f) / 2.0f));
+						shield->setPosition(entity->getPosition() + glm::vec2((shield->getWidth() - entity->getWidth()) * -1.0f / 2.0f, (shield->getHeight() - entity->getHeight()) * -1.0f / 2.0f));
 					};
 					entity->addAddon(addon("shield", shield));
 					return true;
@@ -354,10 +354,10 @@ namespace Engine
 
 		if (gameStateManager->getGameState() == STARTED)
 		{
-			for (auto& m_enemie : m_enemies)
+			for (auto& enemy : m_enemies)
 			{
-				collisionManager->checkCollision(player, m_enemie->getBulletsList());
-				collisionManager->checkCollision(m_enemie, player->getBulletsList());
+				collisionManager->checkCollision(player, enemy->getBulletsList());
+				collisionManager->checkCollision(enemy, player->getBulletsList());
 			}
 
 			for (auto& m_meteor : m_meteors)
@@ -386,15 +386,15 @@ namespace Engine
 			renderer->draw(m_explosions);
 			//Render m_player & his addons
 			renderer->draw(player);
-			for (auto& it : *player->getAddons())
+			for (auto& addon : *player->getAddons())
 			{
-				renderer->draw(it.second);
+				renderer->draw(addon.second);
 			}
 			//Render m_enemies & their addons
 			renderer->draw(m_enemies);
-			for (auto& m_enemie : m_enemies)
+			for (auto& enemy : m_enemies)
 			{
-				for (auto& it2 : *m_enemie->getAddons())
+				for (auto& it2 : *enemy->getAddons())
 				{
 					renderer->draw(it2.second);
 				}
@@ -402,9 +402,9 @@ namespace Engine
 			//Render m_pickups
 			renderer->draw(m_pickups);
 			//Render m_enemies bullets
-			for (auto& m_enemie : m_enemies)
+			for (auto& enemy : m_enemies)
 			{
-				renderer->draw(*m_enemie->getBulletsList());
+				renderer->draw(*enemy->getBulletsList());
 			}
 			//Render m_player's bullets
 			renderer->draw(*player->getBulletsList());

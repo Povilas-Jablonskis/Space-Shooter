@@ -61,8 +61,8 @@ namespace Engine
 
 		setPosition(glm::vec2(windowWidth * (getPositionPercents().x / 100.0f), windowHeight * (getPositionPercents().y / 100.0f)));
 
-		setWidth((getOriginalWidth() * windowWidth) / static_cast<float>(glutGet(GLUT_INIT_WINDOW_WIDTH)));
-		setHeight((getOriginalHeight() * windowHeight) / static_cast<float>(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
+		setWidth(getOriginalWidth() * windowWidth / static_cast<float>(glutGet(GLUT_INIT_WINDOW_WIDTH)));
+		setHeight(getOriginalHeight() * windowHeight / static_cast<float>(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
 	}
 
 	bool UIElementBase::checkIfCollides(const glm::vec2& colCoordinates) const

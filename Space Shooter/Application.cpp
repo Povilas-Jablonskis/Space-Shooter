@@ -10,15 +10,12 @@
 #include "Shader.hpp"
 
 #include <fstream>
-#include <ctime>
 #include "rapidxml/rapidxml_print.hpp"
 
 namespace Engine
 {
 	Application::Application()
 	{
-		srand(static_cast<int>(time(nullptr)));
-
 		getRenderer()->addShader("shader", std::make_shared<Shader>("shader.vert", "shader.frag"));
 		getRenderer()->addShader("textshader", std::make_shared<Shader>("textshader.vert", "textshader.frag"));
 
@@ -31,15 +28,15 @@ namespace Engine
 	void Application::loadPlayerConfig() const
 	{
 		{
-			rapidxml::xml_document<> doc;
+			auto doc = new rapidxml::xml_document<>();
 			// Read the xml file into a vector
 			std::ifstream theFile("Config/keyBindingSettings.xml");
 			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 			buffer.push_back('\0');
 			// Parse the buffer using the xml file parsing library into doc 
-			doc.parse<0>(&buffer[0]);
+			doc->parse<0>(&buffer[0]);
 
-			for (auto brewery_node = doc.first_node("KeyBindings"); brewery_node; brewery_node = brewery_node->next_sibling("KeyBindings"))
+			for (auto brewery_node = doc->first_node("KeyBindings"); brewery_node; brewery_node = brewery_node->next_sibling("KeyBindings"))
 			{
 				for (auto beer_node = brewery_node->first_node("KeyBinding"); beer_node; beer_node = beer_node->next_sibling("KeyBinding"))
 				{
@@ -48,25 +45,27 @@ namespace Engine
 			}
 
 			theFile.close();
-			doc.clear();
+			doc->clear();
+			delete doc;
 		}
 
 		{
-			rapidxml::xml_document<> doc;
+			auto doc = new rapidxml::xml_document<>();
 			// Read the xml file into a vector
 			std::ifstream theFile("Config/soundSettings.xml");
 			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 			buffer.push_back('\0');
 			// Parse the buffer using the xml file parsing library into doc 
-			doc.parse<0>(&buffer[0]);
+			doc->parse<0>(&buffer[0]);
 
-			for (auto brewery_node = doc.first_node("Volume"); brewery_node; brewery_node = brewery_node->next_sibling("Volume"))
+			for (auto brewery_node = doc->first_node("Volume"); brewery_node; brewery_node = brewery_node->next_sibling("Volume"))
 			{
 				getSoundEngine()->setSoundVolume(std::stof(brewery_node->first_attribute("value")->value()));
 			}
 
 			theFile.close();
-			doc.clear();
+			doc->clear();
+			delete doc;
 		}
 	}
 

@@ -17,33 +17,34 @@ namespace Engine
 {
 	void MenuManager::savePlayerConfig(irrklang::ISoundEngine* soundEngine) const
 	{
-		rapidxml::xml_document<> doc;
+		auto doc = new rapidxml::xml_document<>();
 
-		auto volume = doc.allocate_node(rapidxml::node_element, "Volume");
-		const auto attribute_value = doc.allocate_string(std::to_string(soundEngine->getSoundVolume()).c_str());
-		volume->append_attribute(doc.allocate_attribute("value", attribute_value));
-		doc.append_node(volume);
+		auto volume = doc->allocate_node(rapidxml::node_element, "Volume");
+		const auto attribute_value = doc->allocate_string(std::to_string(soundEngine->getSoundVolume()).c_str());
+		volume->append_attribute(doc->allocate_attribute("value", attribute_value));
+		doc->append_node(volume);
 
 		std::ofstream file_stored("Config/soundSettings.xml");
 		file_stored << doc;
 		file_stored.close();
-		doc.clear();
+		doc->clear();
+		delete doc;
 	}
 	
 	void MenuManager::loadPlayerModels(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
 		m_playerModels.clear();
 
-		rapidxml::xml_document<> doc;
+		auto doc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
 		std::ifstream theFile("Config/players.xml");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
-		doc.parse<0>(&buffer[0]);
+		doc->parse<0>(&buffer[0]);
 		// Find our root node
-		rapidxml::xml_node<>* root_node = doc.first_node("Players");
-		// Iterate over the brewerys
+		rapidxml::xml_node<>* root_node = doc->first_node("Players");
+		// Iterate over the breweries
 		for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->next_sibling("Player"))
 		{
 			std::string spriteName = brewery_node->first_attribute("spriteName")->value();
@@ -52,7 +53,8 @@ namespace Engine
 		}
 
 		theFile.close();
-		doc.clear();
+		doc->clear();
+		delete doc;
 	}
 
 	void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
@@ -86,7 +88,7 @@ namespace Engine
 
 				if (getCharacterSelectionIndex() < 0)
 				{
-					setCharacterSelectionIndex(playerModels.size() - 1);
+					setCharacterSelectionIndex(static_cast<int>(playerModels.size()) - 1);
 				}
 
 				option2->applyAnimation(playerModels[getCharacterSelectionIndex()]);
@@ -99,9 +101,9 @@ namespace Engine
 
 				setCharacterSelectionIndex(getCharacterSelectionIndex() + 1);
 
-				if (getCharacterSelectionIndex() > (playerModels.size() - 1))
+				if (getCharacterSelectionIndex() > static_cast<int>(playerModels.size()) - 1)
 				{
-					setCharacterSelectionIndex(playerModels.size() - 1);
+					setCharacterSelectionIndex(static_cast<int>(playerModels.size()) - 1);
 				}
 
 				option2->applyAnimation(playerModels[getCharacterSelectionIndex()]);
@@ -151,10 +153,10 @@ namespace Engine
 				auto i = 0.0f;
 				for (const auto& keybinding : keybindings)
 				{
-					auto option = std::make_shared<Text>(keybinding.first + " :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f - (3.0f * i)));
+					auto option = std::make_shared<Text>(keybinding.first + " :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f - 3.0f * i));
 					option->disable();
 					controls->addText(option);
-					option = std::make_shared<Text>(InputManager::virtualKeyCodeToString(keybinding.second), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(29.0f, 60.0f - (3.0f * i)), std::make_shared<KeyBindingInputComponent>(keybinding.first));
+					option = std::make_shared<Text>(InputManager::virtualKeyCodeToString(keybinding.second), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(29.0f, 60.0f - 3.0f * i), std::make_shared<KeyBindingInputComponent>(keybinding.first));
 					option->onMouseReleaseFunc = [soundEngine, inputManager, option, keybinding]()
 					{
 						if (inputManager->getCurrentlyEditedKeyBinding().empty())

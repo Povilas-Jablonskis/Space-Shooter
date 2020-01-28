@@ -41,17 +41,17 @@ namespace Engine
 
 		if (inputManager->getKey("Move Left"))
 		{
-			entity->setPosition(0, entity->getPosition().x - (entity->getVelocity().x * dt));
+			entity->setPosition(0, entity->getPosition().x - entity->getVelocity().x * dt);
 		}
 
 		if (inputManager->getKey("Move Right"))
 		{
-			entity->setPosition(0, entity->getPosition().x + (entity->getVelocity().x * dt));
+			entity->setPosition(0, entity->getPosition().x + entity->getVelocity().x * dt);
 		}
 
 		if (inputManager->getKey("Move Back"))
 		{
-			entity->setPosition(1, entity->getPosition().y - (entity->getVelocity().y * dt));
+			entity->setPosition(1, entity->getPosition().y - entity->getVelocity().y * dt);
 		}
 	}
 }

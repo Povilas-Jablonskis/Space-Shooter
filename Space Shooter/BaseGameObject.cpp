@@ -49,7 +49,7 @@ namespace Engine
 			}
 		}
 
-		setPosition(getPosition() + (getVelocity() * dt));
+		setPosition(getPosition() + getVelocity() * dt);
 
 		updateAnimation(dt);
 		return getNeedsToBeRemoved();

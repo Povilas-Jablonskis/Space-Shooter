@@ -44,10 +44,10 @@ namespace Engine
 		glBindVertexArray(m_vao);
 
 		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof vertices, vertices, GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof indices, indices, GL_STATIC_DRAW);
 
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), nullptr);
@@ -66,9 +66,9 @@ namespace Engine
 
 	void Renderer::addShader(const std::string& name, const std::shared_ptr<Shader>& t_shader)
 	{
-		for (const auto& it : getShaders())
+		for (const auto& shader : getShaders())
 		{
-			if (it.first == name)
+			if (shader.first == name)
 			{
 				return;
 			}
@@ -100,13 +100,13 @@ namespace Engine
 
 			auto cache = text->getCachedCharacters();
 
-			for (auto& it : cache)
+			for (auto& cachedCharacter : cache)
 			{
 				// Render glyph texture over quad
-				glBindTexture(GL_TEXTURE_2D, it.first);
+				glBindTexture(GL_TEXTURE_2D, cachedCharacter.first);
 				// Update content of VBO memory
 				glBindBuffer(GL_ARRAY_BUFFER, getTextVBO());
-				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &it.second[0]);
+				glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &cachedCharacter.second[0]);
 				glBindBuffer(GL_ARRAY_BUFFER, 0);
 				// Render quad
 				glDrawArrays(GL_TRIANGLES, 0, 6);

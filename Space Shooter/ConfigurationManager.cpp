@@ -27,7 +27,7 @@ namespace Engine
 		setInterfaceFont(std::make_shared<Font>(face));
 
 		// We Don't Need The Face Information Now That The Display
-		// Lists Have Been Created, So We Free The Assosiated Resources.
+		// Lists Have Been Created, So We Free The Associated Resources.
 		FT_Done_Face(face);
 
 		// Ditto For The Font Library.

@@ -30,7 +30,7 @@ namespace Engine
 
 		updateAnimation(dt);
 
-		setPosition(1, getPosition().y + ((getVelocity().y * dt) / 2.0f));
+		setPosition(1, getPosition().y + getVelocity().y * dt / 2.0f);
 
 		const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
 		const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
@@ -45,11 +45,7 @@ namespace Engine
 			setPosition(0, windowWidth - getWidth());
 		}
 
-		if (getPosition().y + getHeight() >= windowHeight)
-		{
-			setPosition(1, 0.0f);
-		}
-		else if (getPosition().y <= 0.0f)
+		if (getPosition().y + getHeight() >= windowHeight || getPosition().y <= 0.0f)
 		{
 			setPosition(1, 0.0f);
 		}

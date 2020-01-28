@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <utility>
+#include <freeglut/freeglut_std.h>
 
 namespace Engine
 {
@@ -72,7 +73,7 @@ namespace Engine
 		changeBoundaryBox(getPosition().y, 3);
 
 		const auto lastPosition = getPosition();
-		std::vector<int> tempVector;
+		std::vector<float> tempVector;
 		auto text = getText();
 
 		for (std::_String_iterator<std::_String_val<std::_Simple_types<char>>>::value_type& c : text)

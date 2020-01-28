@@ -18,9 +18,9 @@ namespace Engine
 
 		renderer->draw(m_playerLives);
 
-		for (auto& it : m_scoreBoard)
+		for (auto& score : m_scoreBoard)
 		{
-			it->update(dt, inputManager);
+			score->update(dt, inputManager);
 		}
 
 		renderer->draw(m_scoreBoard);
@@ -54,9 +54,9 @@ namespace Engine
 		{
 			const auto i = std::distance(str.begin(), it);
 			std::string str2(1, str[i]);
-			auto option = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(12.0f + (4 * (i + 1)), 91.0f));
-			option->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + str2 + ".png"));
-			m_playerLives.push_back(option);
+			auto number = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(12.0f + 4.0f * (i + 1.0f), 91.0f));
+			number->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + str2 + ".png"));
+			m_playerLives.push_back(number);
 		}
 	}
 
@@ -70,7 +70,7 @@ namespace Engine
 		{
 			const auto i = std::distance(str.begin(), it);
 			std::string str2(1, str[i]);
-			auto option = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(70.0f + (4 * (i + 1)), 91.0f));
+			auto option = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(70.0f + 4.0f * (i + 1.0f), 91.0f));
 			option->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + str2 + ".png"));
 			m_scoreBoard.push_back(option);
 		}

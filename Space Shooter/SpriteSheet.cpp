@@ -5,6 +5,7 @@
 #include "rapidxml/rapidxml.hpp"
 
 #include <fstream>
+#include <algorithm>
 
 namespace Engine
 {
@@ -33,7 +34,7 @@ namespace Engine
 		const auto image = SOIL_load_image(path.c_str(), &m_width, &m_height, nullptr, SOIL_LOAD_RGBA);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 		SOIL_free_image_data(image);
-		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentily mess up our texture.
+		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentally mess up our texture.
 
 		m_sprites.emplace_back("wholeSpriteSheet", glm::vec4(m_width, m_height, m_width, m_height));
 	}
@@ -45,16 +46,16 @@ namespace Engine
 			return;
 		}
 
-		rapidxml::xml_document<> doc;
+		auto doc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
 		std::ifstream theFile(path);
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
-		doc.parse<0>(&buffer[0]);
+		doc->parse<0>(&buffer[0]);
 		// Find our root node
-		rapidxml::xml_node<>* root_node = doc.first_node();
-		// Iterate over the brewerys
+		rapidxml::xml_node<>* root_node = doc->first_node();
+		// Iterate over the breweries
 		for (auto brewery_node = root_node->first_node(); brewery_node; brewery_node = brewery_node->next_sibling())
 		{
 			auto animation = glm::vec4(atof(brewery_node->first_attribute("x")->value()),
@@ -65,7 +66,8 @@ namespace Engine
 		}
 
 		theFile.close();
-		doc.clear();
+		doc->clear();
+		delete doc;
 	}
 
 	std::shared_ptr<Animation> SpriteSheet::getSprite(const std::string& index)

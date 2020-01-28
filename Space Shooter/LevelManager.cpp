@@ -15,39 +15,40 @@ namespace Engine
 	LevelManager::LevelManager(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
 	{
 		{
-			rapidxml::xml_document<> doc;
+			auto doc = new rapidxml::xml_document<>();
 			rapidxml::xml_node<> * root_node;
 			// Read the xml file into a vector
 			std::ifstream theFile("Config/levels.xml");
 			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 			buffer.push_back('\0');
 			// Parse the buffer using the xml file parsing library into doc 
-			doc.parse<0>(&buffer[0]);
+			doc->parse<0>(&buffer[0]);
 			// Find our root node
-			root_node = doc.first_node("Levels");
-			// Iterate over the brewerys
+			root_node = doc->first_node("Levels");
+			// Iterate over the breweries
 			for (auto brewery_node = root_node->first_node("Level"); brewery_node; brewery_node = brewery_node->next_sibling("Level"))
 			{
 				m_levels.push(std::make_shared<Level>(brewery_node, spriteSheetManager, soundEngine, t_characterSelectionIndex));
 			}
 
 			theFile.close();
-			doc.clear();
+			doc->clear();
+			delete doc;
 		}
 
 		{
-			rapidxml::xml_document<> doc;
+			auto doc = new rapidxml::xml_document<>();
 			rapidxml::xml_node<> * root_node;
-			size_t i = 0;
+			int i = 0;
 			// Read the xml file into a vector
 			std::ifstream theFile("Config/players.xml");
 			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 			buffer.push_back('\0');
 			// Parse the buffer using the xml file parsing library into doc 
-			doc.parse<0>(&buffer[0]);
+			doc->parse<0>(&buffer[0]);
 			// Find our root node
-			root_node = doc.first_node("Players");
-			// Iterate over the brewerys
+			root_node = doc->first_node("Players");
+			// Iterate over the breweries
 			for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->next_sibling("Player"))
 			{
 				if (i == t_characterSelectionIndex)
@@ -97,7 +98,7 @@ namespace Engine
 							for (const auto& bullet : bullets)
 							{
 								auto _bullet = std::make_shared<BaseGameObject>(*bullet);
-								auto _bulletPosition = glm::vec2(m_player->getPosition().x + (m_player->getWidth() / 2.0f) - (_bullet->getWidth() / 2.0f), m_player->getPosition().y + (m_player->getHeight() / 2.0f));
+								auto _bulletPosition = glm::vec2(m_player->getPosition().x + m_player->getWidth() / 2.0f - _bullet->getWidth() / 2.0f, m_player->getPosition().y + m_player->getHeight() / 2.0f);
 								_bulletPosition += glm::vec2(m_player->getWidth() * _bullet->getPosition().x, m_player->getHeight() * _bullet->getPosition().y);
 								_bullet->setPosition(_bulletPosition);
 
@@ -134,7 +135,7 @@ namespace Engine
 										const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
 										//Collision detection
-										if (_bullet->getPosition().y > windowHeight || (_bullet->getPosition().y + _bullet->getHeight()) < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
+										if (_bullet->getPosition().y > windowHeight || _bullet->getPosition().y + _bullet->getHeight() < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
 										{
 											_bullet->setNeedsToBeRemoved(true);
 										}
@@ -166,7 +167,8 @@ namespace Engine
 			}
 
 			theFile.close();
-			doc.clear();
+			doc->clear();
+			delete doc;
 		}
 	}
 

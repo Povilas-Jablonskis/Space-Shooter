@@ -18,7 +18,7 @@ namespace Engine
 		{
 			setAnimTimer(getAnimTimer() + dt);
 
-			if (getAnimTimer() > (1.0f / 60.f))
+			if (getAnimTimer() > 1.0f / 60.f)
 			{
 				setAnimTimer(0);
 				setCurrentFrame(getCurrentFrame() + 1);

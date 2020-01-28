@@ -189,12 +189,10 @@ namespace Engine
 
 	void InputManager::specialKeyInputUp(const int key, int x, int y)
 	{
-		auto c = 0;
 		switch (key)
 		{
 			case GLUT_KEY_UP:
 			{
-				c = VK_UP;
 				if (!getKey(VK_UP))
 				{
 					setKey(VK_UP, true);
@@ -204,7 +202,6 @@ namespace Engine
 			}
 			case GLUT_KEY_DOWN:
 			{
-				c = VK_DOWN;
 				if (!getKey(VK_DOWN))
 				{
 					setKey(VK_DOWN, true);
@@ -214,7 +211,6 @@ namespace Engine
 			}
 			case GLUT_KEY_LEFT:
 			{
-				c = VK_LEFT;
 				if (!getKey(VK_LEFT))
 				{
 					setKey(VK_LEFT, true);
@@ -224,7 +220,6 @@ namespace Engine
 			}
 			case GLUT_KEY_RIGHT:
 			{
-				c = VK_RIGHT;
 				if (!getKey(VK_RIGHT))
 				{
 					setKey(VK_RIGHT, true);
@@ -239,20 +234,25 @@ namespace Engine
 	{
 		auto scanCode = MapVirtualKey(virtualKey, MAPVK_VK_TO_VSC);
 
-		CHAR szName[128];
-		auto result = 0;
+		TCHAR szName[128];
+		int result;
 		switch (virtualKey)
 		{
 			case VK_LEFT: case VK_UP: case VK_RIGHT: case VK_DOWN:
+			case VK_RCONTROL: case VK_RMENU:
+			case VK_LWIN: case VK_RWIN: case VK_APPS:
 			case VK_PRIOR: case VK_NEXT:
 			case VK_END: case VK_HOME:
 			case VK_INSERT: case VK_DELETE:
 			case VK_DIVIDE:
 			case VK_NUMLOCK:
-				scanCode |= 0x100;
+				scanCode |= KF_EXTENDED;
 			default:
-				result = GetKeyNameTextA(scanCode << 16, szName, 128);
+				result = GetKeyNameText(scanCode << 16, szName, 128);
 		}
+		if (result == 0)
+			throw std::system_error(std::error_code(GetLastError(), std::system_category()),
+				"WinAPI Error occured.");
 		return szName;
 	}
 }

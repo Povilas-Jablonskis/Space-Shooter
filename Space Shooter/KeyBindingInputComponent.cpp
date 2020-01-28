@@ -17,26 +17,27 @@ namespace Engine
 	void KeyBindingInputComponent::savePlayerConfig(const std::shared_ptr<InputManager>& inputManager) const
 	{
 		const auto keyBindings = *inputManager->getKeyBindings();
-		rapidxml::xml_document<> doc;
+		auto doc = new rapidxml::xml_document<>();
 
-		auto KeyBindings = doc.allocate_node(rapidxml::node_element, "KeyBindings");
+		auto KeyBindings = doc->allocate_node(rapidxml::node_element, "KeyBindings");
 
 		for (const auto& keyBinding : keyBindings)
 		{
-			auto KeyBinding = doc.allocate_node(rapidxml::node_element, "KeyBinding");
-			auto attribute_value = doc.allocate_string(keyBinding.first.c_str());
-			KeyBinding->append_attribute(doc.allocate_attribute("key", attribute_value));
-			attribute_value = doc.allocate_string(std::to_string(keyBinding.second).c_str());
-			KeyBinding->append_attribute(doc.allocate_attribute("value", attribute_value));
+			auto KeyBinding = doc->allocate_node(rapidxml::node_element, "KeyBinding");
+			auto attribute_value = doc->allocate_string(keyBinding.first.c_str());
+			KeyBinding->append_attribute(doc->allocate_attribute("key", attribute_value));
+			attribute_value = doc->allocate_string(std::to_string(keyBinding.second).c_str());
+			KeyBinding->append_attribute(doc->allocate_attribute("value", attribute_value));
 			KeyBindings->append_node(KeyBinding);
 		}
 
-		doc.append_node(KeyBindings);
+		doc->append_node(KeyBindings);
 
 		std::ofstream file_stored("Config/keyBindingSettings.xml");
 		file_stored << doc;
 		file_stored.close();
-		doc.clear();
+		doc->clear();
+		delete doc;
 	}
 	
 	void KeyBindingInputComponent::update(Text* uiElement, const std::shared_ptr<InputManager>& inputManager) const

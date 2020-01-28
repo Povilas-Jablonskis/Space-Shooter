@@ -12,8 +12,8 @@ namespace Engine
 	struct Character
 	{
 		GLuint     TextureID;  // ID handle of the glyph texture
-		glm::ivec2 Size;       // Size of glyph
-		glm::ivec2 Bearing;    // Offset from baseline to left/top of glyph
+		glm::vec2  Size;       // Size of glyph
+		glm::vec2  Bearing;    // Offset from baseline to left/top of glyph
 		FT_Pos     Advance;    // Offset to advance to next glyph
 	};
 

@@ -4,7 +4,6 @@
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <glew/glew.h>
-#include <freeglut/freeglut.h>
 #include <vector>
 
 #include "UIElementBase.hpp"
@@ -44,7 +43,7 @@ namespace Engine
 			bool m_needUpdate{ true };
 			std::string m_text;
 			std::vector<cachedCharacter> m_cachedCharacters;
-			glm::vec4 m_bbox;
+			glm::vec4 m_bbox = {0.0f, 0.0f, 0.0f, 0.0f };
 			std::shared_ptr<KeyBindingInputComponent> m_keyBindingInputComponent;
 	};
 }

@@ -3,7 +3,6 @@
 
 #include <glm/vec4.hpp>
 #include <glew/glew.h>
-#include <algorithm>
 #include <vector>
 #include <memory>
 

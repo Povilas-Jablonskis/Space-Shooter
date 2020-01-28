@@ -15,7 +15,7 @@ namespace Engine
 		auto characters = getCharacterList();
 		const auto it = std::find_if(characters.begin(), characters.end(), [index](auto idx) { return idx.first == index; });
 
-		return it != characters.end() ? it->second : Character{ 0, glm::ivec2(0, 0), glm::ivec2(0, 0), 0 };
+		return it != characters.end() ? it->second : Character{ 0, glm::vec2(0, 0), glm::vec2(0, 0), 0 };
 	}
 
 	void Font::loadCharacters()
@@ -58,8 +58,8 @@ namespace Engine
 			// Now store character for later use
 			Character _character = {
 				texture,
-				glm::ivec2(getFace()->glyph->bitmap.width, getFace()->glyph->bitmap.rows),
-				glm::ivec2(getFace()->glyph->bitmap_left, getFace()->glyph->bitmap_top),
+				glm::vec2(getFace()->glyph->bitmap.width, getFace()->glyph->bitmap.rows),
+				glm::vec2(getFace()->glyph->bitmap_left, getFace()->glyph->bitmap_top),
 				getFace()->glyph->advance.x
 			};
 			m_characters.emplace_back(c, _character);
