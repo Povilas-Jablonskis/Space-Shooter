@@ -19,13 +19,16 @@ namespace Engine
 	{
 		auto doc = new rapidxml::xml_document<>();
 
+		auto SoundSettings = doc->allocate_node(rapidxml::node_element, "SoundSettings");
+		
 		auto volume = doc->allocate_node(rapidxml::node_element, "Volume");
 		const auto attribute_value = doc->allocate_string(std::to_string(soundEngine->getSoundVolume()).c_str());
 		volume->append_attribute(doc->allocate_attribute("value", attribute_value));
-		doc->append_node(volume);
+		SoundSettings->append_node(volume);
+		doc->append_node(SoundSettings);
 
 		std::ofstream file_stored("Config/soundSettings.xml");
-		file_stored << doc;
+		file_stored << *doc;
 		file_stored.close();
 		doc->clear();
 		delete doc;

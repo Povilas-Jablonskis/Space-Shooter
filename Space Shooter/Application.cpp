@@ -58,9 +58,12 @@ namespace Engine
 			// Parse the buffer using the xml file parsing library into doc 
 			doc->parse<0>(&buffer[0]);
 
-			for (auto brewery_node = doc->first_node("Volume"); brewery_node; brewery_node = brewery_node->next_sibling("Volume"))
+			for (auto brewery_node = doc->first_node("SoundSettings"); brewery_node; brewery_node = brewery_node->next_sibling("SoundSettings"))
 			{
-				getSoundEngine()->setSoundVolume(std::stof(brewery_node->first_attribute("value")->value()));
+				for (auto beer_node = brewery_node->first_node("Volume"); beer_node; beer_node = beer_node->next_sibling("Volume"))
+				{
+					getSoundEngine()->setSoundVolume(std::stof(beer_node->first_attribute("value")->value()));
+				}
 			}
 
 			theFile.close();

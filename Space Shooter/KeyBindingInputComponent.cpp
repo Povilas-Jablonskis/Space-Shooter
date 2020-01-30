@@ -34,7 +34,7 @@ namespace Engine
 		doc->append_node(KeyBindings);
 
 		std::ofstream file_stored("Config/keyBindingSettings.xml");
-		file_stored << doc;
+		file_stored << *doc;
 		file_stored.close();
 		doc->clear();
 		delete doc;
