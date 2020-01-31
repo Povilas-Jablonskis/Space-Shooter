@@ -1,4 +1,4 @@
-#include "KeyBindingInputComponent.hpp"
+#include "KeyBinding.hpp"
 #include "Text.hpp"
 #include "InputManager.hpp"
 
@@ -9,12 +9,12 @@
 
 namespace Engine
 {
-	KeyBindingInputComponent::KeyBindingInputComponent(std::string kb) : m_keyBinding(std::move(kb))
+	KeyBinding::KeyBinding(std::string keyBinding, char keyBindingCharacter) : m_keyBindingCharacter(keyBindingCharacter), m_keyBinding(std::move(keyBinding))
 	{
 
 	}
-
-	void KeyBindingInputComponent::savePlayerConfig(const std::shared_ptr<InputManager>& inputManager) const
+	
+	void KeyBinding::savePlayerConfig(const std::shared_ptr<InputManager>& inputManager) const
 	{
 		const auto keyBindings = *inputManager->getKeyBindings();
 		auto doc = new rapidxml::xml_document<>();
@@ -24,9 +24,9 @@ namespace Engine
 		for (const auto& keyBinding : keyBindings)
 		{
 			auto KeyBinding = doc->allocate_node(rapidxml::node_element, "KeyBinding");
-			auto attribute_value = doc->allocate_string(keyBinding.first.c_str());
+			auto attribute_value = doc->allocate_string(keyBinding->getKeyBinding().c_str());
 			KeyBinding->append_attribute(doc->allocate_attribute("key", attribute_value));
-			attribute_value = doc->allocate_string(std::to_string(keyBinding.second).c_str());
+			attribute_value = doc->allocate_string(std::to_string(keyBinding->getKeyBindingCharacter()).c_str());
 			KeyBinding->append_attribute(doc->allocate_attribute("value", attribute_value));
 			KeyBindings->append_node(KeyBinding);
 		}
@@ -40,19 +40,19 @@ namespace Engine
 		delete doc;
 	}
 	
-	void KeyBindingInputComponent::update(Text* uiElement, const std::shared_ptr<InputManager>& inputManager) const
+	void KeyBinding::update(const std::shared_ptr<InputManager>& inputManager)
 	{
-		if (inputManager->getCurrentlyEditedKeyBinding() != getKeyBinding())
+		if (inputManager->getCurrentlyEditedKeyBinding() != nullptr && inputManager->getCurrentlyEditedKeyBinding()->getKeyBinding() != getKeyBinding())
 		{
 			return;
 		}
 
 		if (!inputManager->getLastKey(27) && inputManager->getKey(27)) // escape
 		{
-			uiElement->enable();
-			uiElement->onHoverExitFuncDefaults();
+			getText()->enable();
+			getText()->onHoverExitFuncDefaults();
 
-			inputManager->setCurrentlyEditedKeyBinding("");
+			inputManager->setCurrentlyEditedKeyBinding(nullptr);
 			return;
 		}
 
@@ -63,14 +63,14 @@ namespace Engine
 		{
 			if (!inputManager->getLastKey(key.first) && key.second)
 			{
-				if (key.first >= 32 && key.first < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](auto pair) {return pair.second == key.first; }))
+				if (key.first >= 32 && key.first < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](auto pair) {return pair->getKeyBindingCharacter() == key.first; }))
 				{
-					uiElement->enable();
-					uiElement->onHoverExitFuncDefaults();
-					uiElement->setText(InputManager::virtualKeyCodeToString(key.first));
+					getText()->enable();
+					getText()->onHoverExitFuncDefaults();
+					getText()->setText(InputManager::virtualKeyCodeToString(key.first));
 
-					inputManager->setKeyBinding(keyBinding(getKeyBinding(), key.first));
-					inputManager->setCurrentlyEditedKeyBinding("");
+					setKeyBindingCharacter(key.first);
+					inputManager->setCurrentlyEditedKeyBinding(nullptr);
 
 					savePlayerConfig(inputManager);
 					break;

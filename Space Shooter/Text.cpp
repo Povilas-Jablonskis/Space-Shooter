@@ -2,7 +2,6 @@
 #include "ConfigurationManager.hpp"
 #include "UIInputComponent.hpp"
 #include "Font.hpp"
-#include "KeyBindingInputComponent.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -10,19 +9,8 @@
 
 namespace Engine
 {
-	Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPerc,
-	           std::shared_ptr<KeyBindingInputComponent> kbInput) : UIElementBase(color, positionPerc), m_text(
-		                                                                std
-		                                                                ::
-		                                                                move(
-			                                                                text)), m_keyBindingInputComponent(
-		                                                                std::move(kbInput))
-	{
-
-	}
-
 	Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPerc) : UIElementBase(color, positionPerc), m_text(
-		                                                                                      std::move(text)), m_keyBindingInputComponent(nullptr)
+		                                                                                      std::move(text))
 	{
 		
 	}
@@ -62,12 +50,7 @@ namespace Engine
 		setNeedUpdate(false);
 
 		fixPosition();
-		getUIInputComponent()->update(this, inputManager);
-
-		if (getKeyBindingInputComponent() != nullptr)
-		{
-			getKeyBindingInputComponent()->update(this, inputManager);
-		}
+		updateInput(this, inputManager);
 
 		changeBoundaryBox(getPosition().x, 0);
 		changeBoundaryBox(getPosition().y, 3);

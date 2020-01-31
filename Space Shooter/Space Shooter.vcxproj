@@ -94,7 +94,7 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="InputComponent.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="KeyBindingInputComponent.cpp" />
+    <ClCompile Include="KeyBinding.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -119,7 +119,7 @@
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="GameStateManager.hpp" />
     <ClInclude Include="InputManager.hpp" />
-    <ClInclude Include="KeyBindingInputComponent.hpp" />
+    <ClInclude Include="KeyBinding.hpp" />
     <ClInclude Include="Level.hpp" />
     <ClInclude Include="LevelManager.hpp" />
     <ClInclude Include="MenuManager.hpp" />

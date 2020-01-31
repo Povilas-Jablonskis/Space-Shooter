@@ -7,7 +7,7 @@
 #include "GameStateManager.hpp"
 #include "SpriteSheetManager.hpp"
 #include "SpriteSheet.hpp"
-#include "KeyBindingInputComponent.hpp"
+#include "KeyBinding.hpp"
 #include "Text.hpp"
 
 #include <fstream>
@@ -156,23 +156,24 @@ namespace Engine
 				auto i = 0.0f;
 				for (const auto& keybinding : keybindings)
 				{
-					auto option = std::make_shared<Text>(keybinding.first + " :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f - 3.0f * i));
+					auto option = std::make_shared<Text>(keybinding->getKeyBinding() + " :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f - 3.0f * i));
 					option->disable();
 					controls->addText(option);
-					option = std::make_shared<Text>(InputManager::virtualKeyCodeToString(keybinding.second), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(29.0f, 60.0f - 3.0f * i), std::make_shared<KeyBindingInputComponent>(keybinding.first));
+					option = std::make_shared<Text>(InputManager::virtualKeyCodeToString(keybinding->getKeyBindingCharacter()), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(29.0f, 60.0f - 3.0f * i));
 					option->onMouseReleaseFunc = [soundEngine, inputManager, option, keybinding]()
 					{
-						if (inputManager->getCurrentlyEditedKeyBinding().empty())
+						if (inputManager->getCurrentlyEditedKeyBinding() == nullptr)
 						{
 							soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
 
-							inputManager->setCurrentlyEditedKeyBinding(keybinding.first);
+							inputManager->setCurrentlyEditedKeyBinding(keybinding);
 
 							option->disable();
 							option->onHoverEnterFuncDefaults();
 						}
 					};
-					controls->addText(option);
+					keybinding->setText(option);
+					controls->addKeybinding(keybinding);
 					i += 1.0f;
 				}
 				auto option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 20.0f));
@@ -311,7 +312,7 @@ namespace Engine
 		}
 		else if (gameStateManager->getGameState() == IN_MENU)
 		{
-			if (!inputManager->getCurrentlyEditedKeyBinding().empty())
+			if (inputManager->getCurrentlyEditedKeyBinding() != nullptr)
 			{
 				return;
 			}
@@ -330,7 +331,8 @@ namespace Engine
 		auto back = getMenus()->back();
 		const auto uiElements = back->getElements();
 		const auto texts = back->getTexts();
-
+		const auto keybindings = back->getKeyBindings();
+		
 		for (auto& text : *texts)
 		{
 			text->update(configurationManager, inputManager);
@@ -341,11 +343,22 @@ namespace Engine
 			uiElement->update(dt, inputManager);
 		}
 
+		for (auto& keybinding : *keybindings)
+		{
+			keybinding->getText()->update(configurationManager, inputManager);
+			keybinding->update(inputManager);
+		}
+		
 		renderer->draw(*texts);
 
 		for (auto& uiElement : *uiElements)
 		{
 			renderer->draw(uiElement);
+		}
+
+		for (auto& keybinding : *keybindings)
+		{
+			renderer->draw(keybinding->getText());
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace Engine
 	{
 		public:
 			template <typename T>
-			void update(T* object, const std::shared_ptr<InputManager>& inputManager)
+			void updateInput(T* object, const std::shared_ptr<InputManager>& inputManager)
 			{
 				if (!object->isActive())
 				{

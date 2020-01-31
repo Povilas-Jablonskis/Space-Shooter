@@ -13,7 +13,6 @@ namespace Engine
 	class RenderObject;
 	class ConfigurationManager;
 	class InputManager;
-	class KeyBindingInputComponent;
 
 	typedef std::pair<GLuint, std::vector<GLfloat>> cachedCharacter;
 
@@ -21,7 +20,6 @@ namespace Engine
 	{
 		public:
 			Text(std::string, const glm::vec4&, const glm::vec2&);
-			Text(std::string, const glm::vec4&, const glm::vec2&, std::shared_ptr<KeyBindingInputComponent>);
 			void update(const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<InputManager>&);
 			void fixPosition() override;
 			bool checkIfCollides(const glm::vec2&) const override;
@@ -36,7 +34,6 @@ namespace Engine
 			void setPosition(int, float) override;
 		private:
 			const glm::vec4& getBoundaryBox() const { return m_bbox; }
-			const std::shared_ptr<KeyBindingInputComponent>& getKeyBindingInputComponent() const { return m_keyBindingInputComponent; }
 			void changeBoundaryBox(float t_bbox, int index) { m_bbox[index] = t_bbox; }
 			void changeBoundaryBox(glm::vec4& t_bbox) { m_bbox = t_bbox; }
 
@@ -44,7 +41,6 @@ namespace Engine
 			std::string m_text;
 			std::vector<cachedCharacter> m_cachedCharacters;
 			glm::vec4 m_bbox = {0.0f, 0.0f, 0.0f, 0.0f };
-			std::shared_ptr<KeyBindingInputComponent> m_keyBindingInputComponent;
 	};
 }
 #endif

@@ -11,9 +11,9 @@ namespace Engine
 	class MenuManager;
 	class SpriteSheetManager;
 	class GameStateManager;
-
+	class KeyBinding;
+	
 	typedef std::pair<int, bool> keyState;
-	typedef std::pair<std::string, int> keyBinding;
 
 	class InputManager
 	{
@@ -36,10 +36,10 @@ namespace Engine
 			void setLastKey(char, bool);
 			std::vector<keyState>* getLastKeys() { return &m_lastKeyStates; }
 			std::vector<keyState>* getKeys() { return &m_keyStates; }
-			std::vector<keyBinding>* getKeyBindings() { return &m_keyBindings; }
-			void setKeyBinding(const keyBinding&);
-			const std::string& getCurrentlyEditedKeyBinding() const { return m_currentlyEditedKeyBinding; }
-			void setCurrentlyEditedKeyBinding(const std::string& str) { m_currentlyEditedKeyBinding = str; }
+			std::vector<std::shared_ptr<KeyBinding>>* getKeyBindings() { return &m_keyBindings; }
+			void addKeyBinding(const std::shared_ptr<KeyBinding>& key_binding) { m_keyBindings.push_back(key_binding); }
+			std::shared_ptr<KeyBinding> getCurrentlyEditedKeyBinding() const { return m_currentlyEditedKeyBinding; }
+			void setCurrentlyEditedKeyBinding(const std::shared_ptr<KeyBinding>& kb) { m_currentlyEditedKeyBinding = kb; }
 
 			void keyboardInput(unsigned char, int, int, const std::shared_ptr<MenuManager>&, irrklang::ISoundEngine*, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<SpriteSheetManager>&);
 			void motionFunc(int, int);
@@ -57,8 +57,8 @@ namespace Engine
 			bool m_rightMouseClick{ false };
 			std::vector<keyState> m_keyStates;
 			std::vector<keyState> m_lastKeyStates;
-			std::vector<keyBinding> m_keyBindings;
-			std::string m_currentlyEditedKeyBinding{""};
+			std::vector<std::shared_ptr<KeyBinding>> m_keyBindings;
+			std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding = nullptr;
 	};
 }
 #endif

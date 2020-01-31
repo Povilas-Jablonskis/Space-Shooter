@@ -43,7 +43,7 @@ namespace Engine
 
 		updateAnimation(dt);
 		fixPosition();
-		getUIInputComponent()->update(this, inputManager);
+		updateInput(this, inputManager);
 	}
 
 	void UIElementBase::fixPosition()

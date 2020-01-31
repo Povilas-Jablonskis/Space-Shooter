@@ -2,13 +2,13 @@
 #define uIElementBaseH
 
 #include "RenderObject.hpp"
+#include "UIInputComponent.hpp"
 
 namespace Engine
 {
 	class InputManager;
-	class UIInputComponent;
 
-	class UIElementBase : public RenderObject
+	class UIElementBase : public RenderObject, public UIInputComponent
 	{
 		public:
 			UIElementBase(const glm::vec4&, const glm::vec2&);
@@ -29,13 +29,11 @@ namespace Engine
 			void setMousedClicked(const bool boolean) { m_gotMousedClicked = boolean; }
 			bool isClickedByMouse() const { return m_gotMousedClicked; }
 			const glm::vec2& getPositionPercents() const { return m_positionPercents; }
-			const std::shared_ptr<UIInputComponent>& getUIInputComponent() const { return m_inputComponent; }
 		private:
 			bool m_active{ true };
 			glm::vec2 m_positionPercents;
 			bool m_gotMousedClicked{ false };
 			bool m_gotMousedHovered{ false };
-			std::shared_ptr<UIInputComponent> m_inputComponent{ std::make_shared<UIInputComponent>() };
 	};
 }
 #endif

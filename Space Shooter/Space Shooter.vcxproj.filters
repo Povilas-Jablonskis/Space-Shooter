@@ -84,9 +84,6 @@
     <ClCompile Include="InputComponent.cpp">
       <Filter>Source Files\Components\Input</Filter>
     </ClCompile>
-    <ClCompile Include="KeyBindingInputComponent.cpp">
-      <Filter>Source Files\Components\Input</Filter>
-    </ClCompile>
     <ClCompile Include="MenuManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
@@ -99,12 +96,12 @@
     <ClCompile Include="UIManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
+    <ClCompile Include="KeyBinding.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputComponent.hpp">
-      <Filter>Header Files\Components\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyBindingInputComponent.hpp">
       <Filter>Header Files\Components\Input</Filter>
     </ClInclude>
     <ClInclude Include="UIInputComponent.hpp">
@@ -175,6 +172,9 @@
     </ClInclude>
     <ClInclude Include="UIManager.hpp">
       <Filter>Header Files\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyBinding.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

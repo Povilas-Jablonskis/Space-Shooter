@@ -2,6 +2,7 @@
 #include "MenuManager.hpp"
 #include "SpriteSheetManager.hpp"
 #include "GameStateManager.hpp"
+#include "KeyBinding.hpp"
 
 #include <algorithm>
 #include <glew/glew.h>
@@ -28,32 +29,17 @@ namespace Engine
 	bool InputManager::getKey(const std::string& key)
 	{
 		auto keyBindings = *getKeyBindings();
-		const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb.first == key; });
-
-		return kb != keyBindings.end() ? getKey(kb->second) : false;
+		const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb->getKeyBinding() == key; });
+		
+		return kb != keyBindings.end() ? getKey((*kb)->getKeyBindingCharacter()) : false;
 	}
 
 	bool InputManager::getLastKey(const std::string& key)
 	{
 		auto keyBindings = *getKeyBindings();
-		const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb.first == key; });
+		const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb->getKeyBinding() == key; });
 
-		return kb != keyBindings.end() ? getLastKey(kb->second) : false;
-	}
-
-	void InputManager::setKeyBinding(const keyBinding& pair)
-	{
-		auto keyBindings = getKeyBindings();
-		for (auto it = keyBindings->begin(); it != keyBindings->end(); ++it)
-		{
-			if ((*it).first == pair.first)
-			{
-				keyBindings->erase(it);
-				break;
-			}
-		}
-
-		keyBindings->push_back(pair);
+		return kb != keyBindings.end() ? getLastKey((*kb)->getKeyBindingCharacter()) : false;
 	}
 
 	void InputManager::setKey(char key, bool boolean)

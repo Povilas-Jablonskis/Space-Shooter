@@ -8,6 +8,7 @@
 #include "CollisionManager.hpp"
 #include "ConfigurationManager.hpp"
 #include "Shader.hpp"
+#include "KeyBinding.hpp"
 
 #include <fstream>
 #include "rapidxml/rapidxml_print.hpp"
@@ -40,7 +41,7 @@ namespace Engine
 			{
 				for (auto beer_node = brewery_node->first_node("KeyBinding"); beer_node; beer_node = beer_node->next_sibling("KeyBinding"))
 				{
-					getInputManager()->setKeyBinding(keyBinding(beer_node->first_attribute("key")->value(), std::stoi(beer_node->first_attribute("value")->value())));
+					getInputManager()->addKeyBinding(std::make_shared<KeyBinding>(beer_node->first_attribute("key")->value(), std::stoi(beer_node->first_attribute("value")->value())));
 				}
 			}
 
