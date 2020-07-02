@@ -2,6 +2,7 @@
 #define shaderH
 
 #include <vector>
+#include <string>
 #include <glew/glew.h>
 
 namespace Engine

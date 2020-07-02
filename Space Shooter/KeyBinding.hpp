@@ -2,6 +2,7 @@
 #define keyBindingInputComponentH
 
 #include <string>
+#include <memory>
 
 namespace Engine
 {

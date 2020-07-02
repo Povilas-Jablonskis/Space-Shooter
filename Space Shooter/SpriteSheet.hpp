@@ -5,6 +5,7 @@
 #include <glew/glew.h>
 #include <vector>
 #include <memory>
+#include <string>
 
 namespace Engine
 {

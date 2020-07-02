@@ -5,6 +5,7 @@
 #include "KeyBinding.hpp"
 
 #include <algorithm>
+#include <system_error>
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
 

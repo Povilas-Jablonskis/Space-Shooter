@@ -5,6 +5,7 @@
 #include "glm/vec2.hpp"
 #include <vector>
 #include <memory>
+#include <string>
 
 namespace Engine
 {
