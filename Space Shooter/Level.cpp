@@ -299,7 +299,7 @@ namespace Engine
 
 	bool Level::update(const float dt, const std::shared_ptr<Player>& player, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager)
 	{
-		if (gameStateManager->getGameState() != IN_MENU && gameStateManager->getGameState() != IN_PAUSED_MENU)
+		if (gameStateManager->getGameState() != GameState::IN_MENU && gameStateManager->getGameState() != GameState::IN_PAUSED_MENU)
 		{
 			player->update(dt, inputManager);
 
@@ -352,7 +352,7 @@ namespace Engine
 			}
 		}
 
-		if (gameStateManager->getGameState() == STARTED)
+		if (gameStateManager->getGameState() == GameState::STARTED)
 		{
 			for (auto& enemy : m_enemies)
 			{
@@ -375,7 +375,7 @@ namespace Engine
 
 	void Level::render(const float dt, const std::shared_ptr<Player>& player, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager, const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
-		if (gameStateManager->getGameState() != IN_MENU && gameStateManager->getGameState() != IN_PAUSED_MENU)
+		if (gameStateManager->getGameState() != GameState::IN_MENU && gameStateManager->getGameState() != GameState::IN_PAUSED_MENU)
 		{
 			//Render m_background
 			m_background->update(dt, inputManager);

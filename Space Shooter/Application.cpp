@@ -84,7 +84,7 @@ namespace Engine
 			getMenuManager()->getLevelManager()->renderCurrentLevel(m_dt, getGameStateManager(), getInputManager(), getCollisionManager(), getRenderer(), getConfigurationManager(), getSpritesheetManager());
 		}
 
-		if (!menus->empty() && (getGameStateManager()->getGameState() == IN_MENU || getGameStateManager()->getGameState() == IN_PAUSED_MENU))
+		if (!menus->empty() && (getGameStateManager()->getGameState() == GameState::IN_MENU || getGameStateManager()->getGameState() == GameState::IN_PAUSED_MENU))
 		{
 			getMenuManager()->renderCurrentMenu(getRenderer(), m_dt, getConfigurationManager(), getInputManager());
 		}

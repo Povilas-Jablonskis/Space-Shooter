@@ -129,7 +129,7 @@ namespace Engine
 				m_levelManager = std::make_shared<LevelManager>(spriteSheetManager, soundEngine, getCharacterSelectionIndex());
 				getMenus()->clear();
 
-				gameStateManager->setGameState(STARTED);
+				gameStateManager->setGameState(GameState::STARTED);
 			};
 			characterSelection->addText(option);
 
@@ -269,17 +269,17 @@ namespace Engine
 
 	void MenuManager::escapeAction(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
-		if (gameStateManager->getGameState() == ENDED)
+		if (gameStateManager->getGameState() == GameState::ENDED)
 		{
 			initGameMenus(soundEngine, inputManager, gameStateManager, spriteSheetManager);
-			gameStateManager->setGameState(IN_MENU);
+			gameStateManager->setGameState(GameState::IN_MENU);
 		}
-		else if (gameStateManager->getGameState() == IN_PAUSED_MENU)
+		else if (gameStateManager->getGameState() == GameState::IN_PAUSED_MENU)
 		{
 			getMenus()->clear();
-			gameStateManager->setGameState(STARTED);
+			gameStateManager->setGameState(GameState::STARTED);
 		}
-		else if (gameStateManager->getGameState() == STARTED)
+		else if (gameStateManager->getGameState() == GameState::STARTED)
 		{
 			getMenus()->clear();
 
@@ -292,7 +292,7 @@ namespace Engine
 				soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
 
 				initGameMenus(soundEngine, inputManager, gameStateManager, spriteSheetManager);
-				gameStateManager->setGameState(IN_MENU);
+				gameStateManager->setGameState(GameState::IN_MENU);
 			};
 			pauseMenu->addText(option);
 
@@ -308,9 +308,9 @@ namespace Engine
 			pauseMenu->addText(option);
 
 			addMenu(pauseMenu);
-			gameStateManager->setGameState(IN_PAUSED_MENU);
+			gameStateManager->setGameState(GameState::IN_PAUSED_MENU);
 		}
-		else if (gameStateManager->getGameState() == IN_MENU)
+		else if (gameStateManager->getGameState() == GameState::IN_MENU)
 		{
 			if (inputManager->getCurrentlyEditedKeyBinding() != nullptr)
 			{
