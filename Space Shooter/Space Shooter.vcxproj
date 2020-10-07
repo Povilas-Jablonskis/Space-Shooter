@@ -42,13 +42,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)include;$(SolutionDir)include\freetype;$(IncludePath)</IncludePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
-    <LibraryPath>$(SolutionDir)lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib;$(SolutionDir)lib\freeglut;$(LibraryPath)</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)include;$(SolutionDir)include\freetype;$(IncludePath)</IncludePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
-    <LibraryPath>$(SolutionDir)lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib;$(LibraryPath)</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -64,7 +64,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>Simple OpenGL Image Library/SOIL.lib;glew/glew32sd.lib;freeglut/freeglut_staticd.lib;freetype/freetype.lib;irrKlang/irrKlang.lib</AdditionalDependencies>
+      <AdditionalDependencies>Simple OpenGL Image Library/SOILd.lib;glew/glew32sd.lib;freeglut/freeglut_staticd.lib;freetype/freetyped.lib;irrKlang/irrKlang.lib</AdditionalDependencies>
       <Profile>true</Profile>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
