@@ -81,7 +81,7 @@ namespace Engine
 
 		if (getMenuManager()->getLevelManager())
 		{
-			getMenuManager()->getLevelManager()->renderCurrentLevel(m_dt, getGameStateManager(), getInputManager(), getCollisionManager(), getRenderer(), getConfigurationManager(), getSpritesheetManager());
+			getMenuManager()->getLevelManager()->render(m_dt, getGameStateManager(), getInputManager(), getCollisionManager(), getRenderer(), getConfigurationManager(), getSpritesheetManager(), getSoundEngine());
 		}
 
 		if (!menus->empty() && (getGameStateManager()->getGameState() == GameState::IN_MENU || getGameStateManager()->getGameState() == GameState::IN_PAUSED_MENU))

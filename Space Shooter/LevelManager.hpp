@@ -3,33 +3,51 @@
 
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
-#include <memory>
+#include <irrKlang/irrKlang.h>
+#include <rapidxml/rapidxml.hpp>
 #include <queue>
-
-#include "Level.hpp"
+#include <iostream>
 
 namespace Engine
 {
-	class CollisionManager;
-	class SpriteSheetManager;
-	class GameStateManager;
+	class UIElementBase;
+	class Text;
+	class BaseGameObject;
 	class InputManager;
-	class Renderer;
+	class GameStateManager;
 	class ConfigurationManager;
+	class SpriteSheetManager;
+	class CollisionManager;
 	class Player;
+	class Entity;
+	class Renderer;
+	class UIManager;
 
 	class LevelManager
 	{
 		public:
 			LevelManager(const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);
-			const std::shared_ptr<Level>& getCurrentLevel() const { return m_levels.front(); }
-			void renderCurrentLevel(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<SpriteSheetManager>&);
+			void addExplosion(const std::shared_ptr<BaseGameObject>& _explosion) { m_explosions.push_back(_explosion); }
+			bool update(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&);
+			void render(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
 		private:
+			int getCurrentLevel() const { return m_currentLevel; }
+			void loadLevel(const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
+			const std::shared_ptr<UIManager>& getUIManager() const { return m_uiManager; }
+
 			std::shared_ptr<Player> m_player{ nullptr };
 
 			float m_currentTime{ static_cast<float>(glutGet(GLUT_ELAPSED_TIME)) };
 			float m_accumulator{ 0.0f };
-			std::queue<std::shared_ptr<Level>> m_levels;
+			int m_currentLevel{ 0 };
+
+			std::shared_ptr<UIManager> m_uiManager{ std::make_shared<UIManager>() };
+
+			std::vector<std::shared_ptr<BaseGameObject>> m_meteors;
+			std::vector<std::shared_ptr<BaseGameObject>> m_pickups;
+			std::vector<std::shared_ptr<Entity>> m_enemies;
+			std::vector<std::shared_ptr<BaseGameObject>> m_explosions;
+			std::shared_ptr<UIElementBase> m_background;
 	};
 }
 #endif

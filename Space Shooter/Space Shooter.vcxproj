@@ -104,7 +104,6 @@
     <ClCompile Include="InputComponent.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="KeyBinding.cpp" />
-    <ClCompile Include="Level.cpp" />
     <ClCompile Include="LevelManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MenuManager.cpp" />
@@ -129,7 +128,6 @@
     <ClInclude Include="GameStateManager.hpp" />
     <ClInclude Include="InputManager.hpp" />
     <ClInclude Include="KeyBinding.hpp" />
-    <ClInclude Include="Level.hpp" />
     <ClInclude Include="LevelManager.hpp" />
     <ClInclude Include="MenuManager.hpp" />
     <ClInclude Include="Font.hpp" />
