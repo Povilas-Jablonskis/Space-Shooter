@@ -31,7 +31,7 @@ namespace Engine
 		{
 			auto doc = new rapidxml::xml_document<>();
 			// Read the xml file into a vector
-			std::ifstream theFile("Config/keyBindingSettings.xml");
+			std::ifstream theFile("cfg/keyBindingSettings.xml");
 			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 			buffer.push_back('\0');
 			// Parse the buffer using the xml file parsing library into doc 
@@ -53,7 +53,7 @@ namespace Engine
 		{
 			auto doc = new rapidxml::xml_document<>();
 			// Read the xml file into a vector
-			std::ifstream theFile("Config/soundSettings.xml");
+			std::ifstream theFile("cfg/soundSettings.xml");
 			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 			buffer.push_back('\0');
 			// Parse the buffer using the xml file parsing library into doc 

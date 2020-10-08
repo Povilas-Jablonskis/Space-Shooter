@@ -11,7 +11,7 @@
 
 namespace Engine
 {
-	bool InputManager::getKey(char key) 
+	bool InputManager::getKey(const short key) 
 	{ 
 		auto keyStates = *getKeys();
 		const auto it = std::find_if(keyStates.begin(), keyStates.end(), [key](auto kb) { return kb.first == key; });
@@ -19,7 +19,7 @@ namespace Engine
 		return it != keyStates.end() ? it->second : false;
 	}
 
-	bool InputManager::getLastKey(char key)
+	bool InputManager::getLastKey(const short key)
 	{
 		auto lastKeyStates = *getLastKeys();
 		const auto it = std::find_if(lastKeyStates.begin(), lastKeyStates.end(), [key](auto kb) { return kb.first == key; });
@@ -43,7 +43,7 @@ namespace Engine
 		return kb != keyBindings.end() ? getLastKey((*kb)->getKeyBindingCharacter()) : false;
 	}
 
-	void InputManager::setKey(char key, bool boolean)
+	void InputManager::setKey(const short key, bool boolean)
 	{
 		auto keyStates = getKeys();
 		for (auto it = keyStates->begin(); it != keyStates->end(); ++it)
@@ -58,7 +58,7 @@ namespace Engine
 		keyStates->push_back(keyState(key, boolean));
 	}
 
-	void InputManager::setLastKey(char key, bool boolean)
+	void InputManager::setLastKey(const short key, bool boolean)
 	{
 		auto lastKeyStates = getLastKeys();
 		for (auto it = lastKeyStates->begin(); it != lastKeyStates->end(); ++it)

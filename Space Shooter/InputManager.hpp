@@ -14,7 +14,7 @@ namespace Engine
 	class GameStateManager;
 	class KeyBinding;
 	
-	typedef std::pair<int, bool> keyState;
+	typedef std::pair<short, bool> keyState;
 
 	class InputManager
 	{
@@ -29,12 +29,12 @@ namespace Engine
 			void setLastRightMouseState(const bool boolean) { m_lastRightMouseClick = boolean; }
 			void setLastMousePosition(const glm::vec2& position) { m_lastMousePosition = position; }
 			const glm::vec2& getLastMousePosition() const { return m_lastMousePosition; }
-			bool getKey(char);
+			bool getKey(const short);
 			bool getKey(const std::string&);
-			void setKey(char, bool);
-			bool getLastKey(char);
+			void setKey(const short, bool);
+			bool getLastKey(const short);
 			bool getLastKey(const std::string&);
-			void setLastKey(char, bool);
+			void setLastKey(const short, bool);
 			std::vector<keyState>* getLastKeys() { return &m_lastKeyStates; }
 			std::vector<keyState>* getKeys() { return &m_keyStates; }
 			std::vector<std::shared_ptr<KeyBinding>>* getKeyBindings() { return &m_keyBindings; }

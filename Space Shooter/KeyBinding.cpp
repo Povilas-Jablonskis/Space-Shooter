@@ -9,7 +9,7 @@
 
 namespace Engine
 {
-	KeyBinding::KeyBinding(std::string keyBinding, char keyBindingCharacter) : m_keyBindingCharacter(keyBindingCharacter), m_keyBinding(std::move(keyBinding))
+	KeyBinding::KeyBinding(std::string keyBinding, const short keyBindingCharacter) : m_keyBindingCharacter(keyBindingCharacter), m_keyBinding(std::move(keyBinding))
 	{
 
 	}
@@ -33,7 +33,7 @@ namespace Engine
 
 		doc->append_node(KeyBindings);
 
-		std::ofstream file_stored("Config/keyBindingSettings.xml");
+		std::ofstream file_stored("cfg/keyBindingSettings.xml");
 		file_stored << *doc;
 		file_stored.close();
 		doc->clear();

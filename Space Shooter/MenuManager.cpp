@@ -27,7 +27,7 @@ namespace Engine
 		SoundSettings->append_node(volume);
 		doc->append_node(SoundSettings);
 
-		std::ofstream file_stored("Config/soundSettings.xml");
+		std::ofstream file_stored("cfg/soundSettings.xml");
 		file_stored << *doc;
 		file_stored.close();
 		doc->clear();
@@ -79,10 +79,10 @@ namespace Engine
 			auto option = std::make_shared<Text>("Pick your character :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f));
 			option->disable();
 			characterSelection->addText(option);
-			auto option2 = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(43.0f, 60.0f));
+			auto option2 = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(47.0f, 60.0f));
 			option2->applyAnimation(playerModels[getCharacterSelectionIndex()]);
 			option2->setScale(0.5f);
-			option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(40.0f, 60.0f));
+			option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(44.0f, 60.0f));
 			option->onMouseReleaseFunc = [this, soundEngine, option2, playerModels]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
@@ -97,7 +97,7 @@ namespace Engine
 				option2->applyAnimation(playerModels[getCharacterSelectionIndex()]);
 			};
 			characterSelection->addText(option);
-			option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(49.0f, 60.0f));
+			option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(54.0f, 60.0f));
 			option->onMouseReleaseFunc = [this, soundEngine, option2, playerModels]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
@@ -121,7 +121,7 @@ namespace Engine
 				getMenus()->pop_back();
 			};
 			characterSelection->addText(option);
-			option = std::make_shared<Text>("Start", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(25.0f, 20.0f));
+			option = std::make_shared<Text>("Start", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(30.0f, 20.0f));
 			option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &spriteSheetManager]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
@@ -136,7 +136,7 @@ namespace Engine
 			addMenu(characterSelection);
 		};
 		mainMenu->addText(option);
-		option = std::make_shared<Text>("Options", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 57.0f));
+		option = std::make_shared<Text>("Options", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 55.0f));
 		option->onMouseReleaseFunc = [soundEngine, this, inputManager]()
 		{
 			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
@@ -156,10 +156,10 @@ namespace Engine
 				auto i = 0.0f;
 				for (const auto& keybinding : keybindings)
 				{
-					auto option = std::make_shared<Text>(keybinding->getKeyBinding() + " :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f - 3.0f * i));
+					auto option = std::make_shared<Text>(keybinding->getKeyBinding() + " :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f - 5.0f * i));
 					option->disable();
 					controls->addText(option);
-					option = std::make_shared<Text>(InputManager::virtualKeyCodeToString(keybinding->getKeyBindingCharacter()), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(29.0f, 60.0f - 3.0f * i));
+					option = std::make_shared<Text>(InputManager::virtualKeyCodeToString(keybinding->getKeyBindingCharacter()), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(35.0f, 60.0f - 5.0f * i));
 					option->onMouseReleaseFunc = [soundEngine, inputManager, option, keybinding]()
 					{
 						if (inputManager->getCurrentlyEditedKeyBinding() == nullptr)
@@ -188,7 +188,7 @@ namespace Engine
 				addMenu(controls);
 			};
 			options->addText(option);
-			option = std::make_shared<Text>("Sounds", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 57.0f));
+			option = std::make_shared<Text>("Sounds", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 55.0f));
 			option->onMouseReleaseFunc = [this, soundEngine]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
@@ -199,9 +199,9 @@ namespace Engine
 				auto option = std::make_shared<Text>("Volume :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f));
 				option->disable();
 				sounds->addText(option);
-				auto uniqueOption = std::make_shared<Text>(std::to_string(static_cast<int>(soundEngine->getSoundVolume() * 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(32.0f, 60.0f));
+				auto uniqueOption = std::make_shared<Text>(std::to_string(static_cast<int>(soundEngine->getSoundVolume() * 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(33.0f, 60.0f));
 				uniqueOption->disable();
-				option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(29.0f, 60.0f));
+				option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(30.0f, 60.0f));
 				option->onMouseReleaseFunc = [soundEngine, uniqueOption, this]()
 				{
 					soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
@@ -215,7 +215,7 @@ namespace Engine
 					}
 				};
 				sounds->addText(option);
-				option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(36.0f, 60.0f));
+				option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(37.0f, 60.0f));
 				option->onMouseReleaseFunc = [soundEngine, uniqueOption, this]()
 				{
 					soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
@@ -241,7 +241,7 @@ namespace Engine
 				addMenu(sounds);
 			};
 			options->addText(option);
-			option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 54.0f));
+			option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 50.0f));
 			option->onMouseReleaseFunc = [this, soundEngine]()
 			{
 				soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
@@ -253,7 +253,7 @@ namespace Engine
 			addMenu(options);
 		};
 		mainMenu->addText(option);
-		option = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 54.0f));
+		option = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 50.0f));
 		option->onMouseReleaseFunc = []()
 		{
 			#if _DEBUG
@@ -296,7 +296,7 @@ namespace Engine
 			};
 			pauseMenu->addText(option);
 
-			option = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 57.0f));
+			option = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 55.0f));
 			option->onMouseReleaseFunc = []()
 			{
 				#if _DEBUG

@@ -20,7 +20,7 @@ namespace Engine
 
 	void Font::loadCharacters()
 	{
-		FT_Set_Pixel_Sizes(m_face, 0, 12);
+		FT_Set_Pixel_Sizes(m_face, 0, 18);
 
 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // Disable byte-alignment restriction
 
