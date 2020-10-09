@@ -39,6 +39,7 @@ namespace Engine
 
 			float m_currentTime{ static_cast<float>(glutGet(GLUT_ELAPSED_TIME)) };
 			float m_accumulator{ 0.0f };
+			int m_maxLevels{ 0 };
 			int m_currentLevel{ 0 };
 
 			std::shared_ptr<UIManager> m_uiManager{ std::make_shared<UIManager>() };

@@ -17,6 +17,24 @@ namespace Engine
 	{
 		loadLevel(spriteSheetManager, soundEngine);
 
+		{
+			auto doc = new rapidxml::xml_document<>();
+			rapidxml::xml_node<>* root_node;
+			// Read the xml file into a vector
+			std::ifstream theFile("Config/levels.xml");
+			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
+			buffer.push_back('\0');
+			// Parse the buffer using the xml file parsing library into doc 
+			doc->parse<0>(&buffer[0]);
+			// Find our root node
+			root_node = doc->first_node("Levels");
+			// Iterate over the breweries
+			for (auto brewery_node = root_node->first_node("Level"); brewery_node; brewery_node = brewery_node->next_sibling("Level"))
+			{
+				m_maxLevels++;
+			}
+		}
+
 		auto doc = new rapidxml::xml_document<>();
 		rapidxml::xml_node<>* root_node;
 		int i = 0;
@@ -142,6 +160,8 @@ namespace Engine
 						m_player->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node2->first_attribute("animationName")->value()));
 					}
 				}
+
+				break;
 			}
 			++i;
 		}
@@ -243,7 +263,10 @@ namespace Engine
 			{
 				m_currentLevel++;
 
-				loadLevel(spriteSheetManager, soundEngine);
+				if (m_currentLevel < m_maxLevels)
+				{
+					loadLevel(spriteSheetManager, soundEngine);
+				}
 			}
 
 			m_accumulator -= dt;
@@ -591,6 +614,8 @@ namespace Engine
 
 					m_pickups.push_back(pickup);
 				}
+
+				break;
 			}
 			i++;
 		}
