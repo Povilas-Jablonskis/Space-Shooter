@@ -1,5 +1,6 @@
 #include "Entity.hpp"
 #include "InputComponent.hpp"
+#include "Player.hpp"
 
 #include <algorithm>
 
@@ -15,26 +16,41 @@ namespace Engine
 
 	void Entity::addBullet(const std::shared_ptr<BaseGameObject>& bullet)
 	{
-		bullet->onCollisionFunc = [bullet](const std::shared_ptr<BaseGameObject>& collider)
+		bullet->onCollisionFunc = [this, bullet](const std::shared_ptr<BaseGameObject>& collider)
 		{
-			auto entity = dynamic_cast<Entity*>(collider.get());
+			auto player = dynamic_cast<Player*>(collider.get());
 
 			bullet->setNeedsToBeRemoved(true);
 
-			if (entity != nullptr)
+			if (player != nullptr)
 			{
-				if (entity->getAddon("shield") != nullptr)
+				if (player->getAddon("shield") != nullptr)
 				{
-					entity->getAddon("shield")->setNeedsToBeRemoved(true);
+					player->getAddon("shield")->setNeedsToBeRemoved(true);
 				}
 				else
 				{
-					entity->setNeedsToBeRemoved(true);
+					player->setLives(player->getLives() - 1);
+					player->setVelocity(player->getStartVelocity());
+					player->setPosition(player->getStartPosition());
+
+					if (player->getLives() < 1)
+					{
+						player->setNeedsToBeRemoved(true);
+						player->setLives(0);
+					}
 				}
 			}
 			else
 			{
-				collider->setNeedsToBeRemoved(true);
+				collider->setLives(collider->getLives() - 1);
+
+				if (collider->getLives() < 1)
+				{
+					setValue(getValue() + collider->getValue());
+
+					collider->setNeedsToBeRemoved(true);
+				}
 			}
 		};
 		getBulletsList()->push_back(bullet);

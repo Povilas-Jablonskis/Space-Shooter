@@ -1,5 +1,6 @@
 #include "BaseGameObject.hpp"
 #include "Entity.hpp"
+#include "Player.hpp"
 
 #include <algorithm>
 
@@ -14,24 +15,38 @@ namespace Engine
 
 		onCollisionFunc = [this](const std::shared_ptr<BaseGameObject>& collider)
 		{
-			auto entity = dynamic_cast<Entity*>(collider.get());
+			auto player = dynamic_cast<Player*>(collider.get());
 
-			setNeedsToBeRemoved(true);
+			setLives(getLives() - 1);
 
-			if (entity != nullptr)
+			if (getLives() < 1)
 			{
-				if (entity->getAddon("shield") != nullptr)
+				setNeedsToBeRemoved(true);
+			}
+
+			if (player != nullptr)
+			{
+				if (player->getAddon("shield") != nullptr)
 				{
-					entity->getAddon("shield")->setNeedsToBeRemoved(true);
+					if (getNeedsToBeRemoved())
+					{
+						player->setValue(player->getValue() + getValue());
+					}
+
+					player->getAddon("shield")->setNeedsToBeRemoved(true);
 				}
 				else
 				{
-					entity->setNeedsToBeRemoved(true);
+					player->setLives(player->getLives() - 1);
+					player->setVelocity(player->getStartVelocity());
+					player->setPosition(player->getStartPosition());
+
+					if (player->getLives() < 1)
+					{
+						player->setNeedsToBeRemoved(true);
+						player->setLives(0);
+					}
 				}
-			}
-			else
-			{
-				collider->setNeedsToBeRemoved(true);
 			}
 		};
 	}
@@ -39,15 +54,6 @@ namespace Engine
 	bool BaseGameObject::update(const float dt)
 	{
 		onUpdateFunc();
-
-		if (getNeedsToBeRemoved())
-		{
-			setLives(getLives() - 1);
-			if (getLives() > 0)
-			{
-				setNeedsToBeRemoved(false);
-			}
-		}
 
 		setPosition(getPosition() + getVelocity() * dt);
 

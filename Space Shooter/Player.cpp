@@ -13,19 +13,6 @@ namespace Engine
 
 	bool Player::update(const float dt, const std::shared_ptr<InputManager>& inputManager)
 	{
-		if (getNeedsToBeRemoved())
-		{
-			setLives(getLives() - 1);
-			setVelocity(getStartVelocity());
-			setPosition(getStartPosition());
-			if (getLives() < 1)
-			{
-				setLives(0);
-			}
-
-			setNeedsToBeRemoved(false);
-		}
-
 		getInputComponent()->update(this, inputManager, dt);
 
 		updateAnimation(dt);
