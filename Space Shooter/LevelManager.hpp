@@ -5,7 +5,7 @@
 #include <freeglut/freeglut.h>
 #include <irrKlang/irrKlang.h>
 #include <rapidxml/rapidxml.hpp>
-#include <queue>
+#include <vector>
 #include <iostream>
 
 namespace Engine
@@ -28,7 +28,7 @@ namespace Engine
 		public:
 			LevelManager(const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);
 			void addExplosion(const std::shared_ptr<BaseGameObject>& _explosion) { m_explosions.push_back(_explosion); }
-			bool update(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&);
+			void update(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
 			void render(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
 		private:
 			int getCurrentLevel() const { return m_currentLevel; }

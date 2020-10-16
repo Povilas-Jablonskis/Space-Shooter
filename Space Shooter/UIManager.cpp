@@ -8,36 +8,33 @@
 
 namespace Engine
 {
-	void UIManager::render(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<ConfigurationManager>& configurationManager)
+	void UIManager::renderUI(const std::shared_ptr<Renderer>& renderer)
 	{
-		//Render & Update UI elements
-		for (auto& m_playerLive : m_playerLives)
-		{
-			m_playerLive->update(dt, inputManager);
-		}
-
 		renderer->draw(m_playerLives);
-
-		for (auto& score : m_scoreBoard)
-		{
-			score->update(dt, inputManager);
-		}
 
 		renderer->draw(m_scoreBoard);
 
 		for (auto& m_notification : m_notifications)
 		{
-			m_notification.second->update(configurationManager, inputManager);
-		}
-
-		for (auto& m_notification : m_notifications)
-		{
-			renderer->draw(m_notification.second);
+			renderer->draw(m_notification);
 		}
 	}
 
-	void UIManager::updatePlayerLives(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, const std::string& icon, const int lives)
+	void UIManager::updateUI(const int score, const std::string& icon, const int lives, const float dt, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
+		m_scoreBoard.clear();
+
+		auto scoreString = std::to_string(score);
+
+		for (auto it = scoreString.begin(); it != scoreString.end(); ++it)
+		{
+			const auto i = std::distance(scoreString.begin(), it);
+			std::string scoreStringNumber(1, scoreString[i]);
+			auto option = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(70.0f + 4.0f * (i + 1.0f), 91.0f));
+			option->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + scoreStringNumber + ".png"));
+			m_scoreBoard.push_back(option);
+		}
+
 		m_playerLives.clear();
 
 		auto option = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(6.0f, 91.0f));
@@ -48,31 +45,30 @@ namespace Engine
 		option->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeralX.png"));
 		m_playerLives.push_back(option);
 
-		auto str = std::to_string(lives);
+		auto livesString = std::to_string(lives);
 
-		for (auto it = str.begin(); it != str.end(); ++it)
+		for (auto it = livesString.begin(); it != livesString.end(); ++it)
 		{
-			const auto i = std::distance(str.begin(), it);
-			std::string str2(1, str[i]);
+			const auto i = std::distance(livesString.begin(), it);
+			std::string livesStringNumber(1, livesString[i]);
 			auto number = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(12.0f + 4.0f * (i + 1.0f), 91.0f));
-			number->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + str2 + ".png"));
+			number->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + livesStringNumber + ".png"));
 			m_playerLives.push_back(number);
 		}
-	}
 
-	void UIManager::updatePlayerScore(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, const int score)
-	{
-		m_scoreBoard.clear();
-
-		auto str = std::to_string(score);
-
-		for (auto it = str.begin(); it != str.end(); ++it)
+		for (auto& m_playerLive : m_playerLives)
 		{
-			const auto i = std::distance(str.begin(), it);
-			std::string str2(1, str[i]);
-			auto option = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(70.0f + 4.0f * (i + 1.0f), 91.0f));
-			option->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite("numeral" + str2 + ".png"));
-			m_scoreBoard.push_back(option);
+			m_playerLive->update(dt, inputManager);
+		}
+
+		for (auto& m_playerScoreElement : m_scoreBoard)
+		{
+			m_playerScoreElement->update(dt, inputManager);
+		}
+
+		for (auto& m_notification : m_notifications)
+		{
+			m_notification->update(configurationManager, inputManager);
 		}
 	}
 }

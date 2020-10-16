@@ -15,8 +15,6 @@ namespace Engine
 {
 	LevelManager::LevelManager(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine, int t_characterSelectionIndex)
 	{
-		loadLevel(spriteSheetManager, soundEngine);
-
 		{
 			auto doc = new rapidxml::xml_document<>();
 			rapidxml::xml_node<>* root_node;
@@ -35,146 +33,153 @@ namespace Engine
 			}
 		}
 
-		auto doc = new rapidxml::xml_document<>();
-		rapidxml::xml_node<>* root_node;
-		int i = 0;
-		// Read the xml file into a vector
-		std::ifstream theFile("Config/players.xml");
-		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
-		buffer.push_back('\0');
-		// Parse the buffer using the xml file parsing library into doc 
-		doc->parse<0>(&buffer[0]);
-		// Find our root node
-		root_node = doc->first_node("Players");
-		// Iterate over the breweries
-		for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->next_sibling("Player"))
 		{
-			if (i == t_characterSelectionIndex)
+			auto doc = new rapidxml::xml_document<>();
+			rapidxml::xml_node<>* root_node;
+			int i = 0;
+			// Read the xml file into a vector
+			std::ifstream theFile("Config/players.xml");
+			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
+			buffer.push_back('\0');
+			// Parse the buffer using the xml file parsing library into doc 
+			doc->parse<0>(&buffer[0]);
+			// Find our root node
+			root_node = doc->first_node("Players");
+			// Iterate over the breweries
+			for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->next_sibling("Player"))
 			{
-				auto lives = std::stoi(brewery_node->first_attribute("lives")->value());
-				std::string livesIcon = brewery_node->first_attribute("livesIcon")->value();
-				std::string spriteName = brewery_node->first_attribute("spriteName")->value();
-				auto velocityX = std::stof(brewery_node->first_attribute("velocityX")->value());
-				auto velocityY = std::stof(brewery_node->first_attribute("velocityY")->value());
-
-				m_player = std::make_shared<Player>(glm::vec2(static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)) / 2.0f, 0.0f), glm::vec2(velocityX, velocityY), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
-				m_player->setLivesIcon(livesIcon);
-				m_player->setValue(0);
-				m_player->setLives(lives);
-				m_player->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName));
-
-				for (auto beer_node = brewery_node->first_node("ShootingEffect"); beer_node; beer_node = beer_node->next_sibling("ShootingEffect"))
+				if (i == t_characterSelectionIndex)
 				{
-					std::string explosionSound = beer_node->first_attribute("explosionSound")->value();
-					std::vector<std::shared_ptr<BaseGameObject>> bullets;
-					auto delayBetweenShoots = std::stof(beer_node->first_attribute("delayBetweenShoots")->value());
-					std::string shootingSound = beer_node->first_attribute("shootingSound")->value();
+					auto lives = std::stoi(brewery_node->first_attribute("lives")->value());
+					std::string livesIcon = brewery_node->first_attribute("livesIcon")->value();
+					std::string spriteName = brewery_node->first_attribute("spriteName")->value();
+					auto velocityX = std::stof(brewery_node->first_attribute("velocityX")->value());
+					auto velocityY = std::stof(brewery_node->first_attribute("velocityY")->value());
 
-					for (auto beer_node2 = beer_node->first_node("Bullet"); beer_node2; beer_node2 = beer_node2->next_sibling("Bullet"))
+					m_player = std::make_shared<Player>(glm::vec2(static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)) / 2.0f, 0.0f), glm::vec2(velocityX, velocityY), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+					m_player->setLivesIcon(livesIcon);
+					m_player->setValue(0);
+					m_player->setLives(lives);
+					m_player->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName));
+
+					for (auto beer_node = brewery_node->first_node("ShootingEffect"); beer_node; beer_node = beer_node->next_sibling("ShootingEffect"))
 					{
-						auto bullet = std::make_shared<BaseGameObject>(glm::vec2(std::stof(beer_node2->first_attribute("offsetX")->value()), std::stof(beer_node2->first_attribute("offsetY")->value())), glm::vec2(std::stof(beer_node2->first_attribute("velocityX")->value()), std::stof(beer_node2->first_attribute("velocityY")->value())), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
-						bullet->setExplosionSound(explosionSound);
-						bullet->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node2->first_attribute("spriteName")->value()));
+						std::string explosionSound = beer_node->first_attribute("explosionSound")->value();
+						std::vector<std::shared_ptr<BaseGameObject>> bullets;
+						auto delayBetweenShoots = std::stof(beer_node->first_attribute("delayBetweenShoots")->value());
+						std::string shootingSound = beer_node->first_attribute("shootingSound")->value();
 
-						for (auto beer_node3 = beer_node2->first_node("Animations"); beer_node3; beer_node3 = beer_node3->next_sibling("Animations"))
+						for (auto beer_node2 = beer_node->first_node("Bullet"); beer_node2; beer_node2 = beer_node2->next_sibling("Bullet"))
 						{
-							for (auto beer_node4 = beer_node3->first_node("Sprite"); beer_node4; beer_node4 = beer_node4->next_sibling("Sprite"))
+							auto bullet = std::make_shared<BaseGameObject>(glm::vec2(std::stof(beer_node2->first_attribute("offsetX")->value()), std::stof(beer_node2->first_attribute("offsetY")->value())), glm::vec2(std::stof(beer_node2->first_attribute("velocityX")->value()), std::stof(beer_node2->first_attribute("velocityY")->value())), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+							bullet->setExplosionSound(explosionSound);
+							bullet->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node2->first_attribute("spriteName")->value()));
+
+							for (auto beer_node3 = beer_node2->first_node("Animations"); beer_node3; beer_node3 = beer_node3->next_sibling("Animations"))
 							{
-								bullet->addAnimation(beer_node4->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node4->first_attribute("spriteName")->value()));
+								for (auto beer_node4 = beer_node3->first_node("Sprite"); beer_node4; beer_node4 = beer_node4->next_sibling("Sprite"))
+								{
+									bullet->addAnimation(beer_node4->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node4->first_attribute("spriteName")->value()));
+								}
+								for (auto beer_node4 = beer_node3->first_node("Animation"); beer_node4; beer_node4 = beer_node4->next_sibling("Animation"))
+								{
+									bullet->addAnimation(beer_node4->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node4->first_attribute("animationName")->value()));
+								}
 							}
-							for (auto beer_node4 = beer_node3->first_node("Animation"); beer_node4; beer_node4 = beer_node4->next_sibling("Animation"))
-							{
-								bullet->addAnimation(beer_node4->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node4->first_attribute("animationName")->value()));
-							}
+
+							bullets.push_back(bullet);
 						}
 
-						bullets.push_back(bullet);
-					}
-
-					m_player->shootingModeFunc = [soundEngine, bullets, explosionSound, shootingSound, this]()
-					{
-						for (const auto& bullet : bullets)
+						m_player->shootingModeFunc = [soundEngine, bullets, explosionSound, shootingSound, this]()
 						{
-							auto _bullet = std::make_shared<BaseGameObject>(*bullet);
-							auto _bulletPosition = glm::vec2(m_player->getPosition().x + m_player->getWidth() / 2.0f - _bullet->getWidth() / 2.0f, m_player->getPosition().y + m_player->getHeight() / 2.0f);
-							_bulletPosition += glm::vec2(m_player->getWidth() * _bullet->getPosition().x, m_player->getHeight() * _bullet->getPosition().y);
-							_bullet->setPosition(_bulletPosition);
-
-							_bullet->onUpdateFunc = [this, soundEngine, _bullet]()
+							for (const auto& bullet : bullets)
 							{
-								if (_bullet->getNeedsToBeRemoved())
+								auto _bullet = std::make_shared<BaseGameObject>(*bullet);
+								auto _bulletPosition = glm::vec2(m_player->getPosition().x + m_player->getWidth() / 2.0f - _bullet->getWidth() / 2.0f, m_player->getPosition().y + m_player->getHeight() / 2.0f);
+								_bulletPosition += glm::vec2(m_player->getWidth() * _bullet->getPosition().x, m_player->getHeight() * _bullet->getPosition().y);
+								_bullet->setPosition(_bulletPosition);
+
+								_bullet->onUpdateFunc = [this, soundEngine, _bullet]()
 								{
-									if (!_bullet->getExplosionSound().empty())
+									if (_bullet->getNeedsToBeRemoved())
 									{
-										soundEngine->play2D(_bullet->getExplosionSound().c_str(), GL_FALSE);
-									}
-
-									if (_bullet->getAnimationByIndex("explosion") == nullptr)
-									{
-										return;
-									}
-
-									auto explosion = std::make_shared<BaseGameObject>(_bullet->getPosition(), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
-									explosion->applyAnimation(_bullet->getAnimationByIndex("explosion"));
-									explosion->onUpdateFunc = [explosion]()
-									{
-										explosion->changeColor(explosion->getColor().a - 0.05f, 3);
-
-										if (explosion->getColor().a <= 0.0f)
+										if (!_bullet->getExplosionSound().empty())
 										{
-											explosion->setNeedsToBeRemoved(true);
+											soundEngine->play2D(_bullet->getExplosionSound().c_str(), GL_FALSE);
 										}
-									};
-									addExplosion(explosion);
-								}
-								else
-								{
-									const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
-									const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
-									//Collision detection
-									if (_bullet->getPosition().y > windowHeight || _bullet->getPosition().y + _bullet->getHeight() < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
-									{
-										_bullet->setNeedsToBeRemoved(true);
+										if (_bullet->getAnimationByIndex("explosion") == nullptr)
+										{
+											return;
+										}
+
+										auto explosion = std::make_shared<BaseGameObject>(_bullet->getPosition(), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+										explosion->applyAnimation(_bullet->getAnimationByIndex("explosion"));
+										explosion->onUpdateFunc = [explosion]()
+										{
+											explosion->changeColor(explosion->getColor().a - 0.05f, 3);
+
+											if (explosion->getColor().a <= 0.0f)
+											{
+												explosion->setNeedsToBeRemoved(true);
+											}
+										};
+										addExplosion(explosion);
 									}
-								}
-							};
+									else
+									{
+										const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+										const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
-							m_player->addBullet(_bullet);
+										//Collision detection
+										if (_bullet->getPosition().y > windowHeight || _bullet->getPosition().y + _bullet->getHeight() < 0.0f || _bullet->getPosition().x > windowWidth || _bullet->getPosition().x < 0.0f)
+										{
+											_bullet->setNeedsToBeRemoved(true);
+										}
+									}
+								};
+
+								m_player->addBullet(_bullet);
+							}
+
+							soundEngine->play2D(shootingSound.c_str(), GL_FALSE);
+						};
+						m_player->setDelayBetweenShoots(delayBetweenShoots);
+					}
+
+					for (auto beer_node = brewery_node->first_node("Animations"); beer_node; beer_node = beer_node->next_sibling("Animations"))
+					{
+						for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
+						{
+							m_player->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node2->first_attribute("spriteName")->value()));
 						}
 
-						soundEngine->play2D(shootingSound.c_str(), GL_FALSE);
-					};
-					m_player->setDelayBetweenShoots(delayBetweenShoots);
-				}
-
-				for (auto beer_node = brewery_node->first_node("Animations"); beer_node; beer_node = beer_node->next_sibling("Animations"))
-				{
-					for (auto beer_node2 = beer_node->first_node("Sprite"); beer_node2; beer_node2 = beer_node2->next_sibling("Sprite"))
-					{
-						m_player->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node2->first_attribute("spriteName")->value()));
+						for (auto beer_node2 = beer_node->first_node("Animation"); beer_node2; beer_node2 = beer_node2->next_sibling("Animation"))
+						{
+							m_player->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node2->first_attribute("animationName")->value()));
+						}
 					}
 
-					for (auto beer_node2 = beer_node->first_node("Animation"); beer_node2; beer_node2 = beer_node2->next_sibling("Animation"))
-					{
-						m_player->addAnimation(beer_node2->first_attribute("name")->value(), spriteSheetManager->getSpriteSheet("main")->getAnimation(beer_node2->first_attribute("animationName")->value()));
-					}
+					break;
 				}
 
-				break;
+				++i;
 			}
-			++i;
+
+			doc->clear();
+			delete doc;
 		}
 
-		theFile.close();
-		doc->clear();
-		delete doc;
+		loadLevel(spriteSheetManager, soundEngine);
 	}
 
-	bool LevelManager::update(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager)
+	void LevelManager::update(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine)
 	{
-		if (gameStateManager->getGameState() != GameState::IN_MENU && gameStateManager->getGameState() != GameState::IN_PAUSED_MENU)
+		if (gameStateManager->getGameState() == GameState::STARTED)
 		{
+			auto lastPlayerAlive = m_player->getNeedsToBeRemoved();
+			auto lastEnemiesEmpty = m_enemies.empty();
+
 			m_player->update(dt, inputManager);
 
 			for (auto it = m_enemies.begin(); it != m_enemies.end();)
@@ -224,10 +229,7 @@ namespace Engine
 					++it;
 				}
 			}
-		}
 
-		if (gameStateManager->getGameState() == GameState::STARTED)
-		{
 			for (auto& enemy : m_enemies)
 			{
 				collisionManager->checkCollision(m_player, enemy->getBulletsList());
@@ -242,9 +244,33 @@ namespace Engine
 			collisionManager->checkCollision(m_player, &m_meteors);
 			collisionManager->checkCollision(m_player, &m_enemies);
 			collisionManager->checkCollision(m_player, &m_pickups);
-		}
 
-		return m_enemies.empty();
+			if (lastPlayerAlive == false && m_player->getNeedsToBeRemoved())
+			{
+				auto gameOverText = std::make_shared<Text>("Game over!", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(45.0f, 50.0f));
+				gameOverText->disable();
+				getUIManager()->addNotification(gameOverText);
+
+				gameStateManager->setGameState(GameState::ENDED);
+			}
+			else if (lastEnemiesEmpty == false && m_enemies.empty())
+			{
+				m_currentLevel++;
+
+				if (m_currentLevel < m_maxLevels)
+				{
+					loadLevel(spriteSheetManager, soundEngine);
+				}
+				else
+				{
+					auto gameWinText = std::make_shared<Text>("You killed all waves!", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(45.0f, 50.0f));
+					gameWinText->disable();
+					getUIManager()->addNotification(gameWinText);
+
+					gameStateManager->setGameState(GameState::ENDED);
+				}
+			}
+		}
 	}
 
 	void LevelManager::render(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager, const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine)
@@ -257,17 +283,7 @@ namespace Engine
 
 		while (m_accumulator >= dt)
 		{
-			const auto updateStatus = update(dt, gameStateManager, inputManager, collisionManager);
-
-			if (updateStatus)
-			{
-				m_currentLevel++;
-
-				if (m_currentLevel < m_maxLevels)
-				{
-					loadLevel(spriteSheetManager, soundEngine);
-				}
-			}
+			update(dt, gameStateManager, inputManager, collisionManager, spriteSheetManager, soundEngine);
 
 			m_accumulator -= dt;
 		}
@@ -306,10 +322,9 @@ namespace Engine
 			//Render m_player's bullets
 			renderer->draw(*m_player->getBulletsList());
 			//Render & Update UI elements
-			getUIManager()->updatePlayerLives(spriteSheetManager, m_player->getLivesIcon(), m_player->getLives());
-			getUIManager()->updatePlayerScore(spriteSheetManager, m_player->getValue());
+			getUIManager()->updateUI(m_player->getValue(), m_player->getLivesIcon(), m_player->getLives(), dt, inputManager, configurationManager, spriteSheetManager);
 
-			getUIManager()->render(dt, gameStateManager, inputManager, renderer, configurationManager);
+			getUIManager()->renderUI(renderer);
 		}
 	}
 

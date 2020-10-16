@@ -15,19 +15,17 @@ namespace Engine
 	class ConfigurationManager;
 	class UIElementBase;
 
-	typedef std::pair<std::string, std::shared_ptr<Text>> uiPlayerElement;
-
 	class UIManager
 	{
 		public:
-			void updatePlayerLives(const std::shared_ptr<SpriteSheetManager>&, const std::string&, int);
-			void updatePlayerScore(const std::shared_ptr<SpriteSheetManager>&, int);
-			void render(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<ConfigurationManager>&);
+			void addNotification(const std::shared_ptr<Text>& text) { m_notifications.push_back(text); };
+			void renderUI(const std::shared_ptr<Renderer>&);
+			void updateUI(int, const std::string&, int, float, const std::shared_ptr<InputManager>&, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<SpriteSheetManager>&);
 		private:
 			std::vector<std::shared_ptr<UIElementBase>> m_playerLives;
 			std::vector<std::shared_ptr<UIElementBase>> m_scoreBoard;
 
-			std::vector<uiPlayerElement> m_notifications;
+			std::vector<std::shared_ptr<Text>> m_notifications;
 	};
 }
 #endif
