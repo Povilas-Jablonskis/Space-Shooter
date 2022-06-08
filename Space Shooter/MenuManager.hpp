@@ -10,7 +10,6 @@ namespace Engine
 	class Menu;
 	class Animation;
 	class Renderer;
-	class ConfigurationManager;
 	class InputManager;
 	class LevelManager;
 	class GameStateManager;
@@ -25,7 +24,7 @@ namespace Engine
 
 			const std::shared_ptr<LevelManager>& getLevelManager() const { return m_levelManager; }
 
-			void renderCurrentMenu(const std::shared_ptr<Renderer>&, float, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<InputManager>&);
+			void renderCurrentMenu(const std::shared_ptr<Renderer>&, float, const std::shared_ptr<InputManager>&);
 
 			void loadPlayerModels(const std::shared_ptr<SpriteSheetManager>&);
 			void initGameMenus(irrklang::ISoundEngine*, InputManager*, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<SpriteSheetManager>&);

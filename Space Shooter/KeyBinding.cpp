@@ -3,7 +3,7 @@
 #include "InputManager.hpp"
 
 #include <algorithm>
-#include "rapidxml/rapidxml_print.hpp"
+#include "rapidxml/RapidXMLSTD.hpp"
 #include <fstream>
 #include <utility>
 
@@ -19,11 +19,11 @@ namespace Engine
 		const auto keyBindings = *inputManager->getKeyBindings();
 		auto doc = new rapidxml::xml_document<>();
 
-		auto KeyBindings = doc->allocate_node(rapidxml::node_element, "KeyBindings");
+		auto KeyBindings = doc->allocate_node(rapidxml::node_type::node_element, "KeyBindings");
 
 		for (const auto& keyBinding : keyBindings)
 		{
-			auto KeyBinding = doc->allocate_node(rapidxml::node_element, "KeyBinding");
+			auto KeyBinding = doc->allocate_node(rapidxml::node_type::node_element, "KeyBinding");
 			auto attribute_value = doc->allocate_string(keyBinding->getKeyBinding().c_str());
 			KeyBinding->append_attribute(doc->allocate_attribute("key", attribute_value));
 			attribute_value = doc->allocate_string(std::to_string(keyBinding->getKeyBindingCharacter()).c_str());

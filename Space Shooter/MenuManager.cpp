@@ -1,7 +1,6 @@
 #include "MenuManager.hpp"
 #include "Menu.hpp"
 #include "Renderer.hpp"
-#include "ConfigurationManager.hpp"
 #include "InputManager.hpp"
 #include "LevelManager.hpp"
 #include "GameStateManager.hpp"
@@ -11,7 +10,7 @@
 #include "Text.hpp"
 
 #include <fstream>
-#include "rapidxml/rapidxml_print.hpp"
+#include "rapidxml/RapidXMLSTD.hpp"
 
 namespace Engine
 {
@@ -19,9 +18,9 @@ namespace Engine
 	{
 		auto doc = new rapidxml::xml_document<>();
 
-		auto SoundSettings = doc->allocate_node(rapidxml::node_element, "SoundSettings");
+		auto SoundSettings = doc->allocate_node(rapidxml::node_type::node_element, "SoundSettings");
 		
-		auto volume = doc->allocate_node(rapidxml::node_element, "Volume");
+		auto volume = doc->allocate_node(rapidxml::node_type::node_element, "Volume");
 		const auto attribute_value = doc->allocate_string(std::to_string(soundEngine->getSoundVolume()).c_str());
 		volume->append_attribute(doc->allocate_attribute("value", attribute_value));
 		SoundSettings->append_node(volume);
@@ -40,7 +39,7 @@ namespace Engine
 
 		auto doc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
-		std::ifstream theFile("Config/players.xml");
+		std::ifstream theFile("assets/Config/players.xml");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
@@ -71,7 +70,7 @@ namespace Engine
 		auto option = std::make_shared<Text>("Start Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f));
 		option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &spriteSheetManager, playerModels]()
 		{
-			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
+			soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
 			auto characterSelection = std::make_shared<Menu>();
 
@@ -85,7 +84,7 @@ namespace Engine
 			option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(44.0f, 60.0f));
 			option->onMouseReleaseFunc = [this, soundEngine, option2, playerModels]()
 			{
-				soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
 				setCharacterSelectionIndex(getCharacterSelectionIndex() - 1);
 
@@ -100,7 +99,7 @@ namespace Engine
 			option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(54.0f, 60.0f));
 			option->onMouseReleaseFunc = [this, soundEngine, option2, playerModels]()
 			{
-				soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
 				setCharacterSelectionIndex(getCharacterSelectionIndex() + 1);
 
@@ -116,7 +115,7 @@ namespace Engine
 			option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 20.0f));
 			option->onMouseReleaseFunc = [this, soundEngine]()
 			{
-				soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
 				getMenus()->pop_back();
 			};
@@ -124,7 +123,7 @@ namespace Engine
 			option = std::make_shared<Text>("Start", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(30.0f, 20.0f));
 			option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &spriteSheetManager]()
 			{
-				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
 				m_levelManager = std::make_shared<LevelManager>(spriteSheetManager, soundEngine, getCharacterSelectionIndex());
 				getMenus()->clear();
@@ -139,7 +138,7 @@ namespace Engine
 		option = std::make_shared<Text>("Options", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 55.0f));
 		option->onMouseReleaseFunc = [soundEngine, this, inputManager]()
 		{
-			soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
+			soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
 			auto options = std::make_shared<Menu>();
 
@@ -147,7 +146,7 @@ namespace Engine
 			auto option = std::make_shared<Text>("Controls", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f));
 			option->onMouseReleaseFunc = [soundEngine, this, inputManager]()
 			{
-				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
 				auto controls = std::make_shared<Menu>();
 
@@ -164,7 +163,7 @@ namespace Engine
 					{
 						if (inputManager->getCurrentlyEditedKeyBinding() == nullptr)
 						{
-							soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
+							soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
 
 							inputManager->setCurrentlyEditedKeyBinding(keybinding);
 
@@ -179,7 +178,7 @@ namespace Engine
 				auto option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 20.0f));
 				option->onMouseReleaseFunc = [this, soundEngine]()
 				{
-					soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
+					soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
 					getMenus()->pop_back();
 				};
@@ -191,7 +190,7 @@ namespace Engine
 			option = std::make_shared<Text>("Sounds", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 55.0f));
 			option->onMouseReleaseFunc = [this, soundEngine]()
 			{
-				soundEngine->play2D("Sounds/buttonselect/2.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
 				auto sounds = std::make_shared<Menu>();
 
@@ -204,7 +203,7 @@ namespace Engine
 				option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(30.0f, 60.0f));
 				option->onMouseReleaseFunc = [soundEngine, uniqueOption, this]()
 				{
-					soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
+					soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
 					const auto vol = soundEngine->getSoundVolume() - 0.01f;
 					if (vol >= 0.0f)
@@ -218,7 +217,7 @@ namespace Engine
 				option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(37.0f, 60.0f));
 				option->onMouseReleaseFunc = [soundEngine, uniqueOption, this]()
 				{
-					soundEngine->play2D("Sounds/buttonselect/1.wav", GL_FALSE);
+					soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 					const auto vol = soundEngine->getSoundVolume() + 0.01f;
 					if (vol <= 1.0f)
 					{
@@ -232,7 +231,7 @@ namespace Engine
 				option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 20.0f));
 				option->onMouseReleaseFunc = [this, soundEngine]()
 				{
-					soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
+					soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
 					getMenus()->pop_back();
 				};
@@ -244,7 +243,7 @@ namespace Engine
 			option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 50.0f));
 			option->onMouseReleaseFunc = [this, soundEngine]()
 			{
-				soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
 				getMenus()->pop_back();
 			};
@@ -258,7 +257,7 @@ namespace Engine
 		{
 			#if _DEBUG
 				std::cout << "exiting\n";
-				getchar();
+				(void)getchar();
 			#endif
 			exit(0);
 		};
@@ -289,7 +288,7 @@ namespace Engine
 			auto option = std::make_shared<Text>("Go To Main Menu", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f));
 			option->onMouseReleaseFunc = [this, soundEngine, inputManager, &gameStateManager, &spriteSheetManager]()
 			{
-				soundEngine->play2D("Sounds/buttonselect/3.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
 
 				initGameMenus(soundEngine, inputManager, gameStateManager, spriteSheetManager);
 				gameStateManager->setGameState(GameState::IN_MENU);
@@ -301,7 +300,7 @@ namespace Engine
 			{
 				#if _DEBUG
 					std::cout << "exiting\n";
-					getchar();
+					(void)getchar();
 				#endif
 				exit(0);
 			};
@@ -320,13 +319,13 @@ namespace Engine
 			auto menus = getMenus();
 			if (menus->size() > 1)
 			{
-				soundEngine->play2D("Sounds/buttonselect/5.wav", GL_FALSE);
+				soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 				menus->pop_back();
 			}
 		}
 	}
 
-	void MenuManager::renderCurrentMenu(const std::shared_ptr<Renderer>& renderer, const float dt, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<InputManager>& inputManager)
+	void MenuManager::renderCurrentMenu(const std::shared_ptr<Renderer>& renderer, const float dt, const std::shared_ptr<InputManager>& inputManager)
 	{
 		auto back = getMenus()->back();
 		const auto uiElements = back->getElements();
@@ -335,7 +334,7 @@ namespace Engine
 		
 		for (auto& text : *texts)
 		{
-			text->update(configurationManager, inputManager);
+			text->update(inputManager);
 		}
 
 		for (auto& uiElement : *uiElements)
@@ -345,7 +344,7 @@ namespace Engine
 
 		for (auto& keybinding : *keybindings)
 		{
-			keybinding->getText()->update(configurationManager, inputManager);
+			keybinding->getText()->update(inputManager);
 			keybinding->update(inputManager);
 		}
 		

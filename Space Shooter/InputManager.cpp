@@ -222,7 +222,7 @@ namespace Engine
 		auto scanCode = MapVirtualKey(virtualKey, MAPVK_VK_TO_VSC);
 
 		TCHAR szName[128];
-		int result;
+		int result = 0;
 		switch (virtualKey)
 		{
 			case VK_LEFT: case VK_UP: case VK_RIGHT: case VK_DOWN:
@@ -234,8 +234,10 @@ namespace Engine
 			case VK_DIVIDE:
 			case VK_NUMLOCK:
 				scanCode |= KF_EXTENDED;
+				break;
 			default:
 				result = GetKeyNameText(scanCode << 16, szName, 128);
+				break;
 		}
 		if (result == 0)
 			throw std::system_error(std::error_code(GetLastError(), std::system_category()),

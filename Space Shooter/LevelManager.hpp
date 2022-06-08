@@ -15,9 +15,7 @@ namespace Engine
 	class BaseGameObject;
 	class InputManager;
 	class GameStateManager;
-	class ConfigurationManager;
 	class SpriteSheetManager;
-	class CollisionManager;
 	class Player;
 	class Entity;
 	class Renderer;
@@ -28,8 +26,8 @@ namespace Engine
 		public:
 			LevelManager(const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*, int);
 			void addExplosion(const std::shared_ptr<BaseGameObject>& _explosion) { m_explosions.push_back(_explosion); }
-			void update(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
-			void render(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<CollisionManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
+			void update(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
+			void render(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
 		private:
 			int getCurrentLevel() const { return m_currentLevel; }
 			void loadLevel(const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);

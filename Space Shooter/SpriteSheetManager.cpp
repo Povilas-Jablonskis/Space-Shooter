@@ -11,7 +11,7 @@ namespace Engine
 	{
 		auto doc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
-		std::ifstream theFile("Config/spritesheets.xml");
+		std::ifstream theFile("assets/Config/spritesheets.xml");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 

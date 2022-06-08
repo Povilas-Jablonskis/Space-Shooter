@@ -19,13 +19,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -48,7 +48,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)include;$(SolutionDir)include\freetype;$(IncludePath)</IncludePath>
     <ReferencePath>$(ReferencePath)</ReferencePath>
-    <LibraryPath>$(SolutionDir)lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)lib;$(SolutionDir)lib\freeglut;$(LibraryPath)</LibraryPath>
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -65,12 +65,19 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>Simple OpenGL Image Library/SOILd.lib;glew/glew32sd.lib;freeglut/freeglut_staticd.lib;freetype/freetyped.lib;irrKlang/irrKlang.lib</AdditionalDependencies>
+      <AdditionalDependencies>glew/glew32s.lib;freeglut/freeglut_static.lib;freetype/freetype.lib;irrKlang/irrKlang.lib</AdditionalDependencies>
       <Profile>true</Profile>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <OptimizeReferences>false</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>
+			XCOPY "$(SolutionDir)Space Shooter\assets\" "$(TargetDir)\assets"  /s /i /y
+			XCOPY "$(SolutionDir)Space Shooter\cfg\" "$(TargetDir)\cfg"  /s /i /y
+			XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y
+		</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -82,7 +89,7 @@
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;FREEGLUT_STATIC;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -90,15 +97,24 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>
       </AdditionalLibraryDirectories>
-      <AdditionalDependencies>Simple OpenGL Image Library/SOIL.lib;glew/glew32s.lib;freeglut/freeglut_static.lib;freetype/freetype.lib;irrKlang/irrKlang.lib</AdditionalDependencies>
+      <AdditionalDependencies>glew/glew32s.lib;freeglut/freeglut_static.lib;freetype/freetype.lib;irrKlang/irrKlang.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
+      <SubSystem>
+      </SubSystem>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
+    <PostBuildEvent>
+      <Command>XCOPY "$(SolutionDir)Space Shooter\assets\" "$(TargetDir)\assets"  /s /i /y
+XCOPY "$(SolutionDir)Space Shooter\cfg\" "$(TargetDir)\cfg"  /s /i /y
+XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="BaseGameObject.cpp" />
-    <ClCompile Include="ConfigurationManager.cpp" />
+    <ClCompile Include="checkCollision.hpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="InputComponent.cpp" />
@@ -122,8 +138,6 @@
     <ClInclude Include="Animation.hpp" />
     <ClInclude Include="Application.hpp" />
     <ClInclude Include="BaseGameObject.hpp" />
-    <ClInclude Include="CollisionManager.hpp" />
-    <ClInclude Include="ConfigurationManager.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="GameStateManager.hpp" />
     <ClInclude Include="InputManager.hpp" />

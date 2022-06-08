@@ -1,7 +1,7 @@
 #include "SpriteSheet.hpp"
 #include "Animation.hpp"
 
-#include "Simple OpenGL Image Library/SOIL.h"
+#include <stb/stb_image.h>
 #include "rapidxml/rapidxml.hpp"
 
 #include <fstream>
@@ -31,9 +31,9 @@ namespace Engine
 		// Set texture filtering
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		const auto image = SOIL_load_image(path.c_str(), &m_width, &m_height, nullptr, SOIL_LOAD_RGBA);
+		const auto image = stbi_load(path.c_str(), &m_width, &m_height, nullptr, STBI_rgb_alpha);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-		SOIL_free_image_data(image);
+		stbi_image_free(image);
 		glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentally mess up our texture.
 
 		m_sprites.emplace_back("wholeSpriteSheet", glm::vec4(m_width, m_height, m_width, m_height));
@@ -139,7 +139,7 @@ namespace Engine
 
 		auto _animation = std::make_shared<Animation>(getTexture(), getWidth(), getHeight());
 
-		for (auto sprite : sprites)
+		for (auto& sprite : sprites)
 		{
 			_animation->addSprite(sprite);
 		}

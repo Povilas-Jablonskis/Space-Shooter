@@ -1,7 +1,5 @@
 #include "Text.hpp"
-#include "ConfigurationManager.hpp"
 #include "UIInputComponent.hpp"
-#include "Font.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -12,7 +10,31 @@ namespace Engine
 	Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPerc) : UIElementBase(color, positionPerc), m_text(
 		                                                                                      std::move(text))
 	{
-		
+		FT_Library library;
+
+		if (FT_Init_FreeType(&library))
+		{
+			#if _DEBUG
+				std::cout << "ERROR::FREETYPE: Could not init FreeType Library\n";
+			#endif
+		}
+
+		FT_Face face;
+		if (FT_New_Face(library, "assets/Fonts/kenvector_future_thin.ttf", 0, &face))
+		{
+			#if _DEBUG
+				std::cout << "ERROR::FREETYPE: Failed to load font\n";
+			#endif
+		}
+
+		m_font = std::make_shared<Font>(face);
+
+		// We Don't Need The Face Information Now That The Display
+		// Lists Have Been Created, So We Free The Associated Resources.
+		FT_Done_Face(face);
+
+		// Ditto For The Font Library.
+		FT_Done_FreeType(library);
 	}
 
 	void Text::setPosition(const glm::vec2& position)
@@ -42,7 +64,7 @@ namespace Engine
 		return colCoordinates.x >= getBoundaryBox().x && colCoordinates.x <= getBoundaryBox().y && colCoordinates.y <= getBoundaryBox().z && colCoordinates.y >= getBoundaryBox().a;
 	}
 
-	void Text::update(const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<InputManager>& inputManager)
+	void Text::update(const std::shared_ptr<InputManager>& inputManager)
 	{
 		if (!doesItNeedUpdate()) return;
 
@@ -61,7 +83,7 @@ namespace Engine
 
 		for (std::_String_iterator<std::_String_val<std::_Simple_types<char>>>::value_type& c : text)
 		{
-			auto ch = configurationManager->getInterfaceFont()->getCharacter(c);
+			auto ch = m_font->getCharacter(c);
 
 			auto xpos = getPosition().x + ch.Bearing.x;
 			auto ypos = getPosition().y - (ch.Size.y - ch.Bearing.y);

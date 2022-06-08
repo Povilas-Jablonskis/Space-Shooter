@@ -3,8 +3,7 @@
 #include "SpriteSheet.hpp"
 #include "GameStateManager.hpp"
 #include "Renderer.hpp"
-#include "ConfigurationManager.hpp"
-#include "CollisionManager.hpp"
+#include "checkCollision.hpp"
 #include "Player.hpp"
 #include "Text.hpp"
 #include "UIManager.hpp"
@@ -19,7 +18,7 @@ namespace Engine
 			auto doc = new rapidxml::xml_document<>();
 			rapidxml::xml_node<>* root_node;
 			// Read the xml file into a vector
-			std::ifstream theFile("Config/levels.xml");
+			std::ifstream theFile("assets/Config/levels.xml");
 			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 			buffer.push_back('\0');
 			// Parse the buffer using the xml file parsing library into doc 
@@ -38,7 +37,7 @@ namespace Engine
 			rapidxml::xml_node<>* root_node;
 			int i = 0;
 			// Read the xml file into a vector
-			std::ifstream theFile("Config/players.xml");
+			std::ifstream theFile("assets/Config/players.xml");
 			std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 			buffer.push_back('\0');
 			// Parse the buffer using the xml file parsing library into doc 
@@ -173,7 +172,7 @@ namespace Engine
 		loadLevel(spriteSheetManager, soundEngine);
 	}
 
-	void LevelManager::update(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine)
+	void LevelManager::update(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine)
 	{
 		if (gameStateManager->getGameState() == GameState::STARTED)
 		{
@@ -232,18 +231,18 @@ namespace Engine
 
 			for (auto& enemy : m_enemies)
 			{
-				collisionManager->checkCollision(m_player, enemy->getBulletsList());
-				collisionManager->checkCollision(enemy, m_player->getBulletsList());
+				checkCollision(m_player, enemy->getBulletsList());
+				checkCollision(enemy, m_player->getBulletsList());
 			}
 
 			for (auto& m_meteor : m_meteors)
 			{
-				collisionManager->checkCollision(m_meteor, m_player->getBulletsList());
+				checkCollision(m_meteor, m_player->getBulletsList());
 			}
 
-			collisionManager->checkCollision(m_player, &m_meteors);
-			collisionManager->checkCollision(m_player, &m_enemies);
-			collisionManager->checkCollision(m_player, &m_pickups);
+			checkCollision(m_player, &m_meteors);
+			checkCollision(m_player, &m_enemies);
+			checkCollision(m_player, &m_pickups);
 
 			if (lastPlayerAlive == false && m_player->getNeedsToBeRemoved())
 			{
@@ -273,7 +272,7 @@ namespace Engine
 		}
 	}
 
-	void LevelManager::render(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<CollisionManager>& collisionManager, const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine)
+	void LevelManager::render(const float dt, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<Renderer>& renderer, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager, irrklang::ISoundEngine* soundEngine)
 	{
 		const auto newTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
 		const auto frameTime = (newTime - m_currentTime) / 1000.0f;
@@ -283,7 +282,7 @@ namespace Engine
 
 		while (m_accumulator >= dt)
 		{
-			update(dt, gameStateManager, inputManager, collisionManager, spriteSheetManager, soundEngine);
+			update(dt, gameStateManager, inputManager, spriteSheetManager, soundEngine);
 
 			m_accumulator -= dt;
 		}
@@ -322,7 +321,7 @@ namespace Engine
 			//Render m_player's bullets
 			renderer->draw(*m_player->getBulletsList());
 			//Render & Update UI elements
-			getUIManager()->updateUI(m_player->getValue(), m_player->getLivesIcon(), m_player->getLives(), dt, inputManager, configurationManager, spriteSheetManager);
+			getUIManager()->updateUI(m_player->getValue(), m_player->getLivesIcon(), m_player->getLives(), dt, inputManager, spriteSheetManager);
 
 			getUIManager()->renderUI(renderer);
 		}
@@ -334,7 +333,7 @@ namespace Engine
 		auto doc = new rapidxml::xml_document<>();
 		rapidxml::xml_node<>* root_node;
 		// Read the xml file into a vector
-		std::ifstream theFile("Config/levels.xml");
+		std::ifstream theFile("assets/Config/levels.xml");
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 

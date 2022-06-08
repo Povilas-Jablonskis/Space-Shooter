@@ -1,6 +1,8 @@
 #ifndef spriteSheetH
 #define spriteSheetH
 
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <glm/vec4.hpp>
 #include <glew/glew.h>
 #include <vector>

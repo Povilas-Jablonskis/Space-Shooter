@@ -1,0 +1,4 @@
+<Spritesheets>
+	<Spritesheet name="main" spriteSheetName="assets/Spritesheet/sheet.png" spriteSheetNameXml="assets/Spritesheet/sheet.xml"/>
+	<Spritesheet name="background" spriteSheetName="assets/Backgrounds/blue.png" spriteSheetNameXml=""/>
+</Spritesheets>

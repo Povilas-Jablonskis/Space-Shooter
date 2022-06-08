@@ -6,8 +6,6 @@
 
 namespace Engine
 {
-	class CollisionManager;
-	class ConfigurationManager;
 	class InputManager;
 	class MenuManager;
 	class SpriteSheetManager;
@@ -27,15 +25,11 @@ namespace Engine
 			const std::shared_ptr<InputManager>& getInputManager() const { return m_inputManager; }
 			const std::shared_ptr<MenuManager>& getMenuManager() const { return m_menuManager; }
 			const std::shared_ptr<SpriteSheetManager>& getSpritesheetManager() const { return m_spriteSheetManager; }
-			const std::shared_ptr<ConfigurationManager>& getConfigurationManager() const { return m_configurationManager; }
-			const std::shared_ptr<CollisionManager>& getCollisionManager() const { return m_collisionManager; }
 			const std::shared_ptr<Renderer>& getRenderer() const { return m_renderer; }
 			const std::shared_ptr<GameStateManager>& getGameStateManager() const { return m_gameStateManager; }
 		private:
-			std::shared_ptr<ConfigurationManager> m_configurationManager{ std::make_shared<ConfigurationManager>() };
 			std::shared_ptr<MenuManager> m_menuManager{ std::make_shared<MenuManager>() };
 			std::shared_ptr<SpriteSheetManager> m_spriteSheetManager{ std::make_shared<SpriteSheetManager>() };
-			std::shared_ptr<CollisionManager> m_collisionManager{ std::make_shared<CollisionManager>() };
 			std::shared_ptr<InputManager> m_inputManager{ std::make_shared<InputManager>() };
 			std::shared_ptr<GameStateManager> m_gameStateManager{ std::make_shared<GameStateManager>() };
 

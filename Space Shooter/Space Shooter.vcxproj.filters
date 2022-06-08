@@ -31,6 +31,9 @@
     <Filter Include="Source Files\Components\Input">
       <UniqueIdentifier>{06288c2f-8a07-47b8-9884-0f3cb2af6ab3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\CollisionCheck">
+      <UniqueIdentifier>{64505145-e5e3-454c-a211-d734886d1781}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -72,9 +75,6 @@
     <ClCompile Include="Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigurationManager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
     <ClCompile Include="InputManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
@@ -96,6 +96,9 @@
     <ClCompile Include="KeyBinding.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="checkCollision.hpp">
+      <Filter>Header Files\CollisionCheck</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputComponent.hpp">
@@ -103,12 +106,6 @@
     </ClInclude>
     <ClInclude Include="UIInputComponent.hpp">
       <Filter>Header Files\Components\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionManager.hpp">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigurationManager.hpp">
-      <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="InputManager.hpp">
       <Filter>Header Files\Managers</Filter>

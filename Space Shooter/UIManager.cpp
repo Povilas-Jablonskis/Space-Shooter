@@ -3,7 +3,6 @@
 #include "SpriteSheetManager.hpp"
 #include "GameStateManager.hpp"
 #include "Renderer.hpp"
-#include "ConfigurationManager.hpp"
 #include "SpriteSheet.hpp"
 
 namespace Engine
@@ -20,7 +19,7 @@ namespace Engine
 		}
 	}
 
-	void UIManager::updateUI(const int score, const std::string& icon, const int lives, const float dt, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<ConfigurationManager>& configurationManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
+	void UIManager::updateUI(const int score, const std::string& icon, const int lives, const float dt, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
 	{
 		m_scoreBoard.clear();
 
@@ -68,7 +67,7 @@ namespace Engine
 
 		for (auto& m_notification : m_notifications)
 		{
-			m_notification->update(configurationManager, inputManager);
+			m_notification->update(inputManager);
 		}
 	}
 }

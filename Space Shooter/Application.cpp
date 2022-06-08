@@ -5,8 +5,6 @@
 #include "LevelManager.hpp"
 #include "InputManager.hpp"
 #include "GameStateManager.hpp"
-#include "CollisionManager.hpp"
-#include "ConfigurationManager.hpp"
 #include "Shader.hpp"
 #include "KeyBinding.hpp"
 
@@ -81,12 +79,12 @@ namespace Engine
 
 		if (getMenuManager()->getLevelManager())
 		{
-			getMenuManager()->getLevelManager()->render(m_dt, getGameStateManager(), getInputManager(), getCollisionManager(), getRenderer(), getConfigurationManager(), getSpritesheetManager(), getSoundEngine());
+			getMenuManager()->getLevelManager()->render(m_dt, getGameStateManager(), getInputManager(), getRenderer(), getSpritesheetManager(), getSoundEngine());
 		}
 
 		if (!menus->empty() && (getGameStateManager()->getGameState() == GameState::IN_MENU || getGameStateManager()->getGameState() == GameState::IN_PAUSED_MENU))
 		{
-			getMenuManager()->renderCurrentMenu(getRenderer(), m_dt, getConfigurationManager(), getInputManager());
+			getMenuManager()->renderCurrentMenu(getRenderer(), m_dt, getInputManager());
 		}
 
 		glutSwapBuffers();

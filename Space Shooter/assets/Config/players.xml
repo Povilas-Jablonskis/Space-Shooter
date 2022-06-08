@@ -1,0 +1,119 @@
+<Players>
+	<Player spriteName="playerShip1_blue.png" livesIcon="playerLife1_blue.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserBlue14.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserBlue08.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+	<Player spriteName="playerShip2_blue.png" livesIcon="playerLife2_blue.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserBlue14.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserBlue08.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+	<Player spriteName="playerShip3_blue.png" livesIcon="playerLife3_blue.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserBlue14.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserBlue08.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+	<Player spriteName="playerShip1_green.png" livesIcon="playerLife1_green.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserGreen06.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserGreen14.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+	<Player spriteName="playerShip2_green.png" livesIcon="playerLife2_green.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserGreen06.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserGreen14.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+	<Player spriteName="playerShip3_green.png" livesIcon="playerLife3_green.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserGreen06.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserGreen14.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+	<Player spriteName="playerShip1_red.png" livesIcon="playerLife1_red.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserRed14.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserRed08.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+	<Player spriteName="playerShip2_red.png" livesIcon="playerLife2_red.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserRed14.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserRed08.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+	<Player spriteName="playerShip3_red.png" livesIcon="playerLife3_red.png" velocityX="150.0" velocityY="100.0" lives="3">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" shootingSound="assets/Sounds/sfx_laser1.ogg" delayBetweenShoots="0.5">
+			<Bullet spriteName="laserRed14.png" velocityX="0.0" velocityY="200.0" offsetX="0.0" offsetY="0.0">
+				<Animations>
+					<Sprite name="explosion" spriteName="laserRed08.png"/>
+				</Animations>
+			</Bullet>
+		</ShootingEffect>
+		<Animations>
+			<Sprite name="noMovingExhaust" spriteName="fire03.png"/>
+			<Sprite name="movingExhaust" spriteName="fire07.png"/>
+		</Animations>
+	</Player>
+</Players>

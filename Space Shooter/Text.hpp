@@ -7,11 +7,11 @@
 #include <vector>
 
 #include "UIElementBase.hpp"
+#include "Font.hpp"
 
 namespace Engine
 {
-	class RenderObject;
-	class ConfigurationManager;
+	class Render1Object;
 	class InputManager;
 
 	typedef std::pair<GLuint, std::vector<GLfloat>> cachedCharacter;
@@ -20,7 +20,7 @@ namespace Engine
 	{
 		public:
 			Text(std::string, const glm::vec4&, const glm::vec2&);
-			void update(const std::shared_ptr<ConfigurationManager>&, const std::shared_ptr<InputManager>&);
+			void update(const std::shared_ptr<InputManager>&);
 			void fixPosition() override;
 			bool checkIfCollides(const glm::vec2&) const override;
 			void onHoverEnterFuncDefaults() override;
@@ -38,6 +38,7 @@ namespace Engine
 			void changeBoundaryBox(glm::vec4& t_bbox) { m_bbox = t_bbox; }
 
 			bool m_needUpdate{ true };
+			std::shared_ptr<Font> m_font;
 			std::string m_text;
 			std::vector<cachedCharacter> m_cachedCharacters;
 			glm::vec4 m_bbox = {0.0f, 0.0f, 0.0f, 0.0f };

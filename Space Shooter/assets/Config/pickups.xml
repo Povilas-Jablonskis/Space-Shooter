@@ -1,0 +1,23 @@
+<Pickups>
+	<Pickup name="defaultShooting" pickupSound="assets/Sounds/sfx_shieldUp.ogg" spriteName="bolt_bronze.png">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" delayBetweenShoots="0.25">
+			<Shoot velocityX="0.0" velocityY="200.0" offsetX="1.0" offsetY="1.0"/>
+		</ShootingEffect>
+	</Pickup>
+	<Pickup name="doubleShooting" pickupSound="assets/Sounds/sfx_shieldUp.ogg" spriteName="bold_silver.png">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" delayBetweenShoots="0.5">
+			<Shoot velocityX="0.0" velocityY="200.0" offsetX="1.0" offsetY="1.0"/>
+			<Shoot velocityX="0.0" velocityY="200.0" offsetX="1.0" offsetY="3.0"/>
+		</ShootingEffect>
+	</Pickup>
+	<Pickup name="halfCircleShooting" pickupSound="assets/Sounds/sfx_shieldUp.ogg" spriteName="bolt_gold.png">
+		<ShootingEffect explosionSound="assets/Sounds/explosions/6.wav" delayBetweenShoots="0.5">
+			<Shoot velocityX="0.0" velocityY="200.0" offsetX="-3.0" offsetY="-3.0"/>
+			<Shoot velocityX="0.0" velocityY="200.0" offsetX="1.0" offsetY="1.0"/>
+			<Shoot velocityX="0.0" velocityY="200.0" offsetX="3.0" offsetY="3.0"/>
+		</ShootingEffect>
+	</Pickup>
+	<Pickup name="shield" pickupSound="assets/Sounds/sfx_shieldUp.ogg" spriteName="shield_silver.png">
+		<Shield loseSound="assets/Sounds/sfx_shieldDown.ogg"/>
+	</Pickup>
+</Pickups>

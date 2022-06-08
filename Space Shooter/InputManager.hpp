@@ -59,7 +59,7 @@ namespace Engine
 			std::vector<keyState> m_keyStates;
 			std::vector<keyState> m_lastKeyStates;
 			std::vector<std::shared_ptr<KeyBinding>> m_keyBindings;
-			std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding = nullptr;
+			std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding{ nullptr };
 	};
 }
 #endif

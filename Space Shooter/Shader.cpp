@@ -13,7 +13,7 @@ namespace Engine
 	std::string Shader::readShaderFile(const std::string& path) const
 	{
 		std::string content;
-		std::ifstream fs("Shaders/" + path);
+		std::ifstream fs("assets/Shaders/" + path);
 		char buffer;
 
 		if (fs.is_open())
