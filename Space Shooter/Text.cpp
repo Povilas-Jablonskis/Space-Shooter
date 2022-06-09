@@ -5,149 +5,146 @@
 #include <utility>
 #include <freeglut/freeglut_std.h>
 
-namespace Engine
+Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPerc) : UIElementBase(color, positionPerc), m_text(
+	std::move(text))
 {
-	Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPerc) : UIElementBase(color, positionPerc), m_text(
-		                                                                                      std::move(text))
+	FT_Library library;
+
+	if (FT_Init_FreeType(&library))
 	{
-		FT_Library library;
-
-		if (FT_Init_FreeType(&library))
-		{
-			#if _DEBUG
-				std::cout << "ERROR::FREETYPE: Could not init FreeType Library\n";
-			#endif
-		}
-
-		FT_Face face;
-		if (FT_New_Face(library, "assets/Fonts/kenvector_future_thin.ttf", 0, &face))
-		{
-			#if _DEBUG
-				std::cout << "ERROR::FREETYPE: Failed to load font\n";
-			#endif
-		}
-
-		m_font = std::make_shared<Font>(face);
-
-		// We Don't Need The Face Information Now That The Display
-		// Lists Have Been Created, So We Free The Associated Resources.
-		FT_Done_Face(face);
-
-		// Ditto For The Font Library.
-		FT_Done_FreeType(library);
+#if _DEBUG
+		std::cout << "ERROR::FREETYPE: Could not init FreeType Library\n";
+#endif
 	}
 
-	void Text::setPosition(const glm::vec2& position)
-	{ 
-		RenderObject::setPosition(position);
-		m_needUpdate = true; 
-	}
-
-	void Text::setPosition(const int index, const float position)
-	{ 
-		RenderObject::setPosition(index, position);
-		m_needUpdate = true;
-	}
-
-	void Text::onHoverEnterFuncDefaults()
+	FT_Face face;
+	if (FT_New_Face(library, "assets/Fonts/kenvector_future_thin.ttf", 0, &face))
 	{
-		changeColor(glm::vec4(0.0f, 0.0f, 0.0f, getColor().a));
+#if _DEBUG
+		std::cout << "ERROR::FREETYPE: Failed to load font\n";
+#endif
 	}
 
-	void Text::onHoverExitFuncDefaults()
+	m_font = std::make_shared<Font>(face);
+
+	// We Don't Need The Face Information Now That The Display
+	// Lists Have Been Created, So We Free The Associated Resources.
+	FT_Done_Face(face);
+
+	// Ditto For The Font Library.
+	FT_Done_FreeType(library);
+}
+
+void Text::setPosition(const glm::vec2& position)
+{
+	RenderObject::setPosition(position);
+	m_needUpdate = true;
+}
+
+void Text::setPosition(const int index, const float position)
+{
+	RenderObject::setPosition(index, position);
+	m_needUpdate = true;
+}
+
+void Text::onHoverEnterFuncDefaults()
+{
+	changeColor(glm::vec4(0.0f, 0.0f, 0.0f, getColor().a));
+}
+
+void Text::onHoverExitFuncDefaults()
+{
+	changeColor(glm::vec4(255.0f, 160.0f, 122.0f, getColor().a));
+}
+
+bool Text::checkIfCollides(const glm::vec2& colCoordinates) const
+{
+	return colCoordinates.x >= getBoundaryBox().x && colCoordinates.x <= getBoundaryBox().y && colCoordinates.y <= getBoundaryBox().z && colCoordinates.y >= getBoundaryBox().a;
+}
+
+void Text::update(const std::shared_ptr<InputManager>& inputManager)
+{
+	if (!doesItNeedUpdate()) return;
+
+	m_cachedCharacters.clear();
+	setNeedUpdate(false);
+
+	fixPosition();
+	updateInput(this, inputManager);
+
+	changeBoundaryBox(getPosition().x, 0);
+	changeBoundaryBox(getPosition().y, 3);
+
+	const auto lastPosition = getPosition();
+	std::vector<float> tempVector;
+	auto text = getText();
+
+	for (std::_String_iterator<std::_String_val<std::_Simple_types<char>>>::value_type& c : text)
 	{
-		changeColor(glm::vec4(255.0f, 160.0f, 122.0f, getColor().a));
+		auto ch = m_font->getCharacter(c);
+
+		auto xpos = getPosition().x + ch.Bearing.x;
+		auto ypos = getPosition().y - (ch.Size.y - ch.Bearing.y);
+
+		tempVector.push_back(ch.Size.y);
+
+		const auto w = static_cast<GLfloat>(ch.Size.x);
+		const auto h = static_cast<GLfloat>(ch.Size.y);
+		// Update VBO for each character
+
+		std::vector<cachedCharacter> textVector;
+		std::vector<GLfloat> vertices;
+		vertices.push_back(xpos);
+		vertices.push_back(ypos + h);
+		vertices.push_back(0.0);
+		vertices.push_back(0.0);
+
+		vertices.push_back(xpos);
+		vertices.push_back(ypos);
+		vertices.push_back(0.0);
+		vertices.push_back(1.0);
+
+		vertices.push_back(xpos + w);
+		vertices.push_back(ypos);
+		vertices.push_back(1.0);
+		vertices.push_back(1.0);
+
+
+		vertices.push_back(xpos);
+		vertices.push_back(ypos + h);
+		vertices.push_back(0.0);
+		vertices.push_back(0.0);
+
+		vertices.push_back(xpos + w);
+		vertices.push_back(ypos);
+		vertices.push_back(1.0);
+		vertices.push_back(1.0);
+
+		vertices.push_back(xpos + w);
+		vertices.push_back(ypos + h);
+		vertices.push_back(1.0);
+		vertices.push_back(0.0);
+
+		m_cachedCharacters.emplace_back(
+			ch.TextureID,
+			vertices
+		);
+		setPosition(0, getPosition().x + (ch.Advance >> 6)); // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 
-	bool Text::checkIfCollides(const glm::vec2& colCoordinates) const
+	changeBoundaryBox(getPosition().x, 1);
+	changeBoundaryBox(getPosition().y + (tempVector.empty() ? 0.0f : static_cast<float>(*std::max_element(std::begin(tempVector), std::end(tempVector)))), 2);
+	setPosition(lastPosition);
+}
+
+void Text::fixPosition()
+{
+	const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+	const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
+
+	if (getPositionPercents() != glm::vec2(0.0f, 0.0f))
 	{
-		return colCoordinates.x >= getBoundaryBox().x && colCoordinates.x <= getBoundaryBox().y && colCoordinates.y <= getBoundaryBox().z && colCoordinates.y >= getBoundaryBox().a;
-	}
-
-	void Text::update(const std::shared_ptr<InputManager>& inputManager)
-	{
-		if (!doesItNeedUpdate()) return;
-
-		m_cachedCharacters.clear();
-		setNeedUpdate(false);
-
-		fixPosition();
-		updateInput(this, inputManager);
-
-		changeBoundaryBox(getPosition().x, 0);
-		changeBoundaryBox(getPosition().y, 3);
-
-		const auto lastPosition = getPosition();
-		std::vector<float> tempVector;
-		auto text = getText();
-
-		for (std::_String_iterator<std::_String_val<std::_Simple_types<char>>>::value_type& c : text)
-		{
-			auto ch = m_font->getCharacter(c);
-
-			auto xpos = getPosition().x + ch.Bearing.x;
-			auto ypos = getPosition().y - (ch.Size.y - ch.Bearing.y);
-
-			tempVector.push_back(ch.Size.y);
-
-			const auto w = static_cast<GLfloat>(ch.Size.x);
-			const auto h = static_cast<GLfloat>(ch.Size.y);
-			// Update VBO for each character
-
-			std::vector<cachedCharacter> textVector;
-			std::vector<GLfloat> vertices;
-			vertices.push_back(xpos);
-			vertices.push_back(ypos + h);
-			vertices.push_back(0.0);
-			vertices.push_back(0.0);
-
-			vertices.push_back(xpos);
-			vertices.push_back(ypos);
-			vertices.push_back(0.0);
-			vertices.push_back(1.0);
-
-			vertices.push_back(xpos + w);
-			vertices.push_back(ypos);
-			vertices.push_back(1.0);
-			vertices.push_back(1.0);
-
-
-			vertices.push_back(xpos);
-			vertices.push_back(ypos + h);
-			vertices.push_back(0.0);
-			vertices.push_back(0.0);
-
-			vertices.push_back(xpos + w);
-			vertices.push_back(ypos);
-			vertices.push_back(1.0);
-			vertices.push_back(1.0);
-
-			vertices.push_back(xpos + w);
-			vertices.push_back(ypos + h);
-			vertices.push_back(1.0);
-			vertices.push_back(0.0);
-
-			m_cachedCharacters.emplace_back(
-				ch.TextureID,
-				vertices
-			);
-			setPosition(0, getPosition().x + (ch.Advance >> 6)); // Bitshift by 6 to get value in pixels (2^6 = 64)
-		}
-
-		changeBoundaryBox(getPosition().x, 1);
-		changeBoundaryBox(getPosition().y + (tempVector.empty() ? 0.0f : static_cast<float>(*std::max_element(std::begin(tempVector), std::end(tempVector)))), 2);
-		setPosition(lastPosition);
-	}
-
-	void Text::fixPosition()
-	{
-		const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
-		const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
-
-		if (getPositionPercents() != glm::vec2(0.0f, 0.0f))
-		{
-			setPosition(0, windowWidth * (getPositionPercents().x / 100.0f));
-			setPosition(1, windowHeight * (getPositionPercents().y / 100.0f));
-		}
+		setPosition(0, windowWidth * (getPositionPercents().x / 100.0f));
+		setPosition(1, windowHeight * (getPositionPercents().y / 100.0f));
 	}
 }

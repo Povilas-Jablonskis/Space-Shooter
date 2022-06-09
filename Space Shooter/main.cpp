@@ -5,8 +5,6 @@
 #include <freeglut/freeglut.h>
 #include <iostream>
 
-using namespace Engine;
-
 std::shared_ptr<Application> application;
 
 void motionFunc(const int x, const int y)
