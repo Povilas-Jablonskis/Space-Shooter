@@ -25,7 +25,7 @@ void Animation::loadFromFile(const std::string& path)
 	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentally mess up our texture.
 
 	m_sprites.clear();
-	setSpriteSheetWidth(width);
-	setSpriteSheetHeight(height);
+	m_spriteSheetWidth = width;
+	m_spriteSheetHeight = height;
 	m_sprites.emplace_back(width, height, width, height);
 }

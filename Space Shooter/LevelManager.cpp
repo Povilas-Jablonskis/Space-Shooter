@@ -88,7 +88,7 @@ LevelManager::LevelManager(const std::shared_ptr<SpriteSheetManager>& spriteShee
 						bullets.push_back(bullet);
 					}
 
-					m_player->shootingModeFunc = [soundEngine, bullets, explosionSound, shootingSound, this]()
+					m_player->shootingModeFunc = [=]()
 					{
 						for (const auto& bullet : bullets)
 						{
@@ -97,7 +97,7 @@ LevelManager::LevelManager(const std::shared_ptr<SpriteSheetManager>& spriteShee
 							_bulletPosition += glm::vec2(m_player->getWidth() * _bullet->getPosition().x, m_player->getHeight() * _bullet->getPosition().y);
 							_bullet->setPosition(_bulletPosition);
 
-							_bullet->onUpdateFunc = [this, soundEngine, _bullet]()
+							_bullet->onUpdateFunc = [=]()
 							{
 								if (_bullet->getNeedsToBeRemoved())
 								{
@@ -113,7 +113,7 @@ LevelManager::LevelManager(const std::shared_ptr<SpriteSheetManager>& spriteShee
 
 									auto explosion = std::make_shared<BaseGameObject>(_bullet->getPosition(), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 									explosion->applyAnimation(_bullet->getAnimationByIndex("explosion"));
-									explosion->onUpdateFunc = [explosion]()
+									explosion->onUpdateFunc = [=]()
 									{
 										explosion->changeColor(explosion->getColor().a - 0.05f, 3);
 
@@ -247,7 +247,7 @@ void LevelManager::update(const float dt, const std::shared_ptr<GameStateManager
 		{
 			auto gameOverText = std::make_shared<Text>("Game over!", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(45.0f, 50.0f));
 			gameOverText->disable();
-			getUIManager()->addNotification(gameOverText);
+			m_uiManager->addNotification(gameOverText);
 
 			gameStateManager->setGameState(GameState::ENDED);
 		}
@@ -263,7 +263,7 @@ void LevelManager::update(const float dt, const std::shared_ptr<GameStateManager
 			{
 				auto gameWinText = std::make_shared<Text>("You killed all waves!", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(45.0f, 50.0f));
 				gameWinText->disable();
-				getUIManager()->addNotification(gameWinText);
+				m_uiManager->addNotification(gameWinText);
 
 				gameStateManager->setGameState(GameState::ENDED);
 			}
@@ -320,9 +320,9 @@ void LevelManager::render(const float dt, const std::shared_ptr<GameStateManager
 		//Render m_player's bullets
 		renderer->draw(*m_player->getBulletsList());
 		//Render & Update UI elements
-		getUIManager()->updateUI(m_player->getValue(), m_player->getLivesIcon(), m_player->getLives(), dt, inputManager, spriteSheetManager);
+		m_uiManager->updateUI(m_player->getValue(), m_player->getLivesIcon(), m_player->getLives(), dt, inputManager, spriteSheetManager);
 
-		getUIManager()->renderUI(renderer);
+		m_uiManager->renderUI(renderer);
 	}
 }
 
@@ -342,7 +342,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 	// Iterate over the breweries
 	for (auto brewery_node = root_node->first_node("Level"); brewery_node; brewery_node = brewery_node->next_sibling("Level"))
 	{
-		if (i == getCurrentLevel())
+		if (i == m_currentLevel)
 		{
 			m_background = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(0.0f, 0.0f));
 			m_background->applyAnimation(spriteSheetManager->getSpriteSheet("background")->getSprite("wholeSpriteSheet"));
@@ -387,7 +387,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 						bullets.push_back(bullet);
 					}
 
-					enemy->shootingModeFunc = [this, soundEngine, shootingSound, bullets, enemy, explosionSound]()
+					enemy->shootingModeFunc = [=]()
 					{
 						for (const auto& bullet : bullets)
 						{
@@ -396,7 +396,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 							_bulletPosition += glm::vec2(enemy->getWidth() * _bullet->getPosition().x, enemy->getHeight() * _bullet->getPosition().y);
 							_bullet->setPosition(_bulletPosition);
 
-							_bullet->onUpdateFunc = [this, soundEngine, _bullet]()
+							_bullet->onUpdateFunc = [=]()
 							{
 								if (_bullet->getNeedsToBeRemoved() && _bullet->getLives() <= 1)
 								{
@@ -412,7 +412,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 
 									auto explosion = std::make_shared<BaseGameObject>(_bullet->getPosition(), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 									explosion->applyAnimation(_bullet->getAnimationByIndex("explosion"));
-									explosion->onUpdateFunc = [explosion]()
+									explosion->onUpdateFunc = [=]()
 									{
 										explosion->changeColor(explosion->getColor().a - 0.05f, 3);
 
@@ -457,7 +457,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 					}
 				}
 
-				enemy->onUpdateFunc = [enemy]()
+				enemy->onUpdateFunc = [=]()
 				{
 					const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
 					const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
@@ -479,7 +479,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 				meteor->setExplosionSound(beer_node->first_attribute("explosionSound")->value());
 				meteor->setVelocity(glm::vec2(std::stof(beer_node->first_attribute("velocityX")->value()), std::stof(beer_node->first_attribute("velocityY")->value())));
 				meteor->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(beer_node->first_attribute("spriteName")->value()));
-				meteor->onUpdateFunc = [meteor]()
+				meteor->onUpdateFunc = [=]()
 				{
 					meteor->setRotationAngle(meteor->getRotationAngle() + 0.05f);
 
@@ -529,13 +529,13 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 						bullets.push_back(bullet);
 					}
 
-					pickup->onCollisionFunc = [soundEngine, bullets, explosionSound, shootingSound, delayBetweenShoots, pickup, this](const std::shared_ptr<BaseGameObject>& collider)
+					pickup->onCollisionFunc = [=](const std::shared_ptr<BaseGameObject>& collider)
 					{
 						auto entity = dynamic_cast<Entity*>(collider.get());
 
 						pickup->setNeedsToBeRemoved(true);
 
-						entity->shootingModeFunc = [this, soundEngine, bullets, explosionSound, shootingSound, entity]()
+						entity->shootingModeFunc = [=]()
 						{
 							for (const auto& bullet : bullets)
 							{
@@ -544,7 +544,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 								_bulletPosition += glm::vec2(entity->getWidth() * _bullet->getPosition().x, entity->getHeight() * _bullet->getPosition().y);
 								_bullet->setPosition(_bulletPosition);
 
-								_bullet->onUpdateFunc = [this, soundEngine, _bullet]()
+								_bullet->onUpdateFunc = [=]()
 								{
 									if (_bullet->getNeedsToBeRemoved() && _bullet->getLives() <= 1)
 									{
@@ -560,7 +560,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 
 										auto explosion = std::make_shared<BaseGameObject>(_bullet->getPosition(), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 										explosion->applyAnimation(_bullet->getAnimationByIndex("explosion"));
-										explosion->onUpdateFunc = [explosion]()
+										explosion->onUpdateFunc = [=]()
 										{
 											explosion->changeColor(explosion->getColor().a - 0.05f, 3);
 
@@ -600,7 +600,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 				{
 					std::string shieldSpriteName = beer_node2->first_attribute("spriteName")->value();
 
-					pickup->onCollisionFunc = [&spriteSheetManager, shieldSpriteName, pickup](const std::shared_ptr<BaseGameObject>& collider)
+					pickup->onCollisionFunc = [=](const std::shared_ptr<BaseGameObject>& collider)
 					{
 						auto entity = dynamic_cast<Entity*>(collider.get());
 
@@ -609,7 +609,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 						auto shield = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 0.7f));
 
 						shield->applyAnimation(spriteSheetManager->getSpriteSheet("main")->getSprite(shieldSpriteName));
-						shield->onUpdateFunc = [shield, entity]()
+						shield->onUpdateFunc = [=]()
 						{
 							shield->changeColor(shield->getColor().a - 0.05f, 3);
 
@@ -620,7 +620,7 @@ void LevelManager::loadLevel(const std::shared_ptr<SpriteSheetManager>& spriteSh
 
 							shield->setPosition(entity->getPosition() + glm::vec2((shield->getWidth() - entity->getWidth()) * -1.0f / 2.0f, (shield->getHeight() - entity->getHeight()) * -1.0f / 2.0f));
 						};
-						entity->addAddon(addon("shield", shield));
+						entity->addAddon("shield", shield);
 						return true;
 					};
 				}

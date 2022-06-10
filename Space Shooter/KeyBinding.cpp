@@ -14,7 +14,7 @@ KeyBinding::KeyBinding(std::string keyBinding, const short keyBindingCharacter) 
 
 void KeyBinding::savePlayerConfig(const std::shared_ptr<InputManager>& inputManager) const
 {
-	const auto keyBindings = *inputManager->getKeyBindings();
+	const auto& keyBindings = *inputManager->getKeyBindings();
 	auto doc = new rapidxml::xml_document<>();
 
 	auto KeyBindings = doc->allocate_node(rapidxml::node_type::node_element, "KeyBindings");
@@ -54,10 +54,10 @@ void KeyBinding::update(const std::shared_ptr<InputManager>& inputManager)
 		return;
 	}
 
-	auto keys = *inputManager->getKeys();
+	auto& keys = *inputManager->getKeys();
 	auto keyBindings = inputManager->getKeyBindings();
 
-	for (auto key : keys)
+	for (auto& key : keys)
 	{
 		if (!inputManager->getLastKey(key.first) && key.second)
 		{
@@ -67,7 +67,7 @@ void KeyBinding::update(const std::shared_ptr<InputManager>& inputManager)
 				getText()->onHoverExitFuncDefaults();
 				getText()->setText(InputManager::virtualKeyCodeToString(key.first));
 
-				setKeyBindingCharacter(key.first);
+				m_keyBindingCharacter = key.first;
 				inputManager->setCurrentlyEditedKeyBinding(nullptr);
 
 				savePlayerConfig(inputManager);

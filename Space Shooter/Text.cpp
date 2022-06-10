@@ -59,7 +59,7 @@ void Text::onHoverExitFuncDefaults()
 
 bool Text::checkIfCollides(const glm::vec2& colCoordinates) const
 {
-	return colCoordinates.x >= getBoundaryBox().x && colCoordinates.x <= getBoundaryBox().y && colCoordinates.y <= getBoundaryBox().z && colCoordinates.y >= getBoundaryBox().a;
+	return colCoordinates.x >= m_bbox.x && colCoordinates.x <= m_bbox.y && colCoordinates.y <= m_bbox.z && colCoordinates.y >= m_bbox.a;
 }
 
 void Text::update(const std::shared_ptr<InputManager>& inputManager)
@@ -72,14 +72,14 @@ void Text::update(const std::shared_ptr<InputManager>& inputManager)
 	fixPosition();
 	updateInput(this, inputManager);
 
-	changeBoundaryBox(getPosition().x, 0);
-	changeBoundaryBox(getPosition().y, 3);
+	m_bbox[0] = getPosition().x;
+	m_bbox[3] = getPosition().y;
 
-	const auto lastPosition = getPosition();
+	const auto& lastPosition = getPosition();
 	std::vector<float> tempVector;
-	auto text = getText();
+	auto& text = getText();
 
-	for (std::_String_iterator<std::_String_val<std::_Simple_types<char>>>::value_type& c : text)
+	for (FT_ULong c : m_text)
 	{
 		auto ch = m_font->getCharacter(c);
 
@@ -131,9 +131,8 @@ void Text::update(const std::shared_ptr<InputManager>& inputManager)
 		);
 		setPosition(0, getPosition().x + (ch.Advance >> 6)); // Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
-
-	changeBoundaryBox(getPosition().x, 1);
-	changeBoundaryBox(getPosition().y + (tempVector.empty() ? 0.0f : static_cast<float>(*std::max_element(std::begin(tempVector), std::end(tempVector)))), 2);
+	m_bbox[1] = getPosition().x;
+	m_bbox[2] = getPosition().y + (tempVector.empty() ? 0.0f : static_cast<float>(*std::max_element(std::begin(tempVector), std::end(tempVector))));
 	setPosition(lastPosition);
 }
 

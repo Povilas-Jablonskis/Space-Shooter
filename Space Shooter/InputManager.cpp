@@ -4,31 +4,39 @@
 #include "GameStateManager.hpp"
 #include "KeyBinding.hpp"
 
+#include <iostream>
 #include <algorithm>
 #include <system_error>
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
 
-
 bool InputManager::getKey(const short key) 
 { 
-	auto keyStates = *getKeys();
-	const auto it = std::find_if(keyStates.begin(), keyStates.end(), [key](auto kb) { return kb.first == key; });
-
-	return it != keyStates.end() ? it->second : false;
+	try
+	{
+		return m_keyStates.at(key);
+	}
+	catch (const std::exception&)
+	{
+		return false;
+	};
 }
 
 bool InputManager::getLastKey(const short key)
 {
-	auto lastKeyStates = *getLastKeys();
-	const auto it = std::find_if(lastKeyStates.begin(), lastKeyStates.end(), [key](auto kb) { return kb.first == key; });
-
-	return it != lastKeyStates.end() ? it->second : false;
+	try
+	{
+		return m_lastKeyStates.at(key);
+	}
+	catch (const std::exception&)
+	{
+		return false;
+	};
 }
 
 bool InputManager::getKey(const std::string& key)
 {
-	auto keyBindings = *getKeyBindings();
+	auto& keyBindings = *getKeyBindings();
 	const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb->getKeyBinding() == key; });
 		
 	return kb != keyBindings.end() ? getKey((*kb)->getKeyBindingCharacter()) : false;
@@ -36,7 +44,7 @@ bool InputManager::getKey(const std::string& key)
 
 bool InputManager::getLastKey(const std::string& key)
 {
-	auto keyBindings = *getKeyBindings();
+	auto& keyBindings = *getKeyBindings();
 	const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb->getKeyBinding() == key; });
 
 	return kb != keyBindings.end() ? getLastKey((*kb)->getKeyBindingCharacter()) : false;
@@ -44,32 +52,12 @@ bool InputManager::getLastKey(const std::string& key)
 
 void InputManager::setKey(const short key, bool boolean)
 {
-	auto keyStates = getKeys();
-	for (auto it = keyStates->begin(); it != keyStates->end(); ++it)
-	{
-		if ((*it).first == key)
-		{
-			keyStates->erase(it);
-			break;
-		}
-	}
-
-	keyStates->push_back(keyState(key, boolean));
+	m_keyStates.insert_or_assign(key, boolean);
 }
 
 void InputManager::setLastKey(const short key, bool boolean)
 {
-	auto lastKeyStates = getLastKeys();
-	for (auto it = lastKeyStates->begin(); it != lastKeyStates->end(); ++it)
-	{
-		if ((*it).first == key)
-		{
-			lastKeyStates->erase(it);
-			break;
-		}
-	}
-
-	lastKeyStates->push_back(keyState(key, boolean));
+	m_lastKeyStates.insert_or_assign(key, boolean);
 }
 
 void InputManager::motionFunc(const int x, const int y)

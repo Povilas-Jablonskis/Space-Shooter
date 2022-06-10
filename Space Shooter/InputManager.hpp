@@ -3,16 +3,14 @@
 
 #include <irrKlang/irrKlang.h>
 #include "glm/vec2.hpp"
-#include <vector>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 class MenuManager;
 class SpriteSheetManager;
 class GameStateManager;
 class KeyBinding;
-
-typedef std::pair<short, bool> keyState;
 
 class InputManager
 {
@@ -33,8 +31,8 @@ public:
 	bool getLastKey(const short);
 	bool getLastKey(const std::string&);
 	void setLastKey(const short, bool);
-	std::vector<keyState>* getLastKeys() { return &m_lastKeyStates; }
-	std::vector<keyState>* getKeys() { return &m_keyStates; }
+	std::unordered_map<short, bool>* getLastKeys() { return &m_lastKeyStates; }
+	std::unordered_map<short, bool>* getKeys() { return &m_keyStates; }
 	std::vector<std::shared_ptr<KeyBinding>>* getKeyBindings() { return &m_keyBindings; }
 	void addKeyBinding(const std::shared_ptr<KeyBinding>& key_binding) { m_keyBindings.push_back(key_binding); }
 	std::shared_ptr<KeyBinding> getCurrentlyEditedKeyBinding() const { return m_currentlyEditedKeyBinding; }
@@ -54,8 +52,8 @@ private:
 	bool m_leftMouseClick{ false };
 	bool m_lastRightMouseClick{ false };
 	bool m_rightMouseClick{ false };
-	std::vector<keyState> m_keyStates;
-	std::vector<keyState> m_lastKeyStates;
+	std::unordered_map<short, bool> m_keyStates;
+	std::unordered_map<short, bool> m_lastKeyStates;
 	std::vector<std::shared_ptr<KeyBinding>> m_keyBindings;
 	std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding{ nullptr };
 };

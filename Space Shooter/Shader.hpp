@@ -13,7 +13,6 @@ public:
 	std::string readShaderFile(const std::string&) const;
 	GLuint getShader() const { return m_program; }
 private:
-	void setShader(const GLuint t_program) { m_program = t_program; }
 	GLuint m_program{};
 };
 #endif

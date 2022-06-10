@@ -96,7 +96,7 @@ void Shader::loadShader(const std::string& vertex_path, const std::string& fragm
 	}
 
 	// Link shaders
-	setShader(glCreateProgram());
+	m_program = glCreateProgram();
 	glAttachShader(m_program, vertexShader);
 	glAttachShader(m_program, fragmentShader);
 	glLinkProgram(m_program);

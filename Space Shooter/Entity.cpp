@@ -14,7 +14,7 @@ Entity::Entity(const glm::vec2& position, const glm::vec2& velocity, const glm::
 
 void Entity::addBullet(const std::shared_ptr<BaseGameObject>& bullet)
 {
-	bullet->onCollisionFunc = [this, bullet](const std::shared_ptr<BaseGameObject>& collider)
+	bullet->onCollisionFunc = [=](const std::shared_ptr<BaseGameObject>& collider)
 	{
 		auto player = dynamic_cast<Player*>(collider.get());
 
@@ -97,24 +97,17 @@ bool Entity::update(const float dt)
 
 std::shared_ptr<BaseGameObject> Entity::getAddon(const std::string& index)
 {
-	auto addons = getAddons();
-	const auto it = std::find_if(addons->begin(), addons->end(), [index](auto idx) { return idx.first == index; });
-
-	return it != addons->end() ? it->second : nullptr;
+	try
+	{
+		return m_addons.at(index);
+	}
+	catch (const std::exception&)
+	{
+		return nullptr;
+	};
 }
 
-void Entity::addAddon(const addon& addon)
+void Entity::addAddon(const std::string& key, const std::shared_ptr<BaseGameObject>& value)
 {
-	auto addons = getAddons();
-
-	for (auto it = addons->begin(); it != addons->end(); ++it)
-	{
-		if (it->first == addon.first)
-		{
-			addons->erase(it);
-			break;
-		}
-	}
-
-	addons->push_back(addon);
+	m_addons.insert_or_assign(key, value);
 }

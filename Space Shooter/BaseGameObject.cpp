@@ -11,7 +11,7 @@ BaseGameObject::BaseGameObject(const glm::vec2& position, const glm::vec2& veloc
 
 	};
 
-	onCollisionFunc = [this](const std::shared_ptr<BaseGameObject>& collider)
+	onCollisionFunc = [=](const std::shared_ptr<BaseGameObject>& collider)
 	{
 		auto player = dynamic_cast<Player*>(collider.get());
 
@@ -61,23 +61,10 @@ bool BaseGameObject::update(const float dt)
 
 void BaseGameObject::addAnimation(const std::string& index, const std::shared_ptr<Animation>& t_animation)
 {
-	auto animations = getAnimations();
-
-	for (auto& animation : *animations)
-	{
-		if (animation.first == index)
-		{
-			return;
-		}
-	}
-
-	animations->push_back(animation(index, t_animation));
+	m_animations.insert_or_assign(index, t_animation);
 }
 
 std::shared_ptr<Animation> BaseGameObject::getAnimationByIndex(const std::string& index)
 {
-	auto animations = *getAnimations();
-	const auto it = std::find_if(animations.begin(), animations.end(), [index](auto idx) { return idx.first == index; });
-
-	return it != animations.end() ? it->second : nullptr;
+	return m_animations.at(index);
 }

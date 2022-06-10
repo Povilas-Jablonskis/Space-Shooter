@@ -17,7 +17,6 @@ public:
 	void setText(const std::shared_ptr<Text>& text) { m_text = text; }
 	std::shared_ptr<Text> getText() const { return m_text; }
 private:
-	void setKeyBindingCharacter(const short character) { m_keyBindingCharacter = character; }
 	void savePlayerConfig(const std::shared_ptr<InputManager>&) const;
 
 	short m_keyBindingCharacter;

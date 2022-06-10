@@ -42,23 +42,10 @@ void SpriteSheetManager::loadSpriteSheetsFromConfig()
 
 void SpriteSheetManager::loadSpriteSheet(const std::string& name, const std::shared_ptr<SpriteSheet>& t_spriteSheet)
 {
-	auto spriteSheets = getSpriteSheets();
-
-	for (const auto& spriteSheet : *spriteSheets)
-	{
-		if (spriteSheet.first == name)
-		{
-			return;
-		}
-	}
-
-	spriteSheets->push_back(spriteSheet(name, t_spriteSheet));
+	m_spriteSheets.insert_or_assign(name, t_spriteSheet);
 }
 
 std::shared_ptr<SpriteSheet> SpriteSheetManager::getSpriteSheet(const std::string& name)
 {
-	auto spriteSheets = *getSpriteSheets();
-	const auto it = std::find_if(spriteSheets.begin(), spriteSheets.end(), [name](auto keyname) { return keyname.first == name; });
-
-	return it != spriteSheets.end() ? it->second : nullptr;
+	return m_spriteSheets.at(name);
 }

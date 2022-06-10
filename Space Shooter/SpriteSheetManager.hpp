@@ -3,11 +3,9 @@
 
 #include <string>
 #include <memory>
-#include <vector>
+#include <unordered_map>
 
 class SpriteSheet;
-
-typedef std::pair<std::string, std::shared_ptr<SpriteSheet>> spriteSheet;
 
 class SpriteSheetManager
 {
@@ -15,9 +13,7 @@ public:
 	void loadSpriteSheetsFromConfig();
 	std::shared_ptr<SpriteSheet> getSpriteSheet(const std::string&);
 private:
-	std::vector<spriteSheet>* getSpriteSheets() { return &m_spriteSheets; }
-
 	void loadSpriteSheet(const std::string&, const std::shared_ptr<SpriteSheet>&);
-	std::vector<spriteSheet> m_spriteSheets;
+	std::unordered_map<std::string, std::shared_ptr<SpriteSheet>> m_spriteSheets;
 };
 #endif

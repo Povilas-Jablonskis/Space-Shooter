@@ -27,9 +27,7 @@ public:
 	void update(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
 	void render(float, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<InputManager>&, const std::shared_ptr<Renderer>&, const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
 private:
-	int getCurrentLevel() const { return m_currentLevel; }
 	void loadLevel(const std::shared_ptr<SpriteSheetManager>&, irrklang::ISoundEngine*);
-	const std::shared_ptr<UIManager>& getUIManager() const { return m_uiManager; }
 
 	std::shared_ptr<Player> m_player{ nullptr };
 

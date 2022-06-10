@@ -57,22 +57,12 @@ Renderer::Renderer()
 
 GLuint Renderer::getShaderProgram(const std::string& name) const
 {
-	const auto it = std::find_if(getShaders().begin(), getShaders().end(), [name](auto shaderName) { return shaderName.first == name; });
-
-	return it != getShaders().end() ? it->second->getShader() : -1;
+	return m_shaders.at(name)->getShader();
 }
 
 void Renderer::addShader(const std::string& name, const std::shared_ptr<Shader>& t_shader)
 {
-	for (const auto& shader : getShaders())
-	{
-		if (shader.first == name)
-		{
-			return;
-		}
-	}
-
-	m_shaders.emplace_back(name, t_shader);
+	m_shaders.insert_or_assign(name, t_shader);
 }
 
 void Renderer::draw(const std::vector<std::shared_ptr<Text>>& texts) const

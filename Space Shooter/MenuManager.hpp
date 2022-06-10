@@ -30,8 +30,6 @@ public:
 	void escapeAction(irrklang::ISoundEngine*, InputManager*, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<SpriteSheetManager>&);
 private:
 	void savePlayerConfig(irrklang::ISoundEngine*) const;
-	void addMenu(const std::shared_ptr<Menu>& t_menu) { m_menus.push_back(t_menu); }
-	const std::vector<std::shared_ptr<Animation>>& getPlayerModels() const { return m_playerModels; }
 
 	std::shared_ptr<LevelManager> m_levelManager{ nullptr };
 

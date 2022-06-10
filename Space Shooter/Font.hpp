@@ -5,7 +5,7 @@
 #include FT_FREETYPE_H
 #include <glew/glew.h>
 #include <glm/vec2.hpp>
-#include <vector>
+#include <unordered_map>
 
 struct Character
 {
@@ -15,19 +15,13 @@ struct Character
 	FT_Pos     Advance;    // Offset to advance to next glyph
 };
 
-typedef std::pair<GLchar, Character> character;
-
 class Font
 {
 public:
 	explicit Font(const FT_Face&);
-	Character getCharacter(GLchar) const;
-	const std::vector<character>& getCharacterList() const { return m_characters; }
+	Character getCharacter(FT_ULong) const;
 private:
-	const FT_Face& getFace() const { return m_face; }
-
 	FT_Face m_face;
-	void loadCharacters();
-	std::vector<character> m_characters;
+	std::unordered_map<FT_ULong, Character> m_characters;
 };
 #endif

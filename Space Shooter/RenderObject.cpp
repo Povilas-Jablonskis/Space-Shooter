@@ -39,7 +39,7 @@ void RenderObject::applyAnimation(const std::shared_ptr<Animation>& t_animation)
 {
 	if (t_animation == nullptr || t_animation == getAnimation()) return;
 
-	setAnimation(t_animation);
+	m_animation = t_animation;
 	setAnimTimer(0);
 	setAnimationStatus(false);
 	setCurrentFrame(0);

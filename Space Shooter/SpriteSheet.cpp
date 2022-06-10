@@ -34,7 +34,7 @@ void SpriteSheet::loadSpriteSheet(const std::string& path)
 	stbi_image_free(image);
 	glBindTexture(GL_TEXTURE_2D, 0); // Unbind texture when done, so we won't accidentally mess up our texture.
 
-	m_sprites.emplace_back("wholeSpriteSheet", glm::vec4(m_width, m_height, m_width, m_height));
+	m_sprites.insert_or_assign("wholeSpriteSheet", glm::vec4(m_width, m_height, m_width, m_height));
 }
 
 void SpriteSheet::loadSpritesFromXml(const std::string& path)
@@ -60,7 +60,7 @@ void SpriteSheet::loadSpritesFromXml(const std::string& path)
 			atof(brewery_node->first_attribute("y")->value()),
 			atof(brewery_node->first_attribute("width")->value()),
 			atof(brewery_node->first_attribute("height")->value()));
-		m_sprites.emplace_back(brewery_node->first_attribute("name")->value(), animation);
+		m_sprites.insert_or_assign(brewery_node->first_attribute("name")->value(), animation);
 	}
 
 	theFile.close();
@@ -70,47 +70,25 @@ void SpriteSheet::loadSpritesFromXml(const std::string& path)
 
 std::shared_ptr<Animation> SpriteSheet::getSprite(const std::string& index)
 {
-	auto sprites = getSprites();
+	auto& sprite = m_sprites.at(index);
 
-	for (const auto& sprite : sprites)
-	{
-		if (sprite.first == index)
-		{
-			auto animation = std::make_shared<Animation>(m_texture, getWidth(), getHeight());
-			animation->addSprite(sprite.second);
-			return animation;
-		}
-	}
-
-	return nullptr;
+	auto animation = std::make_shared<Animation>(m_texture, getWidth(), getHeight());
+	animation->addSprite(sprite);
+	return animation;
 }
 
 glm::vec4 SpriteSheet::getSpriteAsVector(const std::string& index) const
 {
-	auto sprites = getSprites();
-	const auto it = std::find_if(sprites.begin(), sprites.end(), [index](auto idx) { return idx.first == index; });
-
-	return it != sprites.end() ? it->second : glm::vec4(0.0, 0.0, 0.0, 0.0);
+	return m_sprites.at(index);
 }
 
 void SpriteSheet::makeAnimation(const std::string& index, const std::vector<std::string>& indexes)
 {
-	auto animations = getAnimations();
-
-	for (const auto& animation : animations)
-	{
-		if (animation.first == index)
-		{
-			return;
-		}
-	}
-
 	auto _animation = std::make_shared<Animation>(getTexture(), getWidth(), getHeight());
-	auto sprites = getSprites();
 
 	for (const auto& _index : indexes)
 	{
-		for (const auto& sprite : sprites)
+		for (const auto& sprite : m_sprites)
 		{
 			if (sprite.first == _index)
 			{
@@ -120,21 +98,11 @@ void SpriteSheet::makeAnimation(const std::string& index, const std::vector<std:
 		}
 	}
 
-	m_animations.emplace_back(index, _animation);
+	m_animations.insert_or_assign(index, _animation);
 }
 
 void SpriteSheet::makeAnimation(const std::string& index, const std::vector<glm::vec4>& sprites)
 {
-	auto animations = getAnimations();
-
-	for (const auto& animation : animations)
-	{
-		if (animation.first == index)
-		{
-			return;
-		}
-	}
-
 	auto _animation = std::make_shared<Animation>(getTexture(), getWidth(), getHeight());
 
 	for (auto& sprite : sprites)
@@ -142,13 +110,10 @@ void SpriteSheet::makeAnimation(const std::string& index, const std::vector<glm:
 		_animation->addSprite(sprite);
 	}
 
-	m_animations.emplace_back(index, _animation);
+	m_animations.insert_or_assign(index, _animation);
 }
 
 std::shared_ptr<Animation> SpriteSheet::getAnimation(const std::string& index) const
 {
-	auto animations = getAnimations();
-	const auto it = std::find_if(animations.begin(), animations.end(), [index](auto idx) { return idx.first == index; });
-
-	return it != animations.end() ? it->second : nullptr;
+	return m_animations.at(index);
 }

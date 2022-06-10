@@ -62,11 +62,10 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 	getMenus()->clear();
 
 	auto mainMenu = std::make_shared<Menu>();
-	auto playerModels = getPlayerModels();
 
 	//Main Menu
 	auto option = std::make_shared<Text>("Start Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f));
-	option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &spriteSheetManager, playerModels]()
+	option->onMouseReleaseFunc = [=]()
 	{
 		soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
@@ -77,10 +76,10 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 		option->disable();
 		characterSelection->addText(option);
 		auto option2 = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(47.0f, 60.0f));
-		option2->applyAnimation(playerModels[getCharacterSelectionIndex()]);
+		option2->applyAnimation(m_playerModels[getCharacterSelectionIndex()]);
 		option2->setScale(0.5f);
 		option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(44.0f, 60.0f));
-		option->onMouseReleaseFunc = [this, soundEngine, option2, playerModels]()
+		option->onMouseReleaseFunc = [=]()
 		{
 			soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
@@ -88,30 +87,30 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 
 			if (getCharacterSelectionIndex() < 0)
 			{
-				setCharacterSelectionIndex(static_cast<int>(playerModels.size()) - 1);
+				setCharacterSelectionIndex(static_cast<int>(m_playerModels.size()) - 1);
 			}
 
-			option2->applyAnimation(playerModels[getCharacterSelectionIndex()]);
+			option2->applyAnimation(m_playerModels[getCharacterSelectionIndex()]);
 		};
 		characterSelection->addText(option);
 		option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(54.0f, 60.0f));
-		option->onMouseReleaseFunc = [this, soundEngine, option2, playerModels]()
+		option->onMouseReleaseFunc = [=]()
 		{
 			soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
 			setCharacterSelectionIndex(getCharacterSelectionIndex() + 1);
 
-			if (getCharacterSelectionIndex() > static_cast<int>(playerModels.size()) - 1)
+			if (getCharacterSelectionIndex() > static_cast<int>(m_playerModels.size()) - 1)
 			{
-				setCharacterSelectionIndex(static_cast<int>(playerModels.size()) - 1);
+				setCharacterSelectionIndex(static_cast<int>(m_playerModels.size()) - 1);
 			}
 
-			option2->applyAnimation(playerModels[getCharacterSelectionIndex()]);
+			option2->applyAnimation(m_playerModels[getCharacterSelectionIndex()]);
 		};
 		characterSelection->addText(option);
 		characterSelection->addUIElement(option2);
 		option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 20.0f));
-		option->onMouseReleaseFunc = [this, soundEngine]()
+		option->onMouseReleaseFunc = [=]()
 		{
 			soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
@@ -119,7 +118,7 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 		};
 		characterSelection->addText(option);
 		option = std::make_shared<Text>("Start", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(30.0f, 20.0f));
-		option->onMouseReleaseFunc = [this, soundEngine, &gameStateManager, &spriteSheetManager]()
+		option->onMouseReleaseFunc = [=]()
 		{
 			soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
@@ -130,11 +129,11 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 		};
 		characterSelection->addText(option);
 
-		addMenu(characterSelection);
+		m_menus.push_back(characterSelection);
 	};
 	mainMenu->addText(option);
 	option = std::make_shared<Text>("Options", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 55.0f));
-	option->onMouseReleaseFunc = [soundEngine, this, inputManager]()
+	option->onMouseReleaseFunc = [=]()
 	{
 		soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
@@ -142,14 +141,14 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 
 		//Options
 		auto option = std::make_shared<Text>("Controls", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f));
-		option->onMouseReleaseFunc = [soundEngine, this, inputManager]()
+		option->onMouseReleaseFunc = [=]()
 		{
 			soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
 			auto controls = std::make_shared<Menu>();
 
 			//Controls
-			const auto keybindings = *inputManager->getKeyBindings();
+			const auto& keybindings = *inputManager->getKeyBindings();
 			auto i = 0.0f;
 			for (const auto& keybinding : keybindings)
 			{
@@ -157,7 +156,7 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 				option->disable();
 				controls->addText(option);
 				option = std::make_shared<Text>(InputManager::virtualKeyCodeToString(keybinding->getKeyBindingCharacter()), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(35.0f, 60.0f - 5.0f * i));
-				option->onMouseReleaseFunc = [soundEngine, inputManager, option, keybinding]()
+				option->onMouseReleaseFunc = [=]()
 				{
 					if (inputManager->getCurrentlyEditedKeyBinding() == nullptr)
 					{
@@ -174,7 +173,7 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 				i += 1.0f;
 			}
 			auto option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 20.0f));
-			option->onMouseReleaseFunc = [this, soundEngine]()
+			option->onMouseReleaseFunc = [=]()
 			{
 				soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
@@ -182,11 +181,11 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 			};
 			controls->addText(option);
 
-			addMenu(controls);
+			m_menus.push_back(controls);
 		};
 		options->addText(option);
 		option = std::make_shared<Text>("Sounds", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 55.0f));
-		option->onMouseReleaseFunc = [this, soundEngine]()
+		option->onMouseReleaseFunc = [=]()
 		{
 			soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
@@ -199,7 +198,7 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 			auto uniqueOption = std::make_shared<Text>(std::to_string(static_cast<int>(soundEngine->getSoundVolume() * 100.0f)), glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(33.0f, 60.0f));
 			uniqueOption->disable();
 			option = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(30.0f, 60.0f));
-			option->onMouseReleaseFunc = [soundEngine, uniqueOption, this]()
+			option->onMouseReleaseFunc = [=]()
 			{
 				soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
@@ -213,7 +212,7 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 			};
 			sounds->addText(option);
 			option = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(37.0f, 60.0f));
-			option->onMouseReleaseFunc = [soundEngine, uniqueOption, this]()
+			option->onMouseReleaseFunc = [=]()
 			{
 				soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 				const auto vol = soundEngine->getSoundVolume() + 0.01f;
@@ -227,7 +226,7 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 			sounds->addText(option);
 			sounds->addText(uniqueOption);
 			option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 20.0f));
-			option->onMouseReleaseFunc = [this, soundEngine]()
+			option->onMouseReleaseFunc = [=]()
 			{
 				soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
@@ -235,11 +234,11 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 			};
 			sounds->addText(option);
 
-			addMenu(sounds);
+			m_menus.push_back(sounds);
 		};
 		options->addText(option);
 		option = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 50.0f));
-		option->onMouseReleaseFunc = [this, soundEngine]()
+		option->onMouseReleaseFunc = [=]()
 		{
 			soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
@@ -247,7 +246,7 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 		};
 		options->addText(option);
 
-		addMenu(options);
+		m_menus.push_back(options);
 	};
 	mainMenu->addText(option);
 	option = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 50.0f));
@@ -261,7 +260,7 @@ void MenuManager::initGameMenus(irrklang::ISoundEngine* soundEngine, InputManage
 	};
 	mainMenu->addText(option);
 
-	addMenu(mainMenu);
+	m_menus.push_back(mainMenu);
 }
 
 void MenuManager::escapeAction(irrklang::ISoundEngine* soundEngine, InputManager* inputManager, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
@@ -284,7 +283,7 @@ void MenuManager::escapeAction(irrklang::ISoundEngine* soundEngine, InputManager
 
 		//Pause Menu
 		auto option = std::make_shared<Text>("Go To Main Menu", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(48.0f, 60.0f));
-		option->onMouseReleaseFunc = [this, soundEngine, inputManager, &gameStateManager, &spriteSheetManager]()
+		option->onMouseReleaseFunc = [=]()
 		{
 			soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
 
@@ -304,7 +303,7 @@ void MenuManager::escapeAction(irrklang::ISoundEngine* soundEngine, InputManager
 		};
 		pauseMenu->addText(option);
 
-		addMenu(pauseMenu);
+		m_menus.push_back(pauseMenu);
 		gameStateManager->setGameState(GameState::IN_PAUSED_MENU);
 	}
 	else if (gameStateManager->getGameState() == GameState::IN_MENU)

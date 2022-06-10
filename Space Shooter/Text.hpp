@@ -31,9 +31,6 @@ public:
 	void setPosition(const glm::vec2&) override;
 	void setPosition(int, float) override;
 private:
-	const glm::vec4& getBoundaryBox() const { return m_bbox; }
-	void changeBoundaryBox(float t_bbox, int index) { m_bbox[index] = t_bbox; }
-	void changeBoundaryBox(glm::vec4& t_bbox) { m_bbox = t_bbox; }
 
 	bool m_needUpdate{ true };
 	std::shared_ptr<Font> m_font;

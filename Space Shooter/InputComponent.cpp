@@ -16,12 +16,12 @@ void InputComponent::update(Entity* entity, const std::shared_ptr<InputManager>&
 		auto exhaust = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 		exhaust->applyAnimation(entity->getAnimationByIndex("movingExhaust"));
 		exhaust->setPosition(entity->getPosition() + glm::vec2(0.0f, exhaust->getHeight() * -1.0f));
-		entity->addAddon(addon("leftExhaust", exhaust));
+		entity->addAddon("leftExhaust", exhaust);
 
 		exhaust = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 		exhaust->applyAnimation(entity->getAnimationByIndex("movingExhaust"));
 		exhaust->setPosition(entity->getPosition() + glm::vec2(entity->getWidth() - exhaust->getWidth(), exhaust->getHeight() * -1.0f));
-		entity->addAddon(addon("rightExhaust", exhaust));
+		entity->addAddon("rightExhaust", exhaust);
 	}
 
 	if (!inputManager->getKey("Move Left") && !inputManager->getKey("Move Back") && !inputManager->getKey("Move Right"))
@@ -29,12 +29,12 @@ void InputComponent::update(Entity* entity, const std::shared_ptr<InputManager>&
 		auto exhaust = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 		exhaust->applyAnimation(entity->getAnimationByIndex("noMovingExhaust"));
 		exhaust->setPosition(entity->getPosition() + glm::vec2(0.0f, exhaust->getHeight() * -1.0f));
-		entity->addAddon(addon("leftExhaust", exhaust));
+		entity->addAddon("leftExhaust", exhaust);
 
 		exhaust = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
 		exhaust->applyAnimation(entity->getAnimationByIndex("noMovingExhaust"));
 		exhaust->setPosition(entity->getPosition() + glm::vec2(entity->getWidth() - exhaust->getWidth(), exhaust->getHeight() * -1.0f));
-		entity->addAddon(addon("rightExhaust", exhaust));
+		entity->addAddon("rightExhaust", exhaust);
 	}
 
 	if (inputManager->getKey("Move Left"))

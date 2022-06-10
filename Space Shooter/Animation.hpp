@@ -17,9 +17,6 @@ public:
 	int getSpriteSheetHeight() const { return m_spriteSheetHeight; };
 	void loadFromFile(const std::string&);
 private:
-	void setSpriteSheetWidth(int t_spriteSheetWidth) { m_spriteSheetWidth = t_spriteSheetWidth; };
-	void setSpriteSheetHeight(int t_spriteSheetHeight) { m_spriteSheetHeight = t_spriteSheetHeight; };
-
 	int m_spriteSheetWidth;
 	int m_spriteSheetHeight;
 	GLuint m_spriteSheetTexture;

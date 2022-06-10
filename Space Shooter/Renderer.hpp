@@ -3,7 +3,7 @@
 
 #include "glm/gtc/type_ptr.hpp"
 #include <string>
-#include <vector>
+#include <unordered_map>
 #include <memory>
 
 #include "Animation.hpp"
@@ -12,14 +12,12 @@
 class Text;
 class Shader;
 
-typedef std::pair<std::string, std::shared_ptr<Shader>> shader;
-
 class Renderer
 {
 public:
 	Renderer();
 	void addShader(const std::string&, const std::shared_ptr<Shader>&);
-	const std::vector<shader>& getShaders() const { return m_shaders; }
+	const std::unordered_map<std::string, std::shared_ptr<Shader>>& getShaders() const { return m_shaders; }
 	GLuint getVAO() const { return m_vao; }
 	GLuint getShaderProgram(const std::string&) const;
 	GLuint getTextVBO() const { return m_textVBO; }
@@ -91,6 +89,6 @@ private:
 	GLuint m_vbo{}, m_vao{}, m_ebo{};
 	GLuint m_textVBO{};
 	GLuint m_textVAO{};
-	std::vector<shader> m_shaders;
+	std::unordered_map<std::string, std::shared_ptr<Shader>> m_shaders;
 };
 #endif

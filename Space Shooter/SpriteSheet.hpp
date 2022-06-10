@@ -5,14 +5,11 @@
 
 #include <glm/vec4.hpp>
 #include <glew/glew.h>
-#include <vector>
+#include <unordered_map>
 #include <memory>
 #include <string>
 
 class Animation;
-
-typedef std::pair<std::string, glm::vec4> sprite;
-typedef std::pair<std::string, std::shared_ptr<Animation>> animation;
 
 class SpriteSheet
 {
@@ -31,13 +28,11 @@ public:
 private:
 	void loadSpriteSheet(const std::string&);
 	void loadSpritesFromXml(const std::string&);
-	const std::vector<sprite>& getSprites() const { return m_sprites; }
-	const std::vector<animation>& getAnimations() const { return m_animations; }
 
 	int m_width{};
 	int m_height{};
 	GLuint m_texture{};
-	std::vector<sprite> m_sprites;
-	std::vector<animation> m_animations;
+	std::unordered_map<std::string, glm::vec4> m_sprites;
+	std::unordered_map<std::string, std::shared_ptr<Animation>> m_animations;
 };
 #endif

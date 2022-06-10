@@ -1,7 +1,6 @@
 #ifndef baseGameObjectH
 #define baseGameObjectH
 
-#include <vector>
 #include <memory>
 
 #include "RenderObject.hpp"
@@ -27,11 +26,9 @@ public:
 	const std::string& getExplosionSound() const { return m_explosionSound; }
 	void setExplosionSound(const std::string& explosionSound) { m_explosionSound = explosionSound; }
 private:
-	std::vector<animation>* getAnimations() { return &m_animations; }
-
 	std::string m_explosionSound;
 	bool m_needsToBeRemoved{ false };
-	std::vector<animation> m_animations;
+	std::unordered_map<std::string, std::shared_ptr<Animation>> m_animations;
 	glm::vec2 m_velocity;
 	int m_value{ 0 };
 	int m_lives{ 1 };

@@ -9,8 +9,6 @@
 
 class Animation;
 
-typedef std::pair<std::string, std::shared_ptr<Animation>> animation;
-
 class RenderObject
 {
 public:
@@ -51,8 +49,6 @@ public:
 	void updateAnimation(float);
 	void applyAnimation(const std::shared_ptr<Animation>&);
 private:
-	void setAnimation(const std::shared_ptr<Animation>& t_animation) { m_animation = t_animation; }
-
 	size_t m_currentFrame{ 0 };
 	bool m_animComplete{ false };
 	float m_animTimer{ 0.0f };
