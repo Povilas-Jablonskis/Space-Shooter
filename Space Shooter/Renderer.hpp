@@ -1,12 +1,13 @@
 #ifndef rendererH
 #define rendererH
 
+#include "Animation.hpp"
+
 #include "glm/gtc/type_ptr.hpp"
 #include <string>
 #include <unordered_map>
 #include <memory>
 
-#include "Animation.hpp"
 #include <freeglut/freeglut_std.h>
 
 class Text;

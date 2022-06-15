@@ -13,26 +13,38 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Components">
-      <UniqueIdentifier>{c67422d6-5219-4e0d-aded-a15dac3880aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Components">
-      <UniqueIdentifier>{0cec987f-aa41-46ee-a939-281e7ad21b2c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Managers">
       <UniqueIdentifier>{9fcb3d2e-604b-48f4-a54b-71e3c0a4700f}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{3a7d7458-7351-42d9-a855-ac9eb90c763d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Components\Input">
-      <UniqueIdentifier>{f86722c3-cc51-4ee1-b11c-1d05feac089b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Components\Input">
-      <UniqueIdentifier>{06288c2f-8a07-47b8-9884-0f3cb2af6ab3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\CollisionCheck">
       <UniqueIdentifier>{64505145-e5e3-454c-a211-d734886d1781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Constants">
+      <UniqueIdentifier>{026c227d-e250-40dd-be8e-a8f112fccb8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Scene">
+      <UniqueIdentifier>{b10fdab2-5012-457c-84d0-07f0c255f3df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenes">
+      <UniqueIdentifier>{904c6d28-772c-4f73-ac2d-7dfc4e08a317}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scenes\Menu">
+      <UniqueIdentifier>{ce23ab18-122c-42b3-9fc6-2bbc7a538689}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scenes">
+      <UniqueIdentifier>{b6710d71-8bc4-4616-bf3f-48c30cb5158e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scenes\Menu">
+      <UniqueIdentifier>{b84aa1dd-9ede-4d3b-a16b-8f51f63775f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Managers\Scene">
+      <UniqueIdentifier>{a5bdffb0-c0b5-44ae-8e51-0c86d3b76f45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CollisionCheck">
+      <UniqueIdentifier>{ad8e7f1e-e9ec-4345-ab24-7c46da4989aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -81,15 +93,6 @@
     <ClCompile Include="SpriteSheetManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="InputComponent.cpp">
-      <Filter>Source Files\Components\Input</Filter>
-    </ClCompile>
-    <ClCompile Include="MenuManager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="LevelManager.cpp">
-      <Filter>Source Files\Managers</Filter>
-    </ClCompile>
     <ClCompile Include="UIManager.cpp">
       <Filter>Source Files\Managers</Filter>
     </ClCompile>
@@ -99,18 +102,42 @@
     <ClCompile Include="checkCollision.hpp">
       <Filter>Header Files\CollisionCheck</Filter>
     </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files\Scenes\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneStateMachine.cpp">
+      <Filter>Source Files\Managers\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="PickYourCharacterMenu.cpp">
+      <Filter>Source Files\Scenes\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsMenu.cpp">
+      <Filter>Source Files\Scenes\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundsMenu.cpp">
+      <Filter>Source Files\Scenes\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlsMenu.cpp">
+      <Filter>Source Files\Scenes\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="PauseMenu.cpp">
+      <Filter>Source Files\Scenes\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="checkCollision.cpp">
+      <Filter>Source Files\CollisionCheck</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOver.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWon.cpp">
+      <Filter>Source Files\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="InputComponent.hpp">
-      <Filter>Header Files\Components\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="UIInputComponent.hpp">
-      <Filter>Header Files\Components\Input</Filter>
-    </ClInclude>
     <ClInclude Include="InputManager.hpp">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuManager.hpp">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="SpriteSheetManager.hpp">
@@ -129,9 +156,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Font.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.hpp">
@@ -155,17 +179,58 @@
     <ClInclude Include="UIElementBase.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameStateManager.hpp">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="LevelManager.hpp">
-      <Filter>Header Files\Managers</Filter>
-    </ClInclude>
     <ClInclude Include="UIManager.hpp">
       <Filter>Header Files\Managers</Filter>
     </ClInclude>
     <ClInclude Include="KeyBinding.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FileConstants.hpp">
+      <Filter>Header Files\Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="ScientificConstants.hpp">
+      <Filter>Header Files\Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="BindableActions.hpp">
+      <Filter>Header Files\Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneStateMachine.hpp">
+      <Filter>Header Files\Managers\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.hpp">
+      <Filter>Header Files\Managers\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenesEnum.hpp">
+      <Filter>Header Files\Managers\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.hpp">
+      <Filter>Header Files\Scenes\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="PickYourCharacterMenu.hpp">
+      <Filter>Header Files\Scenes\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsMenu.hpp">
+      <Filter>Header Files\Scenes\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlsMenu.hpp">
+      <Filter>Header Files\Scenes\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.hpp">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="PauseMenu.hpp">
+      <Filter>Header Files\Scenes\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOver.hpp">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWon.hpp">
+      <Filter>Header Files\Scenes</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SoundsMenu.hpp">
+      <Filter>Header Files\Scenes\Menu</Filter>
+    </None>
   </ItemGroup>
 </Project>

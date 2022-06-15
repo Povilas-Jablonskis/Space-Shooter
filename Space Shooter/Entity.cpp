@@ -1,5 +1,3 @@
-#include "Entity.hpp"
-#include "InputComponent.hpp"
 #include "Player.hpp"
 
 #include <algorithm>

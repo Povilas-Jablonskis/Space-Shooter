@@ -86,7 +86,7 @@ void Renderer::draw(const std::shared_ptr<Text>& text) const
 	glUniform4f(offsetLocation, text->getColor().x / 255.0f, text->getColor().y / 255.0f, text->getColor().z / 255.0f, text->getColor().a);
 	glUniformMatrix4fv(offsetLocation2, 1, GL_FALSE, value_ptr(projection));
 
-	auto cache = text->getCachedCharacters();
+	auto& cache = text->getCachedCharacters();
 
 	for (auto& cachedCharacter : cache)
 	{

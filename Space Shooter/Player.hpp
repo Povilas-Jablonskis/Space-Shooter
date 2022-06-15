@@ -1,6 +1,7 @@
 #ifndef playerH
 #define playerH
 
+#include "BaseGameObject.hpp"
 #include "Entity.hpp"
 
 class InputManager;

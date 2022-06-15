@@ -19,7 +19,7 @@ void processMouseClick(const int button, const int state, const int x, const int
 
 void keyboardInput(const unsigned char c, const int x, const int y)
 {
-	application->getInputManager()->keyboardInput(c, x, y, application->getMenuManager(), application->getSoundEngine(), application->getGameStateManager(), application->getSpritesheetManager());
+	application->getInputManager()->keyboardInput(c);
 }
 
 void keyboardInputUp(const unsigned char c, const int x, const int y)

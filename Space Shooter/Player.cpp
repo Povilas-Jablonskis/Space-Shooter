@@ -1,5 +1,6 @@
 #include "Player.hpp"
-#include "InputComponent.hpp"
+#include "InputManager.hpp"
+#include "BindableActions.hpp"
 
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
@@ -11,7 +12,51 @@ Player::Player(const glm::vec2& position, const glm::vec2& velocity, const glm::
 
 bool Player::update(const float dt, const std::shared_ptr<InputManager>& inputManager)
 {
-	getInputComponent()->update(this, inputManager, dt);
+	setDelayBetweenShootsTimer(getDelayBetweenShootsTimer() + dt);
+	if (getDelayBetweenShootsTimer() > getDelayBetweenShoots() && inputManager->getKey(BindableActions::ATTACK))
+	{
+		setDelayBetweenShootsTimer(0.0f);
+		shootingModeFunc();
+	}
+
+	if (inputManager->getKey(BindableActions::MOVE_LEFT) || inputManager->getKey(BindableActions::MOVE_BACK) || inputManager->getKey(BindableActions::MOVE_RIGHT))
+	{
+		auto exhaust = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+		exhaust->applyAnimation(getAnimationByIndex("movingExhaust"));
+		exhaust->setPosition(getPosition() + glm::vec2(0.0f, exhaust->getHeight() * -1.0f));
+		addAddon("leftExhaust", exhaust);
+
+		exhaust = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+		exhaust->applyAnimation(getAnimationByIndex("movingExhaust"));
+		exhaust->setPosition(getPosition() + glm::vec2(getWidth() - exhaust->getWidth(), exhaust->getHeight() * -1.0f));
+		addAddon("rightExhaust", exhaust);
+	}
+	else {
+		auto exhaust = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+		exhaust->applyAnimation(getAnimationByIndex("noMovingExhaust"));
+		exhaust->setPosition(getPosition() + glm::vec2(0.0f, exhaust->getHeight() * -1.0f));
+		addAddon("leftExhaust", exhaust);
+
+		exhaust = std::make_shared<BaseGameObject>(glm::vec2(0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(255.0f, 255.0f, 255.0f, 1.0f));
+		exhaust->applyAnimation(getAnimationByIndex("noMovingExhaust"));
+		exhaust->setPosition(getPosition() + glm::vec2(getWidth() - exhaust->getWidth(), exhaust->getHeight() * -1.0f));
+		addAddon("rightExhaust", exhaust);
+	}
+
+	if (inputManager->getKey(BindableActions::MOVE_LEFT))
+	{
+		setPosition(0, getPosition().x - getVelocity().x * dt);
+	}
+
+	if (inputManager->getKey(BindableActions::MOVE_RIGHT))
+	{
+		setPosition(0, getPosition().x + getVelocity().x * dt);
+	}
+
+	if (inputManager->getKey(BindableActions::MOVE_BACK))
+	{
+		setPosition(1, getPosition().y - getVelocity().y * dt);
+	}
 
 	updateAnimation(dt);
 

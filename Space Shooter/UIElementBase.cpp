@@ -1,5 +1,6 @@
 #include "UIElementBase.hpp"
-#include "UIInputComponent.hpp"
+#include "RenderObject.hpp"
+#include "checkCollision.hpp"
 
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
@@ -31,7 +32,6 @@ UIElementBase::UIElementBase(const glm::vec4& color, const glm::vec2& positionPe
 	};
 }
 
-
 void UIElementBase::update(const float dt, const std::shared_ptr<InputManager>& inputManager)
 {
 	if (!isActive())
@@ -41,7 +41,7 @@ void UIElementBase::update(const float dt, const std::shared_ptr<InputManager>& 
 
 	updateAnimation(dt);
 	fixPosition();
-	updateInput(this, inputManager);
+	checkCollision(this, inputManager);
 }
 
 void UIElementBase::fixPosition()
@@ -61,18 +61,6 @@ void UIElementBase::fixPosition()
 
 	setWidth(getOriginalWidth() * windowWidth / static_cast<float>(glutGet(GLUT_INIT_WINDOW_WIDTH)));
 	setHeight(getOriginalHeight() * windowHeight / static_cast<float>(glutGet(GLUT_INIT_WINDOW_HEIGHT)));
-}
-
-bool UIElementBase::checkIfCollides(const glm::vec2& colCoordinates) const
-{
-	// Collision x-axis?
-	const auto collisionX = getPosition().x + getWidth() >= colCoordinates.x &&
-		colCoordinates.x >= getPosition().x;
-	// Collision y-axis?
-	const auto collisionY = getPosition().y + getHeight() >= colCoordinates.y &&
-		colCoordinates.y >= getPosition().y;
-	// Collision only if on both axes
-	return collisionX && collisionY;
 }
 
 void UIElementBase::onHoverEnterFuncDefaults()

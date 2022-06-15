@@ -1,20 +1,13 @@
 #include "UIManager.hpp"
-#include "Text.hpp"
+#include "UIElementBase.hpp"
 #include "SpriteSheetManager.hpp"
-#include "GameStateManager.hpp"
 #include "Renderer.hpp"
 #include "SpriteSheet.hpp"
 
 void UIManager::renderUI(const std::shared_ptr<Renderer>& renderer)
 {
 	renderer->draw(m_playerLives);
-
 	renderer->draw(m_scoreBoard);
-
-	for (auto& m_notification : m_notifications)
-	{
-		renderer->draw(m_notification);
-	}
 }
 
 void UIManager::updateUI(const int score, const std::string& icon, const int lives, const float dt, const std::shared_ptr<InputManager>& inputManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
@@ -61,10 +54,5 @@ void UIManager::updateUI(const int score, const std::string& icon, const int liv
 	for (auto& m_playerScoreElement : m_scoreBoard)
 	{
 		m_playerScoreElement->update(dt, inputManager);
-	}
-
-	for (auto& m_notification : m_notifications)
-	{
-		m_notification->update(inputManager);
 	}
 }

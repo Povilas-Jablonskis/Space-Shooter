@@ -1,6 +1,9 @@
 #include "Text.hpp"
-#include "UIInputComponent.hpp"
+#include "RenderObject.hpp"
+#include "Font.hpp"
+#include "checkCollision.hpp"
 
+#include <string>
 #include <algorithm>
 #include <utility>
 #include <freeglut/freeglut_std.h>
@@ -57,11 +60,6 @@ void Text::onHoverExitFuncDefaults()
 	changeColor(glm::vec4(255.0f, 160.0f, 122.0f, getColor().a));
 }
 
-bool Text::checkIfCollides(const glm::vec2& colCoordinates) const
-{
-	return colCoordinates.x >= m_bbox.x && colCoordinates.x <= m_bbox.y && colCoordinates.y <= m_bbox.z && colCoordinates.y >= m_bbox.a;
-}
-
 void Text::update(const std::shared_ptr<InputManager>& inputManager)
 {
 	if (!doesItNeedUpdate()) return;
@@ -70,7 +68,6 @@ void Text::update(const std::shared_ptr<InputManager>& inputManager)
 	setNeedUpdate(false);
 
 	fixPosition();
-	updateInput(this, inputManager);
 
 	m_bbox[0] = getPosition().x;
 	m_bbox[3] = getPosition().y;
@@ -134,6 +131,8 @@ void Text::update(const std::shared_ptr<InputManager>& inputManager)
 	m_bbox[1] = getPosition().x;
 	m_bbox[2] = getPosition().y + (tempVector.empty() ? 0.0f : static_cast<float>(*std::max_element(std::begin(tempVector), std::end(tempVector))));
 	setPosition(lastPosition);
+
+	checkCollision(this, inputManager);
 }
 
 void Text::fixPosition()

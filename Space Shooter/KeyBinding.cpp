@@ -1,6 +1,7 @@
 #include "KeyBinding.hpp"
 #include "Text.hpp"
 #include "InputManager.hpp"
+#include "FileConstants.hpp"
 
 #include <algorithm>
 #include "rapidxml/RapidXMLSTD.hpp"
@@ -31,7 +32,7 @@ void KeyBinding::savePlayerConfig(const std::shared_ptr<InputManager>& inputMana
 
 	doc->append_node(KeyBindings);
 
-	std::ofstream file_stored("cfg/keyBindingSettings.xml");
+	std::ofstream file_stored(FileConstants::keybindingsSettingsPath);
 	file_stored << *doc;
 	file_stored.close();
 	doc->clear();
@@ -45,12 +46,13 @@ void KeyBinding::update(const std::shared_ptr<InputManager>& inputManager)
 		return;
 	}
 
-	if (!inputManager->getLastKey(27) && inputManager->getKey(27)) // escape
+	if (inputManager->getKey(27)) // escape
 	{
 		getText()->enable();
 		getText()->onHoverExitFuncDefaults();
 
 		inputManager->setCurrentlyEditedKeyBinding(nullptr);
+		inputManager->clearEverything();
 		return;
 	}
 
@@ -59,7 +61,7 @@ void KeyBinding::update(const std::shared_ptr<InputManager>& inputManager)
 
 	for (auto& key : keys)
 	{
-		if (!inputManager->getLastKey(key.first) && key.second)
+		if (inputManager->getKey(key.first) && key.second)
 		{
 			if (key.first >= 32 && key.first < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](auto pair) {return pair->getKeyBindingCharacter() == key.first; }))
 			{
@@ -71,6 +73,7 @@ void KeyBinding::update(const std::shared_ptr<InputManager>& inputManager)
 				inputManager->setCurrentlyEditedKeyBinding(nullptr);
 
 				savePlayerConfig(inputManager);
+				inputManager->clearEverything();
 				break;
 			}
 		}

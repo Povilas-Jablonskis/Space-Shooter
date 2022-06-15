@@ -1,5 +1,6 @@
 #include "SpriteSheetManager.hpp"
 #include "SpriteSheet.hpp"
+#include "FileConstants.hpp"
 
 #include <fstream>
 #include "rapidxml/rapidxml.hpp"
@@ -9,7 +10,7 @@ void SpriteSheetManager::loadSpriteSheetsFromConfig()
 {
 	auto doc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
-	std::ifstream theFile("assets/Config/spritesheets.xml");
+	std::ifstream theFile(FileConstants::spriteSheetsPath);
 	std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 	buffer.push_back('\0');
 	// Parse the buffer using the xml file parsing library into doc 

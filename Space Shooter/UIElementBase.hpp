@@ -2,17 +2,15 @@
 #define uIElementBaseH
 
 #include "RenderObject.hpp"
-#include "UIInputComponent.hpp"
 
 class InputManager;
 
-class UIElementBase : public RenderObject, public UIInputComponent
+class UIElementBase : public RenderObject
 {
 public:
 	UIElementBase(const glm::vec4&, const glm::vec2&);
 	void update(float, const std::shared_ptr<InputManager>&);
 	virtual void fixPosition();
-	virtual bool checkIfCollides(const glm::vec2&) const;
 	std::function<void()> onHoverEnterFunc;
 	std::function<void()> onHoverExitFunc;
 	std::function<void()> onMouseClickFunc;

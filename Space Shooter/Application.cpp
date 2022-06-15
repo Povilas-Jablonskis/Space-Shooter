@@ -1,10 +1,18 @@
 #include "Application.hpp"
 #include "Renderer.hpp"
 #include "SpriteSheetManager.hpp"
-#include "MenuManager.hpp"
-#include "LevelManager.hpp"
 #include "InputManager.hpp"
-#include "GameStateManager.hpp"
+#include "FileConstants.hpp"
+#include "SceneStateMachine.hpp"
+#include "MainMenu.hpp"
+#include "PickYourCharacterMenu.hpp"
+#include "OptionsMenu.hpp"
+#include "SoundsMenu.hpp"
+#include "ControlsMenu.hpp"
+#include "GameScene.hpp"
+#include "PauseMenu.hpp"
+#include "GameOver.hpp"
+#include "GameWon.hpp"
 #include "Shader.hpp"
 #include "KeyBinding.hpp"
 
@@ -18,8 +26,23 @@ Application::Application()
 
 	loadPlayerConfig();
 	getSpritesheetManager()->loadSpriteSheetsFromConfig();
-	getMenuManager()->loadPlayerModels(getSpritesheetManager());
-	getMenuManager()->initGameMenus(getSoundEngine(), getInputManager().get(), getGameStateManager(), getSpritesheetManager());
+
+	m_sceneManager->add(ScenesEnum::MAIN, std::make_shared<MainMenu>(m_sceneManager, m_soundEngine, m_inputManager));
+
+	auto pickYourCharacterMenu = std::make_shared<PickYourCharacterMenu>(m_sceneManager, m_spriteSheetManager, m_inputManager, m_soundEngine);
+	pickYourCharacterMenu->loadPlayerModels(m_spriteSheetManager);
+
+	m_sceneManager->add(ScenesEnum::PICK_YOUR_CHARACTER, pickYourCharacterMenu);
+
+	m_sceneManager->add(ScenesEnum::PAUSED, std::make_shared<PauseMenu>(m_sceneManager, m_soundEngine, m_inputManager));
+	m_sceneManager->add(ScenesEnum::GAME_OVER, std::make_shared<GameOver>(m_sceneManager, m_inputManager));
+	m_sceneManager->add(ScenesEnum::GAME_WON, std::make_shared<GameWon>(m_sceneManager, m_inputManager));
+
+	m_sceneManager->add(ScenesEnum::OPTIONS, std::make_shared<OptionsMenu>(m_sceneManager, m_soundEngine, m_inputManager));
+	m_sceneManager->add(ScenesEnum::SOUNDS, std::make_shared<SoundsMenu>(m_sceneManager, m_soundEngine, m_inputManager));
+	m_sceneManager->add(ScenesEnum::CONTROLS, std::make_shared<ControlsMenu>(m_sceneManager, m_soundEngine, m_inputManager));
+
+	getSceneManager()->switchTo(ScenesEnum::MAIN);
 }
 
 void Application::loadPlayerConfig() const
@@ -27,7 +50,7 @@ void Application::loadPlayerConfig() const
 	{
 		auto doc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
-		std::ifstream theFile("cfg/keyBindingSettings.xml");
+		std::ifstream theFile(FileConstants::keybindingsSettingsPath);
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
@@ -49,7 +72,7 @@ void Application::loadPlayerConfig() const
 	{
 		auto doc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
-		std::ifstream theFile("cfg/soundSettings.xml");
+		std::ifstream theFile(FileConstants::soundSettingsPath);
 		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
 		buffer.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
@@ -73,17 +96,8 @@ void Application::render() const
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	const auto menus = getMenuManager()->getMenus();
-
-	if (getMenuManager()->getLevelManager())
-	{
-		getMenuManager()->getLevelManager()->render(m_dt, getGameStateManager(), getInputManager(), getRenderer(), getSpritesheetManager(), getSoundEngine());
-	}
-
-	if (!menus->empty() && (getGameStateManager()->getGameState() == GameState::IN_MENU || getGameStateManager()->getGameState() == GameState::IN_PAUSED_MENU))
-	{
-		getMenuManager()->renderCurrentMenu(getRenderer(), m_dt, getInputManager());
-	}
+	m_sceneManager->processInput();
+	m_sceneManager->draw(m_renderer, m_dt);
 
 	glutSwapBuffers();
 }

@@ -7,9 +7,8 @@
 #include <vector>
 
 #include "UIElementBase.hpp"
-#include "Font.hpp"
 
-class Render1Object;
+class Font;
 class InputManager;
 
 typedef std::pair<GLuint, std::vector<GLfloat>> cachedCharacter;
@@ -20,11 +19,11 @@ public:
 	Text(std::string, const glm::vec4&, const glm::vec2&);
 	void update(const std::shared_ptr<InputManager>&);
 	void fixPosition() override;
-	bool checkIfCollides(const glm::vec2&) const override;
 	void onHoverEnterFuncDefaults() override;
 	void onHoverExitFuncDefaults() override;
 	const std::vector<cachedCharacter>& getCachedCharacters() const { return m_cachedCharacters; }
 	const std::string& getText() const { return m_text; }
+	const glm::vec4& getBoundingBox() const { return m_bbox; }
 	bool doesItNeedUpdate() const { return m_needUpdate; }
 	void setNeedUpdate(bool t_needUpdate) { m_needUpdate = t_needUpdate; }
 	void setText(const std::string& newtext) { m_needUpdate = true; m_text = newtext; }

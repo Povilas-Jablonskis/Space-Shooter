@@ -1,7 +1,4 @@
 #include "InputManager.hpp"
-#include "MenuManager.hpp"
-#include "SpriteSheetManager.hpp"
-#include "GameStateManager.hpp"
 #include "KeyBinding.hpp"
 
 #include <iostream>
@@ -22,18 +19,6 @@ bool InputManager::getKey(const short key)
 	};
 }
 
-bool InputManager::getLastKey(const short key)
-{
-	try
-	{
-		return m_lastKeyStates.at(key);
-	}
-	catch (const std::exception&)
-	{
-		return false;
-	};
-}
-
 bool InputManager::getKey(const std::string& key)
 {
 	auto& keyBindings = *getKeyBindings();
@@ -42,22 +27,9 @@ bool InputManager::getKey(const std::string& key)
 	return kb != keyBindings.end() ? getKey((*kb)->getKeyBindingCharacter()) : false;
 }
 
-bool InputManager::getLastKey(const std::string& key)
-{
-	auto& keyBindings = *getKeyBindings();
-	const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb->getKeyBinding() == key; });
-
-	return kb != keyBindings.end() ? getLastKey((*kb)->getKeyBindingCharacter()) : false;
-}
-
 void InputManager::setKey(const short key, bool boolean)
 {
 	m_keyStates.insert_or_assign(key, boolean);
-}
-
-void InputManager::setLastKey(const short key, bool boolean)
-{
-	m_lastKeyStates.insert_or_assign(key, boolean);
 }
 
 void InputManager::motionFunc(const int x, const int y)
@@ -88,22 +60,12 @@ void InputManager::processMouseClick(const int button, const int state, const in
 	}
 }
 
-void InputManager::keyboardInput(unsigned char c, int x, int y, const std::shared_ptr<MenuManager>& menuManager, irrklang::ISoundEngine* soundEngine, const std::shared_ptr<GameStateManager>& gameStateManager, const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
+void InputManager::keyboardInput(unsigned char c)
 {
 	const auto key = VkKeyScan(c);
 	if (!getKey(key))
 	{
-		switch (c)
-		{
-			case 27: // escape
-			{
-				menuManager->escapeAction(soundEngine, this, gameStateManager, spriteSheetManager);
-				break;
-			}
-		}
-
 		setKey(key, true);
-		setLastKey(key, false);
 	}
 }
 
@@ -114,7 +76,6 @@ void InputManager::keyboardInputUp(const unsigned char c, int x, int y)
 	if (getKey(key))
 	{
 		setKey(key, false);
-		setLastKey(key, true);
 	}
 }
 
@@ -127,7 +88,6 @@ void InputManager::specialKeyInput(const int key, int x, int y)
 			if (getKey(VK_UP))
 			{
 				setKey(VK_UP, false);
-				setLastKey(VK_UP, true);
 			}
 			break;
 		}
@@ -136,7 +96,6 @@ void InputManager::specialKeyInput(const int key, int x, int y)
 			if (getKey(VK_DOWN))
 			{
 				setKey(VK_DOWN, false);
-				setLastKey(VK_DOWN, true);
 			}
 			break;
 		}
@@ -145,7 +104,6 @@ void InputManager::specialKeyInput(const int key, int x, int y)
 			if (getKey(VK_LEFT))
 			{
 				setKey(VK_LEFT, false);
-				setLastKey(VK_LEFT, true);
 			}
 			break;
 		}
@@ -154,7 +112,6 @@ void InputManager::specialKeyInput(const int key, int x, int y)
 			if (getKey(VK_RIGHT))
 			{
 				setKey(VK_RIGHT, false);
-				setLastKey(VK_RIGHT, true);
 			}
 			break;
 		}
@@ -170,7 +127,6 @@ void InputManager::specialKeyInputUp(const int key, int x, int y)
 			if (!getKey(VK_UP))
 			{
 				setKey(VK_UP, true);
-				setLastKey(VK_UP, false);
 			}
 			break;
 		}
@@ -179,7 +135,6 @@ void InputManager::specialKeyInputUp(const int key, int x, int y)
 			if (!getKey(VK_DOWN))
 			{
 				setKey(VK_DOWN, true);
-				setLastKey(VK_DOWN, false);
 			}
 			break;
 		}
@@ -188,7 +143,6 @@ void InputManager::specialKeyInputUp(const int key, int x, int y)
 			if (!getKey(VK_LEFT))
 			{
 				setKey(VK_LEFT, true);
-				setLastKey(VK_LEFT, false);
 			}
 			break;
 		}
@@ -197,11 +151,20 @@ void InputManager::specialKeyInputUp(const int key, int x, int y)
 			if (!getKey(VK_RIGHT))
 			{
 				setKey(VK_RIGHT, true);
-				setLastKey(VK_RIGHT, false);
 			}
 			break;
 		}
 	}
+}
+
+void InputManager::clearEverything()
+{
+	m_lastMousePosition = glm::vec2(0.0f, 0.0f);
+	m_lastLeftMouseClick = false;
+	m_leftMouseClick = false;
+	m_lastRightMouseClick = false;
+	m_rightMouseClick = false;
+	m_keyStates.clear();
 }
 
 std::string InputManager::virtualKeyCodeToString(const int virtualKey)

@@ -4,6 +4,10 @@
 #include <vector>
 #include <memory>
 
+class UIElementBase;
+class Text;
+class InputManager;
+
 template <typename T, typename T2>
 bool checkCollision(const std::shared_ptr<T>& object, const std::shared_ptr<T2>& collider)
 {
@@ -40,4 +44,8 @@ bool checkCollision(const std::shared_ptr<T>& object, std::vector<std::shared_pt
 	}
 	return false;
 }
+
+void checkCollision(UIElementBase* uiElementBase, const std::shared_ptr<InputManager>& inputManager);
+void checkCollision(Text* text, const std::shared_ptr<InputManager>& inputManager);
+
 #endif

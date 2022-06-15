@@ -1,5 +1,4 @@
 #include "BaseGameObject.hpp"
-#include "Entity.hpp"
 #include "Player.hpp"
 
 #include <algorithm>

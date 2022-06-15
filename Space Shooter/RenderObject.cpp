@@ -10,7 +10,7 @@ void RenderObject::updateAnimation(const float dt)
 {
 	if (getAnimation() == nullptr) return;
 
-	const auto sprites = getAnimation()->getAnimation();
+	const auto& sprites = getAnimation()->getAnimation();
 
 	if (!sprites.empty())
 	{

@@ -7,9 +7,6 @@
 #include <string>
 #include <unordered_map>
 
-class MenuManager;
-class SpriteSheetManager;
-class GameStateManager;
 class KeyBinding;
 
 class InputManager
@@ -28,22 +25,20 @@ public:
 	bool getKey(const short);
 	bool getKey(const std::string&);
 	void setKey(const short, bool);
-	bool getLastKey(const short);
-	bool getLastKey(const std::string&);
-	void setLastKey(const short, bool);
-	std::unordered_map<short, bool>* getLastKeys() { return &m_lastKeyStates; }
 	std::unordered_map<short, bool>* getKeys() { return &m_keyStates; }
 	std::vector<std::shared_ptr<KeyBinding>>* getKeyBindings() { return &m_keyBindings; }
 	void addKeyBinding(const std::shared_ptr<KeyBinding>& key_binding) { m_keyBindings.push_back(key_binding); }
 	std::shared_ptr<KeyBinding> getCurrentlyEditedKeyBinding() const { return m_currentlyEditedKeyBinding; }
 	void setCurrentlyEditedKeyBinding(const std::shared_ptr<KeyBinding>& kb) { m_currentlyEditedKeyBinding = kb; }
 
-	void keyboardInput(unsigned char, int, int, const std::shared_ptr<MenuManager>&, irrklang::ISoundEngine*, const std::shared_ptr<GameStateManager>&, const std::shared_ptr<SpriteSheetManager>&);
+	void keyboardInput(unsigned char);
 	void motionFunc(int, int);
 	void processMouseClick(int, int, int, int);
 	void keyboardInputUp(unsigned char, int, int);
 	void specialKeyInput(int, int, int);
 	void specialKeyInputUp(int, int, int);
+
+	void clearEverything();
 
 	static std::string virtualKeyCodeToString(int);
 private:
@@ -53,7 +48,6 @@ private:
 	bool m_lastRightMouseClick{ false };
 	bool m_rightMouseClick{ false };
 	std::unordered_map<short, bool> m_keyStates;
-	std::unordered_map<short, bool> m_lastKeyStates;
 	std::vector<std::shared_ptr<KeyBinding>> m_keyBindings;
 	std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding{ nullptr };
 };
