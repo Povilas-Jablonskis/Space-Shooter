@@ -24,7 +24,7 @@ public:
 private:
     std::vector<std::shared_ptr<UIElementBase>> m_elements;
     std::vector<std::shared_ptr<Text>> m_texts;
-    int m_characterSelectionIndex{ 0 };
+    int m_characterSelectionIndex{};
     std::vector<std::shared_ptr<Animation>> m_playerModels;
     std::shared_ptr<InputManager> m_inputManager{ nullptr };
     std::shared_ptr<SpriteSheetManager> m_spriteSheetManager{ nullptr };
@@ -32,4 +32,4 @@ private:
     std::shared_ptr<SceneStateMachine> m_sceneStateMachine{ nullptr };
 };
 
-#endif /* SceneSplashScreen_hpp */
+#endif

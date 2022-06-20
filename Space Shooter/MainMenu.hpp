@@ -21,4 +21,4 @@ private:
     std::shared_ptr<SceneStateMachine> m_sceneStateMachine{ nullptr };
 };
 
-#endif /* SceneSplashScreen_hpp */
+#endif

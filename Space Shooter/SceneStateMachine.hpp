@@ -21,7 +21,7 @@ public:
 private:
     std::unordered_map<ScenesEnum, std::shared_ptr<Scene>> scenes;
     std::shared_ptr<Scene> curScene{ nullptr };
-    unsigned int insertedSceneID{ 0 };
+    unsigned int insertedSceneID{};
 };
 
 #endif /* SceneStateMachine_hpp */

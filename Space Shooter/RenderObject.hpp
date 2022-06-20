@@ -49,17 +49,17 @@ public:
 	void updateAnimation(float);
 	void applyAnimation(const std::shared_ptr<Animation>&);
 private:
-	size_t m_currentFrame{ 0 };
+	size_t m_currentFrame{};
 	bool m_animComplete{ false };
-	float m_animTimer{ 0.0f };
+	float m_animTimer{};
 	std::shared_ptr<Animation> m_animation{ nullptr };
 	float m_scale{ 0.5f };
-	glm::vec3 m_rotationAxis{ glm::vec3(0.0, 0.0, 1.0) };
-	float m_rotationAngle{ 0.0f };
-	glm::vec2 m_position;
-	float m_width;
-	float m_height;
-	glm::vec4 m_color;
+	glm::vec3 m_rotationAxis{ glm::vec3(0.0f, 0.0f, 1.0f) };
+	float m_rotationAngle{};
+	glm::vec2 m_position{};
+	float m_width{};
+	float m_height{};
+	glm::vec4 m_color{};
 	float m_originalWidth{};
 	float m_originalHeight{};
 };

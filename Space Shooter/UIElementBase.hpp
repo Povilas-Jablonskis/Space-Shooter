@@ -27,8 +27,8 @@ public:
 	const glm::vec2& getPositionPercents() const { return m_positionPercents; }
 private:
 	bool m_active{ true };
-	glm::vec2 m_positionPercents;
-	bool m_gotMousedClicked{ false };
-	bool m_gotMousedHovered{ false };
+	glm::vec2 m_positionPercents{};
+	bool m_gotMousedClicked{};
+	bool m_gotMousedHovered{};
 };
 #endif

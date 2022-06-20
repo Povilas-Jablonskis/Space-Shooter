@@ -26,11 +26,11 @@ public:
 	const std::string& getExplosionSound() const { return m_explosionSound; }
 	void setExplosionSound(const std::string& explosionSound) { m_explosionSound = explosionSound; }
 private:
-	std::string m_explosionSound;
-	bool m_needsToBeRemoved{ false };
+	std::string m_explosionSound{};
+	bool m_needsToBeRemoved{};
 	std::unordered_map<std::string, std::shared_ptr<Animation>> m_animations;
 	glm::vec2 m_velocity;
-	int m_value{ 0 };
+	int m_value{};
 	int m_lives{ 1 };
 };
 #endif

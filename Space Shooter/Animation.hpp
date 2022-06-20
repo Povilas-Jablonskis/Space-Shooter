@@ -17,9 +17,9 @@ public:
 	int getSpriteSheetHeight() const { return m_spriteSheetHeight; };
 	void loadFromFile(const std::string&);
 private:
-	int m_spriteSheetWidth;
-	int m_spriteSheetHeight;
-	GLuint m_spriteSheetTexture;
+	int m_spriteSheetWidth{};
+	int m_spriteSheetHeight{};
+	GLuint m_spriteSheetTexture{};
 	std::vector<glm::vec4> m_sprites;
 };
 #endif

@@ -32,9 +32,9 @@ private:
 	std::shared_ptr<Player> m_player{ nullptr };
 
 	float m_currentTime{ static_cast<float>(glutGet(GLUT_ELAPSED_TIME)) };
-	float m_accumulator{ 0.0f };
-	int m_maxLevels{ 0 };
-	int m_currentLevel{ 0 };
+	float m_accumulator{};
+	int m_maxLevels{};
+	int m_currentLevel{};
 
 	std::vector<std::shared_ptr<BaseGameObject>> m_meteors;
 	std::vector<std::shared_ptr<BaseGameObject>> m_pickups;
@@ -49,4 +49,4 @@ private:
 	irrklang::ISoundEngine* m_soundEngine{ nullptr };
 };
 
-#endif /* SceneSplashScreen_hpp */
+#endif

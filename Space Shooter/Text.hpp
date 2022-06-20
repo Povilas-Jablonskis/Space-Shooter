@@ -32,9 +32,9 @@ public:
 private:
 
 	bool m_needUpdate{ true };
-	std::shared_ptr<Font> m_font;
-	std::string m_text;
+	std::shared_ptr<Font> m_font{ nullptr };
+	std::string m_text{};
 	std::vector<cachedCharacter> m_cachedCharacters;
-	glm::vec4 m_bbox = { 0.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec4 m_bbox{};
 };
 #endif

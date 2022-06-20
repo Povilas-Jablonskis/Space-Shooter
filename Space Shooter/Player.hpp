@@ -17,8 +17,8 @@ public:
 	const std::string& getLivesIcon() const { return m_livesIcon; }
 	void setLivesIcon(const std::string& icon) { m_livesIcon = icon; }
 private:
-	std::string m_livesIcon;
-	glm::vec2 m_startVelocity;
-	glm::vec2 m_startPosition;
+	std::string m_livesIcon{};
+	glm::vec2 m_startVelocity{};
+	glm::vec2 m_startPosition{};
 };
 #endif

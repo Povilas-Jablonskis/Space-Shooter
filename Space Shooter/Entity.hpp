@@ -22,7 +22,7 @@ public:
 private:
 	std::vector<std::shared_ptr<BaseGameObject>> m_bullets;
 	std::unordered_map<std::string, std::shared_ptr<BaseGameObject>> m_addons;
-	float m_delayBetweenShootsTimer{ 0.0f };
-	float m_delayBetweenShoots{ 0.0f };
+	float m_delayBetweenShootsTimer{};
+	float m_delayBetweenShoots{};
 };
 #endif

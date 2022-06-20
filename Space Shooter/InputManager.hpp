@@ -42,11 +42,11 @@ public:
 
 	static std::string virtualKeyCodeToString(int);
 private:
-	glm::vec2 m_lastMousePosition{ glm::vec2(0.0f, 0.0f) };
-	bool m_lastLeftMouseClick{ false };
-	bool m_leftMouseClick{ false };
-	bool m_lastRightMouseClick{ false };
-	bool m_rightMouseClick{ false };
+	glm::vec2 m_lastMousePosition{};
+	bool m_lastLeftMouseClick{};
+	bool m_leftMouseClick{};
+	bool m_lastRightMouseClick{};
+	bool m_rightMouseClick{};
 	std::unordered_map<short, bool> m_keyStates;
 	std::vector<std::shared_ptr<KeyBinding>> m_keyBindings;
 	std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding{ nullptr };

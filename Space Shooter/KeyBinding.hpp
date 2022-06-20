@@ -19,8 +19,8 @@ public:
 private:
 	void savePlayerConfig(const std::shared_ptr<InputManager>&) const;
 
-	short m_keyBindingCharacter;
-	std::string m_keyBinding;
+	short m_keyBindingCharacter{};
+	std::string m_keyBinding{};
 
 	std::shared_ptr<Text> m_text{ nullptr };
 };
