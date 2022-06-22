@@ -3,15 +3,19 @@
 
 #include "Animation.hpp"
 
-#include "glm/gtc/type_ptr.hpp"
 #include <string>
 #include <unordered_map>
 #include <memory>
-
-#include <freeglut/freeglut_std.h>
+#include <algorithm>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <freeglut/freeglut.h>
 
 class Text;
 class Shader;
+class Sprite;
 
 class Renderer
 {
@@ -26,6 +30,8 @@ public:
 
 	void draw(const std::vector<std::shared_ptr<Text>>&) const;
 	void draw(const std::shared_ptr<Text>&) const;
+
+	void draw(const Sprite&) const;
 
 	template <typename T>
 	void draw(const std::vector<std::shared_ptr<T>>& ts) const
@@ -54,13 +60,13 @@ public:
 		auto projection = glm::ortho(0.0f, windowWidth, 0.0f, windowHeight, 0.0f, 1.0f);
 
 		glm::mat4 model(1.f);
-		model = translate(model, glm::vec3(t->getPosition(), 0.0f));
+		model = glm::translate(model, glm::vec3(t->getPosition(), 0.0f));
 
-		model = translate(model, glm::vec3(0.5f * t->getWidth(), 0.5f * t->getHeight(), 0.0f));
-		model = glm::rotate(model, t->getRotationAngle(), t->getRotationAxis());
-		model = translate(model, glm::vec3(-0.5f * t->getWidth(), -0.5f * t->getHeight(), 0.0f));
+		model = glm::translate(model, glm::vec3(0.5f * t->getWidth(), 0.5f * t->getHeight(), 0.0f));
+		model = glm::rotate(model, t->getRotationAngle(), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::translate(model, glm::vec3(-0.5f * t->getWidth(), -0.5f * t->getHeight(), 0.0f));
 
-		model = scale(model, glm::vec3(t->getWidth(), t->getHeight(), 1.0f));
+		model = glm::scale(model, glm::vec3(t->getWidth(), t->getHeight(), 1.0f));
 
 		glUniform4f(offsetLocation, t->getColor().x / 255.0f, t->getColor().y / 255.0f, t->getColor().z / 255.0f, t->getColor().a);
 

@@ -29,7 +29,7 @@ Application::Application()
 
 	m_sceneManager->add(ScenesEnum::MAIN, std::make_shared<MainMenu>(m_sceneManager, m_soundEngine, m_inputManager));
 
-	auto pickYourCharacterMenu = std::make_shared<PickYourCharacterMenu>(m_sceneManager, m_spriteSheetManager, m_inputManager, m_soundEngine);
+	auto pickYourCharacterMenu = std::make_shared<PickYourCharacterMenu>(m_sceneManager, m_spriteSheetManager, m_inputManager, m_soundEngine, m_textureAllocator);
 	pickYourCharacterMenu->loadPlayerModels(m_spriteSheetManager);
 
 	m_sceneManager->add(ScenesEnum::PICK_YOUR_CHARACTER, pickYourCharacterMenu);

@@ -13,10 +13,18 @@
 #include <fstream>
 #include "rapidxml/rapidxml_print.hpp"
 
-GameScene::GameScene(std::shared_ptr<SceneStateMachine> sceneStateMachine, std::shared_ptr<SpriteSheetManager> m_spriteSheetManager, std::shared_ptr<InputManager> inputManager, irrklang::ISoundEngine* m_soundEngine)
-	: m_sceneStateMachine(sceneStateMachine), m_spriteSheetManager(m_spriteSheetManager), m_inputManager(inputManager), m_soundEngine(m_soundEngine)
+GameScene::GameScene(std::shared_ptr<SceneStateMachine> sceneStateMachine, std::shared_ptr<SpriteSheetManager> m_spriteSheetManager, std::shared_ptr<InputManager> inputManager, irrklang::ISoundEngine* m_soundEngine, ResourceAllocator<Texture>& textureAllocator)
+	: m_sceneStateMachine(sceneStateMachine), m_spriteSheetManager(m_spriteSheetManager), m_inputManager(inputManager), m_soundEngine(m_soundEngine), m_textureAllocator(textureAllocator), m_objects(m_drawbleSystem, m_collisionSystem)
 {
-
+	m_context.m_objects = &m_objects;
+	m_context.m_background = m_background;
+	m_context.m_enemies = &m_enemies;
+	m_context.m_explosions = &m_explosions;
+	m_context.m_inputManager = m_inputManager;
+	m_context.m_meteors = &m_meteors;
+	m_context.m_pickups = &m_pickups;
+	m_context.m_player = m_player;
+	m_context.m_textureAllocator = &m_textureAllocator;
 }
 
 void GameScene::loadLevel()
@@ -606,12 +614,17 @@ void GameScene::draw(const std::shared_ptr<Renderer>& renderer, const float dt)
 			}
 		}
 
+		m_objects.processRemovals();
+		m_objects.processNewObjects();
+		m_objects.update(dt);
+
 		m_accumulator -= dt;
 	}
 
 	//Render m_background
 	m_background->update(dt, m_inputManager);
 	renderer->draw(m_background);
+	m_objects.draw(renderer);
 	//Render m_meteors
 	renderer->draw(m_meteors);
 	//Render m_explosions

@@ -11,8 +11,8 @@
 #include "rapidxml/rapidxml_print.hpp"
 
 
-PickYourCharacterMenu::PickYourCharacterMenu(std::shared_ptr<SceneStateMachine> sceneStateMachine, std::shared_ptr<SpriteSheetManager> m_spriteSheetManager, std::shared_ptr<InputManager> inputManager, irrklang::ISoundEngine* m_soundEngine)
-	: m_sceneStateMachine(sceneStateMachine), m_spriteSheetManager(m_spriteSheetManager), m_inputManager(inputManager), m_soundEngine(m_soundEngine)
+PickYourCharacterMenu::PickYourCharacterMenu(std::shared_ptr<SceneStateMachine> sceneStateMachine, std::shared_ptr<SpriteSheetManager> m_spriteSheetManager, std::shared_ptr<InputManager> inputManager, irrklang::ISoundEngine* m_soundEngine, ResourceAllocator<Texture>& textureAllocator)
+	: m_sceneStateMachine(sceneStateMachine), m_spriteSheetManager(m_spriteSheetManager), m_inputManager(inputManager), m_soundEngine(m_soundEngine), m_textureAllocator(textureAllocator)
 {
 
 }
@@ -97,7 +97,7 @@ void PickYourCharacterMenu::onCreate()
 		m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
 		m_sceneStateMachine->remove(ScenesEnum::GAME_LIVE);
-		m_sceneStateMachine->add(ScenesEnum::GAME_LIVE, std::make_shared<GameScene>(m_sceneStateMachine, m_spriteSheetManager, m_inputManager, m_soundEngine));
+		m_sceneStateMachine->add(ScenesEnum::GAME_LIVE, std::make_shared<GameScene>(m_sceneStateMachine, m_spriteSheetManager, m_inputManager, m_soundEngine, m_textureAllocator));
 
 		m_sceneStateMachine->switchTo(ScenesEnum::GAME_LIVE);
 	};

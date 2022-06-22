@@ -1,8 +1,9 @@
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include "Text.hpp"
-
-#include <algorithm>
+#include "Sprite.hpp"
+#include "C_Transform.hpp"
+#include "C_Sprite.hpp"
 
 Renderer::Renderer()
 {
@@ -99,6 +100,34 @@ void Renderer::draw(const std::shared_ptr<Text>& text) const
 		// Render quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
+	glUseProgram(0);
+	glBindVertexArray(0);
+}
+
+void Renderer::draw(const Sprite& sprite) const
+{
+	const auto program = getShaderProgram("shader");
+
+	glBindVertexArray(getVAO());
+	glUseProgram(program);
+	const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
+	const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
+
+	const auto offsetLocation = glGetUniformLocation(program, "color");
+	const auto offsetLocation3 = glGetUniformLocation(program, "spriteCoordinates");
+	const auto offsetLocation6 = glGetUniformLocation(program, "projection");
+	const auto offsetLocation7 = glGetUniformLocation(program, "model");
+
+	auto& textureRect = sprite.getTextureRect();
+	auto texture = sprite.getTexture();
+	glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+
+	auto& spriteSheetSize = texture->getSize();
+	glUniform4f(offsetLocation3, textureRect.x / spriteSheetSize.x, textureRect.y / spriteSheetSize.y, textureRect.z / spriteSheetSize.x, textureRect.w / spriteSheetSize.y);
+	glUniform4f(offsetLocation, sprite.getColor().x / 255.0f, sprite.getColor().y / 255.0f, sprite.getColor().z / 255.0f, sprite.getColor().a);
+	glUniformMatrix4fv(offsetLocation6, 1, GL_FALSE, value_ptr(glm::ortho(0.0f, windowWidth, 0.0f, windowHeight, 0.0f, 1.0f)));
+	glUniformMatrix4fv(offsetLocation7, 1, GL_FALSE, value_ptr(sprite.getTransform()));
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 	glUseProgram(0);
 	glBindVertexArray(0);
 }

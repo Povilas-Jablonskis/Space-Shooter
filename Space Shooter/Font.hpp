@@ -21,7 +21,7 @@ public:
 	explicit Font(const FT_Face&);
 	Character getCharacter(FT_ULong) const;
 private:
-	FT_Face m_face{ nullptr };
+	FT_Face m_face{};
 	std::unordered_map<FT_ULong, Character> m_characters;
 };
 #endif

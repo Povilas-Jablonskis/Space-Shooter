@@ -17,9 +17,9 @@ public:
 
     void draw(const std::shared_ptr<Renderer>&, const float) override;
 private:
-    std::shared_ptr<InputManager> m_inputManager{ nullptr };
+    std::shared_ptr<InputManager> m_inputManager{};
     std::vector<std::shared_ptr<Text>> m_texts;
-    std::shared_ptr<SceneStateMachine> m_sceneStateMachine{ nullptr };
+    std::shared_ptr<SceneStateMachine> m_sceneStateMachine{};
 };
 
 #endif

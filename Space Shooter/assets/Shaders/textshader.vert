@@ -1,5 +1,6 @@
 #version 330 core
 layout (location = 0) in vec4 coord;
+
 out vec2 texCoord;
 
 uniform mat4 projection;

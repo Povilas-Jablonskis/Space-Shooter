@@ -22,6 +22,6 @@ private:
 	short m_keyBindingCharacter{};
 	std::string m_keyBinding{};
 
-	std::shared_ptr<Text> m_text{ nullptr };
+	std::shared_ptr<Text> m_text{};
 };
 #endif

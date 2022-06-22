@@ -24,4 +24,4 @@ public:
     virtual void draw(const std::shared_ptr<Renderer>&, const float) {};
 };
 
-#endif /* Scene_hpp */
+#endif

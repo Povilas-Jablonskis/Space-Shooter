@@ -45,7 +45,7 @@ bool checkCollision(const std::shared_ptr<T>& object, std::vector<std::shared_pt
 	return false;
 }
 
-void checkCollision(UIElementBase* uiElementBase, const std::shared_ptr<InputManager>& inputManager);
-void checkCollision(Text* text, const std::shared_ptr<InputManager>& inputManager);
+void checkCollision(UIElementBase*, const std::shared_ptr<InputManager>&);
+void checkCollision(Text*, const std::shared_ptr<InputManager>&);
 
 #endif

@@ -14,4 +14,4 @@ enum ScenesEnum
 	SOUNDS
 };
 
-#endif /* Scene_hpp */
+#endif

@@ -29,15 +29,12 @@ public:
 	float getAnimTimer() const { return m_animTimer; }
 	const glm::vec4& getColor() const { return m_color; }
 	const glm::vec2& getPosition() const { return m_position; }
-	const glm::vec3& getRotationAxis() const { return m_rotationAxis; }
 	float getRotationAngle() const { return m_rotationAngle; }
 	const std::shared_ptr<Animation>& getAnimation() const { return m_animation; }
 	virtual void setPosition(const glm::vec2& position) { m_position = position; }
 	virtual void setPosition(const int index, const float position) { m_position[index] = position; }
 	void setScale(const float scale) { m_scale = scale; }
 	void setRotationAngle(const float rotation) { m_rotationAngle = rotation; }
-	void setRotationAxis(const glm::vec3& rotation) { m_rotationAxis = rotation; }
-	void setRotationAxis(const int index, const float rotation) { m_rotationAxis[index] = rotation; }
 	float getWidth() const { return m_width * m_scale; };
 	float getHeight() const { return m_height * m_scale; };
 	void setWidth(const float width) { m_width = width; }
@@ -50,11 +47,10 @@ public:
 	void applyAnimation(const std::shared_ptr<Animation>&);
 private:
 	size_t m_currentFrame{};
-	bool m_animComplete{ false };
+	bool m_animComplete{};
 	float m_animTimer{};
-	std::shared_ptr<Animation> m_animation{ nullptr };
+	std::shared_ptr<Animation> m_animation{};
 	float m_scale{ 0.5f };
-	glm::vec3 m_rotationAxis{ glm::vec3(0.0f, 0.0f, 1.0f) };
 	float m_rotationAngle{};
 	glm::vec2 m_position{};
 	float m_width{};

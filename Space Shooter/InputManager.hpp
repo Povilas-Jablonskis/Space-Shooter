@@ -49,6 +49,6 @@ private:
 	bool m_rightMouseClick{};
 	std::unordered_map<short, bool> m_keyStates;
 	std::vector<std::shared_ptr<KeyBinding>> m_keyBindings;
-	std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding{ nullptr };
+	std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding{};
 };
 #endif

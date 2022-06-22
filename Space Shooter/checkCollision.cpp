@@ -1,6 +1,6 @@
 #include "checkCollision.hpp"
-#include "InputManager.hpp"
 #include "UIElementBase.hpp"
+#include "InputManager.hpp"
 #include "Text.hpp"
 
 void checkCollision(UIElementBase* uiElementBase, const std::shared_ptr<InputManager>& inputManager)
