@@ -2,11 +2,16 @@
 #define controlsMenu_hpp
 
 #include "Scene.hpp"
+#include "SceneStateMachine.hpp"
+#include "SharedContext.hpp"
+
+class Text;
+class KeyBinding;
 
 class ControlsMenu : public Scene
 {
 public:
-    ControlsMenu(std::shared_ptr<SceneStateMachine>, irrklang::ISoundEngine*, std::shared_ptr<InputManager>);
+    ControlsMenu(SceneStateMachine&, SharedContext&);
 
     void onCreate() override;
     void onDestroy() override;
@@ -15,13 +20,14 @@ public:
 
     void processInput() override;
 
-    void draw(const std::shared_ptr<Renderer>&, const float) override;
+    void draw(float) override;
+
+    void savePlayerConfig() const;
+    std::string virtualKeyCodeToString(int);
 private:
-    std::shared_ptr<InputManager> m_inputManager{};
-    irrklang::ISoundEngine* m_soundEngine{};
     std::vector<std::shared_ptr<Text>> m_texts;
-    std::vector<std::shared_ptr<KeyBinding>> m_keybindings;
-    std::shared_ptr<SceneStateMachine> m_sceneStateMachine{};
+    SharedContext& m_context;
+    SceneStateMachine& m_sceneStateMachine;
 };
 
 #endif

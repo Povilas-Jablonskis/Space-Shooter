@@ -3,16 +3,19 @@
 
 #include <vector>
 #include <memory>
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
 
 #include "SharedContext.hpp"
 #include "C_Sprite.hpp"
 #include "C_Collidable.hpp"
+#include "C_Transform.hpp"
 
-class C_BoxCollider;
-class C_Transform;
-class Component;
 class C_InstanceID;
+class C_Tag;
+class Component;
 class Renderer;
+struct SharedContext;
 
 class Object
 {
@@ -23,11 +26,11 @@ public:
     void start(); // Called after Awake method. Use to initialise variables.
 
     void update(float);
-    void draw(const std::shared_ptr<Renderer>&);
+    void draw(const Renderer&);
 
-    void onCollisionEnter(std::shared_ptr<C_BoxCollider>);
-    void onCollisionStay(std::shared_ptr<C_BoxCollider>);
-    void onCollisionExit(std::shared_ptr<C_BoxCollider>);
+    void onCollisionEnter(C_BoxCollider&);
+    void onCollisionStay(C_BoxCollider&);
+    void onCollisionExit(C_BoxCollider&);
 
     template <typename T> std::shared_ptr<T> addComponent()
     {
@@ -87,13 +90,14 @@ public:
         return matchingComponents;
     };
 
-    std::shared_ptr<C_Sprite> getSprite() { return m_sprite; };
+    const std::shared_ptr<C_Sprite>& getSprite();
 
     bool isQueuedForRemoval();
     void queueForRemoval();
 
     std::shared_ptr<C_Transform> m_transform;
     std::shared_ptr<C_InstanceID> m_instanceID;
+    std::shared_ptr<C_Tag> m_tag;
 
     SharedContext* m_context;
 private:

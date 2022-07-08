@@ -7,7 +7,6 @@ class C_InstanceID : public Component
 {
 public:
     C_InstanceID(Object*);
-    ~C_InstanceID();
 
     unsigned int get() const;
 

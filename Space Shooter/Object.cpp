@@ -1,14 +1,14 @@
 #include "Object.hpp"
 #include "Renderer.hpp"
 #include "C_BoxCollider.hpp"
-#include "C_Transform.hpp"
-#include "C_Collidable.hpp"
 #include "C_InstanceID.hpp"
+#include "C_Tag.hpp"
 
 Object::Object(SharedContext* context) : m_context(context)
 {
     m_transform = addComponent<C_Transform>();
     m_instanceID = addComponent<C_InstanceID>();
+    m_tag = addComponent<C_Tag>();
 }
 
 void Object::awake()
@@ -35,12 +35,12 @@ void Object::update(float timeDelta)
     }
 }
 
-void Object::draw(const std::shared_ptr<Renderer>& renderer)
+void Object::draw(const Renderer& renderer)
 {
     m_sprite->draw(renderer);
 }
 
-void Object::onCollisionEnter(std::shared_ptr<C_BoxCollider> other)
+void Object::onCollisionEnter(C_BoxCollider& other)
 {
     for (const auto& component : m_collidables)
     {
@@ -48,7 +48,7 @@ void Object::onCollisionEnter(std::shared_ptr<C_BoxCollider> other)
     }
 }
 
-void Object::onCollisionStay(std::shared_ptr<C_BoxCollider> other)
+void Object::onCollisionStay(C_BoxCollider& other)
 {
     for (const auto& component : m_collidables)
     {
@@ -56,7 +56,7 @@ void Object::onCollisionStay(std::shared_ptr<C_BoxCollider> other)
     }
 }
 
-void Object::onCollisionExit(std::shared_ptr<C_BoxCollider> other)
+void Object::onCollisionExit(C_BoxCollider& other)
 {
     for (const auto& component : m_collidables)
     {
@@ -67,6 +67,11 @@ void Object::onCollisionExit(std::shared_ptr<C_BoxCollider> other)
 void Object::queueForRemoval()
 {
     m_queuedForRemoval = true;
+}
+
+const std::shared_ptr<C_Sprite>& Object::getSprite()
+{
+    return m_sprite;
 }
 
 bool Object::isQueuedForRemoval()

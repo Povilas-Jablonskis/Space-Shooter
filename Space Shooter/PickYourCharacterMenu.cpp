@@ -1,23 +1,23 @@
 #include "PickYourCharacterMenu.hpp"
 #include "SceneStateMachine.hpp"
 #include "Text.hpp"
-#include "Renderer.hpp"
-#include "SpriteSheet.hpp"
-#include "SpriteSheetManager.hpp"
+#include "Sprite.hpp"
 #include "FileConstants.hpp"
 #include "GameScene.hpp"
+#include "InputManager.hpp"
+#include "C_Transform.hpp"
 
 #include <fstream>
 #include "rapidxml/rapidxml_print.hpp"
 
 
-PickYourCharacterMenu::PickYourCharacterMenu(std::shared_ptr<SceneStateMachine> sceneStateMachine, std::shared_ptr<SpriteSheetManager> m_spriteSheetManager, std::shared_ptr<InputManager> inputManager, irrklang::ISoundEngine* m_soundEngine, ResourceAllocator<Texture>& textureAllocator)
-	: m_sceneStateMachine(sceneStateMachine), m_spriteSheetManager(m_spriteSheetManager), m_inputManager(inputManager), m_soundEngine(m_soundEngine), m_textureAllocator(textureAllocator)
+PickYourCharacterMenu::PickYourCharacterMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
+	: m_sceneStateMachine(sceneStateMachine), m_context(context)
 {
 
 }
 
-void PickYourCharacterMenu::loadPlayerModels(const std::shared_ptr<SpriteSheetManager>& spriteSheetManager)
+void PickYourCharacterMenu::loadPlayerModels()
 {
 	auto doc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
@@ -31,9 +31,7 @@ void PickYourCharacterMenu::loadPlayerModels(const std::shared_ptr<SpriteSheetMa
 	// Iterate over the breweries
 	for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->next_sibling("Player"))
 	{
-		std::string spriteName = brewery_node->first_attribute("spriteName")->value();
-
-		m_playerModels.push_back(spriteSheetManager->getSpriteSheet("main")->getSprite(spriteName));
+		m_playerModels.push_back(brewery_node->first_attribute("spriteName")->value());
 	}
 
 	theFile.close();
@@ -44,18 +42,25 @@ void PickYourCharacterMenu::loadPlayerModels(const std::shared_ptr<SpriteSheetMa
 void PickYourCharacterMenu::onCreate()
 {
 	//Character Selection
-	auto selectedShip = std::make_shared<UIElementBase>(glm::vec4(255.0f, 255.0f, 255.0f, 1.0f), glm::vec2(47.0f, 60.0f));
-	selectedShip->applyAnimation(m_playerModels[m_characterSelectionIndex]);
-	selectedShip->setScale(0.5f);
-	m_elements.push_back(selectedShip);
+	auto selectedShip = std::make_shared<Object>(nullptr);
+	selectedShip->m_transform->setPosition(static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)) * 0.47f, static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) * 0.6f);
 
-	auto pickYourCharacterText = std::make_shared<Text>("Pick your character :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f));
+	auto selectedShipSprite = selectedShip->addComponent<C_Sprite>();
+	selectedShipSprite->setDrawLayer(DrawLayer::UI);
+
+	selectedShipSprite->getSprite().setSpriteSheet(m_context.m_spriteSheet);
+	selectedShipSprite->getSprite().setTextureRect(m_playerModels[m_characterSelectionIndex]);
+	selectedShipSprite->getSprite().setScale(0.5f, 0.5f);
+
+	m_objects.add(selectedShip);
+
+	auto pickYourCharacterText = std::make_shared<Text>("Pick your character :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 60.0f), *m_context.m_font);
 	pickYourCharacterText->disable();
 	m_texts.push_back(pickYourCharacterText);
-	auto leftArrow = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(44.0f, 60.0f));
+	auto leftArrow = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(44.0f, 60.0f), *m_context.m_font);
 	leftArrow->onMouseReleaseFunc = [=]()
 	{
-		m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
 		m_characterSelectionIndex -= 1;
 
@@ -64,13 +69,13 @@ void PickYourCharacterMenu::onCreate()
 			m_characterSelectionIndex = static_cast<int>(m_playerModels.size()) - 1;
 		}
 
-		selectedShip->applyAnimation(m_playerModels[m_characterSelectionIndex]);
+		selectedShipSprite->getSprite().setTextureRect(m_playerModels[m_characterSelectionIndex]);
 	};
 	m_texts.push_back(leftArrow);
-	auto rightArrow = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(54.0f, 60.0f));
+	auto rightArrow = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(54.0f, 60.0f), *m_context.m_font);
 	rightArrow->onMouseReleaseFunc = [=]()
 	{
-		m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
 		m_characterSelectionIndex += 1;
 
@@ -79,64 +84,60 @@ void PickYourCharacterMenu::onCreate()
 			m_characterSelectionIndex = static_cast<int>(m_playerModels.size()) - 1;
 		}
 
-		selectedShip->applyAnimation(m_playerModels[m_characterSelectionIndex]);
+		selectedShipSprite->getSprite().setTextureRect(m_playerModels[m_characterSelectionIndex]);
 	};
 	m_texts.push_back(rightArrow);
 	
-	auto backOption = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 20.0f));
+	auto backOption = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(20.0f, 20.0f), *m_context.m_font);
 	backOption->onMouseReleaseFunc = [=]()
 	{
-		m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
-		m_sceneStateMachine->switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
 	};
 	m_texts.push_back(backOption);
-	auto startOption = std::make_shared<Text>("Start", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(30.0f, 20.0f));
+	auto startOption = std::make_shared<Text>("Start", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(30.0f, 20.0f), *m_context.m_font);
 	startOption->onMouseReleaseFunc = [=]()
 	{
-		m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
-		m_sceneStateMachine->remove(ScenesEnum::GAME_LIVE);
-		m_sceneStateMachine->add(ScenesEnum::GAME_LIVE, std::make_shared<GameScene>(m_sceneStateMachine, m_spriteSheetManager, m_inputManager, m_soundEngine, m_textureAllocator));
+		m_sceneStateMachine.remove(ScenesEnum::GAME_LIVE);
+		m_sceneStateMachine.add(ScenesEnum::GAME_LIVE, std::make_shared<GameScene>(m_sceneStateMachine, m_context, m_characterSelectionIndex));
 
-		m_sceneStateMachine->switchTo(ScenesEnum::GAME_LIVE);
+		m_sceneStateMachine.switchTo(ScenesEnum::GAME_LIVE);
 	};
 	m_texts.push_back(startOption);
 }
 
 void PickYourCharacterMenu::onActivate()
 {
-	m_inputManager->clearEverything();
+	m_context.m_inputManager->clearEverything();
 }
 
 void PickYourCharacterMenu::onDestroy() { }
 
 void PickYourCharacterMenu::processInput()
 {
-	if (m_inputManager->getKey(27))
+	if (m_context.m_inputManager->getKey(27))
 	{
-		m_soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
-		m_sceneStateMachine->switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
 	}
 }
 
-void PickYourCharacterMenu::draw(const std::shared_ptr<Renderer>& renderer, const float dt)
+void PickYourCharacterMenu::draw(float dt)
 {
 	for (auto& text : m_texts)
 	{
-		text->update(m_inputManager);
+		text->update(*m_context.m_inputManager);
 	}
 
-	for (auto& uiElement : m_elements)
-	{
-		uiElement->update(dt, m_inputManager);
-	}
+	m_context.m_renderer->draw(m_texts);
 
-    renderer->draw(m_texts);
-
-    for (auto& uiElement : m_elements)
-    {
-        renderer->draw(uiElement);
-    }
+	m_objects.processCollidingObjects();
+	m_objects.processRemovals();
+	m_objects.processNewObjects();
+	m_objects.update(dt);
+	m_objects.draw(*m_context.m_renderer);
 }

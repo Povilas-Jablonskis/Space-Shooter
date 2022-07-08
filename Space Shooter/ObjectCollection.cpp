@@ -1,8 +1,7 @@
 #include "ObjectCollection.hpp"
+#include "C_Tag.hpp"
 
-ObjectCollection::ObjectCollection(S_Drawable& drawableSystem, S_Collidable& collidableSystem) : m_drawables(drawableSystem), m_collidables(collidableSystem) {}
-
-void ObjectCollection::add(std::shared_ptr<Object> object)
+void ObjectCollection::add(const std::shared_ptr<Object>& object)
 {
     m_newObjects.push_back(object);
 }
@@ -19,12 +18,17 @@ void ObjectCollection::update(float deltaTime)
         o->update(deltaTime);
     }
 
-    m_collidables.update();
+    m_collidables.resolve();
 }
 
-void ObjectCollection::draw(const std::shared_ptr<Renderer>& renderer)
+void ObjectCollection::draw(Renderer& renderer)
 {
     m_drawables.draw(renderer);
+}
+
+void ObjectCollection::removeObjectsWithTag(Tag tag)
+{
+    for_each_if(m_objects.begin(), m_objects.end(), [=](const std::shared_ptr<Object>& object) { return object->m_tag->compare(tag); }, [](const std::shared_ptr<Object>& object) { object->queueForRemoval(); });
 }
 
 void ObjectCollection::processNewObjects()
@@ -56,7 +60,7 @@ void ObjectCollection::processRemovals()
     auto objIterator = m_objects.begin();
     while (objIterator != m_objects.end())
     {
-        auto obj = *objIterator;
+        auto& obj = *objIterator;
 
         if (obj->isQueuedForRemoval())
         {
@@ -74,4 +78,9 @@ void ObjectCollection::processRemovals()
         m_drawables.processRemovals();
         m_collidables.processRemovals();
     }
+}
+
+void ObjectCollection::processCollidingObjects()
+{
+    m_collidables.processCollidingObjects();
 }

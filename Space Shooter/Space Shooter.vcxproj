@@ -113,19 +113,19 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
-    <ClCompile Include="BaseGameObject.cpp" />
     <ClCompile Include="Bitmask.cpp" />
-    <ClCompile Include="checkCollision.cpp" />
-    <ClCompile Include="checkCollision.hpp" />
     <ClCompile Include="ControlsMenu.cpp" />
     <ClCompile Include="C_BoxCollider.cpp" />
     <ClCompile Include="C_Collider.cpp" />
+    <ClCompile Include="C_RemoveObjectOnCollisionEnter.cpp" />
+    <ClCompile Include="C_Tag.cpp" />
+    <ClCompile Include="C_Velocity_DestroyWhenOutOfBounds.cpp" />
+    <ClCompile Include="C_PlayerLivesAndScore.cpp" />
+    <ClCompile Include="C_Velocity_ReverseVelocityWhenOutOfBounds.cpp" />
     <ClCompile Include="C_InstanceID.cpp" />
     <ClCompile Include="C_KeyboardMovement.cpp" />
     <ClCompile Include="C_Sprite.cpp" />
     <ClCompile Include="C_Transform.cpp" />
-    <ClCompile Include="C_Velocity.cpp" />
-    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="GameOver.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -139,26 +139,18 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     <ClCompile Include="OptionsMenu.cpp" />
     <ClCompile Include="PauseMenu.cpp" />
     <ClCompile Include="PickYourCharacterMenu.cpp" />
-    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Renderer.cpp" />
-    <ClCompile Include="RenderObject.cpp" />
     <ClCompile Include="SceneStateMachine.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SoundsMenu.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
-    <ClCompile Include="SpriteSheetManager.cpp" />
     <ClCompile Include="S_Collidable.cpp" />
     <ClCompile Include="S_Drawable.cpp" />
     <ClCompile Include="Text.cpp" />
-    <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="UIElementBase.cpp" />
-    <ClCompile Include="UIManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Animation.hpp" />
     <ClInclude Include="Application.hpp" />
-    <ClInclude Include="BaseGameObject.hpp" />
     <ClInclude Include="BindableActions.hpp" />
     <ClInclude Include="Bitmask.hpp" />
     <ClInclude Include="Component.hpp" />
@@ -167,13 +159,17 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     <ClInclude Include="C_BoxCollider.hpp" />
     <ClInclude Include="C_Collidable.hpp" />
     <ClInclude Include="C_Collider.hpp" />
+    <ClInclude Include="C_RemoveObjectOnCollisionEnter.hpp" />
+    <ClInclude Include="C_Tag.hpp" />
+    <ClInclude Include="C_Velocity_DestroyWhenOutOfBounds.hpp" />
+    <ClInclude Include="C_PlayerLivesAndScore.hpp" />
+    <ClInclude Include="C_Velocity_ReverseVelocityWhenOutOfBounds.hpp" />
     <ClInclude Include="C_InstanceID.hpp" />
     <ClInclude Include="C_KeyboardMovement.hpp" />
     <ClInclude Include="C_Sprite.hpp" />
     <ClInclude Include="C_Transform.hpp" />
-    <ClInclude Include="C_Velocity.hpp" />
+    <ClInclude Include="Sprite.hpp" />
     <ClInclude Include="S_Drawable.hpp" />
-    <ClInclude Include="Entity.hpp" />
     <ClInclude Include="EnumClassHash.hpp" />
     <ClInclude Include="FileConstants.hpp" />
     <ClInclude Include="GameOver.hpp" />
@@ -188,24 +184,16 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     <ClInclude Include="OptionsMenu.hpp" />
     <ClInclude Include="PauseMenu.hpp" />
     <ClInclude Include="PickYourCharacterMenu.hpp" />
-    <ClInclude Include="Player.hpp" />
     <ClInclude Include="Renderer.hpp" />
-    <ClInclude Include="RenderObject.hpp" />
-    <ClInclude Include="ResourceAllocator.hpp" />
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="ScenesEnum.hpp" />
     <ClInclude Include="SceneStateMachine.hpp" />
     <ClInclude Include="ScientificConstants.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="SharedContext.hpp" />
-    <ClInclude Include="Sprite.hpp" />
     <ClInclude Include="SpriteSheet.hpp" />
-    <ClInclude Include="SpriteSheetManager.hpp" />
     <ClInclude Include="S_Collidable.hpp" />
     <ClInclude Include="Text.hpp" />
-    <ClInclude Include="Texture.hpp" />
-    <ClInclude Include="UIElementBase.hpp" />
-    <ClInclude Include="UIManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SoundsMenu.hpp" />

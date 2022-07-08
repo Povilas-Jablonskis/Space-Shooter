@@ -1,14 +1,15 @@
 #include "C_KeyboardMovement.hpp"
-#include "C_Velocity.hpp"
+#include "C_Transform.hpp"
 #include "Object.hpp"
 #include "InputManager.hpp"
 #include "BindableActions.hpp"
+#include "C_Velocity_ReverseVelocityWhenOutOfBounds.hpp"
 
 C_KeyboardMovement::C_KeyboardMovement(Object* owner) : Component(owner) {}
 
 void C_KeyboardMovement::awake()
 {
-    m_velocity = m_owner->getComponent<C_Velocity>();
+    m_velocity = m_owner->getComponent<C_Velocity_ReverseVelocityWhenOutOfBounds>();
 }
 
 void C_KeyboardMovement::setMovementSpeed(float moveSpeed)

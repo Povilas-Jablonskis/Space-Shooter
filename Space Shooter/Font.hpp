@@ -6,6 +6,7 @@
 #include <glew/glew.h>
 #include <glm/vec2.hpp>
 #include <unordered_map>
+#include <string>
 
 struct Character
 {
@@ -18,10 +19,9 @@ struct Character
 class Font
 {
 public:
-	explicit Font(const FT_Face&);
+	Font(const std::string&);
 	Character getCharacter(FT_ULong) const;
 private:
-	FT_Face m_face{};
 	std::unordered_map<FT_ULong, Character> m_characters;
 };
 #endif

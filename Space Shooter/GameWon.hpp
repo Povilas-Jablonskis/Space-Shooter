@@ -2,11 +2,15 @@
 #define gameWon_hpp
 
 #include "Scene.hpp"
+#include "SceneStateMachine.hpp"
+#include "SharedContext.hpp"
+
+class Text;
 
 class GameWon : public Scene
 {
 public:
-    GameWon(std::shared_ptr<SceneStateMachine>, std::shared_ptr<InputManager>);
+    GameWon(SceneStateMachine&, SharedContext&);
 
     void onCreate() override;
     void onDestroy() override;
@@ -15,11 +19,11 @@ public:
 
     void processInput() override;
 
-    void draw(const std::shared_ptr<Renderer>&, const float) override;
+    void draw(float) override;
 private:
-    std::shared_ptr<InputManager> m_inputManager{};
     std::vector<std::shared_ptr<Text>> m_texts;
-    std::shared_ptr<SceneStateMachine> m_sceneStateMachine{};
+    SharedContext& m_context;
+    SceneStateMachine& m_sceneStateMachine;
 };
 
 #endif

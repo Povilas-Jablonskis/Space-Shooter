@@ -2,23 +2,26 @@
 #define mainMenu_hpp
 
 #include "Scene.hpp"
+#include "SceneStateMachine.hpp"
+#include "SharedContext.hpp"
+
+class Text;
 
 class MainMenu : public Scene
 {
 public:
-    MainMenu(std::shared_ptr<SceneStateMachine>, irrklang::ISoundEngine*, std::shared_ptr<InputManager>);
+    MainMenu(SceneStateMachine&, SharedContext&);
 
     void onCreate() override;
     void onDestroy() override;
 
     void onActivate() override;
 
-    void draw(const std::shared_ptr<Renderer>&, const float) override;
+    void draw(float) override;
 private:
-    std::shared_ptr<InputManager> m_inputManager{};
-    irrklang::ISoundEngine* m_soundEngine{};
     std::vector<std::shared_ptr<Text>> m_texts;
-    std::shared_ptr<SceneStateMachine> m_sceneStateMachine{};
+    SharedContext& m_context;
+    SceneStateMachine& m_sceneStateMachine;
 };
 
 #endif

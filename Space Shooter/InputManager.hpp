@@ -12,24 +12,23 @@ class KeyBinding;
 class InputManager
 {
 public:
-	bool getLeftMouseState() const { return m_leftMouseClick; }
-	bool getRightMouseState() const { return m_rightMouseClick; }
-	void setLeftMouseState(const bool boolean) { m_leftMouseClick = boolean; }
-	void setRightMouseState(const bool boolean) { m_rightMouseClick = boolean; }
-	bool getLastLeftMouseState() const { return m_lastLeftMouseClick; }
-	bool getLastRightMouseState() const { return m_lastRightMouseClick; }
-	void setLastLeftMouseState(const bool boolean) { m_lastLeftMouseClick = boolean; }
-	void setLastRightMouseState(const bool boolean) { m_lastRightMouseClick = boolean; }
-	void setLastMousePosition(const glm::vec2& position) { m_lastMousePosition = position; }
-	const glm::vec2& getLastMousePosition() const { return m_lastMousePosition; }
-	bool getKey(const short);
-	bool getKey(const std::string&);
-	void setKey(const short, bool);
-	std::unordered_map<short, bool>* getKeys() { return &m_keyStates; }
-	std::vector<std::shared_ptr<KeyBinding>>* getKeyBindings() { return &m_keyBindings; }
-	void addKeyBinding(const std::shared_ptr<KeyBinding>& key_binding) { m_keyBindings.push_back(key_binding); }
-	std::shared_ptr<KeyBinding> getCurrentlyEditedKeyBinding() const { return m_currentlyEditedKeyBinding; }
-	void setCurrentlyEditedKeyBinding(const std::shared_ptr<KeyBinding>& kb) { m_currentlyEditedKeyBinding = kb; }
+	bool getLeftMouseState() const;
+	void setLeftMouseState(bool);
+	void setRightMouseState(bool);
+	bool getRightMouseState() const;
+	bool getLastLeftMouseState() const;
+	void setLastLeftMouseState(bool);
+	bool getLastRightMouseState() const;
+	void setLastRightMouseState(bool);
+	const glm::vec2& getLastMousePosition() const;
+	void setLastMousePosition(const glm::vec2&);
+	bool getKey(short) const;
+	bool getKey(const std::string&) const;
+	void setKey(short, bool);
+	std::unordered_map<short, bool>& getKeys();
+	std::vector<std::shared_ptr<KeyBinding>>& getKeyBindings();
+	void addKeyBinding(const std::shared_ptr<KeyBinding>&);
+	std::shared_ptr<KeyBinding> getCurrentlyEditedKeyBinding() const;
 
 	void keyboardInput(unsigned char);
 	void motionFunc(int, int);
@@ -39,9 +38,15 @@ public:
 	void specialKeyInputUp(int, int, int);
 
 	void clearEverything();
-
-	static std::string virtualKeyCodeToString(int);
 private:
+	template<typename Iter, typename Pred, typename Op>
+	void for_each_if(Iter first, Iter last, Pred p, Op op) {
+		while (first != last) {
+			if (p(*first)) op(*first);
+			++first;
+		}
+	}
+
 	glm::vec2 m_lastMousePosition{};
 	bool m_lastLeftMouseClick{};
 	bool m_leftMouseClick{};
@@ -49,6 +54,5 @@ private:
 	bool m_rightMouseClick{};
 	std::unordered_map<short, bool> m_keyStates;
 	std::vector<std::shared_ptr<KeyBinding>> m_keyBindings;
-	std::shared_ptr<KeyBinding> m_currentlyEditedKeyBinding{};
 };
 #endif

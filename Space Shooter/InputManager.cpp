@@ -1,13 +1,65 @@
 #include "InputManager.hpp"
 #include "KeyBinding.hpp"
+#include "FileConstants.hpp"
 
-#include <iostream>
 #include <algorithm>
-#include <system_error>
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
+#include <system_error>
+#include "rapidxml/RapidXMLSTD.hpp"
+#include <fstream>
 
-bool InputManager::getKey(const short key) 
+bool InputManager::getLeftMouseState() const
+{
+	return m_leftMouseClick; 
+}
+
+bool InputManager::getRightMouseState() const
+{
+	return m_rightMouseClick; 
+}
+
+void InputManager::setLeftMouseState(bool boolean) 
+{
+	m_leftMouseClick = boolean; 
+}
+
+void InputManager::setRightMouseState(bool boolean) 
+{
+	m_rightMouseClick = boolean; 
+}
+
+bool InputManager::getLastLeftMouseState() const
+{
+	return m_lastLeftMouseClick;
+}
+
+bool InputManager::getLastRightMouseState() const
+{
+	return m_lastRightMouseClick; 
+}
+
+void InputManager::setLastLeftMouseState(bool boolean) 
+{
+	m_lastLeftMouseClick = boolean; 
+}
+
+void InputManager::setLastRightMouseState(bool boolean) 
+{
+	m_lastRightMouseClick = boolean; 
+}
+
+void InputManager::setLastMousePosition(const glm::vec2& position) 
+{
+	m_lastMousePosition = position; 
+}
+
+const glm::vec2& InputManager::getLastMousePosition() const
+{
+	return m_lastMousePosition; 
+}
+
+bool InputManager::getKey(short key) const
 { 
 	try
 	{
@@ -19,20 +71,40 @@ bool InputManager::getKey(const short key)
 	};
 }
 
-bool InputManager::getKey(const std::string& key)
+bool InputManager::getKey(const std::string& key) const
 {
-	auto& keyBindings = *getKeyBindings();
-	const auto kb = std::find_if(keyBindings.begin(), keyBindings.end(), [key](auto kb) { return kb->getKeyBinding() == key; });
+	const auto kb = std::find_if(m_keyBindings.begin(), m_keyBindings.end(), [=](const std::shared_ptr<KeyBinding>& kb) { return kb->getKeyBinding() == key; });
 		
-	return kb != keyBindings.end() ? getKey((*kb)->getKeyBindingCharacter()) : false;
+	return kb != m_keyBindings.end() ? getKey((*kb)->getKeyBindingCharacter()) : false;
 }
 
-void InputManager::setKey(const short key, bool boolean)
+void InputManager::setKey(short key, bool boolean)
 {
 	m_keyStates.insert_or_assign(key, boolean);
 }
 
-void InputManager::motionFunc(const int x, const int y)
+std::unordered_map<short, bool>& InputManager::getKeys()
+{ 
+	return m_keyStates; 
+}
+
+std::vector<std::shared_ptr<KeyBinding>>& InputManager::getKeyBindings()
+{ 
+	return m_keyBindings; 
+}
+
+void InputManager::addKeyBinding(const std::shared_ptr<KeyBinding>& key_binding) 
+{ 
+	m_keyBindings.push_back(key_binding);
+}
+
+std::shared_ptr<KeyBinding> InputManager::getCurrentlyEditedKeyBinding() const
+{ 
+	const auto kb = std::find_if(m_keyBindings.begin(), m_keyBindings.end(), [=](const std::shared_ptr<KeyBinding>& kb) { return kb->isCurrentlyEdited(); });
+	return kb != m_keyBindings.end() ? (*kb) : nullptr;
+}
+
+void InputManager::motionFunc(int x, int y)
 {
 	auto lastMousePosition = glm::vec2(x, y);
 	lastMousePosition.y -= static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
@@ -40,7 +112,7 @@ void InputManager::motionFunc(const int x, const int y)
 	setLastMousePosition(lastMousePosition);
 }
 
-void InputManager::processMouseClick(const int button, const int state, const int x, const int y)
+void InputManager::processMouseClick(int button, int state, int x, int y)
 {
 	auto lastMousePosition = glm::vec2(x, y);
 	lastMousePosition.y -= static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
@@ -69,8 +141,7 @@ void InputManager::keyboardInput(unsigned char c)
 	}
 }
 
-
-void InputManager::keyboardInputUp(const unsigned char c, int x, int y)
+void InputManager::keyboardInputUp(unsigned char c, int x, int y)
 {
 	const auto key = VkKeyScan(c);
 	if (getKey(key))
@@ -79,7 +150,7 @@ void InputManager::keyboardInputUp(const unsigned char c, int x, int y)
 	}
 }
 
-void InputManager::specialKeyInput(const int key, int x, int y)
+void InputManager::specialKeyInput(int key, int x, int y)
 {
 	switch (key)
 	{
@@ -118,7 +189,7 @@ void InputManager::specialKeyInput(const int key, int x, int y)
 	}
 }
 
-void InputManager::specialKeyInputUp(const int key, int x, int y)
+void InputManager::specialKeyInputUp(int key, int x, int y)
 {
 	switch (key)
 	{
@@ -165,32 +236,4 @@ void InputManager::clearEverything()
 	m_lastRightMouseClick = false;
 	m_rightMouseClick = false;
 	m_keyStates.clear();
-}
-
-std::string InputManager::virtualKeyCodeToString(const int virtualKey)
-{
-	auto scanCode = MapVirtualKey(virtualKey, MAPVK_VK_TO_VSC);
-
-	TCHAR szName[128];
-	int result = 0;
-	switch (virtualKey)
-	{
-		case VK_LEFT: case VK_UP: case VK_RIGHT: case VK_DOWN:
-		case VK_RCONTROL: case VK_RMENU:
-		case VK_LWIN: case VK_RWIN: case VK_APPS:
-		case VK_PRIOR: case VK_NEXT:
-		case VK_END: case VK_HOME:
-		case VK_INSERT: case VK_DELETE:
-		case VK_DIVIDE:
-		case VK_NUMLOCK:
-			scanCode |= KF_EXTENDED;
-			break;
-		default:
-			result = GetKeyNameText(scanCode << 16, szName, 128);
-			break;
-	}
-	if (result == 0)
-		throw std::system_error(std::error_code(GetLastError(), std::system_category()),
-			"WinAPI Error occured.");
-	return szName;
 }

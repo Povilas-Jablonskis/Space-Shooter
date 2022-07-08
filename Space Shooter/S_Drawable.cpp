@@ -6,9 +6,9 @@
 
 void S_Drawable::add(std::vector<std::shared_ptr<Object>>& objects)
 {
-    for (auto o : objects)
+    for (auto& o : objects)
     {
-        add(o);
+        add(*o);
     }
 
     sort();
@@ -35,13 +35,13 @@ void S_Drawable::processRemovals()
     }
 }
 
-void S_Drawable::add(std::shared_ptr<Object> object)
+void S_Drawable::add(Object& object)
 {
-    std::shared_ptr<C_Sprite> objectsDrawable = object->getSprite();
+    auto& objectsDrawable = object.getSprite();
 
     if (objectsDrawable)
     {
-        DrawLayer layer = objectsDrawable->getDrawLayer();
+        auto layer = objectsDrawable->getDrawLayer();
 
         auto itr = m_drawables.find(layer);
 
@@ -59,7 +59,7 @@ void S_Drawable::add(std::shared_ptr<Object> object)
     }
 }
 
-bool S_Drawable::layerSort(std::shared_ptr<C_Sprite> a, std::shared_ptr<C_Sprite> b)
+bool S_Drawable::layerSort(const std::shared_ptr<C_Sprite>& a, const std::shared_ptr<C_Sprite>& b)
 {
     return a->getSortOrder() < b->getSortOrder();
 }
@@ -75,7 +75,7 @@ void S_Drawable::sort()
     }
 }
 
-void S_Drawable::draw(const std::shared_ptr<Renderer>& renderer)
+void S_Drawable::draw(Renderer& renderer)
 {
     for (auto& layer : m_drawables)
     {

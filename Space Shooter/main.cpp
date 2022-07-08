@@ -9,22 +9,22 @@ std::shared_ptr<Application> application;
 
 void motionFunc(const int x, const int y)
 {
-	application->getInputManager()->motionFunc(x, y);
+	application->getInputManager().motionFunc(x, y);
 }
 
 void processMouseClick(const int button, const int state, const int x, const int y)
 {
-	application->getInputManager()->processMouseClick(button, state, x, y);
+	application->getInputManager().processMouseClick(button, state, x, y);
 }
 
 void keyboardInput(const unsigned char c, const int x, const int y)
 {
-	application->getInputManager()->keyboardInput(c);
+	application->getInputManager().keyboardInput(c);
 }
 
 void keyboardInputUp(const unsigned char c, const int x, const int y)
 {
-	application->getInputManager()->keyboardInputUp(c, x, y);
+	application->getInputManager().keyboardInputUp(c, x, y);
 }
 
 void display()
@@ -57,12 +57,12 @@ void resize(int width, int height)
 
 void specialKeyInput(const int key, const int x, const int y)
 {
-	application->getInputManager()->specialKeyInput(key, x, y);
+	application->getInputManager().specialKeyInput(key, x, y);
 }
 
 void specialKeyInputUp(const int key, const int x, const int y)
 {
-	application->getInputManager()->specialKeyInputUp(key, x, y);
+	application->getInputManager().specialKeyInputUp(key, x, y);
 }
 
 int main(int argc, char *argv[])

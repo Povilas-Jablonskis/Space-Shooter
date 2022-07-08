@@ -17,11 +17,11 @@ public:
 
     void processRemovals();
 
-    void draw(const std::shared_ptr<Renderer>&);
+    void draw(Renderer&);
 
 private:
-    static bool layerSort(std::shared_ptr<C_Sprite>, std::shared_ptr<C_Sprite>);
-    void add(std::shared_ptr<Object>);
+    static bool layerSort(const std::shared_ptr<C_Sprite>&, const std::shared_ptr<C_Sprite>&);
+    void add(Object&);
     void sort();
 
     std::map<DrawLayer, std::vector<std::shared_ptr<C_Sprite>>> m_drawables;

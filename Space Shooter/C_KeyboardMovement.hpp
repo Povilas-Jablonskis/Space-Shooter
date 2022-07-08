@@ -5,7 +5,7 @@
 
 #include <memory>
 
-class C_Velocity;
+class C_Velocity_ReverseVelocityWhenOutOfBounds;
 
 class C_KeyboardMovement : public Component
 {
@@ -21,7 +21,7 @@ public:
 private:
     float m_moveSpeed{ 100.0f };
 
-    std::shared_ptr<C_Velocity> m_velocity;
+    std::shared_ptr<C_Velocity_ReverseVelocityWhenOutOfBounds> m_velocity;
 };
 
 #endif

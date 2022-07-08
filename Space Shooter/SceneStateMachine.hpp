@@ -13,9 +13,9 @@ class SceneStateMachine
 {
 public:
     void processInput();
-    void draw(const std::shared_ptr<Renderer>&, const float);
+    void draw(float);
 
-    void add(ScenesEnum, std::shared_ptr<Scene>);
+    void add(ScenesEnum, const std::shared_ptr<Scene>&);
     void switchTo(ScenesEnum);
     void remove(ScenesEnum);
 private:

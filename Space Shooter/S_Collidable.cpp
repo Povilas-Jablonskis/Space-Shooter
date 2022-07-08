@@ -6,26 +6,14 @@
 
 S_Collidable::S_Collidable()
 {
-    Bitmask defaultCollisions;
-    defaultCollisions.setBit((int)CollisionLayer::Default);
-    m_collisionLayers.insert(std::make_pair(CollisionLayer::Default, defaultCollisions));
-
-    m_collisionLayers.insert(std::make_pair(CollisionLayer::Tile, Bitmask(0)));
-
     Bitmask playerCollisions;
-    playerCollisions.setBit((int)CollisionLayer::Default);
-    playerCollisions.setBit((int)CollisionLayer::Tile);
-    playerCollisions.setBit((int)CollisionLayer::NPC);
+    playerCollisions.setBit((int)CollisionLayer::Enemy);
+    playerCollisions.setBit((int)CollisionLayer::Meteor);
     m_collisionLayers.insert(std::make_pair(CollisionLayer::Player, playerCollisions));
 
     Bitmask projectileCollisions;
-    projectileCollisions.setBit((int)CollisionLayer::Tile);
-    projectileCollisions.setBit((int)CollisionLayer::NPC);
+    projectileCollisions.setBit((int)CollisionLayer::Enemy);
     m_collisionLayers.insert(std::make_pair(CollisionLayer::Projectile, projectileCollisions));
-
-    Bitmask npcCollisions;
-    npcCollisions.setBit((int)CollisionLayer::Tile);
-    m_collisionLayers.insert(std::make_pair(CollisionLayer::NPC, npcCollisions));
 }
 
 void S_Collidable::add(std::vector<std::shared_ptr<Object>>& objects)
@@ -35,7 +23,7 @@ void S_Collidable::add(std::vector<std::shared_ptr<Object>>& objects)
         auto collider = o->getComponent<C_BoxCollider>();
         if (collider)
         {
-            CollisionLayer layer = collider->getLayer();
+            auto layer = collider->getLayer();
 
             auto itr = m_collidables.find(layer);
 
@@ -86,7 +74,7 @@ void S_Collidable::resolve()
 
             for (auto it = m_collidables.begin(); it != m_collidables.end(); ++it)
             {
-                for (auto& possibleOverlap : maps->second)
+                for (auto& possibleOverlap : it->second)
                 {
                     // Collision x-axis?
                     const bool collisionX = collidable->getCollidable().x + collidable->getCollidable().z >= possibleOverlap->getCollidable().x &&
@@ -114,7 +102,7 @@ void S_Collidable::resolve()
 
                 if (layersCollide)
                 {
-                    Manifold m = collidable->intersects(collision);
+                    auto m = collidable->intersects(collision);
 
                     if (m.colliding)
                     {
@@ -122,8 +110,8 @@ void S_Collidable::resolve()
 
                         if (collisionPair.second)
                         {
-                            collidable->m_owner->onCollisionEnter(collision);
-                            collision->m_owner->onCollisionEnter(collidable);
+                            collidable->m_owner->onCollisionEnter(*collision);
+                            collision->m_owner->onCollisionEnter(*collidable);
                         }
                     }
                 }
@@ -132,46 +120,38 @@ void S_Collidable::resolve()
     }
 }
 
-void S_Collidable::update()
-{
-    ProcessCollidingObjects();
-
-    resolve();
-}
-
-void S_Collidable::ProcessCollidingObjects()
+void S_Collidable::processCollidingObjects()
 {
     auto itr = m_objectsColliding.begin();
     while (itr != m_objectsColliding.end())
     {
         auto& pair = *itr;
 
-        std::shared_ptr<C_BoxCollider> first = pair.first;
-        std::shared_ptr<C_BoxCollider> second = pair.second;
+        auto& first = pair.first;
+        auto& second = pair.second;
 
         if (first->m_owner->isQueuedForRemoval() || second->m_owner->isQueuedForRemoval())
         {
-            first->m_owner->onCollisionExit(second);
-            second->m_owner->onCollisionExit(first);
+            first->m_owner->onCollisionExit(*second);
+            second->m_owner->onCollisionExit(*first);
 
             itr = m_objectsColliding.erase(itr);
-
         }
         else
         {
-            Manifold m = first->intersects(second);
+            auto m = first->intersects(second);
 
             if (!m.colliding)
             {
-                first->m_owner->onCollisionExit(second);
-                second->m_owner->onCollisionExit(first);
+                first->m_owner->onCollisionExit(*second);
+                second->m_owner->onCollisionExit(*first);
 
                 itr = m_objectsColliding.erase(itr);
             }
             else
             {
-                first->m_owner->onCollisionStay(second);
-                second->m_owner->onCollisionStay(first);
+                first->m_owner->onCollisionStay(*second);
+                second->m_owner->onCollisionStay(*first);
 
                 ++itr;
             }

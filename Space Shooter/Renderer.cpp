@@ -1,9 +1,10 @@
 #include "Renderer.hpp"
-#include "Shader.hpp"
-#include "Text.hpp"
+#include "SpriteSheet.hpp"
 #include "Sprite.hpp"
 #include "C_Transform.hpp"
-#include "C_Sprite.hpp"
+
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Renderer::Renderer()
 {
@@ -56,11 +57,6 @@ Renderer::Renderer()
 	glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 }
 
-GLuint Renderer::getShaderProgram(const std::string& name) const
-{
-	return m_shaders.at(name)->getShader();
-}
-
 void Renderer::addShader(const std::string& name, const std::shared_ptr<Shader>& t_shader)
 {
 	m_shaders.insert_or_assign(name, t_shader);
@@ -70,31 +66,31 @@ void Renderer::draw(const std::vector<std::shared_ptr<Text>>& texts) const
 {
 	for (auto& text : texts)
 	{
-		draw(text);
+		draw(*text);
 	}
 }
 
-void Renderer::draw(const std::shared_ptr<Text>& text) const
+void Renderer::draw(const Text& text) const
 {
-	const auto program = getShaderProgram("textshader");
+	const auto program = m_shaders.at("textshader")->getShader();
 
-	glBindVertexArray(getTextVAO());
+	glBindVertexArray(m_textVAO);
 	glUseProgram(program);
 	const auto offsetLocation = glGetUniformLocation(program, "color");
 	const auto offsetLocation2 = glGetUniformLocation(program, "projection");
 	auto projection = glm::ortho(0.0f, static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)), 0.0f, static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)), 0.0f, 1.0f);
 
-	glUniform4f(offsetLocation, text->getColor().x / 255.0f, text->getColor().y / 255.0f, text->getColor().z / 255.0f, text->getColor().a);
+	glUniform4f(offsetLocation, text.getColor().x / 255.0f, text.getColor().y / 255.0f, text.getColor().z / 255.0f, text.getColor().a);
 	glUniformMatrix4fv(offsetLocation2, 1, GL_FALSE, value_ptr(projection));
 
-	auto& cache = text->getCachedCharacters();
+	auto& cache = text.getCachedCharacters();
 
 	for (auto& cachedCharacter : cache)
 	{
 		// Render glyph texture over quad
 		glBindTexture(GL_TEXTURE_2D, cachedCharacter.first);
 		// Update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, getTextVBO());
+		glBindBuffer(GL_ARRAY_BUFFER, m_textVBO);
 		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, &cachedCharacter.second[0]);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		// Render quad
@@ -106,9 +102,9 @@ void Renderer::draw(const std::shared_ptr<Text>& text) const
 
 void Renderer::draw(const Sprite& sprite) const
 {
-	const auto program = getShaderProgram("shader");
+	const auto program = m_shaders.at("shader")->getShader();
 
-	glBindVertexArray(getVAO());
+	glBindVertexArray(m_vao);
 	glUseProgram(program);
 	const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
 	const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
@@ -119,10 +115,10 @@ void Renderer::draw(const Sprite& sprite) const
 	const auto offsetLocation7 = glGetUniformLocation(program, "model");
 
 	auto& textureRect = sprite.getTextureRect();
-	auto texture = sprite.getTexture();
-	glBindTexture(GL_TEXTURE_2D, texture->getTexture());
+	auto& spriteSheet = sprite.getSpriteSheet();
+	glBindTexture(GL_TEXTURE_2D, spriteSheet.getTexture());
 
-	auto& spriteSheetSize = texture->getSize();
+	auto spriteSheetSize = glm::vec2(spriteSheet.getWidth(), spriteSheet.getHeight());
 	glUniform4f(offsetLocation3, textureRect.x / spriteSheetSize.x, textureRect.y / spriteSheetSize.y, textureRect.z / spriteSheetSize.x, textureRect.w / spriteSheetSize.y);
 	glUniform4f(offsetLocation, sprite.getColor().x / 255.0f, sprite.getColor().y / 255.0f, sprite.getColor().z / 255.0f, sprite.getColor().a);
 	glUniformMatrix4fv(offsetLocation6, 1, GL_FALSE, value_ptr(glm::ortho(0.0f, windowWidth, 0.0f, windowHeight, 0.0f, 1.0f)));

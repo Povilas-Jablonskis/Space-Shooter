@@ -9,15 +9,15 @@ void SceneStateMachine::processInput()
     }
 }
 
-void SceneStateMachine::draw(const std::shared_ptr<Renderer>& renderer, const float dt)
+void SceneStateMachine::draw(float dt)
 {
     if (curScene)
     {
-        curScene->draw(renderer, dt);
+        curScene->draw(dt);
     }
 }
 
-void SceneStateMachine::add(ScenesEnum sceneName, std::shared_ptr<Scene> scene)
+void SceneStateMachine::add(ScenesEnum sceneName, const std::shared_ptr<Scene>& scene)
 {
     auto inserted = scenes.insert(std::make_pair(sceneName, scene));
 

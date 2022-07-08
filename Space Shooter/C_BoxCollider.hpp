@@ -12,15 +12,13 @@ class C_BoxCollider : public C_Collider
 {
 public:
     C_BoxCollider(Object*);
-    ~C_BoxCollider();
 
-    Manifold intersects(std::shared_ptr<C_Collider>) override;
-    void resolveOverlap(const Manifold&) override;
+    Manifold intersects(const std::shared_ptr<C_Collider>&) override;
 
     void setCollidable(const glm::vec4&);
     const glm::vec4& getCollidable();
 
-    void setOffset(const glm::vec2& offset) { m_offset = offset; };
+    void setOffset(const glm::vec2&);
     void setOffset(float, float);
 
     void setSize(const glm::vec2&);

@@ -26,11 +26,16 @@ std::string Shader::readShaderFile(const std::string& path) const
 	{
 #if _DEBUG
 		std::cout << "ERROR::Shader: File " << path.c_str() << " not found\n";
-		getchar();
+		(void)getchar();
 #endif
 		exit(0);
 	}
 	return content;
+}
+
+GLuint Shader::getShader() const 
+{ 
+	return m_program; 
 }
 
 void Shader::loadShader(const std::string& vertex_path, const std::string& fragment_path)
@@ -90,7 +95,7 @@ void Shader::loadShader(const std::string& vertex_path, const std::string& fragm
 	if (isCompiled == GL_FALSE)
 	{
 #if _DEBUG
-		getchar();
+		(void)getchar();
 #endif
 		exit(0);
 	}

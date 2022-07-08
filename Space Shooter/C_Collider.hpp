@@ -11,9 +11,9 @@ enum class CollisionLayer
 {
     Default = 1,    // bit 0
     Player = 2,     // bit 1
-    Tile = 3,       // bit 2
-    Projectile = 4,
-    NPC = 5
+    Projectile = 3,
+    Enemy = 4,
+    Meteor = 5
 };
 
 struct Manifold
@@ -27,8 +27,7 @@ class C_Collider : public Component
 public:
     C_Collider(Object*);
 
-    virtual Manifold intersects(std::shared_ptr<C_Collider>) = 0;
-    virtual void resolveOverlap(const Manifold&) = 0;
+    virtual Manifold intersects(const std::shared_ptr<C_Collider>&) = 0;
 
     CollisionLayer getLayer() const;
     void setLayer(CollisionLayer);

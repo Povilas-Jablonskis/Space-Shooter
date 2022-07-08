@@ -22,11 +22,8 @@ public:
     void add(std::vector<std::shared_ptr<Object>>&);
     void processRemovals();
     void resolve();
-
-    void update();
-
+    void processCollidingObjects();
 private:
-    void ProcessCollidingObjects();
 
     std::unordered_map<CollisionLayer, Bitmask, EnumClassHash> m_collisionLayers;
     std::unordered_map<CollisionLayer, std::vector<std::shared_ptr<C_BoxCollider>>, EnumClassHash> m_collidables;

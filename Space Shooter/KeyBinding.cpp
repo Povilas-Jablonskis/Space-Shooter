@@ -1,81 +1,48 @@
 #include "KeyBinding.hpp"
-#include "Text.hpp"
-#include "InputManager.hpp"
 #include "FileConstants.hpp"
+#include "Text.hpp"
 
 #include <algorithm>
-#include "rapidxml/RapidXMLSTD.hpp"
-#include <fstream>
 #include <utility>
+#include <glm/vec2.hpp>
+#include <glm/vec4.hpp>
 
-KeyBinding::KeyBinding(std::string keyBinding, const short keyBindingCharacter) : m_keyBindingCharacter(keyBindingCharacter), m_keyBinding(std::move(keyBinding))
+KeyBinding::KeyBinding(const std::string& keyBinding, short keyBindingCharacter, const std::shared_ptr<Text>& text) : m_keyBindingCharacter(keyBindingCharacter), m_keyBinding(keyBinding), m_text(text)
 {
 
 }
 
-void KeyBinding::savePlayerConfig(const std::shared_ptr<InputManager>& inputManager) const
-{
-	const auto& keyBindings = *inputManager->getKeyBindings();
-	auto doc = new rapidxml::xml_document<>();
-
-	auto KeyBindings = doc->allocate_node(rapidxml::node_type::node_element, "KeyBindings");
-
-	for (const auto& keyBinding : keyBindings)
-	{
-		auto KeyBinding = doc->allocate_node(rapidxml::node_type::node_element, "KeyBinding");
-		auto attribute_value = doc->allocate_string(keyBinding->getKeyBinding().c_str());
-		KeyBinding->append_attribute(doc->allocate_attribute("key", attribute_value));
-		attribute_value = doc->allocate_string(std::to_string(keyBinding->getKeyBindingCharacter()).c_str());
-		KeyBinding->append_attribute(doc->allocate_attribute("value", attribute_value));
-		KeyBindings->append_node(KeyBinding);
-	}
-
-	doc->append_node(KeyBindings);
-
-	std::ofstream file_stored(FileConstants::keybindingsSettingsPath);
-	file_stored << *doc;
-	file_stored.close();
-	doc->clear();
-	delete doc;
+const std::string& KeyBinding::getKeyBinding() const
+{ 
+	return m_keyBinding; 
 }
 
-void KeyBinding::update(const std::shared_ptr<InputManager>& inputManager)
+void KeyBinding::setKeyBinding(const std::string& keyBinding)
 {
-	if (inputManager->getCurrentlyEditedKeyBinding() != nullptr && inputManager->getCurrentlyEditedKeyBinding()->getKeyBinding() != getKeyBinding())
-	{
-		return;
-	}
+	m_keyBinding = keyBinding;
+}
 
-	if (inputManager->getKey(27)) // escape
-	{
-		getText()->enable();
-		getText()->onHoverExitFuncDefaults();
+short KeyBinding::getKeyBindingCharacter() const
+{ 
+	return m_keyBindingCharacter; 
+}
 
-		inputManager->setCurrentlyEditedKeyBinding(nullptr);
-		inputManager->clearEverything();
-		return;
-	}
+void KeyBinding::setKeyBindingCharacter(short keyBindingCharacter)
+{
+	m_keyBindingCharacter = keyBindingCharacter;
+}
 
-	auto& keys = *inputManager->getKeys();
-	auto keyBindings = inputManager->getKeyBindings();
+bool KeyBinding::isCurrentlyEdited() const
+{
+	return m_currentlyEdited;
+}
 
-	for (auto& key : keys)
-	{
-		if (inputManager->getKey(key.first) && key.second)
-		{
-			if (key.first >= 32 && key.first < 127 && !std::any_of(keyBindings->begin(), keyBindings->end(), [key](auto pair) {return pair->getKeyBindingCharacter() == key.first; }))
-			{
-				getText()->enable();
-				getText()->onHoverExitFuncDefaults();
-				getText()->setText(InputManager::virtualKeyCodeToString(key.first));
+void KeyBinding::setCurrentlyEdited(bool boolean)
+{
+	m_currentlyEdited = boolean;
+}
 
-				m_keyBindingCharacter = key.first;
-				inputManager->setCurrentlyEditedKeyBinding(nullptr);
-
-				savePlayerConfig(inputManager);
-				inputManager->clearEverything();
-				break;
-			}
-		}
-	}
+const std::shared_ptr<Text>& KeyBinding::getText() const
+{
+	return m_text;
 }

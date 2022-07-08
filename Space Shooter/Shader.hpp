@@ -11,7 +11,7 @@ public:
 	Shader(const std::string&, const std::string&);
 	void loadShader(const std::string&, const std::string&);
 	std::string readShaderFile(const std::string&) const;
-	GLuint getShader() const { return m_program; }
+	GLuint getShader() const;
 private:
 	GLuint m_program{};
 };

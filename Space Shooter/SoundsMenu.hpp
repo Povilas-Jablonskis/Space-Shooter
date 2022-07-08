@@ -2,13 +2,17 @@
 #define soundsMenu_hpp
 
 #include "Scene.hpp"
+#include "SceneStateMachine.hpp"
+#include "SharedContext.hpp"
+
+class Text;
 
 class SoundsMenu : public Scene
 {
 public:
-    SoundsMenu(std::shared_ptr<SceneStateMachine>, irrklang::ISoundEngine*, std::shared_ptr<InputManager>);
+    SoundsMenu(SceneStateMachine&, SharedContext&);
 
-    void savePlayerConfig(irrklang::ISoundEngine*) const;
+    void savePlayerConfig() const;
 
     void onCreate() override;
     void onDestroy() override;
@@ -17,12 +21,11 @@ public:
 
     void processInput() override;
 
-    void draw(const std::shared_ptr<Renderer>&, const float) override;
+    void draw(float) override;
 private:
-    std::shared_ptr<InputManager> m_inputManager{};
-    irrklang::ISoundEngine* m_soundEngine{};
     std::vector<std::shared_ptr<Text>> m_texts;
-    std::shared_ptr<SceneStateMachine> m_sceneStateMachine{};
+    SharedContext& m_context;
+    SceneStateMachine& m_sceneStateMachine;
 };
 
 #endif
