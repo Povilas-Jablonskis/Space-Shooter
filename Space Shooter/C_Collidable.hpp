@@ -3,14 +3,26 @@
 
 #include "C_BoxCollider.hpp"
 
-#include <memory>
-
 class C_Collidable
 {
 public:
-    virtual void onCollisionEnter(C_BoxCollider&) {};
-    virtual void onCollisionStay(C_BoxCollider&) {};
-    virtual void onCollisionExit(C_BoxCollider&) {};
-};
+	C_Collidable() = default;
+	C_Collidable(const C_Collidable&) = default;
+	C_Collidable(C_Collidable&&) = default;
+	C_Collidable& operator=(const C_Collidable&) = default;
+	C_Collidable& operator=(C_Collidable&&) = default;
+	virtual ~C_Collidable() = default;
 
+	virtual void onCollisionEnter(C_BoxCollider&)
+	{
+	}
+
+	virtual void onCollisionStay(C_BoxCollider&)
+	{
+	}
+
+	virtual void onCollisionExit(C_BoxCollider&)
+	{
+	}
+};
 #endif

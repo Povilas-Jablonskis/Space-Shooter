@@ -19,12 +19,12 @@ void processMouseClick(const int button, const int state, const int x, const int
 
 void keyboardInput(const unsigned char c, const int x, const int y)
 {
-	application->getInputManager().keyboardInput(c);
+	application->getInputManager().keyboardInput(static_cast<char>(c));
 }
 
 void keyboardInputUp(const unsigned char c, const int x, const int y)
 {
-	application->getInputManager().keyboardInputUp(c, x, y);
+	application->getInputManager().keyboardInputUp(static_cast<char>(c), x, y);
 }
 
 void display()
@@ -34,25 +34,14 @@ void display()
 
 void resize(int width, int height)
 {
-	//const auto ar = (float) width / (float) height;
+	const auto windowWidth = glutGet(GLUT_INIT_WINDOW_WIDTH);
+	const auto windowHeight = glutGet(GLUT_INIT_WINDOW_HEIGHT);
 
-	#if _DEBUG
-		glutReshapeWindow(width, height);
-		glViewport(0, 0, width, height);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0.0f, width, 0.0f, height, 0.0f, 1.0f);
-		return;
-	#endif
-
-	width = glutGet(GLUT_INIT_WINDOW_WIDTH);
-	height = glutGet(GLUT_INIT_WINDOW_HEIGHT);
-
-	glutReshapeWindow(width, height);
-	glViewport(0, 0, width, height);
+	glutReshapeWindow(windowWidth, windowHeight);
+	glViewport(0, 0, windowWidth, windowHeight);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0f, width, 0.0f, height, 0.0f, 1.0f);
+	glOrtho(0.0, windowWidth, 0.0, windowHeight, 0.0, 1.0);
 }
 
 void specialKeyInput(const int key, const int x, const int y)
@@ -65,7 +54,7 @@ void specialKeyInputUp(const int key, const int x, const int y)
 	application->getInputManager().specialKeyInputUp(key, x, y);
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
 	glutInitWindowSize(1024, 768);
@@ -80,9 +69,9 @@ int main(int argc, char *argv[])
 	const auto err = glewInit();
 	if (GLEW_OK != err)
 	{
-		#if _DEBUG
-			std::cout << "ERROR::GLEW: " << glewGetErrorString(err) << "\n";
-		#endif
+#if _DEBUG
+		std::cout << "ERROR::GLEW: " << glewGetErrorString(err) << "\n";
+#endif
 	}
 
 	glEnable(GL_BLEND);

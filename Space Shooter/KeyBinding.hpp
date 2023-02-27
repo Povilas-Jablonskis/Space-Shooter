@@ -1,8 +1,6 @@
 #ifndef keyBindingInputComponentH
 #define keyBindingInputComponentH
 
-#include "InputManager.hpp"
-#include "SharedContext.hpp"
 #include "Text.hpp"
 
 #include <string>
@@ -12,14 +10,15 @@ class Text;
 class KeyBinding
 {
 public:
-	KeyBinding(const std::string&, short, const std::shared_ptr<Text>&);
-	const std::string& getKeyBinding() const;
+	KeyBinding(std::string, short, std::shared_ptr<Text>);
+	[[nodiscard]] const std::string& getKeyBinding() const;
 	void setKeyBinding(const std::string&);
-	short getKeyBindingCharacter() const;
+	[[nodiscard]] short getKeyBindingCharacter() const;
 	void setKeyBindingCharacter(short);
-	bool isCurrentlyEdited() const;
+	[[nodiscard]] bool isCurrentlyEdited() const;
 	void setCurrentlyEdited(bool);
-	const std::shared_ptr<Text>& getText() const;
+	[[nodiscard]] const std::shared_ptr<Text>& getText() const;
+
 private:
 	short m_keyBindingCharacter{};
 	std::string m_keyBinding{};

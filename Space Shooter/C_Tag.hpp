@@ -3,29 +3,27 @@
 
 #include "Component.hpp"
 
-#include <memory>
-
 enum class Tag
 {
-    Default,
-    Player,
-    NPC,
-    PlayerUserInterface
+	Default,
+	Player,
+	NPC,
+	PlayerUserInterface
 };
 
-class C_Tag : public Component
+class C_Tag final : public Component
 {
 public:
-    C_Tag(Object*);
+	explicit C_Tag(Object*);
 
-    Tag get() const;
-    void set(Tag);
+	[[nodiscard]] Tag get() const;
+	void set(Tag);
 
-    bool compare(C_Tag&) const;
-    bool compare(Tag) const;
+	[[nodiscard]] bool compare(const C_Tag&) const;
+	[[nodiscard]] bool compare(Tag) const;
 
 private:
-    Tag m_tag;
+	Tag m_tag;
 };
 
 

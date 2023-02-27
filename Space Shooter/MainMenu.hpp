@@ -7,21 +7,22 @@
 
 class Text;
 
-class MainMenu : public Scene
+class MainMenu final : public Scene
 {
 public:
-    MainMenu(SceneStateMachine&, SharedContext&);
+	MainMenu(SceneStateMachine&, SharedContext&);
 
-    void onCreate() override;
-    void onDestroy() override;
+	void onCreate() override;
+	void onDestroy() override;
 
-    void onActivate() override;
+	void onActivate() override;
 
-    void draw(float) override;
+	void draw(float) override;
+
 private:
-    std::vector<std::shared_ptr<Text>> m_texts;
-    SharedContext& m_context;
-    SceneStateMachine& m_sceneStateMachine;
+	std::vector<std::shared_ptr<Text>> m_texts;
+	SharedContext& m_context;
+	SceneStateMachine& m_sceneStateMachine;
 };
 
 #endif

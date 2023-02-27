@@ -21,6 +21,7 @@ public:
 	void draw(const Text&) const;
 
 	void draw(const Sprite&) const;
+
 private:
 	GLuint m_vbo{}, m_vao{}, m_ebo{};
 	GLuint m_textVBO{};

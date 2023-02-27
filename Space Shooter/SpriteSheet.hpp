@@ -6,17 +6,17 @@
 #include <glm/vec4.hpp>
 #include <glew/glew.h>
 #include <unordered_map>
-#include <memory>
 #include <string>
 
 class SpriteSheet
 {
 public:
-	SpriteSheet(const std::string&);
-	const glm::vec4& getSprite(const std::string&) const;
-	int getWidth() const;
-	int getHeight() const;
-	GLuint getTexture() const;
+	explicit SpriteSheet(const std::string&);
+	[[nodiscard]] const glm::vec4& getSprite(const std::string&) const;
+	[[nodiscard]] int getWidth() const;
+	[[nodiscard]] int getHeight() const;
+	[[nodiscard]] GLuint getTexture() const;
+
 private:
 	bool loadSpritesFromXml(const std::string&);
 	void loadSpriteSheet(const std::string&);

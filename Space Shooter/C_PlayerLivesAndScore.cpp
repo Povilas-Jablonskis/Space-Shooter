@@ -1,11 +1,17 @@
 #include "C_PlayerLivesAndScore.hpp"
+
 #include "C_Tag.hpp"
 #include "Object.hpp"
 #include "ObjectCollection.hpp"
 #include "SharedContext.hpp"
 #include "Sprite.hpp"
 
-C_PlayerLivesAndScore::C_PlayerLivesAndScore(Object* owner) : Component(owner) {}
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
+
+C_PlayerLivesAndScore::C_PlayerLivesAndScore(Object* owner) : Component(owner)
+{
+}
 
 void C_PlayerLivesAndScore::update(float dt)
 {
@@ -29,7 +35,7 @@ void C_PlayerLivesAndScore::updatePlayerLivesAndScore()
 		auto scoreNumber = std::make_shared<Object>(nullptr);
 		scoreNumber->m_tag->set(Tag::PlayerUserInterface);
 
-		auto sprite = scoreNumber->addComponent<C_Sprite>();
+		const auto sprite = scoreNumber->addComponent<C_Sprite>();
 		sprite->setDrawLayer(DrawLayer::UI);
 
 		sprite->getSprite().setSpriteSheet(m_owner->m_context->m_spriteSheet);
@@ -37,16 +43,22 @@ void C_PlayerLivesAndScore::updatePlayerLivesAndScore()
 
 		scoreTextureSize = sprite->getSprite().getTextureRect();
 
-		scoreNumber->m_transform->setPosition((scoreTextureSize.z * 1.5f) + sprite->getSprite().getTextureRect().z * (i + 1.0f), static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (sprite->getSprite().getTextureRect().z * 3.0f));
+		scoreNumber->m_transform->setPosition(
+			(scoreTextureSize.z * 1.5f) + sprite->getSprite().getTextureRect().z * (static_cast<float>(i) + 1.0f),
+			static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (sprite->getSprite().getTextureRect().z * 3.0f));
 
 		m_owner->m_context->m_objects->add(scoreNumber);
 	}
 
-	auto livesIcon = std::make_shared<Object>(nullptr);
-	livesIcon->m_tag->set(Tag::PlayerUserInterface);
-	livesIcon->m_transform->setPosition((scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreString.size() + 1.0f) + (scoreTextureSize.z * 2.0f), static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
+	const auto scoreStringSize = static_cast<float>(scoreString.size());
 
-	auto livesIconSprite = livesIcon->addComponent<C_Sprite>();
+	const auto livesIcon = std::make_shared<Object>(nullptr);
+	livesIcon->m_tag->set(Tag::PlayerUserInterface);
+	livesIcon->m_transform->setPosition(
+		(scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreStringSize + 1.0f) + (scoreTextureSize.z * 2.0f),
+		static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
+
+	const auto livesIconSprite = livesIcon->addComponent<C_Sprite>();
 	livesIconSprite->setDrawLayer(DrawLayer::UI);
 
 	livesIconSprite->getSprite().setSpriteSheet(m_owner->m_context->m_spriteSheet);
@@ -54,11 +66,14 @@ void C_PlayerLivesAndScore::updatePlayerLivesAndScore()
 
 	m_owner->m_context->m_objects->add(livesIcon);
 
-	auto xIcon = std::make_shared<Object>(nullptr);
+	const auto xIcon = std::make_shared<Object>(nullptr);
 	xIcon->m_tag->set(Tag::PlayerUserInterface);
-	xIcon->m_transform->setPosition((scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreString.size() + 1.0f) + (scoreTextureSize.z * 2.0f) + livesIconSprite->getSprite().getTextureRect().z, static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
+	xIcon->m_transform->setPosition(
+		(scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreStringSize + 1.0f) + (scoreTextureSize.z * 2.0f) +
+		livesIconSprite->getSprite().getTextureRect().z,
+		static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
 
-	auto xIconSprite = xIcon->addComponent<C_Sprite>();
+	const auto xIconSprite = xIcon->addComponent<C_Sprite>();
 	xIconSprite->setDrawLayer(DrawLayer::UI);
 
 	xIconSprite->getSprite().setSpriteSheet(m_owner->m_context->m_spriteSheet);
@@ -76,12 +91,16 @@ void C_PlayerLivesAndScore::updatePlayerLivesAndScore()
 		auto liveNumber = std::make_shared<Object>(nullptr);
 		liveNumber->m_tag->set(Tag::PlayerUserInterface);
 
-		auto liveNumberSprite = liveNumber->addComponent<C_Sprite>();
+		const auto liveNumberSprite = liveNumber->addComponent<C_Sprite>();
 		liveNumberSprite->setDrawLayer(DrawLayer::UI);
 
 		liveNumberSprite->getSprite().setSpriteSheet(m_owner->m_context->m_spriteSheet);
 		liveNumberSprite->getSprite().setTextureRect("numeral" + livesStringNumber + ".png");
-		liveNumber->m_transform->setPosition((scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreString.size() + 1.0f) + (scoreTextureSize.z * 2.0f) + livesIconSprite->getSprite().getTextureRect().z + liveNumberSprite->getSprite().getTextureRect().z * (i + 1.0f), static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
+		liveNumber->m_transform->setPosition(
+			(scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreStringSize + 1.0f) + (scoreTextureSize.z * 2.0f)
+			+ livesIconSprite->getSprite().getTextureRect().z + liveNumberSprite->getSprite().getTextureRect().z * (
+				static_cast<float>(i) +
+				1.0f), static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
 
 		m_owner->m_context->m_objects->add(liveNumber);
 	}
@@ -90,6 +109,6 @@ void C_PlayerLivesAndScore::updatePlayerLivesAndScore()
 }
 
 void C_PlayerLivesAndScore::setLivesIcon(const std::string& icon)
-{ 
-	m_livesIcon = icon; 
+{
+	m_livesIcon = icon;
 }

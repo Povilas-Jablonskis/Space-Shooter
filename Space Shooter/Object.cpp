@@ -6,75 +6,75 @@
 
 Object::Object(SharedContext* context) : m_context(context)
 {
-    m_transform = addComponent<C_Transform>();
-    m_instanceID = addComponent<C_InstanceID>();
-    m_tag = addComponent<C_Tag>();
+	m_transform = addComponent<C_Transform>();
+	m_instanceID = addComponent<C_InstanceID>();
+	m_tag = addComponent<C_Tag>();
 }
 
-void Object::awake()
+void Object::awake() const
 {
-    for (const auto& component : m_components)
-    {
-        component->awake();
-    }
+	for (const auto& component : m_components)
+	{
+		component->awake();
+	}
 }
 
-void Object::start()
+void Object::start() const
 {
-    for (const auto& component : m_components)
-    {
-        component->start();
-    }
+	for (const auto& component : m_components)
+	{
+		component->start();
+	}
 }
 
-void Object::update(float timeDelta)
+void Object::update(const float timeDelta) const
 {
-    for (const auto& component : m_components)
-    {
-        component->update(timeDelta);
-    }
+	for (const auto& component : m_components)
+	{
+		component->update(timeDelta);
+	}
 }
 
-void Object::draw(const Renderer& renderer)
+void Object::draw(const Renderer& renderer) const
 {
-    m_sprite->draw(renderer);
+	m_sprite->draw(renderer);
 }
 
-void Object::onCollisionEnter(C_BoxCollider& other)
+void Object::onCollisionEnter(C_BoxCollider& other) const
 {
-    for (const auto& component : m_collidables)
-    {
-        component->onCollisionEnter(other);
-    }
+	for (const auto& component : m_collidables)
+	{
+		component->onCollisionEnter(other);
+	}
 }
 
-void Object::onCollisionStay(C_BoxCollider& other)
+void Object::onCollisionStay(C_BoxCollider& other) const
 {
-    for (const auto& component : m_collidables)
-    {
-        component->onCollisionStay(other);
-    }
+	for (const auto& component : m_collidables)
+	{
+		component->onCollisionStay(other);
+	}
 }
 
-void Object::onCollisionExit(C_BoxCollider& other)
+void Object::onCollisionExit(C_BoxCollider& other) const
 {
-    for (const auto& component : m_collidables)
-    {
-        component->onCollisionExit(other);
-    }
+	for (const auto& component : m_collidables)
+	{
+		component->onCollisionExit(other);
+	}
 }
 
 void Object::queueForRemoval()
 {
-    m_queuedForRemoval = true;
+	m_queuedForRemoval = true;
 }
 
 const std::shared_ptr<C_Sprite>& Object::getSprite()
 {
-    return m_sprite;
+	return m_sprite;
 }
 
-bool Object::isQueuedForRemoval()
+bool Object::isQueuedForRemoval() const
 {
-    return m_queuedForRemoval;
+	return m_queuedForRemoval;
 }

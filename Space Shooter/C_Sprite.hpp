@@ -7,33 +7,34 @@
 
 enum class DrawLayer
 {
-    Default,
-    Background,
-    Entities,
-    UI
+	Default,
+	Background,
+	Entities,
+	UI
 };
 
-class C_Sprite : public Component
+class C_Sprite final : public Component
 {
 public:
-    C_Sprite(Object*);
+	explicit C_Sprite(Object*);
 
-    void update(float) override;
-    void draw(const Renderer&);
-    bool continueToDraw() const;
+	void update(float) override;
+	void draw(const Renderer&) const;
+	[[nodiscard]] bool continueToDraw() const;
 
-    void setSortOrder(int);
-    int getSortOrder() const;
+	void setSortOrder(int);
+	[[nodiscard]] int getSortOrder() const;
 
-    void setDrawLayer(DrawLayer);
-    DrawLayer getDrawLayer() const;
+	void setDrawLayer(DrawLayer);
+	[[nodiscard]] DrawLayer getDrawLayer() const;
 
-    Sprite& getSprite();
+	Sprite& getSprite();
+
 private:
-    int m_sortOrder{};
-    DrawLayer m_layer{ DrawLayer::Default };
+	int m_sortOrder{};
+	DrawLayer m_layer{DrawLayer::Default};
 
-    Sprite m_sprite;
+	Sprite m_sprite;
 };
 
 #endif

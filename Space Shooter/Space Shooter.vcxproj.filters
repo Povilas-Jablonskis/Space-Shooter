@@ -191,9 +191,6 @@
     <ClInclude Include="FileConstants.hpp">
       <Filter>Header Files\Constants</Filter>
     </ClInclude>
-    <ClInclude Include="ScientificConstants.hpp">
-      <Filter>Header Files\Constants</Filter>
-    </ClInclude>
     <ClInclude Include="BindableActions.hpp">
       <Filter>Header Files\Constants</Filter>
     </ClInclude>

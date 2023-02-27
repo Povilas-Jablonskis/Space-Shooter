@@ -7,25 +7,26 @@
 
 class Text;
 
-class SoundsMenu : public Scene
+class SoundsMenu final : public Scene
 {
 public:
-    SoundsMenu(SceneStateMachine&, SharedContext&);
+	SoundsMenu(SceneStateMachine&, SharedContext&);
 
-    void savePlayerConfig() const;
+	void savePlayerConfig() const;
 
-    void onCreate() override;
-    void onDestroy() override;
+	void onCreate() override;
+	void onDestroy() override;
 
-    void onActivate() override;
+	void onActivate() override;
 
-    void processInput() override;
+	void processInput() override;
 
-    void draw(float) override;
+	void draw(float) override;
+
 private:
-    std::vector<std::shared_ptr<Text>> m_texts;
-    SharedContext& m_context;
-    SceneStateMachine& m_sceneStateMachine;
+	std::vector<std::shared_ptr<Text>> m_texts;
+	SharedContext& m_context;
+	SceneStateMachine& m_sceneStateMachine;
 };
 
 #endif

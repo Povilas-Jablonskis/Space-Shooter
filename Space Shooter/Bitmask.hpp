@@ -6,23 +6,23 @@
 class Bitmask
 {
 public:
-    Bitmask();
+	Bitmask();
 
-    Bitmask(uint32_t);
+	explicit Bitmask(uint32_t);
 
-    void setMask(Bitmask&);
-    uint32_t getMask() const;
+	void setMask(const Bitmask&);
+	[[nodiscard]] uint32_t getMask() const;
 
-    bool getBit(int) const;
-    void setBit(int, bool);
+	[[nodiscard]] bool getBit(int) const;
+	void setBit(int, bool);
 
-    void setBit(int);
-    void clearBit(int);
+	void setBit(int);
+	void clearBit(int);
 
-    void clear();
+	void clear();
 
 private:
-    uint32_t bits;
+	uint32_t bits;
 };
 
 #endif

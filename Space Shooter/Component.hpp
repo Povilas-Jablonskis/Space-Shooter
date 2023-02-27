@@ -6,14 +6,30 @@ class Object;
 class Component
 {
 public:
-    Component(Object* owner) : m_owner(owner) {}
+	Component() = default;
+	Component(const Component&) = default;
+	Component(Component&&) = default;
+	Component& operator=(const Component&) = default;
+	Component& operator=(Component&&) = default;
+	virtual ~Component() = default;
 
-    virtual void awake() {};
-    virtual void start() {};
+	explicit Component(Object* owner) : m_owner(owner)
+	{
+	}
 
-    virtual void update(float) {};
+	virtual void awake()
+	{
+	}
 
-    Object* m_owner{};
+	virtual void start()
+	{
+	}
+
+	virtual void update(float)
+	{
+	}
+
+	Object* m_owner{};
 };
 
 #endif

@@ -1,57 +1,57 @@
 #include "SceneStateMachine.hpp"
 #include "Scene.hpp"
 
-void SceneStateMachine::processInput()
+void SceneStateMachine::processInput() const
 {
-    if (curScene)
-    {
-        curScene->processInput();
-    }
+	if (curScene)
+	{
+		curScene->processInput();
+	}
 }
 
-void SceneStateMachine::draw(float dt)
+void SceneStateMachine::draw(const float dt) const
 {
-    if (curScene)
-    {
-        curScene->draw(dt);
-    }
+	if (curScene)
+	{
+		curScene->draw(dt);
+	}
 }
 
 void SceneStateMachine::add(ScenesEnum sceneName, const std::shared_ptr<Scene>& scene)
 {
-    auto inserted = scenes.insert(std::make_pair(sceneName, scene));
+	const auto inserted = scenes.insert(std::make_pair(sceneName, scene));
 
-    inserted.first->second->onCreate();
+	inserted.first->second->onCreate();
 }
 
-void SceneStateMachine::remove(ScenesEnum id)
+void SceneStateMachine::remove(const ScenesEnum id)
 {
-    auto it = scenes.find(id);
-    if (it != scenes.end())
-    {
-        if (curScene == it->second)
-        {
-            curScene = nullptr;
-        }
+	const auto it = scenes.find(id);
+	if (it != scenes.end())
+	{
+		if (curScene == it->second)
+		{
+			curScene = nullptr;
+		}
 
-        it->second->onDestroy();
+		it->second->onDestroy();
 
-        scenes.erase(it);
-    }
+		scenes.erase(it);
+	}
 }
 
-void SceneStateMachine::switchTo(ScenesEnum id)
+void SceneStateMachine::switchTo(const ScenesEnum id)
 {
-    auto it = scenes.find(id);
-    if (it != scenes.end())
-    {
-        if (curScene)
-        {
-            curScene->onDeactivate();
-        }
+	const auto it = scenes.find(id);
+	if (it != scenes.end())
+	{
+		if (curScene)
+		{
+			curScene->onDeactivate();
+		}
 
-        curScene = it->second;
+		curScene = it->second;
 
-        curScene->onActivate();
-    }
+		curScene->onActivate();
+	}
 }

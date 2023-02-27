@@ -6,20 +6,22 @@
 #include "InputManager.hpp"
 
 GameOver::GameOver(SceneStateMachine& sceneStateMachine, SharedContext& context)
-	: m_sceneStateMachine(sceneStateMachine), m_context(context)
+	: m_context(context), m_sceneStateMachine(sceneStateMachine)
 {
-
 }
 
 void GameOver::onCreate()
 {
 	//Game over
-	auto gameOverText = std::make_shared<Text>("Game over!", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(45.0f, 50.0f), *m_context.m_font);
+	const auto gameOverText = std::make_shared<Text>("Game over!", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	                                                 glm::vec2(45.0f, 50.0f), *m_context.m_font);
 	gameOverText->disable();
 	m_texts.push_back(gameOverText);
 }
 
-void GameOver::onDestroy() { }
+void GameOver::onDestroy()
+{
+}
 
 void GameOver::onActivate()
 {
@@ -30,13 +32,13 @@ void GameOver::processInput()
 {
 	if (m_context.m_inputManager->getKey(27))
 	{
-		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(MAIN);
 	}
 }
 
 void GameOver::draw(float dt)
 {
-	for (auto& text : m_texts)
+	for (const auto& text : m_texts)
 	{
 		text->update(*m_context.m_inputManager);
 	}

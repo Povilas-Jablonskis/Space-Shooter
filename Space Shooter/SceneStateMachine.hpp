@@ -12,16 +12,16 @@ class Scene;
 class SceneStateMachine
 {
 public:
-    void processInput();
-    void draw(float);
+	void processInput() const;
+	void draw(float) const;
 
-    void add(ScenesEnum, const std::shared_ptr<Scene>&);
-    void switchTo(ScenesEnum);
-    void remove(ScenesEnum);
+	void add(ScenesEnum, const std::shared_ptr<Scene>&);
+	void switchTo(ScenesEnum);
+	void remove(ScenesEnum);
+
 private:
-    std::unordered_map<ScenesEnum, std::shared_ptr<Scene>> scenes;
-    std::shared_ptr<Scene> curScene{};
-    unsigned int insertedSceneID{};
+	std::unordered_map<ScenesEnum, std::shared_ptr<Scene>> scenes;
+	std::shared_ptr<Scene> curScene{};
 };
 
 #endif

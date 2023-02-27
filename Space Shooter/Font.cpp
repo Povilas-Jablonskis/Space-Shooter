@@ -1,7 +1,6 @@
 #include "Font.hpp"
 
 #include <iostream>
-#include <algorithm>
 
 Font::Font(const std::string& path)
 {
@@ -9,17 +8,17 @@ Font::Font(const std::string& path)
 
 	if (FT_Init_FreeType(&library))
 	{
-		#if _DEBUG
-			std::cout << "ERROR::FREETYPE: Could not init FreeType Library\n";
-		#endif
+#if _DEBUG
+		std::cout << "ERROR::FREETYPE: Could not init FreeType Library\n";
+#endif
 	}
 
 	FT_Face face;
 	if (FT_New_Face(library, path.c_str(), 0, &face))
 	{
-		#if _DEBUG
-			std::cout << "ERROR::FREETYPE: Failed to load font\n";
-		#endif
+#if _DEBUG
+		std::cout << "ERROR::FREETYPE: Failed to load font\n";
+#endif
 	}
 
 	FT_Set_Pixel_Sizes(face, 0, 18);
@@ -31,9 +30,9 @@ Font::Font(const std::string& path)
 		// Load character glyph 
 		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
 		{
-			#if _DEBUG
-				std::cout << "ERROR::FREETYTPE: Failed to load Glyph\n";
-			#endif
+#if _DEBUG
+			std::cout << "ERROR::FREETYTPE: Failed to load Glyph\n";
+#endif
 			continue;
 		}
 
@@ -45,8 +44,8 @@ Font::Font(const std::string& path)
 			GL_TEXTURE_2D,
 			0,
 			GL_RED,
-			face->glyph->bitmap.width,
-			face->glyph->bitmap.rows,
+			static_cast<GLsizei>(face->glyph->bitmap.width),
+			static_cast<GLsizei>(face->glyph->bitmap.rows),
 			0,
 			GL_RED,
 			GL_UNSIGNED_BYTE,
@@ -76,7 +75,7 @@ Font::Font(const std::string& path)
 	FT_Done_FreeType(library);
 }
 
-Character Font::getCharacter(FT_ULong index) const
+Character Font::getCharacter(const FT_ULong index) const
 {
 	return m_characters.at(index);
 }

@@ -3,16 +3,16 @@
 
 #include "Component.hpp"
 
-class C_InstanceID : public Component
+class C_InstanceID final : public Component
 {
 public:
-    C_InstanceID(Object*);
+	explicit C_InstanceID(Object*);
 
-    unsigned int get() const;
+	[[nodiscard]] unsigned int get() const;
 
 private:
-    static unsigned int count;
-    unsigned int id;
+	static unsigned int count;
+	unsigned int id;
 };
 
 

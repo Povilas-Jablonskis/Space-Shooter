@@ -4,27 +4,25 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <freeglut/freeglut.h>
 
-Text::Text(const std::string& text, const glm::vec4& color, const glm::vec2& positionPercents, Font& font) : m_color(color), m_positionPercents(positionPercents), m_text(text), m_font(font)
+Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPercents, Font& font) :
+	m_font(font), m_text(std::move(text)), m_positionPercents(positionPercents), m_color(color)
 {
-	onHoverEnterFunc = []()
+	onHoverEnterFunc = []
 	{
-
 	};
 
-	onHoverExitFunc = []()
+	onHoverExitFunc = []
 	{
-
 	};
 
-	onMouseClickFunc = []()
+	onMouseClickFunc = []
 	{
-
 	};
 
-	onMouseReleaseFunc = []()
+	onMouseReleaseFunc = []
 	{
-
 	};
 }
 
@@ -42,9 +40,8 @@ void Text::update(const InputManager& inputManager)
 
 	const auto& lastPosition = getPosition();
 	std::vector<float> tempVector;
-	auto& text = getText();
 
-	for (FT_ULong c : m_text)
+	for (const signed char c : m_text)
 	{
 		auto ch = m_font.getCharacter(c);
 
@@ -53,8 +50,8 @@ void Text::update(const InputManager& inputManager)
 
 		tempVector.push_back(ch.Size.y);
 
-		const auto w = static_cast<GLfloat>(ch.Size.x);
-		const auto h = static_cast<GLfloat>(ch.Size.y);
+		const auto w = ch.Size.x;
+		const auto h = ch.Size.y;
 		// Update VBO for each character
 
 		std::vector<cachedCharacter> textVector;
@@ -94,10 +91,13 @@ void Text::update(const InputManager& inputManager)
 			ch.TextureID,
 			vertices
 		);
-		setPosition(0, getPosition().x + (ch.Advance >> 6)); // Bitshift by 6 to get value in pixels (2^6 = 64)
+		setPosition(0, getPosition().x + static_cast<float>(ch.Advance >> 6));
+		// Bitshift by 6 to get value in pixels (2^6 = 64)
 	}
 	m_bbox[1] = getPosition().x;
-	m_bbox[2] = getPosition().y + (tempVector.empty() ? 0.0f : static_cast<float>(*std::max_element(std::begin(tempVector), std::end(tempVector))));
+	m_bbox[2] = getPosition().y + (tempVector.empty()
+		                               ? 0.0f
+		                               : *std::ranges::max_element(tempVector));
 	setPosition(lastPosition);
 
 	if (!isActive())
@@ -105,9 +105,9 @@ void Text::update(const InputManager& inputManager)
 		return;
 	}
 
-	const auto collision = getBoundingBox().x >= getBoundingBox().x && inputManager.getLastMousePosition().x <= getBoundingBox().y && inputManager.getLastMousePosition().y <= getBoundingBox().z && inputManager.getLastMousePosition().y >= getBoundingBox().a;
-
-	if (collision)
+	if (inputManager.getLastMousePosition().x <=
+		getBoundingBox().y && inputManager.getLastMousePosition().y <= getBoundingBox().z && inputManager.
+		getLastMousePosition().y >= getBoundingBox().a)
 	{
 		if (!isClickedByMouse())
 		{
@@ -167,156 +167,159 @@ void Text::onHoverExitFuncDefaults()
 }
 
 const std::vector<cachedCharacter>& Text::getCachedCharacters() const
-{ 
-	return m_cachedCharacters; 
+{
+	return m_cachedCharacters;
 }
 
-const std::string& Text::getText() const 
-{ 
-	return m_text; 
+const std::string& Text::getText() const
+{
+	return m_text;
 }
 
-const glm::vec4& Text::getBoundingBox() const 
-{ 
-	return m_bbox; 
+const glm::vec4& Text::getBoundingBox() const
+{
+	return m_bbox;
 }
 
-bool Text::doesItNeedUpdate() const 
-{ 
-	return m_needUpdate; 
+bool Text::doesItNeedUpdate() const
+{
+	return m_needUpdate;
 }
 
-void Text::setNeedUpdate(bool t_needUpdate) 
-{ 
-	m_needUpdate = t_needUpdate; 
+void Text::setNeedUpdate(const bool t_needUpdate)
+{
+	m_needUpdate = t_needUpdate;
 }
 
-void Text::setText(const std::string& newtext) 
-{ 
-	m_needUpdate = true; m_text = newtext; 
+void Text::setText(const std::string& newtext)
+{
+	m_needUpdate = true;
+	m_text = newtext;
 }
 
-void Text::setPosition(const glm::vec2& position) 
-{ 
-	m_position = position; m_needUpdate = true; 
+void Text::setPosition(const glm::vec2& position)
+{
+	m_position = position;
+	m_needUpdate = true;
 }
 
-void Text::setPosition(int index, const float position) 
-{ 
-	m_position[index] = position; 
-	m_needUpdate = true; 
+void Text::setPosition(const int index, const float position)
+{
+	m_position[index] = position;
+	m_needUpdate = true;
 }
 
-void Text::disable() 
-{ 
-	m_active = false; 
+void Text::disable()
+{
+	m_active = false;
 }
 
-void Text::enable() 
-{ 
-	m_active = true; 
+void Text::enable()
+{
+	m_active = true;
 }
 
-bool Text::isActive() const 
-{ 
-	return m_active; 
+bool Text::isActive() const
+{
+	return m_active;
 }
 
-void Text::setMousedHovered(const bool boolean) 
-{ 
-	m_gotMousedHovered = boolean; 
+void Text::setMousedHovered(const bool boolean)
+{
+	m_gotMousedHovered = boolean;
 }
 
-bool Text::isHoveredByMouse() const 
-{ 
-	return m_gotMousedHovered; 
+bool Text::isHoveredByMouse() const
+{
+	return m_gotMousedHovered;
 }
 
-void Text::setMousedClicked(const bool boolean) 
-{ 
-	m_gotMousedClicked = boolean; 
+void Text::setMousedClicked(const bool boolean)
+{
+	m_gotMousedClicked = boolean;
 }
 
-bool Text::isClickedByMouse() const 
-{ 
-	return m_gotMousedClicked; 
-}
-const glm::vec2& Text::getPositionPercents() const 
-{ 
-	return m_positionPercents; 
+bool Text::isClickedByMouse() const
+{
+	return m_gotMousedClicked;
 }
 
-void Text::changeColor(float color, const int index) 
-{ 
-	m_color[index] = color; 
+const glm::vec2& Text::getPositionPercents() const
+{
+	return m_positionPercents;
 }
 
-void Text::changeColor(const glm::vec4& color) 
-{ 
-	m_color = color; 
+void Text::changeColor(const float color, const int index)
+{
+	m_color[index] = color;
 }
 
-const glm::vec4& Text::getColor() const 
-{ 
-	return m_color; 
+void Text::changeColor(const glm::vec4& color)
+{
+	m_color = color;
 }
 
-const glm::vec2& Text::getPosition() const 
-{ 
-	return m_position; 
+const glm::vec4& Text::getColor() const
+{
+	return m_color;
 }
 
-float Text::getRotationAngle() const 
-{ 
+const glm::vec2& Text::getPosition() const
+{
+	return m_position;
+}
+
+float Text::getRotationAngle() const
+{
 	return m_rotationAngle;
 }
 
-void Text::setScale(float scale) 
-{ 
-	m_scale = scale; 
+void Text::setScale(const float scale)
+{
+	m_scale = scale;
 }
 
-void Text::setRotationAngle(float rotation) 
-{ 
-	m_rotationAngle = rotation; 
+void Text::setRotationAngle(const float rotation)
+{
+	m_rotationAngle = rotation;
 }
 
-float Text::getWidth() const 
-{ 
-	return m_width * m_scale; 
+float Text::getWidth() const
+{
+	return m_width * m_scale;
 }
 
-float Text::getHeight() const 
-{ 
-	return m_height * m_scale; 
+float Text::getHeight() const
+{
+	return m_height * m_scale;
 }
 
-void Text::setWidth(float width) 
-{ 
+void Text::setWidth(const float width)
+{
 	m_width = width;
 }
 
-void Text::setHeight(float height) 
+void Text::setHeight(const float height)
 {
-	m_height = height; 
+	m_height = height;
 }
 
-float Text::getOriginalWidth() const 
-{ 
-	return m_originalWidth; 
-}
-
-float Text::getOriginalHeight() const 
+float Text::getOriginalWidth() const
 {
-	return m_originalHeight; 
+	return m_originalWidth;
 }
 
-void Text::setOriginalWidth(float width) 
-{ 
-	m_originalWidth = width; 
+float Text::getOriginalHeight() const
+{
+	return m_originalHeight;
 }
 
-void Text::setOriginalHeight(float height) 
-{ 
-	m_originalHeight = height; 
+void Text::setOriginalWidth(const float width)
+{
+	m_originalWidth = width;
+}
+
+void Text::setOriginalHeight(const float height)
+{
+	m_originalHeight = height;
 }

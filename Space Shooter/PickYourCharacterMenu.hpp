@@ -8,29 +8,30 @@
 
 class Text;
 
-class PickYourCharacterMenu : public Scene
+class PickYourCharacterMenu final : public Scene
 {
 public:
-    PickYourCharacterMenu(SceneStateMachine&, SharedContext&);
+	PickYourCharacterMenu(SceneStateMachine&, SharedContext&);
 
-    void loadPlayerModels();
+	void loadPlayerModels();
 
-    void onCreate() override;
-    void onDestroy() override;
+	void onCreate() override;
+	void onDestroy() override;
 
-    void onActivate() override;
+	void onActivate() override;
 
-    void processInput() override;
+	void processInput() override;
 
-    void draw(float) override;
+	void draw(float) override;
+
 private:
-    std::vector<std::shared_ptr<Text>> m_texts;
-    int m_characterSelectionIndex{};
-    std::vector<std::string> m_playerModels;
+	std::vector<std::shared_ptr<Text>> m_texts;
+	int m_characterSelectionIndex{};
+	std::vector<std::string> m_playerModels;
 
-    ObjectCollection m_objects;
-    SharedContext& m_context;
-    SceneStateMachine& m_sceneStateMachine;
+	ObjectCollection m_objects;
+	SharedContext& m_context;
+	SceneStateMachine& m_sceneStateMachine;
 };
 
 #endif

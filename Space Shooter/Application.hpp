@@ -16,22 +16,23 @@ class Application
 public:
 	Application();
 
-	void loadPlayerConfig();
+	void loadPlayerConfig() const;
 
-	void render();
+	void render() const;
 
 	InputManager& getInputManager();
+
 private:
 	SharedContext m_context;
-	SpriteSheet m_spriteSheet{ FileConstants::spriteSheetsPath };
+	SpriteSheet m_spriteSheet{FileConstants::spriteSheetsPath};
 	SceneStateMachine m_sceneManager;
 	InputManager m_inputManager;
-	Font m_font{ "assets/Fonts/kenvector_future_thin.ttf" };
+	Font m_font{"assets/Fonts/kenvector_future_thin.ttf"};
 
 	Renderer m_renderer;
 
-	irrklang::ISoundEngine* m_soundEngine{ irrklang::createIrrKlangDevice() };
+	irrklang::ISoundEngine* m_soundEngine{irrklang::createIrrKlangDevice()};
 
-	const float m_dt{ 1.0f / 60.0f };
+	const float m_dt{1.0f / 60.0f};
 };
 #endif

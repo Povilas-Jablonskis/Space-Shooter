@@ -5,26 +5,27 @@
 
 #include "Component.hpp"
 
-class C_Transform : public Component
+class C_Transform final : public Component
 {
 public:
-    C_Transform(Object*);
+	explicit C_Transform(Object*);
 
-    void setPosition(float, float);
-    void setPosition(const glm::vec2&);
+	void setPosition(float, float);
+	void setPosition(const glm::vec2&);
 
-    void addPosition(float, float);
-    void addPosition(glm::vec2);
+	void addPosition(float, float);
+	void addPosition(glm::vec2);
 
-    void setX(float);
-    void setY(float);
+	void setX(float);
+	void setY(float);
 
-    void addX(float);
-    void addY(float);
+	void addX(float);
+	void addY(float);
 
-    glm::vec2 getPosition() const;
+	[[nodiscard]] glm::vec2 getPosition() const;
+
 private:
-    glm::vec2 m_position{};
+	glm::vec2 m_position{};
 };
 
 #endif

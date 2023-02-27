@@ -2,20 +2,23 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
+
+#include <freeglut/freeglut.h>
 
 Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
 {
 	loadShader(vertex_path, fragment_path);
 }
 
-std::string Shader::readShaderFile(const std::string& path) const
+std::string Shader::readShaderFile(const std::string& path)
 {
 	std::string content;
 	std::ifstream fs("assets/Shaders/" + path);
-	char buffer;
 
 	if (fs.is_open())
 	{
+		char buffer;
 		while (fs.get(buffer))
 		{
 			content.push_back(buffer);
@@ -28,22 +31,22 @@ std::string Shader::readShaderFile(const std::string& path) const
 		std::cout << "ERROR::Shader: File " << path.c_str() << " not found\n";
 		(void)getchar();
 #endif
-		exit(0);
+		glutLeaveMainLoop();
 	}
 	return content;
 }
 
-GLuint Shader::getShader() const 
-{ 
-	return m_program; 
+GLuint Shader::getShader() const
+{
+	return m_program;
 }
 
 void Shader::loadShader(const std::string& vertex_path, const std::string& fragment_path)
 {
 	const auto vertShaderStr = readShaderFile(vertex_path);
 	const auto fragShaderStr = readShaderFile(fragment_path);
-	auto vertexShaderSource = vertShaderStr.c_str();
-	auto fragmentShaderSource = fragShaderStr.c_str();
+	const auto vertexShaderSource = vertShaderStr.c_str();
+	const auto fragmentShaderSource = fragShaderStr.c_str();
 	auto isCompiled = 0;
 
 	// Vertex shader
@@ -58,11 +61,11 @@ void Shader::loadShader(const std::string& vertex_path, const std::string& fragm
 
 		// The maxLength includes the NULL character
 		std::vector<GLchar> errorLogs(maxLength);
-		glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &errorLogs[0]);
+		glGetShaderInfoLog(vertexShader, maxLength, &maxLength, errorLogs.data());
 
 #if _DEBUG
 		std::cout << "ERROR::Shader: Errors in vertex shader ( Shaders/" << vertex_path.c_str() << " ) :\n";
-		for (auto errorLog : errorLogs)
+		for (const auto errorLog : errorLogs)
 		{
 			std::cout << errorLog;
 		}
@@ -81,11 +84,11 @@ void Shader::loadShader(const std::string& vertex_path, const std::string& fragm
 
 		// The maxLength includes the NULL character
 		std::vector<GLchar> errorLogs(maxLength);
-		glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &errorLogs[0]);
+		glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, errorLogs.data());
 
 #if _DEBUG
 		std::cout << "ERROR::Shader: Errors in fragment shader ( Shaders/ " << fragment_path.c_str() << " ) :\n";
-		for (auto errorLog : errorLogs)
+		for (const auto errorLog : errorLogs)
 		{
 			std::cout << errorLog;
 		}
@@ -97,7 +100,7 @@ void Shader::loadShader(const std::string& vertex_path, const std::string& fragm
 #if _DEBUG
 		(void)getchar();
 #endif
-		exit(0);
+		glutLeaveMainLoop();
 	}
 
 	// Link shaders

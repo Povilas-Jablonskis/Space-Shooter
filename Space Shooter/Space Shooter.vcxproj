@@ -59,7 +59,10 @@
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;FREEGLUT_STATIC;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <ExternalWarningLevel>InheritWarningLevel</ExternalWarningLevel>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -89,7 +92,9 @@
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;FREEGLUT_STATIC;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -188,7 +193,6 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     <ClInclude Include="Scene.hpp" />
     <ClInclude Include="ScenesEnum.hpp" />
     <ClInclude Include="SceneStateMachine.hpp" />
-    <ClInclude Include="ScientificConstants.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="SharedContext.hpp" />
     <ClInclude Include="SpriteSheet.hpp" />

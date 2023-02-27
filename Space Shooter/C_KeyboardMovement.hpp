@@ -7,21 +7,21 @@
 
 class C_Velocity_ReverseVelocityWhenOutOfBounds;
 
-class C_KeyboardMovement : public Component
+class C_KeyboardMovement final : public Component
 {
 public:
-    C_KeyboardMovement(Object*);
+	explicit C_KeyboardMovement(Object*);
 
-    void awake() override;
+	void awake() override;
 
-    void setMovementSpeed(float);
+	void setMovementSpeed(float);
 
-    void update(float) override;
+	void update(float) override;
 
 private:
-    float m_moveSpeed{ 100.0f };
+	float m_moveSpeed{100.0f};
 
-    std::shared_ptr<C_Velocity_ReverseVelocityWhenOutOfBounds> m_velocity;
+	std::shared_ptr<C_Velocity_ReverseVelocityWhenOutOfBounds> m_velocity;
 };
 
 #endif

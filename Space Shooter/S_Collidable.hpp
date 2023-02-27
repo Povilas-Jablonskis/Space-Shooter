@@ -18,18 +18,18 @@ class C_BoxCollider;
 class S_Collidable
 {
 public:
-    S_Collidable();
-    void add(std::vector<std::shared_ptr<Object>>&);
-    void processRemovals();
-    void resolve();
-    void processCollidingObjects();
+	S_Collidable();
+	void add(const std::vector<std::shared_ptr<Object>>&);
+	void processRemovals();
+	void resolve();
+	void processCollidingObjects();
+
 private:
-
-    std::unordered_map<CollisionLayer, Bitmask, EnumClassHash> m_collisionLayers;
-    std::unordered_map<CollisionLayer, std::vector<std::shared_ptr<C_BoxCollider>>, EnumClassHash> m_collidables;
-    std::unordered_set<std::pair<std::shared_ptr<C_BoxCollider>, std::shared_ptr<C_BoxCollider>>, ComponentPairHash> m_objectsColliding;
+	std::unordered_map<CollisionLayer, Bitmask, EnumClassHash> m_collisionLayers;
+	std::unordered_map<CollisionLayer, std::vector<std::shared_ptr<C_BoxCollider>>, EnumClassHash> m_collidables;
+	std::unordered_set<std::pair<std::shared_ptr<C_BoxCollider>, std::shared_ptr<C_BoxCollider>>, ComponentPairHash>
+	m_objectsColliding;
 };
-
 
 
 #endif
