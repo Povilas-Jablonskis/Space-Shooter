@@ -57,13 +57,13 @@ Font::Font(const std::string& path)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		// Now store character for later use
-		Character _character = {
+		Character character = {
 			texture,
 			glm::vec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
 			glm::vec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
 			face->glyph->advance.x
 		};
-		m_characters.insert_or_assign(c, _character);
+		m_characters.insert_or_assign(c, character);
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 

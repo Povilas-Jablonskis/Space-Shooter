@@ -28,9 +28,9 @@ void ObjectCollection::draw(const Renderer& renderer) const
 
 void ObjectCollection::removeObjectsWithTag(const Tag tag)
 {
-	for_each_if(m_objects.begin(), m_objects.end(),
-	            [=](const std::shared_ptr<Object>& object) { return object->m_tag->compare(tag); },
-	            [](const std::shared_ptr<Object>& object) { object->queueForRemoval(); });
+	sFor_each_if(m_objects.begin(), m_objects.end(),
+	             [=](const std::shared_ptr<Object>& object) { return object->tag->compare(tag); },
+	             [](const std::shared_ptr<Object>& object) { object->queueForRemoval(); });
 }
 
 void ObjectCollection::processNewObjects()
@@ -58,16 +58,14 @@ void ObjectCollection::processNewObjects()
 
 void ObjectCollection::processRemovals()
 {
-	bool removed = false;
+	bool isRemoved = false;
 	auto objIterator = m_objects.begin();
 	while (objIterator != m_objects.end())
 	{
-		const auto& obj = *objIterator;
-
-		if (obj->isQueuedForRemoval())
+		if ((*objIterator)->isQueuedForRemoval())
 		{
 			objIterator = m_objects.erase(objIterator);
-			removed = true;
+			isRemoved = true;
 		}
 		else
 		{
@@ -75,7 +73,7 @@ void ObjectCollection::processRemovals()
 		}
 	}
 
-	if (removed)
+	if (isRemoved)
 	{
 		m_drawables.processRemovals();
 		m_collidables.processRemovals();

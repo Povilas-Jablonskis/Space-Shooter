@@ -7,7 +7,7 @@
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
 
-C_Velocity_DestroyWhenOutOfBounds::C_Velocity_DestroyWhenOutOfBounds(Object* owner) : Component(owner)
+C_Velocity_DestroyWhenOutOfBounds::C_Velocity_DestroyWhenOutOfBounds(Object* initialOwner) : Component(initialOwner)
 {
 }
 
@@ -16,24 +16,25 @@ void C_Velocity_DestroyWhenOutOfBounds::update(const float deltaTime)
 	const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
 	const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
-	const auto width = m_owner->getSprite()->getSprite().getTextureRect().z * m_owner->getSprite()->getSprite().
-		getScale().x;
-	const auto height = m_owner->getSprite()->getSprite().getTextureRect().w * m_owner->getSprite()->getSprite().
-		getScale().y;
+	const auto& spriteComponentSprite = owner->getSprite()->getSprite();
+	const auto transformPosition = owner->transform->getPosition();
+
+	const auto width = spriteComponentSprite.getTextureRect().z * spriteComponentSprite.getScale().x;
+	const auto height = spriteComponentSprite.getTextureRect().w * spriteComponentSprite.getScale().y;
 
 	//Remove if object is out of bounds
-	if (m_owner->m_transform->getPosition().y > windowHeight || m_owner->m_transform->getPosition().y + height < 0.0f ||
-		m_owner->m_transform->getPosition().x > windowWidth || m_owner->m_transform->getPosition().x + width < 0.0f)
+	if (transformPosition.y > windowHeight || transformPosition.y + height < 0.0f ||
+		transformPosition.x > windowWidth || transformPosition.x + width < 0.0f)
 	{
-		m_owner->queueForRemoval();
+		owner->queueForRemoval();
 	}
 
-	m_owner->m_transform->addPosition(m_velocity * deltaTime);
+	owner->transform->addPosition(m_velocity * deltaTime);
 }
 
-void C_Velocity_DestroyWhenOutOfBounds::set(const glm::vec2& vel)
+void C_Velocity_DestroyWhenOutOfBounds::set(const glm::vec2& velocity)
 {
-	m_velocity = vel;
+	m_velocity = velocity;
 }
 
 void C_Velocity_DestroyWhenOutOfBounds::set(const float x, const float y)

@@ -4,11 +4,11 @@
 #include "C_InstanceID.hpp"
 #include "C_Tag.hpp"
 
-Object::Object(SharedContext* context) : m_context(context)
+Object::Object(SharedContext* context) : context(context)
 {
-	m_transform = addComponent<C_Transform>();
-	m_instanceID = addComponent<C_InstanceID>();
-	m_tag = addComponent<C_Tag>();
+	transform = addComponent<C_Transform>();
+	instanceID = addComponent<C_InstanceID>();
+	tag = addComponent<C_Tag>();
 }
 
 void Object::awake() const

@@ -1,11 +1,11 @@
 #include "C_RemoveObjectOnCollisionEnter.hpp"
 #include "Object.hpp"
 
-C_RemoveObjectOnCollisionEnter::C_RemoveObjectOnCollisionEnter(Object* owner) : Component(owner)
+C_RemoveObjectOnCollisionEnter::C_RemoveObjectOnCollisionEnter(Object* initialOwner) : Component(initialOwner)
 {
 }
 
-void C_RemoveObjectOnCollisionEnter::onCollisionEnter(C_BoxCollider& other)
+void C_RemoveObjectOnCollisionEnter::onCollisionEnter(C_BoxCollider&)
 {
-	m_owner->queueForRemoval();
+	owner->queueForRemoval();
 }

@@ -14,31 +14,31 @@ void OptionsMenu::onCreate()
 {
 	//Options
 	const auto controlsOption = std::make_shared<Text>("Controls", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-	                                                   glm::vec2(48.0f, 60.0f), *m_context.m_font);
+	                                                   glm::vec2(48.0f, 60.0f), *m_context.font);
 	controlsOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(CONTROLS);
+		m_sceneStateMachine.switchTo(ScenesEnum::CONTROLS);
 	};
 	m_texts.push_back(controlsOption);
 	const auto soundsOption = std::make_shared<Text>("Sounds", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-	                                                 glm::vec2(48.0f, 55.0f), *m_context.m_font);
+	                                                 glm::vec2(48.0f, 55.0f), *m_context.font);
 	soundsOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(SOUNDS);
+		m_sceneStateMachine.switchTo(ScenesEnum::SOUNDS);
 	};
 	m_texts.push_back(soundsOption);
 	const auto backOption = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
 	                                               glm::vec2(48.0f, 50.0f),
-	                                               *m_context.m_font);
+	                                               *m_context.font);
 	backOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(MAIN);
+		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
 	};
 	m_texts.push_back(backOption);
 }
@@ -49,25 +49,25 @@ void OptionsMenu::onDestroy()
 
 void OptionsMenu::onActivate()
 {
-	m_context.m_inputManager->clearEverything();
+	m_context.inputManager->clearEverything();
 }
 
 void OptionsMenu::processInput()
 {
-	if (m_context.m_inputManager->getKey(27))
+	if (m_context.inputManager->isKeyActive(27))
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(MAIN);
+		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
 	}
 }
 
-void OptionsMenu::draw(float dt)
+void OptionsMenu::draw(float)
 {
 	for (const auto& text : m_texts)
 	{
-		text->update(*m_context.m_inputManager);
+		text->update(*m_context.inputManager);
 	}
 
-	m_context.m_renderer->draw(m_texts);
+	m_context.renderer->draw(m_texts);
 }

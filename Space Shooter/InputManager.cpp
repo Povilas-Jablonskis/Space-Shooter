@@ -7,49 +7,49 @@
 #include <system_error>
 #include "rapidxml/RapidXMLSTD.hpp"
 
-bool InputManager::getLeftMouseState() const
+bool InputManager::isLeftMouseClicked() const
 {
 	return m_leftMouseClick;
 }
 
-bool InputManager::getRightMouseState() const
+bool InputManager::isRightMouseClicked() const
 {
 	return m_rightMouseClick;
 }
 
-void InputManager::setLeftMouseState(const bool boolean)
+void InputManager::setLeftMouseClicked(const bool leftMouseClick)
 {
-	m_leftMouseClick = boolean;
+	m_leftMouseClick = leftMouseClick;
 }
 
-void InputManager::setRightMouseState(const bool boolean)
+void InputManager::setRightMouseClicked(const bool rightMouseClick)
 {
-	m_rightMouseClick = boolean;
+	m_rightMouseClick = rightMouseClick;
 }
 
-bool InputManager::getLastLeftMouseState() const
+bool InputManager::isLastLeftMouseStateClicked() const
 {
 	return m_lastLeftMouseClick;
 }
 
-bool InputManager::getLastRightMouseState() const
+bool InputManager::isLastRightMouseStateClicked() const
 {
 	return m_lastRightMouseClick;
 }
 
-void InputManager::setLastLeftMouseState(const bool boolean)
+void InputManager::setLastLeftMouseClicked(const bool lastLeftMouseClick)
 {
-	m_lastLeftMouseClick = boolean;
+	m_lastLeftMouseClick = lastLeftMouseClick;
 }
 
-void InputManager::setLastRightMouseState(const bool boolean)
+void InputManager::setLastRightMouseClicked(const bool lastRightMouseClick)
 {
-	m_lastRightMouseClick = boolean;
+	m_lastRightMouseClick = lastRightMouseClick;
 }
 
-void InputManager::setLastMousePosition(const glm::vec2& position)
+void InputManager::setLastMousePosition(const glm::vec2& lastMousePosition)
 {
-	m_lastMousePosition = position;
+	m_lastMousePosition = lastMousePosition;
 }
 
 const glm::vec2& InputManager::getLastMousePosition() const
@@ -57,7 +57,7 @@ const glm::vec2& InputManager::getLastMousePosition() const
 	return m_lastMousePosition;
 }
 
-bool InputManager::getKey(const short key) const
+bool InputManager::isKeyActive(const short key) const
 {
 	try
 	{
@@ -69,17 +69,17 @@ bool InputManager::getKey(const short key) const
 	}
 }
 
-bool InputManager::getKey(const std::string& key) const
+bool InputManager::isKeyActive(const std::string& key) const
 {
 	const auto foundKb = std::ranges::find_if(m_keyBindings, [=](const std::shared_ptr<KeyBinding>& kb)
 	{
 		return kb->getKeyBinding() == key;
 	});
 
-	return foundKb != m_keyBindings.end() ? getKey((*foundKb)->getKeyBindingCharacter()) : false;
+	return foundKb != m_keyBindings.end() ? isKeyActive((*foundKb)->getKeyBindingCharacter()) : false;
 }
 
-void InputManager::setKey(const short key, bool boolean)
+void InputManager::setKeyState(const short key, bool boolean)
 {
 	m_keyStates.insert_or_assign(key, boolean);
 }
@@ -94,9 +94,9 @@ std::vector<std::shared_ptr<KeyBinding>>& InputManager::getKeyBindings()
 	return m_keyBindings;
 }
 
-void InputManager::addKeyBinding(const std::shared_ptr<KeyBinding>& key_binding)
+void InputManager::addKeyBinding(const std::shared_ptr<KeyBinding>& keyBinding)
 {
-	m_keyBindings.push_back(key_binding);
+	m_keyBindings.push_back(keyBinding);
 }
 
 std::shared_ptr<KeyBinding> InputManager::getCurrentlyEditedKeyBinding() const
@@ -105,7 +105,7 @@ std::shared_ptr<KeyBinding> InputManager::getCurrentlyEditedKeyBinding() const
 	{
 		return kb->isCurrentlyEdited();
 	});
-	return foundKb != m_keyBindings.end() ? (*foundKb) : nullptr;
+	return foundKb != m_keyBindings.end() ? *foundKb : nullptr;
 }
 
 void InputManager::motionFunc(const int x, const int y)
@@ -124,14 +124,14 @@ void InputManager::processMouseClick(const int button, const int state, const in
 
 	if (button == GLUT_LEFT_BUTTON)
 	{
-		setLastLeftMouseState(getLeftMouseState());
-		setLeftMouseState(state == GLUT_DOWN ? true : false);
+		setLastLeftMouseClicked(isLeftMouseClicked());
+		setLeftMouseClicked(state == GLUT_DOWN ? true : false);
 		setLastMousePosition(lastMousePosition);
 	}
 	else if (button == GLUT_RIGHT_BUTTON)
 	{
-		setLastRightMouseState(getRightMouseState());
-		setRightMouseState(state == GLUT_DOWN ? true : false);
+		setLastRightMouseClicked(isRightMouseClicked());
+		setRightMouseClicked(state == GLUT_DOWN ? true : false);
 		setLastMousePosition(lastMousePosition);
 	}
 }
@@ -139,54 +139,54 @@ void InputManager::processMouseClick(const int button, const int state, const in
 void InputManager::keyboardInput(const char c)
 {
 	const auto key = VkKeyScan(c);
-	if (!getKey(key))
+	if (!isKeyActive(key))
 	{
-		setKey(key, true);
+		setKeyState(key, true);
 	}
 }
 
-void InputManager::keyboardInputUp(const char c, int x, int y)
+void InputManager::keyboardInputUp(const char c, int, int)
 {
 	const auto key = VkKeyScan(c);
-	if (getKey(key))
+	if (isKeyActive(key))
 	{
-		setKey(key, false);
+		setKeyState(key, false);
 	}
 }
 
-void InputManager::specialKeyInput(const int key, int x, int y)
+void InputManager::specialKeyInput(const int key, int, int)
 {
 	switch (key)
 	{
 	case GLUT_KEY_UP:
 		{
-			if (getKey(VK_UP))
+			if (isKeyActive(VK_UP))
 			{
-				setKey(VK_UP, false);
+				setKeyState(VK_UP, false);
 			}
 			break;
 		}
 	case GLUT_KEY_DOWN:
 		{
-			if (getKey(VK_DOWN))
+			if (isKeyActive(VK_DOWN))
 			{
-				setKey(VK_DOWN, false);
+				setKeyState(VK_DOWN, false);
 			}
 			break;
 		}
 	case GLUT_KEY_LEFT:
 		{
-			if (getKey(VK_LEFT))
+			if (isKeyActive(VK_LEFT))
 			{
-				setKey(VK_LEFT, false);
+				setKeyState(VK_LEFT, false);
 			}
 			break;
 		}
 	case GLUT_KEY_RIGHT:
 		{
-			if (getKey(VK_RIGHT))
+			if (isKeyActive(VK_RIGHT))
 			{
-				setKey(VK_RIGHT, false);
+				setKeyState(VK_RIGHT, false);
 			}
 			break;
 		}
@@ -194,39 +194,39 @@ void InputManager::specialKeyInput(const int key, int x, int y)
 	}
 }
 
-void InputManager::specialKeyInputUp(const int key, int x, int y)
+void InputManager::specialKeyInputUp(const int key, int, int)
 {
 	switch (key)
 	{
 	case GLUT_KEY_UP:
 		{
-			if (!getKey(VK_UP))
+			if (!isKeyActive(VK_UP))
 			{
-				setKey(VK_UP, true);
+				setKeyState(VK_UP, true);
 			}
 			break;
 		}
 	case GLUT_KEY_DOWN:
 		{
-			if (!getKey(VK_DOWN))
+			if (!isKeyActive(VK_DOWN))
 			{
-				setKey(VK_DOWN, true);
+				setKeyState(VK_DOWN, true);
 			}
 			break;
 		}
 	case GLUT_KEY_LEFT:
 		{
-			if (!getKey(VK_LEFT))
+			if (!isKeyActive(VK_LEFT))
 			{
-				setKey(VK_LEFT, true);
+				setKeyState(VK_LEFT, true);
 			}
 			break;
 		}
 	case GLUT_KEY_RIGHT:
 		{
-			if (!getKey(VK_RIGHT))
+			if (!isKeyActive(VK_RIGHT))
 			{
-				setKey(VK_RIGHT, true);
+				setKeyState(VK_RIGHT, true);
 			}
 			break;
 		}

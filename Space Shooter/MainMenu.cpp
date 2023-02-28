@@ -16,30 +16,30 @@ MainMenu::MainMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 void MainMenu::onCreate()
 {
 	const auto startGameOption = std::make_shared<Text>("Start Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-	                                                    glm::vec2(48.0f, 60.0f), *m_context.m_font);
+	                                                    glm::vec2(48.0f, 60.0f), *m_context.font);
 	startGameOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(PICK_YOUR_CHARACTER);
+		m_sceneStateMachine.switchTo(ScenesEnum::PICK_YOUR_CHARACTER);
 	};
 	m_texts.push_back(startGameOption);
 
 	const auto optionsOption = std::make_shared<Text>("Options", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-	                                                  glm::vec2(48.0f, 55.0f), *m_context.m_font);
+	                                                  glm::vec2(48.0f, 55.0f), *m_context.font);
 	optionsOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(OPTIONS);
+		m_sceneStateMachine.switchTo(ScenesEnum::OPTIONS);
 	};
 	m_texts.push_back(optionsOption);
 
 	const auto endGameOption = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-	                                                  glm::vec2(48.0f, 50.0f), *m_context.m_font);
+	                                                  glm::vec2(48.0f, 50.0f), *m_context.font);
 	endGameOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
 
 #if _DEBUG
 		std::cout << "exiting\n";
@@ -52,19 +52,19 @@ void MainMenu::onCreate()
 
 void MainMenu::onActivate()
 {
-	m_context.m_inputManager->clearEverything();
+	m_context.inputManager->clearEverything();
 }
 
 void MainMenu::onDestroy()
 {
 }
 
-void MainMenu::draw(float dt)
+void MainMenu::draw(float)
 {
 	for (const auto& text : m_texts)
 	{
-		text->update(*m_context.m_inputManager);
+		text->update(*m_context.inputManager);
 	}
 
-	m_context.m_renderer->draw(m_texts);
+	m_context.renderer->draw(m_texts);
 }

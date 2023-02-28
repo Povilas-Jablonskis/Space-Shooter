@@ -1,12 +1,12 @@
 #include "C_InstanceID.hpp"
 
-unsigned int C_InstanceID::count = 0;
+unsigned int C_InstanceID::m_s_Count = 0;
 
-C_InstanceID::C_InstanceID(Object* owner) : Component(owner), id(count++)
+C_InstanceID::C_InstanceID(Object* initialOwner) : Component(initialOwner), m_id(m_s_Count++)
 {
 }
 
 unsigned int C_InstanceID::get() const
 {
-	return id;
+	return m_id;
 }

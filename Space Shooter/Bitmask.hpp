@@ -22,7 +22,7 @@ public:
 	void clear();
 
 private:
-	uint32_t bits;
+	uint32_t m_bits;
 };
 
 #endif

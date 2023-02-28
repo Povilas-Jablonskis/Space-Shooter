@@ -17,7 +17,7 @@ void processMouseClick(const int button, const int state, const int x, const int
 	application->getInputManager().processMouseClick(button, state, x, y);
 }
 
-void keyboardInput(const unsigned char c, const int x, const int y)
+void keyboardInput(const unsigned char c, const int, const int)
 {
 	application->getInputManager().keyboardInput(static_cast<char>(c));
 }
@@ -32,7 +32,7 @@ void display()
 	application->render();
 }
 
-void resize(int width, int height)
+void resize(int, int)
 {
 	const auto windowWidth = glutGet(GLUT_INIT_WINDOW_WIDTH);
 	const auto windowHeight = glutGet(GLUT_INIT_WINDOW_HEIGHT);

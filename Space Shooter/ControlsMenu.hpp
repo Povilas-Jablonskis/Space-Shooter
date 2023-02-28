@@ -25,7 +25,7 @@ public:
 	void draw(float) override;
 
 	void savePlayerConfig() const;
-	static std::string virtualKeyCodeToString(int);
+	static std::string sVirtualKeyCodeToString(int);
 
 private:
 	std::vector<std::shared_ptr<Text>> m_texts;

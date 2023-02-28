@@ -3,7 +3,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 
-C_Sprite::C_Sprite(Object* owner) : Component(owner)
+C_Sprite::C_Sprite(Object* initialOwner) : Component(initialOwner)
 {
 }
 
@@ -28,10 +28,10 @@ DrawLayer C_Sprite::getDrawLayer() const
 }
 
 //TODO: implement static sprites for level tiles etc.
-void C_Sprite::update(float deltaTime)
+void C_Sprite::update(float)
 {
 	auto transform = glm::mat4(1.0f);
-	transform = translate(transform, glm::vec3(m_owner->m_transform->getPosition(), 0.0f));
+	transform = translate(transform, glm::vec3(owner->transform->getPosition(), 0.0f));
 
 	const auto width = m_sprite.getTextureRect().z * m_sprite.getScale().x;
 	const auto height = m_sprite.getTextureRect().w * m_sprite.getScale().y;
@@ -51,7 +51,7 @@ void C_Sprite::draw(const Renderer& renderer) const
 
 bool C_Sprite::continueToDraw() const
 {
-	return !m_owner->isQueuedForRemoval();
+	return !owner->isQueuedForRemoval();
 }
 
 

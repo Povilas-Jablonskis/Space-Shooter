@@ -33,7 +33,7 @@ private:
 	int m_currentLevel{};
 	int m_characterSelectionIndex{};
 
-	SpriteSheet m_spriteSheet{FileConstants::backgroundPath};
+	SpriteSheet m_spriteSheet{FileConstants::BACKGROUND_PATH};
 	ObjectCollection m_objects;
 	SharedContext& m_context;
 	SceneStateMachine& m_sceneStateMachine;

@@ -17,17 +17,17 @@ void PauseMenu::onCreate()
 {
 	//Pause Menu
 	const auto gotoMainMenuOption = std::make_shared<Text>("Go To Main Menu", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-	                                                       glm::vec2(48.0f, 60.0f), *m_context.m_font);
+	                                                       glm::vec2(48.0f, 60.0f), *m_context.font);
 	gotoMainMenuOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(MAIN);
+		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
 	};
 	m_texts.push_back(gotoMainMenuOption);
 
 	const auto endGameOption = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-	                                                  glm::vec2(48.0f, 55.0f), *m_context.m_font);
+	                                                  glm::vec2(48.0f, 55.0f), *m_context.font);
 	endGameOption->onMouseReleaseFunc = []
 	{
 #if _DEBUG
@@ -45,25 +45,25 @@ void PauseMenu::onDestroy()
 
 void PauseMenu::onActivate()
 {
-	m_context.m_inputManager->clearEverything();
+	m_context.inputManager->clearEverything();
 }
 
 void PauseMenu::processInput()
 {
-	if (m_context.m_inputManager->getKey(27))
+	if (m_context.inputManager->isKeyActive(27))
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(GAME_LIVE);
+		m_sceneStateMachine.switchTo(ScenesEnum::GAME_LIVE);
 	}
 }
 
-void PauseMenu::draw(float dt)
+void PauseMenu::draw(float)
 {
 	for (const auto& text : m_texts)
 	{
-		text->update(*m_context.m_inputManager);
+		text->update(*m_context.inputManager);
 	}
 
-	m_context.m_renderer->draw(m_texts);
+	m_context.renderer->draw(m_texts);
 }

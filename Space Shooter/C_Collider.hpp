@@ -9,13 +9,13 @@
 // enum integers used when defining collision layers
 enum class CollisionLayer
 {
-	Default = 1,
+	DEFAULT = 1,
 	// bit 0
-	Player = 2,
+	PLAYER = 2,
 	// bit 1
-	Projectile = 3,
-	Enemy = 4,
-	Meteor = 5
+	PROJECTILE = 3,
+	ENEMY = 4,
+	METEOR = 5
 };
 
 struct Manifold

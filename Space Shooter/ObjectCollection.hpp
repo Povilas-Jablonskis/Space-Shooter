@@ -27,7 +27,7 @@ public:
 
 private:
 	template <typename Iterator, typename Predicate, typename Op>
-	static void for_each_if(Iterator first, Iterator last, Predicate p, Op op)
+	static void sFor_each_if(Iterator first, Iterator last, Predicate p, Op op)
 	{
 		while (first != last)
 		{

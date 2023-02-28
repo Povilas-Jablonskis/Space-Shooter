@@ -1,4 +1,7 @@
 #include "S_Collidable.hpp"
+
+#include <ranges>
+
 #include "Bitmask.hpp"
 #include "Object.hpp"
 #include "C_BoxCollider.hpp"
@@ -7,26 +10,26 @@
 S_Collidable::S_Collidable()
 {
 	Bitmask playerCollisions;
-	playerCollisions.setBit(static_cast<int>(CollisionLayer::Enemy));
-	playerCollisions.setBit(static_cast<int>(CollisionLayer::Meteor));
-	m_collisionLayers.insert(std::make_pair(CollisionLayer::Player, playerCollisions));
+	playerCollisions.setBit(static_cast<int>(CollisionLayer::ENEMY));
+	playerCollisions.setBit(static_cast<int>(CollisionLayer::METEOR));
+	m_collisionLayers.insert(std::make_pair(CollisionLayer::PLAYER, playerCollisions));
 
 	Bitmask projectileCollisions;
-	projectileCollisions.setBit(static_cast<int>(CollisionLayer::Enemy));
-	m_collisionLayers.insert(std::make_pair(CollisionLayer::Projectile, projectileCollisions));
+	projectileCollisions.setBit(static_cast<int>(CollisionLayer::ENEMY));
+	m_collisionLayers.insert(std::make_pair(CollisionLayer::PROJECTILE, projectileCollisions));
 }
 
 void S_Collidable::add(const std::vector<std::shared_ptr<Object>>& objects)
 {
-	for (const auto& o : objects)
+	for (const auto& object : objects)
 	{
-		if (auto collider = o->getComponent<C_BoxCollider>())
+		if (auto collider = object->getComponent<C_BoxCollider>())
 		{
 			auto layer = collider->getLayer();
 
-			auto itr = m_collidables.find(layer);
+			auto layerIterator = m_collidables.find(layer);
 
-			if (itr != m_collidables.end())
+			if (layerIterator != m_collidables.end())
 			{
 				m_collidables[layer].push_back(collider);
 			}
@@ -40,18 +43,18 @@ void S_Collidable::add(const std::vector<std::shared_ptr<Object>>& objects)
 
 void S_Collidable::processRemovals()
 {
-	for (auto& layer : m_collidables)
+	for (auto& layer : m_collidables | std::views::values)
 	{
-		auto itr = layer.second.begin();
-		while (itr != layer.second.end())
+		auto layerIterator = layer.begin();
+		while (layerIterator != layer.end())
 		{
-			if ((*itr)->m_owner->isQueuedForRemoval())
+			if ((*layerIterator)->owner->isQueuedForRemoval())
 			{
-				itr = layer.second.erase(itr);
+				layerIterator = layer.erase(layerIterator);
 			}
 			else
 			{
-				++itr;
+				++layerIterator;
 			}
 		}
 	}
@@ -59,21 +62,21 @@ void S_Collidable::processRemovals()
 
 void S_Collidable::resolve()
 {
-	for (auto& m_collidable : m_collidables)
+	for (auto& [layer, boxColliders] : m_collidables)
 	{
 		// If this layer collides with nothing then no need to perform any further checks.
-		if (m_collisionLayers[m_collidable.first].getMask() == 0)
+		if (m_collisionLayers[layer].getMask() == 0)
 		{
 			continue;
 		}
 
-		for (auto& collidable : m_collidable.second)
+		for (auto& collidable : boxColliders)
 		{
 			std::vector<std::shared_ptr<C_BoxCollider>> collisions;
 
-			for (auto& it : m_collidables)
+			for (auto& it : m_collidables | std::views::values)
 			{
-				for (auto& possibleOverlap : it.second)
+				for (auto& possibleOverlap : it)
 				{
 					// Collision x-axis?
 					const bool collisionX = collidable->getCollidable().x + collidable->getCollidable().z >=
@@ -96,7 +99,7 @@ void S_Collidable::resolve()
 			for (auto& collision : collisions)
 			{
 				// Make sure we do not resolve collisions between the the same object.
-				if (collidable->m_owner->m_instanceID->get() == collision->m_owner->m_instanceID->get())
+				if (collidable->owner->instanceID->get() == collision->owner->instanceID->get())
 				{
 					continue;
 				}
@@ -104,16 +107,16 @@ void S_Collidable::resolve()
 				if (m_collisionLayers[collidable->getLayer()].getBit(
 					static_cast<int>(collision->getLayer())))
 				{
-					const auto m = collidable->intersects(collision);
+					const auto [colliding, other] = collidable->intersects(collision);
 
-					if (m.colliding)
+					if (colliding)
 					{
-						const auto collisionPair = m_objectsColliding.emplace(std::make_pair(collidable, collision));
+						const auto [firstCollider, secondCollider] = m_objectsColliding.emplace(std::make_pair(collidable, collision));
 
-						if (collisionPair.second)
+						if (secondCollider)
 						{
-							collidable->m_owner->onCollisionEnter(*collision);
-							collision->m_owner->onCollisionEnter(*collidable);
+							collidable->owner->onCollisionEnter(*collision);
+							collision->owner->onCollisionEnter(*collidable);
 						}
 					}
 				}
@@ -127,33 +130,30 @@ void S_Collidable::processCollidingObjects()
 	auto itr = m_objectsColliding.begin();
 	while (itr != m_objectsColliding.end())
 	{
-		auto& pair = *itr;
+		const auto& [firstCollider, secondCollider] = *itr;
 
-		auto& first = pair.first;
-		auto& second = pair.second;
-
-		if (first->m_owner->isQueuedForRemoval() || second->m_owner->isQueuedForRemoval())
+		if (firstCollider->owner->isQueuedForRemoval() || secondCollider->owner->isQueuedForRemoval())
 		{
-			first->m_owner->onCollisionExit(*second);
-			second->m_owner->onCollisionExit(*first);
+			firstCollider->owner->onCollisionExit(*secondCollider);
+			secondCollider->owner->onCollisionExit(*firstCollider);
 
 			itr = m_objectsColliding.erase(itr);
 		}
 		else
 		{
-			const auto m = first->intersects(second);
+			const auto [colliding, other] = firstCollider->intersects(secondCollider);
 
-			if (!m.colliding)
+			if (!colliding)
 			{
-				first->m_owner->onCollisionExit(*second);
-				second->m_owner->onCollisionExit(*first);
+				firstCollider->owner->onCollisionExit(*secondCollider);
+				secondCollider->owner->onCollisionExit(*firstCollider);
 
 				itr = m_objectsColliding.erase(itr);
 			}
 			else
 			{
-				first->m_owner->onCollisionStay(*second);
-				second->m_owner->onCollisionStay(*first);
+				firstCollider->owner->onCollisionStay(*secondCollider);
+				secondCollider->owner->onCollisionStay(*firstCollider);
 
 				++itr;
 			}

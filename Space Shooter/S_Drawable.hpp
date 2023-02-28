@@ -20,7 +20,7 @@ public:
 	void draw(const Renderer&) const;
 
 private:
-	static bool layerSort(const std::shared_ptr<C_Sprite>&, const std::shared_ptr<C_Sprite>&);
+	static bool sLayerSort(const std::shared_ptr<C_Sprite>&, const std::shared_ptr<C_Sprite>&);
 	void add(Object&);
 	void sort();
 

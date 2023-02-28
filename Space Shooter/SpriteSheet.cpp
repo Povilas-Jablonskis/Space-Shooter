@@ -52,30 +52,30 @@ void SpriteSheet::loadSpriteSheet(const std::string& path)
 
 bool SpriteSheet::loadSpritesFromXml(const std::string& path)
 {
-	const auto doc = new rapidxml::xml_document();
+	const auto spriteSheetFileDoc = new rapidxml::xml_document();
 	// Read the xml file into a vector
-	std::ifstream theFile(path);
-	std::vector buffer((std::istreambuf_iterator(theFile)), std::istreambuf_iterator<char>());
-	buffer.push_back('\0');
+	std::ifstream spriteSheetFile(path);
+	std::vector spriteSheetFileBuffer((std::istreambuf_iterator(spriteSheetFile)), std::istreambuf_iterator<char>());
+	spriteSheetFileBuffer.push_back('\0');
 	// Parse the buffer using the xml file parsing library into doc 
-	doc->parse<0>(buffer.data());
+	spriteSheetFileDoc->parse<0>(spriteSheetFileBuffer.data());
 	// Find our root node
-	const rapidxml::xml_node<>* root_node = doc->first_node();
-	loadSpriteSheet(root_node->first_attribute("imagePath")->value());
+	const rapidxml::xml_node<>* atlasNode = spriteSheetFileDoc->first_node();
+	loadSpriteSheet(atlasNode->first_attribute("imagePath")->value());
 	// Iterate over the breweries
-	for (auto brewery_node = root_node->first_node(); brewery_node; brewery_node = brewery_node->next_sibling())
+	for (auto subTextureNode = atlasNode->first_node(); subTextureNode; subTextureNode = subTextureNode->next_sibling())
 	{
-		char* err_ptr;
+		char* errPtr = nullptr;
 		glm::vec4 animation;
-		animation = glm::vec4(strtod(brewery_node->first_attribute("x")->value(), &err_ptr),
-		                      strtod(brewery_node->first_attribute("y")->value(), &err_ptr),
-		                      strtod(brewery_node->first_attribute("width")->value(), &err_ptr),
-		                      strtod(brewery_node->first_attribute("height")->value(), &err_ptr));
-		m_sprites.insert_or_assign(brewery_node->first_attribute("name")->value(), animation);
+		animation = glm::vec4(strtod(subTextureNode->first_attribute("x")->value(), &errPtr),
+		                      strtod(subTextureNode->first_attribute("y")->value(), &errPtr),
+		                      strtod(subTextureNode->first_attribute("width")->value(), &errPtr),
+		                      strtod(subTextureNode->first_attribute("height")->value(), &errPtr));
+		m_sprites.insert_or_assign(subTextureNode->first_attribute("name")->value(), animation);
 	}
 
-	theFile.close();
-	doc->clear();
-	delete doc;
+	spriteSheetFile.close();
+	spriteSheetFileDoc->clear();
+	delete spriteSheetFileDoc;
 	return true;
 }

@@ -3,55 +3,53 @@
 
 void SceneStateMachine::processInput() const
 {
-	if (curScene)
+	if (m_curScene)
 	{
-		curScene->processInput();
+		m_curScene->processInput();
 	}
 }
 
-void SceneStateMachine::draw(const float dt) const
+void SceneStateMachine::draw(const float deltaTime) const
 {
-	if (curScene)
+	if (m_curScene)
 	{
-		curScene->draw(dt);
+		m_curScene->draw(deltaTime);
 	}
 }
 
 void SceneStateMachine::add(ScenesEnum sceneName, const std::shared_ptr<Scene>& scene)
 {
-	const auto inserted = scenes.insert(std::make_pair(sceneName, scene));
+	const auto [iterator, success] = m_scenes.insert(std::make_pair(sceneName, scene));
 
-	inserted.first->second->onCreate();
+	iterator->second->onCreate();
 }
 
-void SceneStateMachine::remove(const ScenesEnum id)
+void SceneStateMachine::remove(const ScenesEnum sceneId)
 {
-	const auto it = scenes.find(id);
-	if (it != scenes.end())
+	if (const auto sceneIterator = m_scenes.find(sceneId); sceneIterator != m_scenes.end())
 	{
-		if (curScene == it->second)
+		if (m_curScene == sceneIterator->second)
 		{
-			curScene = nullptr;
+			m_curScene = nullptr;
 		}
 
-		it->second->onDestroy();
+		sceneIterator->second->onDestroy();
 
-		scenes.erase(it);
+		m_scenes.erase(sceneIterator);
 	}
 }
 
-void SceneStateMachine::switchTo(const ScenesEnum id)
+void SceneStateMachine::switchTo(const ScenesEnum sceneId)
 {
-	const auto it = scenes.find(id);
-	if (it != scenes.end())
+	if (const auto sceneIterator = m_scenes.find(sceneId); sceneIterator != m_scenes.end())
 	{
-		if (curScene)
+		if (m_curScene)
 		{
-			curScene->onDeactivate();
+			m_curScene->onDeactivate();
 		}
 
-		curScene = it->second;
+		m_curScene = sceneIterator->second;
 
-		curScene->onActivate();
+		m_curScene->onActivate();
 	}
 }

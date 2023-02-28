@@ -9,11 +9,11 @@
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
 
-C_PlayerLivesAndScore::C_PlayerLivesAndScore(Object* owner) : Component(owner)
+C_PlayerLivesAndScore::C_PlayerLivesAndScore(Object* initialOwner) : Component(initialOwner)
 {
 }
 
-void C_PlayerLivesAndScore::update(float dt)
+void C_PlayerLivesAndScore::update(float)
 {
 	if (m_needToUpdateScoreAndHealth)
 		updatePlayerLivesAndScore();
@@ -21,88 +21,103 @@ void C_PlayerLivesAndScore::update(float dt)
 
 void C_PlayerLivesAndScore::updatePlayerLivesAndScore()
 {
-	m_owner->m_context->m_objects->removeObjectsWithTag(Tag::PlayerUserInterface);
+	owner->context->objects->removeObjectsWithTag(Tag::PLAYER_USER_INTERFACE);
 
 	auto scoreString = std::to_string(m_playerScore);
 
 	auto scoreTextureSize = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	for (auto it = scoreString.begin(); it != scoreString.end(); ++it)
+	for (auto scoreStringIterator = scoreString.begin(); scoreStringIterator != scoreString.end(); ++
+	     scoreStringIterator)
 	{
-		const auto i = std::distance(scoreString.begin(), it);
-		std::string scoreStringNumber(1, scoreString[i]);
+		const auto distanceFromStartToIterator = std::distance(scoreString.begin(), scoreStringIterator);
+		std::string scoreStringNumber(1, scoreString[distanceFromStartToIterator]);
 
 		auto scoreNumber = std::make_shared<Object>(nullptr);
-		scoreNumber->m_tag->set(Tag::PlayerUserInterface);
+		scoreNumber->tag->set(Tag::PLAYER_USER_INTERFACE);
 
-		const auto sprite = scoreNumber->addComponent<C_Sprite>();
-		sprite->setDrawLayer(DrawLayer::UI);
+		const auto spriteComponent = scoreNumber->addComponent<C_Sprite>();
+		spriteComponent->setDrawLayer(DrawLayer::UI);
 
-		sprite->getSprite().setSpriteSheet(m_owner->m_context->m_spriteSheet);
-		sprite->getSprite().setTextureRect("numeral" + scoreStringNumber + ".png");
+		auto& spriteComponentSprite = spriteComponent->getSprite();
 
-		scoreTextureSize = sprite->getSprite().getTextureRect();
+		spriteComponentSprite.setSpriteSheet(owner->context->spriteSheet);
+		spriteComponentSprite.setTextureRect("numeral" + scoreStringNumber + ".png");
 
-		scoreNumber->m_transform->setPosition(
-			(scoreTextureSize.z * 1.5f) + sprite->getSprite().getTextureRect().z * (static_cast<float>(i) + 1.0f),
-			static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (sprite->getSprite().getTextureRect().z * 3.0f));
+		scoreTextureSize = spriteComponentSprite.getTextureRect();
 
-		m_owner->m_context->m_objects->add(scoreNumber);
+		scoreNumber->transform->setPosition(
+			(scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (static_cast<float>(distanceFromStartToIterator) + 1.0f),
+			static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.z * 3.0f));
+
+		owner->context->objects->add(scoreNumber);
 	}
 
 	const auto scoreStringSize = static_cast<float>(scoreString.size());
 
+	const auto iconPositionX = (scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreStringSize + 1.0f) + (
+		scoreTextureSize.z * 2.0f);
+
 	const auto livesIcon = std::make_shared<Object>(nullptr);
-	livesIcon->m_tag->set(Tag::PlayerUserInterface);
-	livesIcon->m_transform->setPosition(
-		(scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreStringSize + 1.0f) + (scoreTextureSize.z * 2.0f),
+	livesIcon->tag->set(Tag::PLAYER_USER_INTERFACE);
+
+	const auto livesIconComponent = livesIcon->addComponent<C_Sprite>();
+	livesIconComponent->setDrawLayer(DrawLayer::UI);
+
+	auto& livesIconSpriteComponentSprite = livesIconComponent->getSprite();
+
+	livesIconSpriteComponentSprite.setSpriteSheet(owner->context->spriteSheet);
+	livesIconSpriteComponentSprite.setTextureRect(m_livesIcon);
+
+	livesIcon->transform->setPosition(
+		iconPositionX,
 		static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
 
-	const auto livesIconSprite = livesIcon->addComponent<C_Sprite>();
-	livesIconSprite->setDrawLayer(DrawLayer::UI);
-
-	livesIconSprite->getSprite().setSpriteSheet(m_owner->m_context->m_spriteSheet);
-	livesIconSprite->getSprite().setTextureRect(m_livesIcon);
-
-	m_owner->m_context->m_objects->add(livesIcon);
+	owner->context->objects->add(livesIcon);
 
 	const auto xIcon = std::make_shared<Object>(nullptr);
-	xIcon->m_tag->set(Tag::PlayerUserInterface);
-	xIcon->m_transform->setPosition(
-		(scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreStringSize + 1.0f) + (scoreTextureSize.z * 2.0f) +
-		livesIconSprite->getSprite().getTextureRect().z,
+	xIcon->tag->set(Tag::PLAYER_USER_INTERFACE);
+
+	const auto xIconComponent = xIcon->addComponent<C_Sprite>();
+	xIconComponent->setDrawLayer(DrawLayer::UI);
+
+	auto& xIconComponentSprite = xIconComponent->getSprite();
+
+	xIconComponentSprite.setSpriteSheet(owner->context->spriteSheet);
+	xIconComponentSprite.setTextureRect("numeralX.png");
+
+	xIcon->transform->setPosition(
+		iconPositionX +
+		livesIconSpriteComponentSprite.getTextureRect().z,
 		static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
 
-	const auto xIconSprite = xIcon->addComponent<C_Sprite>();
-	xIconSprite->setDrawLayer(DrawLayer::UI);
-
-	xIconSprite->getSprite().setSpriteSheet(m_owner->m_context->m_spriteSheet);
-	xIconSprite->getSprite().setTextureRect("numeralX.png");
-
-	m_owner->m_context->m_objects->add(xIcon);
+	owner->context->objects->add(xIcon);
 
 	auto livesString = std::to_string(m_playerLives);
 
-	for (auto it = livesString.begin(); it != livesString.end(); ++it)
+	for (auto livesStringIterator = livesString.begin(); livesStringIterator != livesString.end(); ++
+	     livesStringIterator)
 	{
-		const auto i = std::distance(livesString.begin(), it);
-		std::string livesStringNumber(1, livesString[i]);
+		const auto distanceFromStartToIterator = std::distance(livesString.begin(), livesStringIterator);
+		std::string livesStringNumber(1, livesString[distanceFromStartToIterator]);
 
 		auto liveNumber = std::make_shared<Object>(nullptr);
-		liveNumber->m_tag->set(Tag::PlayerUserInterface);
+		liveNumber->tag->set(Tag::PLAYER_USER_INTERFACE);
 
-		const auto liveNumberSprite = liveNumber->addComponent<C_Sprite>();
-		liveNumberSprite->setDrawLayer(DrawLayer::UI);
+		const auto spriteComponent = liveNumber->addComponent<C_Sprite>();
+		spriteComponent->setDrawLayer(DrawLayer::UI);
 
-		liveNumberSprite->getSprite().setSpriteSheet(m_owner->m_context->m_spriteSheet);
-		liveNumberSprite->getSprite().setTextureRect("numeral" + livesStringNumber + ".png");
-		liveNumber->m_transform->setPosition(
-			(scoreTextureSize.z * 1.5f) + scoreTextureSize.z * (scoreStringSize + 1.0f) + (scoreTextureSize.z * 2.0f)
-			+ livesIconSprite->getSprite().getTextureRect().z + liveNumberSprite->getSprite().getTextureRect().z * (
-				static_cast<float>(i) +
+		auto& spriteComponentSprite = spriteComponent->getSprite();
+
+		spriteComponentSprite.setSpriteSheet(owner->context->spriteSheet);
+		spriteComponentSprite.setTextureRect("numeral" + livesStringNumber + ".png");
+		liveNumber->transform->setPosition(
+			iconPositionX
+			+ livesIconSpriteComponentSprite.getTextureRect().z + spriteComponentSprite.getTextureRect().z * (
+				static_cast<float>(distanceFromStartToIterator) +
 				1.0f), static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)) - (scoreTextureSize.w * 3.0f));
 
-		m_owner->m_context->m_objects->add(liveNumber);
+		owner->context->objects->add(liveNumber);
 	}
 
 	m_needToUpdateScoreAndHealth = false;

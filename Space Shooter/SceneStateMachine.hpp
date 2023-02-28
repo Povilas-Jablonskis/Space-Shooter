@@ -20,8 +20,8 @@ public:
 	void remove(ScenesEnum);
 
 private:
-	std::unordered_map<ScenesEnum, std::shared_ptr<Scene>> scenes;
-	std::shared_ptr<Scene> curScene{};
+	std::unordered_map<ScenesEnum, std::shared_ptr<Scene>> m_scenes;
+	std::shared_ptr<Scene> m_curScene{};
 };
 
 #endif

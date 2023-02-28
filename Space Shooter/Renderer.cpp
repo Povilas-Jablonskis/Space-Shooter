@@ -62,9 +62,9 @@ Renderer::Renderer()
 	// Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs), remember: do NOT unbind the EBO, keep it bound to this VAO
 }
 
-void Renderer::addShader(const std::string& name, const std::shared_ptr<Shader>& t_shader)
+void Renderer::addShader(const std::string& name, const std::shared_ptr<Shader>& shader)
 {
-	m_shaders.insert_or_assign(name, t_shader);
+	m_shaders.insert_or_assign(name, shader);
 }
 
 void Renderer::draw(const std::vector<std::shared_ptr<Text>>& texts) const
@@ -92,13 +92,13 @@ void Renderer::draw(const Text& text) const
 
 	auto& cache = text.getCachedCharacters();
 
-	for (auto& cachedCharacter : cache)
+	for (const auto& [textureID, vertices] : cache)
 	{
 		// Render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, cachedCharacter.first);
+		glBindTexture(GL_TEXTURE_2D, textureID);
 		// Update content of VBO memory
 		glBindBuffer(GL_ARRAY_BUFFER, m_textVBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, cachedCharacter.second.data());
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat) * 6 * 4, vertices.data());
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		// Render quad
 		glDrawArrays(GL_TRIANGLES, 0, 6);

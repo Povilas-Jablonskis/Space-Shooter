@@ -7,9 +7,9 @@
 
 enum class DrawLayer
 {
-	Default,
-	Background,
-	Entities,
+	DEFAULT,
+	BACKGROUND,
+	ENTITIES,
 	UI
 };
 
@@ -32,7 +32,7 @@ public:
 
 private:
 	int m_sortOrder{};
-	DrawLayer m_layer{DrawLayer::Default};
+	DrawLayer m_layer{DrawLayer::DEFAULT};
 
 	Sprite m_sprite;
 };

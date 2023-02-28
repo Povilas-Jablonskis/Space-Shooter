@@ -23,90 +23,102 @@
 GameScene::GameScene(SceneStateMachine& sceneStateMachine, SharedContext& context, const int characterSelectionIndex)
 	: m_characterSelectionIndex(characterSelectionIndex), m_context(context), m_sceneStateMachine(sceneStateMachine)
 {
-	m_context.m_objects = &m_objects;
+	m_context.objects = &m_objects;
 }
 
 void GameScene::loadLevel()
 {
-	int i = 0;
-	const auto doc = new rapidxml::xml_document();
+	int index = 0;
+	const auto levelsFileDoc = new rapidxml::xml_document();
 	// Read the xml file into a vector
-	std::ifstream theFile(FileConstants::levelsPath);
-	std::vector buffer((std::istreambuf_iterator(theFile)), std::istreambuf_iterator<char>());
-	buffer.push_back('\0');
+	std::ifstream levelsFile(FileConstants::LEVELS_PATH);
+	std::vector levelsFileBuffer((std::istreambuf_iterator(levelsFile)), std::istreambuf_iterator<char>());
+	levelsFileBuffer.push_back('\0');
 	// Parse the buffer using the xml file parsing library into doc 
-	doc->parse<0>(buffer.data());
+	levelsFileDoc->parse<0>(levelsFileBuffer.data());
 	// Find our root node
-	const rapidxml::xml_node<>* root_node = doc->first_node("Levels");
+	const rapidxml::xml_node<>* levelsNode = levelsFileDoc->first_node("Levels");
 	// Iterate over the breweries
-	for (auto brewery_node = root_node->first_node("Level"); brewery_node; brewery_node = brewery_node->
+	for (auto levelNode = levelsNode->first_node("Level"); levelNode; levelNode = levelNode->
 	     next_sibling("Level"))
 	{
-		if (i == m_currentLevel)
+		if (index == m_currentLevel)
 		{
 			const auto background = std::make_shared<Object>(&m_context);
 
-			const auto sprite = background->addComponent<C_Sprite>();
-			sprite->setDrawLayer(DrawLayer::Background);
+			const auto backgroundComponent = background->addComponent<C_Sprite>();
+			backgroundComponent->setDrawLayer(DrawLayer::BACKGROUND);
 
-			sprite->getSprite().setSpriteSheet(&m_spriteSheet);
-			sprite->getSprite().setTextureRect("wholeSpriteSheet");
-			sprite->getSprite().setScale(4.0f, 3.0f);
+			auto& backgroundComponentSprite = backgroundComponent->getSprite();
+
+			backgroundComponentSprite.setSpriteSheet(&m_spriteSheet);
+			backgroundComponentSprite.setTextureRect("wholeSpriteSheet");
+			backgroundComponentSprite.setScale(4.0f, 3.0f);
 
 			m_objects.add(background);
 
-			for (auto beer_node = brewery_node->first_node("Enemy"); beer_node; beer_node = beer_node->
+			for (auto enemyNode = levelNode->first_node("Enemy"); enemyNode; enemyNode = enemyNode->
 			     next_sibling("Enemy"))
 			{
 				auto enemy = std::make_shared<Object>(&m_context);
-				enemy->m_tag->set(Tag::NPC);
-				enemy->m_transform->setPosition(glm::vec2(std::stof(beer_node->first_attribute("positionX")->value()),
-				                                          std::stof(beer_node->first_attribute("positionY")->value())));
+				enemy->tag->set(Tag::NPC);
+				enemy->transform->setPosition(glm::vec2(std::stof(enemyNode->first_attribute("positionX")->value()),
+				                                        std::stof(enemyNode->first_attribute("positionY")->value())));
 
-				const auto enemySprite = enemy->addComponent<C_Sprite>();
-				enemySprite->setDrawLayer(DrawLayer::Entities);
+				const auto enemyComponent = enemy->addComponent<C_Sprite>();
+				enemyComponent->setDrawLayer(DrawLayer::ENTITIES);
 
-				enemySprite->getSprite().setSpriteSheet(m_context.m_spriteSheet);
-				enemySprite->getSprite().setTextureRect(beer_node->first_attribute("spriteName")->value());
-				enemySprite->getSprite().setScale(0.5f, 0.5f);
+				auto& enemyComponentSprite = enemyComponent->getSprite();
+
+				enemyComponentSprite.setSpriteSheet(m_context.spriteSheet);
+				enemyComponentSprite.setTextureRect(enemyNode->first_attribute("spriteName")->value());
+				enemyComponentSprite.setScale(0.5f, 0.5f);
+
+				const auto enemyComponentSpriteRect = enemyComponentSprite.getTextureRect();
+				const auto enemyComponentSpriteScale = enemyComponentSprite.getScale();
 
 				const auto collider = enemy->addComponent<C_BoxCollider>();
-				collider->setSize(enemySprite->getSprite().getTextureRect().z * enemySprite->getSprite().getScale().x,
-				                  enemySprite->getSprite().getTextureRect().w * enemySprite->getSprite().getScale().y);
-				collider->setLayer(CollisionLayer::Enemy);
+				collider->setSize(enemyComponentSpriteRect.z * enemyComponentSpriteScale.x,
+				                  enemyComponentSpriteRect.w * enemyComponentSpriteScale.y);
+				collider->setLayer(CollisionLayer::ENEMY);
 
 				const auto velocity = enemy->addComponent<C_Velocity_ReverseVelocityWhenOutOfBounds>();
-				velocity->set(glm::vec2(std::stof(beer_node->first_attribute("velocityX")->value()),
-				                        std::stof(beer_node->first_attribute("velocityY")->value())));
+				velocity->set(glm::vec2(std::stof(enemyNode->first_attribute("velocityX")->value()),
+				                        std::stof(enemyNode->first_attribute("velocityY")->value())));
 
 				m_objects.add(enemy);
 			}
 
-			for (auto beer_node = brewery_node->first_node("Meteor"); beer_node; beer_node = beer_node->
+			for (auto meteorNode = levelNode->first_node("Meteor"); meteorNode; meteorNode = meteorNode->
 			     next_sibling("Meteor"))
 			{
 				auto meteor = std::make_shared<Object>(&m_context);
-				meteor->m_tag->set(Tag::NPC);
-				meteor->m_transform->setPosition(glm::vec2(std::stof(beer_node->first_attribute("positionX")->value()),
-				                                           std::stof(beer_node->first_attribute(
-					                                           "positionY")->value())));
+				meteor->tag->set(Tag::NPC);
+				meteor->transform->setPosition(glm::vec2(std::stof(meteorNode->first_attribute("positionX")->value()),
+				                                         std::stof(meteorNode->first_attribute(
+					                                         "positionY")->value())));
 
-				const auto meteorSprite = meteor->addComponent<C_Sprite>();
-				meteorSprite->setDrawLayer(DrawLayer::Entities);
+				const auto meteorComponent = meteor->addComponent<C_Sprite>();
+				meteorComponent->setDrawLayer(DrawLayer::ENTITIES);
 
-				meteorSprite->getSprite().setSpriteSheet(m_context.m_spriteSheet);
-				meteorSprite->getSprite().setTextureRect(beer_node->first_attribute("spriteName")->value());
-				meteorSprite->getSprite().setScale(0.5f, 0.5f);
+				auto& meteorComponentSprite = meteorComponent->getSprite();
+
+				meteorComponentSprite.setSpriteSheet(m_context.spriteSheet);
+				meteorComponentSprite.setTextureRect(meteorNode->first_attribute("spriteName")->value());
+				meteorComponentSprite.setScale(0.5f, 0.5f);
+
+				const auto meteorComponentSpriteRect = meteorComponentSprite.getTextureRect();
+				const auto meteorComponentSpriteScale = meteorComponentSprite.getScale();
 
 				const auto collider = meteor->addComponent<C_BoxCollider>();
-				collider->setSize(meteorSprite->getSprite().getTextureRect().z * meteorSprite->getSprite().getScale().x,
-				                  meteorSprite->getSprite().getTextureRect().w * meteorSprite->getSprite().getScale().
+				collider->setSize(meteorComponentSpriteRect.z * meteorComponentSpriteScale.x,
+				                  meteorComponentSpriteRect.w * meteorComponentSpriteScale.
 				                  y);
-				collider->setLayer(CollisionLayer::Meteor);
+				collider->setLayer(CollisionLayer::METEOR);
 
 				const auto velocity = meteor->addComponent<C_Velocity_DestroyWhenOutOfBounds>();
-				velocity->set(glm::vec2(std::stof(beer_node->first_attribute("velocityX")->value()),
-				                        std::stof(beer_node->first_attribute("velocityY")->value())));
+				velocity->set(glm::vec2(std::stof(meteorNode->first_attribute("velocityX")->value()),
+				                        std::stof(meteorNode->first_attribute("velocityY")->value())));
 
 				meteor->addComponent<C_RemoveObjectOnCollisionEnter>();
 
@@ -115,29 +127,28 @@ void GameScene::loadLevel()
 
 			break;
 		}
-		i++;
+		index++;
 	}
 
-	theFile.close();
-	doc->clear();
-	delete doc;
+	levelsFile.close();
+	levelsFileDoc->clear();
+	delete levelsFileDoc;
 }
 
 void GameScene::onCreate()
 {
 	{
-		auto doc = new rapidxml::xml_document();
-		rapidxml::xml_node<>* root_node;
+		auto levelsFileDoc = new rapidxml::xml_document();
 		// Read the xml file into a vector
-		std::ifstream theFile(FileConstants::levelsPath);
-		std::vector buffer((std::istreambuf_iterator(theFile)), std::istreambuf_iterator<char>());
-		buffer.push_back('\0');
+		std::ifstream levelsFile(FileConstants::LEVELS_PATH);
+		std::vector levelsFileStream((std::istreambuf_iterator(levelsFile)), std::istreambuf_iterator<char>());
+		levelsFileStream.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
-		doc->parse<0>(buffer.data());
+		levelsFileDoc->parse<0>(levelsFileStream.data());
 		// Find our root node
-		root_node = doc->first_node("Levels");
+		rapidxml::xml_node<>* levelsNode = levelsFileDoc->first_node("Levels");
 		// Iterate over the breweries
-		for (auto brewery_node = root_node->first_node("Level"); brewery_node; brewery_node = brewery_node->
+		for (auto levelNode = levelsNode->first_node("Level"); levelNode; levelNode = levelNode->
 		     next_sibling("Level"))
 		{
 			m_maxLevels++;
@@ -145,55 +156,60 @@ void GameScene::onCreate()
 	}
 
 	{
-		auto doc = new rapidxml::xml_document();
-		rapidxml::xml_node<>* root_node;
-		int i = 0;
+		auto playersFileDoc = new rapidxml::xml_document();
+		int index = 0;
 		// Read the xml file into a vector
-		std::ifstream theFile(FileConstants::playersPath);
-		std::vector buffer((std::istreambuf_iterator(theFile)), std::istreambuf_iterator<char>());
-		buffer.push_back('\0');
+		std::ifstream playersFile(FileConstants::PLAYERS_PATH);
+		std::vector playersFileStream((std::istreambuf_iterator(playersFile)), std::istreambuf_iterator<char>());
+		playersFileStream.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
-		doc->parse<0>(buffer.data());
+		playersFileDoc->parse<0>(playersFileStream.data());
 		// Find our root node
-		root_node = doc->first_node("Players");
+		rapidxml::xml_node<>* playersNode = playersFileDoc->first_node("Players");
 		// Iterate over the breweries
-		for (auto brewery_node = root_node->first_node("Player"); brewery_node; brewery_node = brewery_node->
+		for (auto playerNode = playersNode->first_node("Player"); playerNode; playerNode = playerNode->
 		     next_sibling("Player"))
 		{
-			if (i == m_characterSelectionIndex)
+			if (index == m_characterSelectionIndex)
 			{
 				auto player = std::make_shared<Object>(&m_context);
-				player->m_tag->set(Tag::Player);
-				player->m_transform->setPosition(static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)) / 2.0f, 0.0f);
+				player->tag->set(Tag::PLAYER);
+				player->transform->setPosition(static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)) / 2.0f, 0.0f);
 
-				auto sprite = player->addComponent<C_Sprite>();
-				sprite->setDrawLayer(DrawLayer::Entities);
+				auto playerComponent = player->addComponent<C_Sprite>();
+				playerComponent->setDrawLayer(DrawLayer::ENTITIES);
+
+				auto& playerComponentSprite = playerComponent->getSprite();
 
 				player->addComponent<C_KeyboardMovement>();
 
-				sprite->getSprite().setSpriteSheet(m_context.m_spriteSheet);
-				sprite->getSprite().setTextureRect(brewery_node->first_attribute("spriteName")->value());
-				sprite->getSprite().setScale(0.5f, 0.5f);
+				playerComponentSprite.setSpriteSheet(m_context.spriteSheet);
+				playerComponentSprite.setTextureRect(playerNode->first_attribute("spriteName")->value());
+				playerComponentSprite.setScale(0.5f, 0.5f);
+
+				const auto playerComponentSpriteRect = playerComponentSprite.getTextureRect();
+				const auto playerComponentSpriteScale = playerComponentSprite.getScale();
+
 
 				auto collider = player->addComponent<C_BoxCollider>();
-				collider->setSize(sprite->getSprite().getTextureRect().z * sprite->getSprite().getScale().x,
-				                  sprite->getSprite().getTextureRect().w * sprite->getSprite().getScale().y);
-				collider->setLayer(CollisionLayer::Player);
+				collider->setSize(playerComponentSpriteRect.z * playerComponentSpriteScale.x,
+				                  playerComponentSpriteRect.w * playerComponentSpriteScale.y);
+				collider->setLayer(CollisionLayer::PLAYER);
 
 				player->addComponent<C_Velocity_ReverseVelocityWhenOutOfBounds>();
 				auto playerLivesAndScore = player->addComponent<C_PlayerLivesAndScore>();
-				playerLivesAndScore->setLivesIcon(brewery_node->first_attribute("livesIcon")->value());
+				playerLivesAndScore->setLivesIcon(playerNode->first_attribute("livesIcon")->value());
 
 				m_objects.add(player);
 
 				break;
 			}
 
-			++i;
+			++index;
 		}
 
-		doc->clear();
-		delete doc;
+		playersFileDoc->clear();
+		delete playersFileDoc;
 	}
 
 	loadLevel();
@@ -203,7 +219,7 @@ void GameScene::onActivate()
 {
 	m_accumulator = 0;
 	m_currentTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
-	m_context.m_inputManager->clearEverything();
+	m_context.inputManager->clearEverything();
 }
 
 void GameScene::onDestroy()
@@ -212,15 +228,15 @@ void GameScene::onDestroy()
 
 void GameScene::processInput()
 {
-	if (m_context.m_inputManager->getKey(27))
+	if (m_context.inputManager->isKeyActive(27))
 	{
-		m_context.m_soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
-		m_sceneStateMachine.switchTo(PAUSED);
+		m_sceneStateMachine.switchTo(ScenesEnum::PAUSED);
 	}
 }
 
-void GameScene::draw(const float dt)
+void GameScene::draw(const float deltaTime)
 {
 	const auto newTime = static_cast<float>(glutGet(GLUT_ELAPSED_TIME));
 	const auto frameTime = (newTime - m_currentTime) / 1000.0f;
@@ -228,15 +244,15 @@ void GameScene::draw(const float dt)
 
 	m_accumulator += frameTime;
 
-	while (m_accumulator >= dt)
+	while (m_accumulator >= deltaTime)
 	{
 		m_objects.processCollidingObjects();
 		m_objects.processRemovals();
 		m_objects.processNewObjects();
-		m_objects.update(dt);
+		m_objects.update(deltaTime);
 
-		m_accumulator -= dt;
+		m_accumulator -= deltaTime;
 	}
 
-	m_objects.draw(*m_context.m_renderer);
+	m_objects.draw(*m_context.renderer);
 }

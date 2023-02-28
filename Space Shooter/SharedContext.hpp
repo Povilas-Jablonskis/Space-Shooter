@@ -11,12 +11,12 @@ class Font;
 
 struct SharedContext
 {
-	irrklang::ISoundEngine* m_soundEngine{};
-	ObjectCollection* m_objects{};
-	InputManager* m_inputManager{};
-	SpriteSheet* m_spriteSheet{};
-	Renderer* m_renderer{};
-	Font* m_font{};
+	irrklang::ISoundEngine* soundEngine{};
+	ObjectCollection* objects{};
+	InputManager* inputManager{};
+	SpriteSheet* spriteSheet{};
+	Renderer* renderer{};
+	Font* font{};
 };
 
 #endif

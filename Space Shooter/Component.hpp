@@ -13,7 +13,7 @@ public:
 	Component& operator=(Component&&) = default;
 	virtual ~Component() = default;
 
-	explicit Component(Object* owner) : m_owner(owner)
+	explicit Component(Object* owner) : owner(owner)
 	{
 	}
 
@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-	Object* m_owner{};
+	Object* owner{};
 };
 
 #endif

@@ -11,8 +11,8 @@ public:
 	[[nodiscard]] unsigned int get() const;
 
 private:
-	static unsigned int count;
-	unsigned int id;
+	static unsigned int m_s_Count;
+	unsigned int m_id;
 };
 
 

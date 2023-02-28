@@ -18,7 +18,7 @@ class Text
 public:
 	Text(std::string, const glm::vec4&, const glm::vec2&, Font&);
 	void update(const InputManager&);
-	void fixPosition();
+	void updatePosition();
 	void onHoverEnterFuncDefaults();
 	void onHoverExitFuncDefaults();
 	std::function<void()> onHoverEnterFunc;
@@ -28,7 +28,7 @@ public:
 	[[nodiscard]] const std::vector<cachedCharacter>& getCachedCharacters() const;
 	[[nodiscard]] const std::string& getText() const;
 	[[nodiscard]] const glm::vec4& getBoundingBox() const;
-	[[nodiscard]] bool doesItNeedUpdate() const;
+	[[nodiscard]] bool doesNeedUpdate() const;
 	void setNeedUpdate(bool);
 	void setText(const std::string&);
 	void setPosition(const glm::vec2&);

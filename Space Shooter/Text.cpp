@@ -28,12 +28,12 @@ Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPe
 
 void Text::update(const InputManager& inputManager)
 {
-	if (!doesItNeedUpdate()) return;
+	if (!doesNeedUpdate()) return;
 
 	m_cachedCharacters.clear();
 	setNeedUpdate(false);
 
-	fixPosition();
+	updatePosition();
 
 	m_bbox[0] = getPosition().x;
 	m_bbox[3] = getPosition().y;
@@ -43,56 +43,56 @@ void Text::update(const InputManager& inputManager)
 
 	for (const signed char c : m_text)
 	{
-		auto ch = m_font.getCharacter(c);
+		auto [textureID, size, bearing, advance] = m_font.getCharacter(c);
 
-		auto xpos = getPosition().x + ch.Bearing.x;
-		auto ypos = getPosition().y - (ch.Size.y - ch.Bearing.y);
+		auto positionX = getPosition().x + bearing.x;
+		auto positionY = getPosition().y - (size.y - bearing.y);
 
-		tempVector.push_back(ch.Size.y);
+		tempVector.push_back(size.y);
 
-		const auto w = ch.Size.x;
-		const auto h = ch.Size.y;
+		const auto w = size.x;
+		const auto h = size.y;
 		// Update VBO for each character
 
 		std::vector<cachedCharacter> textVector;
 		std::vector<GLfloat> vertices;
-		vertices.push_back(xpos);
-		vertices.push_back(ypos + h);
+		vertices.push_back(positionX);
+		vertices.push_back(positionY + h);
 		vertices.push_back(0.0);
 		vertices.push_back(0.0);
 
-		vertices.push_back(xpos);
-		vertices.push_back(ypos);
+		vertices.push_back(positionX);
+		vertices.push_back(positionY);
 		vertices.push_back(0.0);
 		vertices.push_back(1.0);
 
-		vertices.push_back(xpos + w);
-		vertices.push_back(ypos);
+		vertices.push_back(positionX + w);
+		vertices.push_back(positionY);
 		vertices.push_back(1.0);
 		vertices.push_back(1.0);
 
 
-		vertices.push_back(xpos);
-		vertices.push_back(ypos + h);
+		vertices.push_back(positionX);
+		vertices.push_back(positionY + h);
 		vertices.push_back(0.0);
 		vertices.push_back(0.0);
 
-		vertices.push_back(xpos + w);
-		vertices.push_back(ypos);
+		vertices.push_back(positionX + w);
+		vertices.push_back(positionY);
 		vertices.push_back(1.0);
 		vertices.push_back(1.0);
 
-		vertices.push_back(xpos + w);
-		vertices.push_back(ypos + h);
+		vertices.push_back(positionX + w);
+		vertices.push_back(positionY + h);
 		vertices.push_back(1.0);
 		vertices.push_back(0.0);
 
 		m_cachedCharacters.emplace_back(
-			ch.TextureID,
+			textureID,
 			vertices
 		);
-		setPosition(0, getPosition().x + static_cast<float>(ch.Advance >> 6));
-		// Bitshift by 6 to get value in pixels (2^6 = 64)
+		setPosition(0, getPosition().x + static_cast<float>(advance >> 6));
+		// Bit shift by 6 to get value in pixels (2^6 = 64)
 	}
 	m_bbox[1] = getPosition().x;
 	m_bbox[2] = getPosition().y + (tempVector.empty()
@@ -105,13 +105,13 @@ void Text::update(const InputManager& inputManager)
 		return;
 	}
 
-	if (inputManager.getLastMousePosition().x <=
+	if (inputManager.getLastMousePosition().x >= getBoundingBox().x && inputManager.getLastMousePosition().x <=
 		getBoundingBox().y && inputManager.getLastMousePosition().y <= getBoundingBox().z && inputManager.
 		getLastMousePosition().y >= getBoundingBox().a)
 	{
 		if (!isClickedByMouse())
 		{
-			if (!inputManager.getLastLeftMouseState() && inputManager.getLeftMouseState())
+			if (!inputManager.isLastLeftMouseStateClicked() && inputManager.isLeftMouseClicked())
 			{
 				onMouseClickFunc();
 				setMousedClicked(true);
@@ -119,7 +119,7 @@ void Text::update(const InputManager& inputManager)
 		}
 		else
 		{
-			if (inputManager.getLastLeftMouseState() && !inputManager.getLeftMouseState())
+			if (inputManager.isLastLeftMouseStateClicked() && !inputManager.isLeftMouseClicked())
 			{
 				onMouseReleaseFunc();
 				setMousedClicked(false);
@@ -144,7 +144,7 @@ void Text::update(const InputManager& inputManager)
 	}
 }
 
-void Text::fixPosition()
+void Text::updatePosition()
 {
 	const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
 	const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
@@ -181,20 +181,20 @@ const glm::vec4& Text::getBoundingBox() const
 	return m_bbox;
 }
 
-bool Text::doesItNeedUpdate() const
+bool Text::doesNeedUpdate() const
 {
 	return m_needUpdate;
 }
 
-void Text::setNeedUpdate(const bool t_needUpdate)
+void Text::setNeedUpdate(const bool needUpdate)
 {
-	m_needUpdate = t_needUpdate;
+	m_needUpdate = needUpdate;
 }
 
-void Text::setText(const std::string& newtext)
+void Text::setText(const std::string& text)
 {
 	m_needUpdate = true;
-	m_text = newtext;
+	m_text = text;
 }
 
 void Text::setPosition(const glm::vec2& position)
@@ -224,9 +224,9 @@ bool Text::isActive() const
 	return m_active;
 }
 
-void Text::setMousedHovered(const bool boolean)
+void Text::setMousedHovered(const bool gotMousedHovered)
 {
-	m_gotMousedHovered = boolean;
+	m_gotMousedHovered = gotMousedHovered;
 }
 
 bool Text::isHoveredByMouse() const
@@ -234,9 +234,9 @@ bool Text::isHoveredByMouse() const
 	return m_gotMousedHovered;
 }
 
-void Text::setMousedClicked(const bool boolean)
+void Text::setMousedClicked(const bool gotMousedClicked)
 {
-	m_gotMousedClicked = boolean;
+	m_gotMousedClicked = gotMousedClicked;
 }
 
 bool Text::isClickedByMouse() const

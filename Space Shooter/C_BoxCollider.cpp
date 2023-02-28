@@ -2,7 +2,7 @@
 #include "Object.hpp"
 #include "C_Transform.hpp"
 
-C_BoxCollider::C_BoxCollider(Object* owner) : C_Collider(owner)
+C_BoxCollider::C_BoxCollider(Object* initialOwner) : C_Collider(initialOwner)
 {
 }
 
@@ -13,20 +13,20 @@ Manifold C_BoxCollider::intersects(const std::shared_ptr<C_Collider>& other)
 
 	if (const auto boxCollider = std::dynamic_pointer_cast<C_BoxCollider>(other))
 	{
-		auto& rect1 = getCollidable();
-		auto& rect2 = boxCollider->getCollidable();
+		auto& rectangle = getCollidable();
+		auto& boxColliderRectangle = boxCollider->getCollidable();
 
 		// Collision x-axis?
-		const bool collisionX = rect1.x + rect1.z >= rect2.x &&
-			rect2.x + rect2.z >= rect1.x;
+		const bool collisionX = rectangle.x + rectangle.z >= boxColliderRectangle.x &&
+			boxColliderRectangle.x + boxColliderRectangle.z >= rectangle.x;
 		// Collision y-axis?
-		const bool collisionY = rect1.y + rect1.z >= rect2.y &&
-			rect2.y + rect2.z >= rect1.y;
+		const bool collisionY = rectangle.y + rectangle.z >= boxColliderRectangle.y &&
+			boxColliderRectangle.y + boxColliderRectangle.z >= rectangle.y;
 
 		if (collisionX && collisionY)
 		{
 			m.colliding = true;
-			m.other = &rect2;
+			m.other = &boxColliderRectangle;
 		}
 	}
 
@@ -34,9 +34,9 @@ Manifold C_BoxCollider::intersects(const std::shared_ptr<C_Collider>& other)
 }
 
 //TODO: As we're updating the rects position manually we only need to update the width and height of the rect and an offset.
-void C_BoxCollider::setCollidable(const glm::vec4& rect)
+void C_BoxCollider::setCollidable(const glm::vec4& AABB)
 {
-	m_AABB = rect;
+	m_AABB = AABB;
 	setPosition();
 }
 
@@ -52,16 +52,16 @@ void C_BoxCollider::setOffset(const glm::vec2& offset)
 	m_offset = offset;
 }
 
-void C_BoxCollider::setOffset(const float x, const float y)
+void C_BoxCollider::setOffset(const float offsetX, const float offsetY)
 {
-	m_offset.x = x;
-	m_offset.y = y;
+	m_offset.x = offsetX;
+	m_offset.y = offsetY;
 }
 
-void C_BoxCollider::setSize(const glm::vec2& size)
+void C_BoxCollider::setSize(const glm::vec2& AABB)
 {
-	m_AABB.z = size.x;
-	m_AABB.w = size.y;
+	m_AABB.z = AABB.x;
+	m_AABB.w = AABB.y;
 }
 
 void C_BoxCollider::setSize(const float width, const float height)
@@ -72,7 +72,7 @@ void C_BoxCollider::setSize(const float width, const float height)
 
 void C_BoxCollider::setPosition()
 {
-	const auto& pos = m_owner->m_transform->getPosition();
+	const auto& pos = owner->transform->getPosition();
 
 	m_AABB.x = pos.x - (m_AABB.z / 2) + m_offset.x;
 	m_AABB.y = pos.y - (m_AABB.w / 2) + m_offset.y;

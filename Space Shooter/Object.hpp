@@ -96,11 +96,11 @@ public:
 	[[nodiscard]] bool isQueuedForRemoval() const;
 	void queueForRemoval();
 
-	std::shared_ptr<C_Transform> m_transform;
-	std::shared_ptr<C_InstanceID> m_instanceID;
-	std::shared_ptr<C_Tag> m_tag;
+	std::shared_ptr<C_Transform> transform;
+	std::shared_ptr<C_InstanceID> instanceID;
+	std::shared_ptr<C_Tag> tag;
 
-	SharedContext* m_context;
+	SharedContext* context;
 
 private:
 	std::vector<std::shared_ptr<Component>> m_components;

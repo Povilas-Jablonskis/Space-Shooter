@@ -5,10 +5,10 @@
 
 enum class Tag
 {
-	Default,
-	Player,
+	DEFAULT,
+	PLAYER,
 	NPC,
-	PlayerUserInterface
+	PLAYER_USER_INTERFACE
 };
 
 class C_Tag final : public Component

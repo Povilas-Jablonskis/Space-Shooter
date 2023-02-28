@@ -10,10 +10,10 @@
 
 struct Character
 {
-	GLuint TextureID; // ID handle of the glyph texture
-	glm::vec2 Size; // Size of glyph
-	glm::vec2 Bearing; // Offset from baseline to left/top of glyph
-	FT_Pos Advance; // Offset to advance to next glyph
+	GLuint textureID; // ID handle of the glyph texture
+	glm::vec2 size; // Size of glyph
+	glm::vec2 bearing; // Offset from baseline to left/top of glyph
+	FT_Pos advance; // Offset to advance to next glyph
 };
 
 class Font

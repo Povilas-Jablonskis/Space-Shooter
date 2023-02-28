@@ -11,19 +11,19 @@ class KeyBinding;
 class InputManager
 {
 public:
-	[[nodiscard]] bool getLeftMouseState() const;
-	void setLeftMouseState(bool);
-	void setRightMouseState(bool);
-	[[nodiscard]] bool getRightMouseState() const;
-	[[nodiscard]] bool getLastLeftMouseState() const;
-	void setLastLeftMouseState(bool);
-	[[nodiscard]] bool getLastRightMouseState() const;
-	void setLastRightMouseState(bool);
+	[[nodiscard]] bool isLeftMouseClicked() const;
+	void setLeftMouseClicked(bool);
+	void setRightMouseClicked(bool);
+	[[nodiscard]] bool isRightMouseClicked() const;
+	[[nodiscard]] bool isLastLeftMouseStateClicked() const;
+	void setLastLeftMouseClicked(bool);
+	[[nodiscard]] bool isLastRightMouseStateClicked() const;
+	void setLastRightMouseClicked(bool);
 	[[nodiscard]] const glm::vec2& getLastMousePosition() const;
 	void setLastMousePosition(const glm::vec2&);
-	[[nodiscard]] bool getKey(short) const;
-	[[nodiscard]] bool getKey(const std::string&) const;
-	void setKey(short, bool);
+	[[nodiscard]] bool isKeyActive(short) const;
+	[[nodiscard]] bool isKeyActive(const std::string&) const;
+	void setKeyState(short, bool);
 	std::unordered_map<short, bool>& getKeys();
 	std::vector<std::shared_ptr<KeyBinding>>& getKeyBindings();
 	void addKeyBinding(const std::shared_ptr<KeyBinding>&);
@@ -40,7 +40,7 @@ public:
 
 private:
 	template <typename Iterator, typename Predicate, typename Op>
-	static void for_each_if(Iterator first, Iterator last, Predicate p, Op op)
+	static void sFor_each_if(Iterator first, Iterator last, Predicate p, Op op)
 	{
 		while (first != last)
 		{

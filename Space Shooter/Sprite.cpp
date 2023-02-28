@@ -36,9 +36,9 @@ const glm::vec2& Sprite::getScale() const
 	return m_scale;
 }
 
-void Sprite::setScale(const float x, const float y)
+void Sprite::setScale(const float scaleX, const float scaleY)
 {
-	m_scale = glm::vec2(x, y);
+	m_scale = glm::vec2(scaleX, scaleY);
 }
 
 void Sprite::setRotationAngle(const float rotation)

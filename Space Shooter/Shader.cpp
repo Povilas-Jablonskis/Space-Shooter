@@ -6,12 +6,12 @@
 
 #include <freeglut/freeglut.h>
 
-Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
+Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	loadShader(vertex_path, fragment_path);
+	loadShader(vertexPath, fragmentPath);
 }
 
-std::string Shader::readShaderFile(const std::string& path)
+std::string Shader::sReadShaderFile(const std::string& path)
 {
 	std::string content;
 	std::ifstream fs("assets/Shaders/" + path);
@@ -41,10 +41,10 @@ GLuint Shader::getShader() const
 	return m_program;
 }
 
-void Shader::loadShader(const std::string& vertex_path, const std::string& fragment_path)
+void Shader::loadShader(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	const auto vertShaderStr = readShaderFile(vertex_path);
-	const auto fragShaderStr = readShaderFile(fragment_path);
+	const auto vertShaderStr = sReadShaderFile(vertexPath);
+	const auto fragShaderStr = sReadShaderFile(fragmentPath);
 	const auto vertexShaderSource = vertShaderStr.c_str();
 	const auto fragmentShaderSource = fragShaderStr.c_str();
 	auto isCompiled = 0;
@@ -64,7 +64,7 @@ void Shader::loadShader(const std::string& vertex_path, const std::string& fragm
 		glGetShaderInfoLog(vertexShader, maxLength, &maxLength, errorLogs.data());
 
 #if _DEBUG
-		std::cout << "ERROR::Shader: Errors in vertex shader ( Shaders/" << vertex_path.c_str() << " ) :\n";
+		std::cout << "ERROR::Shader: Errors in vertex shader ( Shaders/" << vertexPath.c_str() << " ) :\n";
 		for (const auto errorLog : errorLogs)
 		{
 			std::cout << errorLog;
@@ -87,7 +87,7 @@ void Shader::loadShader(const std::string& vertex_path, const std::string& fragm
 		glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, errorLogs.data());
 
 #if _DEBUG
-		std::cout << "ERROR::Shader: Errors in fragment shader ( Shaders/ " << fragment_path.c_str() << " ) :\n";
+		std::cout << "ERROR::Shader: Errors in fragment shader ( Shaders/ " << fragmentPath.c_str() << " ) :\n";
 		for (const auto errorLog : errorLogs)
 		{
 			std::cout << errorLog;

@@ -1,7 +1,7 @@
 #ifndef scenesEnum_hpp
 #define scenesEnum_hpp
 
-enum ScenesEnum
+enum class ScenesEnum
 {
 	MAIN,
 	PICK_YOUR_CHARACTER,
