@@ -1,8 +1,4 @@
 #include "MainMenu.hpp"
-#include "SceneStateMachine.hpp"
-#include "Text.hpp"
-#include "Renderer.hpp"
-#include "SharedContext.hpp"
 #include "InputManager.hpp"
 
 #include <iostream>
@@ -63,7 +59,12 @@ void MainMenu::draw(float)
 {
 	for (const auto& text : m_texts)
 	{
-		text->update(*m_context.inputManager);
+		text->update();
+	}
+
+	for (const auto& text : m_texts)
+	{
+		m_context.inputManager->checkInteraction(text);
 	}
 
 	m_context.renderer->draw(m_texts);

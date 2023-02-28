@@ -4,10 +4,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include "Scene.hpp"
 #include "ScenesEnum.hpp"
-
-class Renderer;
-class Scene;
 
 class SceneStateMachine
 {

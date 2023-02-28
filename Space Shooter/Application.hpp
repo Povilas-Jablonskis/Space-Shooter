@@ -3,11 +3,9 @@
 
 #include "SpriteSheet.hpp"
 #include "FileConstants.hpp"
-#include "SharedContext.hpp"
-#include "SceneStateMachine.hpp"
 #include "InputManager.hpp"
-#include "Renderer.hpp"
-#include "Font.hpp"
+#include "SceneStateMachine.hpp"
+#include "SharedContext.hpp"
 
 #include <irrKlang/irrKlang.h>
 

@@ -1,5 +1,4 @@
 #include "C_Transform.hpp"
-#include "Object.hpp"
 
 C_Transform::C_Transform(Object* initialOwner) : Component(initialOwner)
 {

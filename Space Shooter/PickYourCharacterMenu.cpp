@@ -1,11 +1,6 @@
 #include "PickYourCharacterMenu.hpp"
-#include "SceneStateMachine.hpp"
-#include "Text.hpp"
-#include "Sprite.hpp"
-#include "FileConstants.hpp"
 #include "GameScene.hpp"
 #include "InputManager.hpp"
-#include "C_Transform.hpp"
 
 #include <fstream>
 #include "rapidxml/rapidxml_print.hpp"
@@ -116,7 +111,8 @@ void PickYourCharacterMenu::onCreate()
 
 		m_sceneStateMachine.remove(ScenesEnum::GAME_LIVE);
 		m_sceneStateMachine.add(
-			ScenesEnum::GAME_LIVE, std::make_shared<GameScene>(m_sceneStateMachine, m_context, m_characterSelectionIndex));
+			ScenesEnum::GAME_LIVE,
+			std::make_shared<GameScene>(m_sceneStateMachine, m_context, m_characterSelectionIndex));
 
 		m_sceneStateMachine.switchTo(ScenesEnum::GAME_LIVE);
 	};
@@ -146,7 +142,12 @@ void PickYourCharacterMenu::draw(const float deltaTime)
 {
 	for (const auto& text : m_texts)
 	{
-		text->update(*m_context.inputManager);
+		text->update();
+	}
+
+	for (const auto& text : m_texts)
+	{
+		m_context.inputManager->checkInteraction(text);
 	}
 
 	m_context.renderer->draw(m_texts);

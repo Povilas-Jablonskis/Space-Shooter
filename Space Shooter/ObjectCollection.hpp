@@ -8,8 +8,6 @@
 #include "S_Drawable.hpp"
 #include "S_Collidable.hpp"
 
-enum class Tag;
-
 class ObjectCollection
 {
 public:

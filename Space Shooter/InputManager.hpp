@@ -6,7 +6,7 @@
 #include <string>
 #include <unordered_map>
 
-class KeyBinding;
+#include "KeyBinding.hpp"
 
 class InputManager
 {
@@ -37,6 +37,8 @@ public:
 	void specialKeyInputUp(int, int, int);
 
 	void clearEverything();
+
+	void checkInteraction(const std::shared_ptr<Text>&) const;
 
 private:
 	template <typename Iterator, typename Predicate, typename Op>

@@ -1,9 +1,5 @@
 #include "SoundsMenu.hpp"
-#include "SceneStateMachine.hpp"
-#include "Text.hpp"
-#include "Renderer.hpp"
 #include "FileConstants.hpp"
-#include "SharedContext.hpp"
 #include "InputManager.hpp"
 
 #include <fstream>
@@ -112,7 +108,12 @@ void SoundsMenu::draw(float)
 {
 	for (const auto& text : m_texts)
 	{
-		text->update(*m_context.inputManager);
+		text->update();
+	}
+
+	for (const auto& text : m_texts)
+	{
+		m_context.inputManager->checkInteraction(text);
 	}
 
 	m_context.renderer->draw(m_texts);

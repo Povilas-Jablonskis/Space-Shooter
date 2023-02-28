@@ -1,8 +1,6 @@
 #include "C_Velocity_ReverseVelocityWhenOutOfBounds.hpp"
 
-#include "C_Transform.hpp"
 #include "Object.hpp"
-#include "Sprite.hpp"
 
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>

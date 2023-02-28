@@ -1,23 +1,21 @@
 #ifndef textH
 #define textH
 
-#include "InputManager.hpp"
-
 #include <vector>
 #include <functional>
 #include <glew/glew.h>
 #include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
-class Font;
+#include "Font.hpp"
 
-using cachedCharacter = std::pair<GLuint, std::vector<GLfloat>>;
+using CachedCharacter = std::pair<GLuint, std::vector<GLfloat>>;
 
 class Text
 {
 public:
 	Text(std::string, const glm::vec4&, const glm::vec2&, Font&);
-	void update(const InputManager&);
+	void update();
 	void updatePosition();
 	void onHoverEnterFuncDefaults();
 	void onHoverExitFuncDefaults();
@@ -25,7 +23,7 @@ public:
 	std::function<void()> onHoverExitFunc;
 	std::function<void()> onMouseClickFunc;
 	std::function<void()> onMouseReleaseFunc;
-	[[nodiscard]] const std::vector<cachedCharacter>& getCachedCharacters() const;
+	[[nodiscard]] const std::vector<CachedCharacter>& getCachedCharacters() const;
 	[[nodiscard]] const std::string& getText() const;
 	[[nodiscard]] const glm::vec4& getBoundingBox() const;
 	[[nodiscard]] bool doesNeedUpdate() const;
@@ -62,7 +60,7 @@ private:
 	bool m_needUpdate{true};
 	Font& m_font;
 	std::string m_text{};
-	std::vector<cachedCharacter> m_cachedCharacters;
+	std::vector<CachedCharacter> m_cachedCharacters;
 	glm::vec4 m_bbox{};
 	glm::vec2 m_positionPercents{};
 	bool m_gotMousedClicked{};

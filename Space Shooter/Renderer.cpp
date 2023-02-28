@@ -1,12 +1,8 @@
 #include "Renderer.hpp"
 
-#include <freeglut/freeglut.h>
-
-#include "SpriteSheet.hpp"
-#include "Sprite.hpp"
-
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <freeglut/freeglut.h>
 
 Renderer::Renderer()
 {

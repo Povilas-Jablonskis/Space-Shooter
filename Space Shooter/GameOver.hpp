@@ -4,8 +4,7 @@
 #include "Scene.hpp"
 #include "SceneStateMachine.hpp"
 #include "SharedContext.hpp"
-
-class Text;
+#include "Text.hpp"
 
 class GameOver final : public Scene
 {

@@ -6,8 +6,6 @@
 #include "SceneStateMachine.hpp"
 #include "SharedContext.hpp"
 
-class Text;
-
 class PickYourCharacterMenu final : public Scene
 {
 public:

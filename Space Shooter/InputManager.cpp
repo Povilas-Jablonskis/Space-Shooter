@@ -1,11 +1,7 @@
 #include "InputManager.hpp"
-#include "KeyBinding.hpp"
 
-#include <algorithm>
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
-#include <system_error>
-#include "rapidxml/RapidXMLSTD.hpp"
 
 bool InputManager::isLeftMouseClicked() const
 {
@@ -242,4 +238,50 @@ void InputManager::clearEverything()
 	m_lastRightMouseClick = false;
 	m_rightMouseClick = false;
 	m_keyStates.clear();
+}
+
+void InputManager::checkInteraction(const std::shared_ptr<Text>& text) const
+{
+	if (!text->isActive())
+	{
+		return;
+	}
+
+	if (getLastMousePosition().x >= text->getBoundingBox().x && getLastMousePosition().x <=
+		text->getBoundingBox().y && getLastMousePosition().y <= text->getBoundingBox().z &&
+		getLastMousePosition().y >= text->getBoundingBox().a)
+	{
+		if (!text->isClickedByMouse())
+		{
+			if (!isLastLeftMouseStateClicked() && isLeftMouseClicked())
+			{
+				text->onMouseClickFunc();
+				text->setMousedClicked(true);
+			}
+		}
+		else
+		{
+			if (isLastLeftMouseStateClicked() && !isLeftMouseClicked())
+			{
+				text->onMouseReleaseFunc();
+				text->setMousedClicked(false);
+			}
+		}
+
+		if (!text->isHoveredByMouse())
+		{
+			text->onHoverEnterFuncDefaults();
+			text->onHoverEnterFunc();
+			text->setMousedHovered(true);
+		}
+	}
+	else
+	{
+		if (text->isHoveredByMouse())
+		{
+			text->onHoverExitFuncDefaults();
+			text->onHoverExitFunc();
+			text->setMousedHovered(false);
+		}
+	}
 }

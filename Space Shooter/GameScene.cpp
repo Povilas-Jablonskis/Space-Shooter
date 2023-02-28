@@ -1,20 +1,11 @@
 #include "GameScene.hpp"
-#include "SceneStateMachine.hpp"
-#include "Text.hpp"
-#include "FileConstants.hpp"
-#include "Sprite.hpp"
-#include "Object.hpp"
-#include "SharedContext.hpp"
-#include "InputManager.hpp"
-#include "ObjectCollection.hpp"
-#include "C_Transform.hpp"
-#include "C_KeyboardMovement.hpp"
+
 #include "C_Velocity_ReverseVelocityWhenOutOfBounds.hpp"
 #include "C_Velocity_DestroyWhenOutOfBounds.hpp"
+#include "C_KeyboardMovement.hpp"
 #include "C_PlayerLivesAndScore.hpp"
-#include "C_BoxCollider.hpp"
-#include "C_Tag.hpp"
 #include "C_RemoveObjectOnCollisionEnter.hpp"
+#include "InputManager.hpp"
 
 #include <fstream>
 

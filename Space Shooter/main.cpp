@@ -1,5 +1,4 @@
 #include "Application.hpp"
-#include "InputManager.hpp"
 
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>

@@ -1,8 +1,6 @@
 #ifndef scene_hpp
 #define scene_hpp
 
-class Renderer;
-
 class Scene
 {
 public:

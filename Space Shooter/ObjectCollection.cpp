@@ -1,5 +1,4 @@
 #include "ObjectCollection.hpp"
-#include "C_Tag.hpp"
 
 void ObjectCollection::add(const std::shared_ptr<Object>& object)
 {

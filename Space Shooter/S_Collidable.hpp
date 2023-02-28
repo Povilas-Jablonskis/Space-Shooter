@@ -5,15 +5,14 @@
 #include "EnumClassHash.hpp"
 #include "ComponentPairHash.hpp"
 #include "Bitmask.hpp"
+#include "C_BoxCollider.hpp"
+#include "Object.hpp"
 
 #include <vector>
 #include <memory>
 #include <set>
 #include <unordered_map>
 #include <unordered_set>
-
-class Object;
-class C_BoxCollider;
 
 class S_Collidable
 {

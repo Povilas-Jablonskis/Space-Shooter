@@ -6,9 +6,7 @@
 #include "Scene.hpp"
 #include "SceneStateMachine.hpp"
 #include "SharedContext.hpp"
-
-class Text;
-class KeyBinding;
+#include "Text.hpp"
 
 class ControlsMenu final : public Scene
 {

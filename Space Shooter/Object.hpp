@@ -4,16 +4,13 @@
 #include <vector>
 #include <memory>
 
-#include "SharedContext.hpp"
-#include "C_Sprite.hpp"
 #include "C_Collidable.hpp"
+#include "C_InstanceID.hpp"
+#include "C_Sprite.hpp"
+#include "C_Tag.hpp"
 #include "C_Transform.hpp"
-
-class C_InstanceID;
-class C_Tag;
-class Component;
-class Renderer;
-struct SharedContext;
+#include "Renderer.hpp"
+#include "SharedContext.hpp"
 
 class Object
 {

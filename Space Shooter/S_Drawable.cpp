@@ -1,6 +1,4 @@
 #include "S_Drawable.hpp"
-#include "Object.hpp"
-#include "C_Sprite.hpp"
 
 #include <algorithm>
 #include <ranges>

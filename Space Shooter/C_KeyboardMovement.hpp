@@ -5,7 +5,7 @@
 
 #include <memory>
 
-class C_Velocity_ReverseVelocityWhenOutOfBounds;
+#include "C_Velocity_ReverseVelocityWhenOutOfBounds.hpp"
 
 class C_KeyboardMovement final : public Component
 {

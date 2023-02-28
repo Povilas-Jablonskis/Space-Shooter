@@ -2,11 +2,6 @@
 
 #include <ranges>
 
-#include "Bitmask.hpp"
-#include "Object.hpp"
-#include "C_BoxCollider.hpp"
-#include "C_InstanceID.hpp"
-
 S_Collidable::S_Collidable()
 {
 	Bitmask playerCollisions;
@@ -111,7 +106,8 @@ void S_Collidable::resolve()
 
 					if (colliding)
 					{
-						const auto [firstCollider, secondCollider] = m_objectsColliding.emplace(std::make_pair(collidable, collision));
+						const auto [firstCollider, secondCollider] = m_objectsColliding.emplace(
+							std::make_pair(collidable, collision));
 
 						if (secondCollider)
 						{

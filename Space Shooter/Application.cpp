@@ -8,8 +8,6 @@
 #include "PauseMenu.hpp"
 #include "GameOver.hpp"
 #include "GameWon.hpp"
-#include "Shader.hpp"
-#include "KeyBinding.hpp"
 
 #include <fstream>
 #include "rapidxml/rapidxml_print.hpp"

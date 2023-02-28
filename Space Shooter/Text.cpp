@@ -1,5 +1,4 @@
 #include "Text.hpp"
-#include "Font.hpp"
 
 #include <string>
 #include <algorithm>
@@ -26,7 +25,7 @@ Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPe
 	};
 }
 
-void Text::update(const InputManager& inputManager)
+void Text::update()
 {
 	if (!doesNeedUpdate()) return;
 
@@ -54,7 +53,7 @@ void Text::update(const InputManager& inputManager)
 		const auto h = size.y;
 		// Update VBO for each character
 
-		std::vector<cachedCharacter> textVector;
+		std::vector<CachedCharacter> textVector;
 		std::vector<GLfloat> vertices;
 		vertices.push_back(positionX);
 		vertices.push_back(positionY + h);
@@ -99,49 +98,6 @@ void Text::update(const InputManager& inputManager)
 		                               ? 0.0f
 		                               : *std::ranges::max_element(tempVector));
 	setPosition(lastPosition);
-
-	if (!isActive())
-	{
-		return;
-	}
-
-	if (inputManager.getLastMousePosition().x >= getBoundingBox().x && inputManager.getLastMousePosition().x <=
-		getBoundingBox().y && inputManager.getLastMousePosition().y <= getBoundingBox().z && inputManager.
-		getLastMousePosition().y >= getBoundingBox().a)
-	{
-		if (!isClickedByMouse())
-		{
-			if (!inputManager.isLastLeftMouseStateClicked() && inputManager.isLeftMouseClicked())
-			{
-				onMouseClickFunc();
-				setMousedClicked(true);
-			}
-		}
-		else
-		{
-			if (inputManager.isLastLeftMouseStateClicked() && !inputManager.isLeftMouseClicked())
-			{
-				onMouseReleaseFunc();
-				setMousedClicked(false);
-			}
-		}
-
-		if (!isHoveredByMouse())
-		{
-			onHoverEnterFuncDefaults();
-			onHoverEnterFunc();
-			setMousedHovered(true);
-		}
-	}
-	else
-	{
-		if (isHoveredByMouse())
-		{
-			onHoverExitFuncDefaults();
-			onHoverExitFunc();
-			setMousedHovered(false);
-		}
-	}
 }
 
 void Text::updatePosition()
@@ -166,7 +122,7 @@ void Text::onHoverExitFuncDefaults()
 	changeColor(glm::vec4(255.0f, 160.0f, 122.0f, getColor().a));
 }
 
-const std::vector<cachedCharacter>& Text::getCachedCharacters() const
+const std::vector<CachedCharacter>& Text::getCachedCharacters() const
 {
 	return m_cachedCharacters;
 }

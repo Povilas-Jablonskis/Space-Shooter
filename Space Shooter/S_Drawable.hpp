@@ -5,10 +5,7 @@
 #include <vector>
 #include <memory>
 
-class Renderer;
-class Object;
-class C_Sprite;
-enum class DrawLayer;
+#include "Object.hpp"
 
 class S_Drawable
 {

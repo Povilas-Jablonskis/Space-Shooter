@@ -1,6 +1,5 @@
 #include "C_BoxCollider.hpp"
 #include "Object.hpp"
-#include "C_Transform.hpp"
 
 C_BoxCollider::C_BoxCollider(Object* initialOwner) : C_Collider(initialOwner)
 {

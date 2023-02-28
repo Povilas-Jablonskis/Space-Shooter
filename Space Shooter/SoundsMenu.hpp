@@ -5,8 +5,6 @@
 #include "SceneStateMachine.hpp"
 #include "SharedContext.hpp"
 
-class Text;
-
 class SoundsMenu final : public Scene
 {
 public:

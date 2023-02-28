@@ -1,13 +1,14 @@
 #include "C_PlayerLivesAndScore.hpp"
 
+#include <memory>
+#include <glm/vec4.hpp>
+#include <glew/glew.h>
+#include <freeglut/freeglut.h>
+
+#include "C_Sprite.hpp"
 #include "C_Tag.hpp"
 #include "Object.hpp"
 #include "ObjectCollection.hpp"
-#include "SharedContext.hpp"
-#include "Sprite.hpp"
-
-#include <glew/glew.h>
-#include <freeglut/freeglut.h>
 
 C_PlayerLivesAndScore::C_PlayerLivesAndScore(Object* initialOwner) : Component(initialOwner)
 {

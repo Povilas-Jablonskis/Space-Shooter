@@ -7,7 +7,7 @@
 #include <glm/vec4.hpp>
 #include <glm/ext/matrix_float4x4.hpp>
 
-class SpriteSheet;
+#include "SpriteSheet.hpp"
 
 class Sprite
 {

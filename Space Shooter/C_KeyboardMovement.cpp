@@ -1,9 +1,7 @@
 #include "C_KeyboardMovement.hpp"
-#include "C_Transform.hpp"
 #include "Object.hpp"
-#include "InputManager.hpp"
 #include "BindableActions.hpp"
-#include "C_Velocity_ReverseVelocityWhenOutOfBounds.hpp"
+#include "InputManager.hpp"
 
 C_KeyboardMovement::C_KeyboardMovement(Object* initialOwner) : Component(initialOwner)
 {

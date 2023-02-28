@@ -1,5 +1,4 @@
 #include "Sprite.hpp"
-#include "SpriteSheet.hpp"
 
 const glm::vec4& Sprite::getTextureRect() const
 {

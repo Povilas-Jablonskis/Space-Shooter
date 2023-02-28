@@ -1,8 +1,4 @@
 #include "Object.hpp"
-#include "Renderer.hpp"
-#include "C_BoxCollider.hpp"
-#include "C_InstanceID.hpp"
-#include "C_Tag.hpp"
 
 Object::Object(SharedContext* context) : context(context)
 {

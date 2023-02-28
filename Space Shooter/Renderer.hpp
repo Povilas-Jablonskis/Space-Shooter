@@ -3,13 +3,12 @@
 
 #include "Shader.hpp"
 #include "Text.hpp"
+#include "Sprite.hpp"
 
 #include <string>
 #include <memory>
 #include <unordered_map>
 #include <glew/glew.h>
-
-class Sprite;
 
 class Renderer
 {

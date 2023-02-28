@@ -3,11 +3,11 @@
 
 #include <irrKlang/irrKlang.h>
 
-class InputManager;
+#include "Font.hpp"
+#include "Renderer.hpp"
+#include "InputManager.hpp"
+
 class ObjectCollection;
-class SpriteSheet;
-class Renderer;
-class Font;
 
 struct SharedContext
 {

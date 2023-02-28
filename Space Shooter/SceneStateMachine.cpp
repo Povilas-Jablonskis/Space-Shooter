@@ -1,5 +1,4 @@
 #include "SceneStateMachine.hpp"
-#include "Scene.hpp"
 
 void SceneStateMachine::processInput() const
 {

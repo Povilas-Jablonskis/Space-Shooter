@@ -1,5 +1,4 @@
 #include "KeyBinding.hpp"
-#include "Text.hpp"
 
 KeyBinding::KeyBinding(std::string keyBinding, const short keyBindingCharacter, std::shared_ptr<Text> text) :
 	m_keyBindingCharacter(keyBindingCharacter), m_keyBinding(std::move(keyBinding)), m_text(std::move(text))

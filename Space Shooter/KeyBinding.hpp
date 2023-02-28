@@ -1,11 +1,11 @@
 #ifndef keyBindingInputComponentH
 #define keyBindingInputComponentH
 
+
 #include "Text.hpp"
 
 #include <string>
-
-class Text;
+#include <memory>
 
 class KeyBinding
 {
