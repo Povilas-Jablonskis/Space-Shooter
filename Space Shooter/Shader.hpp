@@ -8,11 +8,11 @@ class Shader
 {
 public:
 	Shader(const std::string&, const std::string&);
-	void loadShader(const std::string&, const std::string&);
-	[[nodiscard]] static std::string sReadShaderFile(const std::string&);
-	[[nodiscard]] GLuint getShader() const;
+	void load(const std::string&, const std::string&);
+	[[nodiscard]] GLuint get() const;
 
 private:
+	[[nodiscard]] std::string loadFromFile(const std::string&);
 	GLuint m_program{};
 };
 #endif

@@ -12,7 +12,6 @@ public:
 
 	void update(float) override;
 
-	void updatePlayerLivesAndScore();
 	void setLivesIcon(const std::string&);
 
 private:

@@ -1,0 +1,7 @@
+<Keybinds>
+	<Keybind key="MOVE_LEFT" value="65"/>
+	<Keybind key="MOVE_RIGHT" value="68"/>
+	<Keybind key="ATTACK" value="32"/>
+	<Keybind key="MOVE_BACK" value="83"/>
+</Keybinds>
+

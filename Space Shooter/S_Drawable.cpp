@@ -18,9 +18,9 @@ void S_Drawable::processRemovals()
 	for (auto& layer : m_drawables | std::views::values)
 	{
 		auto layerIterator = layer.begin();
-		while (layerIterator != layer.end())
+		while (layerIterator < layer.end())
 		{
-			if (!(*layerIterator)->continueToDraw())
+			if (! (*layerIterator)->continueToDraw())
 			{
 				layerIterator = layer.erase(layerIterator);
 			}
@@ -47,7 +47,7 @@ void S_Drawable::add(Object& object)
 			std::vector<std::shared_ptr<C_Sprite>> objects;
 			objects.push_back(objectsDrawable);
 
-			m_drawables.insert(std::make_pair(layer, objects));
+			m_drawables.insert(make_pair(layer, objects));
 		}
 	}
 }
@@ -62,7 +62,7 @@ void S_Drawable::sort()
 {
 	for (auto& layer : m_drawables | std::views::values)
 	{
-		if (!std::ranges::is_sorted(layer, sLayerSort))
+		if (! std::ranges::is_sorted(layer, sLayerSort))
 		{
 			std::ranges::sort(layer, sLayerSort);
 		}

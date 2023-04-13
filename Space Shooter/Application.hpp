@@ -13,8 +13,13 @@ class Application
 {
 public:
 	Application();
+	Application(const Application&) = default;
+	Application(Application&&) = default;
+	Application& operator=(const Application&) = delete;
+	Application& operator=(Application&&) = delete;
+	~Application();
 
-	void loadPlayerConfig() const;
+	void loadConfig();
 
 	void render() const;
 

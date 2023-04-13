@@ -10,7 +10,7 @@ Manifold C_BoxCollider::intersects(const std::shared_ptr<C_Collider>& other)
 	Manifold m;
 	m.colliding = false;
 
-	if (const auto boxCollider = std::dynamic_pointer_cast<C_BoxCollider>(other))
+	if (const auto boxCollider = dynamic_pointer_cast<C_BoxCollider>(other))
 	{
 		auto& rectangle = getCollidable();
 		auto& boxColliderRectangle = boxCollider->getCollidable();

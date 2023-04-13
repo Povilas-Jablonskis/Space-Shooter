@@ -4,6 +4,8 @@
 #include <iostream>
 #include <freeglut/freeglut.h>
 
+#include "Colors.hpp"
+
 PauseMenu::PauseMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
 {
@@ -12,7 +14,7 @@ PauseMenu::PauseMenu(SceneStateMachine& sceneStateMachine, SharedContext& contex
 void PauseMenu::onCreate()
 {
 	//Pause Menu
-	const auto gotoMainMenuOption = std::make_shared<Text>("Go To Main Menu", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto gotoMainMenuOption = std::make_shared<Text>("Go To Main Menu", Colors::DEFAULT_TEXT,
 	                                                       glm::vec2(48.0f, 60.0f), *m_context.font);
 	gotoMainMenuOption->onMouseReleaseFunc = [=, this]
 	{
@@ -22,7 +24,7 @@ void PauseMenu::onCreate()
 	};
 	m_texts.push_back(gotoMainMenuOption);
 
-	const auto endGameOption = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto endGameOption = std::make_shared<Text>("End Game", Colors::DEFAULT_TEXT,
 	                                                  glm::vec2(48.0f, 55.0f), *m_context.font);
 	endGameOption->onMouseReleaseFunc = []
 	{
@@ -46,7 +48,7 @@ void PauseMenu::onActivate()
 
 void PauseMenu::processInput()
 {
-	if (m_context.inputManager->isKeyActive(27))
+	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
 		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 

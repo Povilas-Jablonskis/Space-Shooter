@@ -30,7 +30,7 @@ void S_Collidable::add(const std::vector<std::shared_ptr<Object>>& objects)
 			}
 			else
 			{
-				m_collidables.insert(std::make_pair(layer, std::vector{collider}));
+				m_collidables.insert(make_pair(layer, std::vector{collider}));
 			}
 		}
 	}
@@ -41,7 +41,7 @@ void S_Collidable::processRemovals()
 	for (auto& layer : m_collidables | std::views::values)
 	{
 		auto layerIterator = layer.begin();
-		while (layerIterator != layer.end())
+		while (layerIterator < layer.end())
 		{
 			if ((*layerIterator)->owner->isQueuedForRemoval())
 			{
@@ -107,7 +107,7 @@ void S_Collidable::resolve()
 					if (colliding)
 					{
 						const auto [firstCollider, secondCollider] = m_objectsColliding.emplace(
-							std::make_pair(collidable, collision));
+							make_pair(collidable, collision));
 
 						if (secondCollider)
 						{
@@ -139,7 +139,7 @@ void S_Collidable::processCollidingObjects()
 		{
 			const auto [colliding, other] = firstCollider->intersects(secondCollider);
 
-			if (!colliding)
+			if (! colliding)
 			{
 				firstCollider->owner->onCollisionExit(*secondCollider);
 				secondCollider->owner->onCollisionExit(*firstCollider);

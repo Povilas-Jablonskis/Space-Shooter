@@ -1,7 +1,0 @@
-<KeyBindings>
-	<KeyBinding key="Move Left" value="68"/>
-	<KeyBinding key="Move Right" value="65"/>
-	<KeyBinding key="Attack" value="32"/>
-	<KeyBinding key="Move Back" value="83"/>
-</KeyBindings>
-

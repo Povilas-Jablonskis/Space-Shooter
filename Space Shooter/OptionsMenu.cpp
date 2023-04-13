@@ -1,6 +1,10 @@
 #include "OptionsMenu.hpp"
 #include "InputManager.hpp"
 
+#include <Windows.h>
+
+#include "Colors.hpp"
+
 OptionsMenu::OptionsMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
 {
@@ -9,7 +13,7 @@ OptionsMenu::OptionsMenu(SceneStateMachine& sceneStateMachine, SharedContext& co
 void OptionsMenu::onCreate()
 {
 	//Options
-	const auto controlsOption = std::make_shared<Text>("Controls", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto controlsOption = std::make_shared<Text>("Controls", Colors::DEFAULT_TEXT,
 	                                                   glm::vec2(48.0f, 60.0f), *m_context.font);
 	controlsOption->onMouseReleaseFunc = [=, this]
 	{
@@ -18,7 +22,7 @@ void OptionsMenu::onCreate()
 		m_sceneStateMachine.switchTo(ScenesEnum::CONTROLS);
 	};
 	m_texts.push_back(controlsOption);
-	const auto soundsOption = std::make_shared<Text>("Sounds", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto soundsOption = std::make_shared<Text>("Sounds", Colors::DEFAULT_TEXT,
 	                                                 glm::vec2(48.0f, 55.0f), *m_context.font);
 	soundsOption->onMouseReleaseFunc = [=, this]
 	{
@@ -27,7 +31,7 @@ void OptionsMenu::onCreate()
 		m_sceneStateMachine.switchTo(ScenesEnum::SOUNDS);
 	};
 	m_texts.push_back(soundsOption);
-	const auto backOption = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto backOption = std::make_shared<Text>("Back", Colors::DEFAULT_TEXT,
 	                                               glm::vec2(48.0f, 50.0f),
 	                                               *m_context.font);
 	backOption->onMouseReleaseFunc = [=, this]
@@ -50,7 +54,7 @@ void OptionsMenu::onActivate()
 
 void OptionsMenu::processInput()
 {
-	if (m_context.inputManager->isKeyActive(27))
+	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
 		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 

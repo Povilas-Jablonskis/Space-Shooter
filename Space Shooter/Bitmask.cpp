@@ -20,7 +20,7 @@ uint32_t Bitmask::getMask() const
 
 bool Bitmask::getBit(const int pos) const
 {
-	return (m_bits & (1 << pos)) != 0;
+	return m_bits & (1 << pos);
 }
 
 void Bitmask::setBit(const int pos, const bool on)

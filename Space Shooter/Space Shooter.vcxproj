@@ -75,11 +75,9 @@
       <OptimizeReferences>false</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>
-			XCOPY "$(SolutionDir)Space Shooter\assets\" "$(TargetDir)\assets"  /s /i /y
-			XCOPY "$(SolutionDir)Space Shooter\cfg\" "$(TargetDir)\cfg"  /s /i /y
-			XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y
-		</Command>
+      <Command>XCOPY "$(SolutionDir)Space Shooter\assets\" "$(TargetDir)\assets"  /s /i /y
+XCOPY "$(SolutionDir)Space Shooter\cfg\" "$(TargetDir)\cfg"  /s /i /y
+XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -136,7 +134,6 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="GameWon.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="KeyBinding.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -156,8 +153,9 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.hpp" />
-    <ClInclude Include="BindableActions.hpp" />
+    <ClInclude Include="BindableAction.hpp" />
     <ClInclude Include="Bitmask.hpp" />
+    <ClInclude Include="Colors.hpp" />
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="ComponentPairHash.hpp" />
     <ClInclude Include="ControlsMenu.hpp" />
@@ -181,7 +179,6 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     <ClInclude Include="GameScene.hpp" />
     <ClInclude Include="GameWon.hpp" />
     <ClInclude Include="InputManager.hpp" />
-    <ClInclude Include="KeyBinding.hpp" />
     <ClInclude Include="MainMenu.hpp" />
     <ClInclude Include="Font.hpp" />
     <ClInclude Include="Object.hpp" />

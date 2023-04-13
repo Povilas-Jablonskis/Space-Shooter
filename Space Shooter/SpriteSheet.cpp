@@ -1,13 +1,13 @@
 #include "SpriteSheet.hpp"
 
 #include <stb/stb_image.h>
-#include "rapidxml/rapidxml.hpp"
-
 #include <fstream>
+
+#include "rapidxml/rapidxml_ext.hpp"
 
 SpriteSheet::SpriteSheet(const std::string& path)
 {
-	loadSpritesFromXml(path);
+	load(path);
 }
 
 const glm::vec4& SpriteSheet::getSprite(const std::string& index) const
@@ -30,7 +30,7 @@ GLuint SpriteSheet::getTexture() const
 	return m_texture;
 }
 
-void SpriteSheet::loadSpriteSheet(const std::string& path)
+void SpriteSheet::generateTexture(const std::string& path)
 {
 	glGenTextures(1, &m_texture);
 
@@ -50,9 +50,9 @@ void SpriteSheet::loadSpriteSheet(const std::string& path)
 	m_sprites.insert_or_assign("wholeSpriteSheet", glm::vec4(m_width, m_height, m_width, m_height));
 }
 
-bool SpriteSheet::loadSpritesFromXml(const std::string& path)
+bool SpriteSheet::load(const std::string& path)
 {
-	const auto spriteSheetFileDoc = new rapidxml::xml_document();
+	const auto spriteSheetFileDoc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
 	std::ifstream spriteSheetFile(path);
 	std::vector spriteSheetFileBuffer((std::istreambuf_iterator(spriteSheetFile)), std::istreambuf_iterator<char>());
@@ -61,7 +61,7 @@ bool SpriteSheet::loadSpritesFromXml(const std::string& path)
 	spriteSheetFileDoc->parse<0>(spriteSheetFileBuffer.data());
 	// Find our root node
 	const rapidxml::xml_node<>* atlasNode = spriteSheetFileDoc->first_node();
-	loadSpriteSheet(atlasNode->first_attribute("imagePath")->value());
+	generateTexture(atlasNode->first_attribute("imagePath")->value());
 	// Iterate over the breweries
 	for (auto subTextureNode = atlasNode->first_node(); subTextureNode; subTextureNode = subTextureNode->next_sibling())
 	{

@@ -3,9 +3,11 @@
 #include "InputManager.hpp"
 
 #include <fstream>
-#include "rapidxml/rapidxml_print.hpp"
+#include "rapidxml/rapidxml_ext.hpp"
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
+
+#include "Colors.hpp"
 
 PickYourCharacterMenu::PickYourCharacterMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -14,7 +16,7 @@ PickYourCharacterMenu::PickYourCharacterMenu(SceneStateMachine& sceneStateMachin
 
 void PickYourCharacterMenu::loadPlayerModels()
 {
-	const auto playersFileDoc = new rapidxml::xml_document();
+	const auto playersFileDoc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
 	std::ifstream playersFile(FileConstants::PLAYERS_PATH);
 	std::vector playersFileBuffer((std::istreambuf_iterator(playersFile)), std::istreambuf_iterator<char>());
@@ -54,11 +56,11 @@ void PickYourCharacterMenu::onCreate()
 	m_objects.add(selectedShip);
 
 	const auto pickYourCharacterText = std::make_shared<Text>("Pick your character :",
-	                                                          glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	                                                          Colors::DEFAULT_TEXT,
 	                                                          glm::vec2(20.0f, 60.0f), *m_context.font);
 	pickYourCharacterText->disable();
 	m_texts.push_back(pickYourCharacterText);
-	const auto leftArrow = std::make_shared<Text>("<", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(44.0f, 60.0f),
+	const auto leftArrow = std::make_shared<Text>("<", Colors::DEFAULT_TEXT, glm::vec2(44.0f, 60.0f),
 	                                              *m_context.font);
 	leftArrow->onMouseReleaseFunc = [=, this, &selectedShipComponentSprite]
 	{
@@ -74,7 +76,7 @@ void PickYourCharacterMenu::onCreate()
 		selectedShipComponentSprite.setTextureRect(m_playerModels[m_characterSelectionIndex]);
 	};
 	m_texts.push_back(leftArrow);
-	const auto rightArrow = std::make_shared<Text>(">", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto rightArrow = std::make_shared<Text>(">", Colors::DEFAULT_TEXT,
 	                                               glm::vec2(54.0f, 60.0f),
 	                                               *m_context.font);
 	rightArrow->onMouseReleaseFunc = [=, this, &selectedShipComponentSprite]
@@ -92,7 +94,7 @@ void PickYourCharacterMenu::onCreate()
 	};
 	m_texts.push_back(rightArrow);
 
-	const auto backOption = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto backOption = std::make_shared<Text>("Back", Colors::DEFAULT_TEXT,
 	                                               glm::vec2(20.0f, 20.0f),
 	                                               *m_context.font);
 	backOption->onMouseReleaseFunc = [=, this]
@@ -102,7 +104,7 @@ void PickYourCharacterMenu::onCreate()
 		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
 	};
 	m_texts.push_back(backOption);
-	const auto startOption = std::make_shared<Text>("Start", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto startOption = std::make_shared<Text>("Start", Colors::DEFAULT_TEXT,
 	                                                glm::vec2(30.0f, 20.0f),
 	                                                *m_context.font);
 	startOption->onMouseReleaseFunc = [=, this]
@@ -130,7 +132,7 @@ void PickYourCharacterMenu::onDestroy()
 
 void PickYourCharacterMenu::processInput()
 {
-	if (m_context.inputManager->isKeyActive(27))
+	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
 		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 

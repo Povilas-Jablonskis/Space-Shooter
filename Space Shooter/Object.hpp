@@ -36,9 +36,9 @@ public:
 		// Check that we don't already have a component of this type.
 		for (auto& existingComponent : m_components)
 		{
-			if (std::dynamic_pointer_cast<T>(existingComponent))
+			if (dynamic_pointer_cast<T>(existingComponent))
 			{
-				return std::dynamic_pointer_cast<T>(existingComponent);
+				return dynamic_pointer_cast<T>(existingComponent);
 			}
 		}
 
@@ -46,14 +46,14 @@ public:
 
 		m_components.push_back(newComponent);
 
-		if (std::dynamic_pointer_cast<C_Sprite>(newComponent))
+		if (dynamic_pointer_cast<C_Sprite>(newComponent))
 		{
-			m_sprite = std::dynamic_pointer_cast<C_Sprite>(newComponent);
+			m_sprite = dynamic_pointer_cast<C_Sprite>(newComponent);
 		}
 
-		if (std::dynamic_pointer_cast<C_Collidable>(newComponent))
+		if (dynamic_pointer_cast<C_Collidable>(newComponent))
 		{
-			m_collidables.push_back(std::dynamic_pointer_cast<C_Collidable>(newComponent));
+			m_collidables.push_back(dynamic_pointer_cast<C_Collidable>(newComponent));
 		}
 
 		return newComponent;
@@ -64,9 +64,9 @@ public:
 	{
 		for (auto& existingComponent : m_components)
 		{
-			if (std::dynamic_pointer_cast<T>(existingComponent))
+			if (dynamic_pointer_cast<T>(existingComponent))
 			{
-				return std::dynamic_pointer_cast<T>(existingComponent);
+				return dynamic_pointer_cast<T>(existingComponent);
 			}
 		}
 
@@ -79,9 +79,9 @@ public:
 		std::vector<std::shared_ptr<T>> matchingComponents;
 		for (auto& existingComponent : m_components)
 		{
-			if (std::dynamic_pointer_cast<T>(existingComponent))
+			if (dynamic_pointer_cast<T>(existingComponent))
 			{
-				matchingComponents.emplace_back(std::dynamic_pointer_cast<T>(existingComponent));
+				matchingComponents.emplace_back(dynamic_pointer_cast<T>(existingComponent));
 			}
 		}
 

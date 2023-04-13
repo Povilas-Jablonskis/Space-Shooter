@@ -73,18 +73,18 @@ void Renderer::draw(const std::vector<std::shared_ptr<Text>>& texts) const
 
 void Renderer::draw(const Text& text) const
 {
-	const auto program = m_shaders.at("textshader")->getShader();
+	const auto textShaderProgram = m_shaders.at("textshader")->get();
 
 	glBindVertexArray(m_textVAO);
-	glUseProgram(program);
-	const auto offsetLocation = glGetUniformLocation(program, "color");
-	const auto offsetLocation2 = glGetUniformLocation(program, "projection");
+	glUseProgram(textShaderProgram);
+	const auto colorUniform = glGetUniformLocation(textShaderProgram, "color");
+	const auto projectionUniform = glGetUniformLocation(textShaderProgram, "projection");
 	auto projection = glm::ortho(0.0f, static_cast<float>(glutGet(GLUT_WINDOW_WIDTH)), 0.0f,
 	                             static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT)), 0.0f, 1.0f);
 
-	glUniform4f(offsetLocation, text.getColor().x / 255.0f, text.getColor().y / 255.0f, text.getColor().z / 255.0f,
+	glUniform4f(colorUniform, text.getColor().x / 255.0f, text.getColor().y / 255.0f, text.getColor().z / 255.0f,
 	            text.getColor().a);
-	glUniformMatrix4fv(offsetLocation2, 1, GL_FALSE, value_ptr(projection));
+	glUniformMatrix4fv(projectionUniform, 1, GL_FALSE, value_ptr(projection));
 
 	auto& cache = text.getCachedCharacters();
 
@@ -105,30 +105,30 @@ void Renderer::draw(const Text& text) const
 
 void Renderer::draw(const Sprite& sprite) const
 {
-	const auto program = m_shaders.at("shader")->getShader();
+	const auto shaderProgram = m_shaders.at("shader")->get();
 
 	glBindVertexArray(m_vao);
-	glUseProgram(program);
+	glUseProgram(shaderProgram);
 	const auto windowWidth = static_cast<float>(glutGet(GLUT_WINDOW_WIDTH));
 	const auto windowHeight = static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
 
-	const auto offsetLocation = glGetUniformLocation(program, "color");
-	const auto offsetLocation3 = glGetUniformLocation(program, "spriteCoordinates");
-	const auto offsetLocation6 = glGetUniformLocation(program, "projection");
-	const auto offsetLocation7 = glGetUniformLocation(program, "model");
+	const auto colorUniform = glGetUniformLocation(shaderProgram, "color");
+	const auto spriteCoordinatesUniform = glGetUniformLocation(shaderProgram, "spriteCoordinates");
+	const auto projectionUniform = glGetUniformLocation(shaderProgram, "projection");
+	const auto modelUniform = glGetUniformLocation(shaderProgram, "model");
 
 	auto& textureRect = sprite.getTextureRect();
 	auto& spriteSheet = sprite.getSpriteSheet();
 	glBindTexture(GL_TEXTURE_2D, spriteSheet.getTexture());
 
 	const auto spriteSheetSize = glm::vec2(spriteSheet.getWidth(), spriteSheet.getHeight());
-	glUniform4f(offsetLocation3, textureRect.x / spriteSheetSize.x, textureRect.y / spriteSheetSize.y,
+	glUniform4f(spriteCoordinatesUniform, textureRect.x / spriteSheetSize.x, textureRect.y / spriteSheetSize.y,
 	            textureRect.z / spriteSheetSize.x, textureRect.w / spriteSheetSize.y);
-	glUniform4f(offsetLocation, sprite.getColor().x / 255.0f, sprite.getColor().y / 255.0f,
+	glUniform4f(colorUniform, sprite.getColor().x / 255.0f, sprite.getColor().y / 255.0f,
 	            sprite.getColor().z / 255.0f, sprite.getColor().a);
-	glUniformMatrix4fv(offsetLocation6, 1, GL_FALSE,
+	glUniformMatrix4fv(projectionUniform, 1, GL_FALSE,
 	                   value_ptr(glm::ortho(0.0f, windowWidth, 0.0f, windowHeight, 0.0f, 1.0f)));
-	glUniformMatrix4fv(offsetLocation7, 1, GL_FALSE, value_ptr(sprite.getTransform()));
+	glUniformMatrix4fv(modelUniform, 1, GL_FALSE, value_ptr(sprite.getTransform()));
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 	glUseProgram(0);
 	glBindVertexArray(0);

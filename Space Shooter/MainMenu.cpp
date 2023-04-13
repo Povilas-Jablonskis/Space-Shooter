@@ -4,6 +4,8 @@
 #include <iostream>
 #include <freeglut/freeglut.h>
 
+#include "Colors.hpp"
+
 MainMenu::MainMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
 {
@@ -11,7 +13,7 @@ MainMenu::MainMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 
 void MainMenu::onCreate()
 {
-	const auto startGameOption = std::make_shared<Text>("Start Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto startGameOption = std::make_shared<Text>("Start Game", Colors::DEFAULT_TEXT,
 	                                                    glm::vec2(48.0f, 60.0f), *m_context.font);
 	startGameOption->onMouseReleaseFunc = [=, this]
 	{
@@ -21,7 +23,7 @@ void MainMenu::onCreate()
 	};
 	m_texts.push_back(startGameOption);
 
-	const auto optionsOption = std::make_shared<Text>("Options", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto optionsOption = std::make_shared<Text>("Options", Colors::DEFAULT_TEXT,
 	                                                  glm::vec2(48.0f, 55.0f), *m_context.font);
 	optionsOption->onMouseReleaseFunc = [=, this]
 	{
@@ -31,7 +33,7 @@ void MainMenu::onCreate()
 	};
 	m_texts.push_back(optionsOption);
 
-	const auto endGameOption = std::make_shared<Text>("End Game", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto endGameOption = std::make_shared<Text>("End Game", Colors::DEFAULT_TEXT,
 	                                                  glm::vec2(48.0f, 50.0f), *m_context.font);
 	endGameOption->onMouseReleaseFunc = [=, this]
 	{

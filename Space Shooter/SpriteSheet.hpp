@@ -18,8 +18,8 @@ public:
 	[[nodiscard]] GLuint getTexture() const;
 
 private:
-	bool loadSpritesFromXml(const std::string&);
-	void loadSpriteSheet(const std::string&);
+	bool load(const std::string&);
+	void generateTexture(const std::string&);
 
 	int m_width{};
 	int m_height{};

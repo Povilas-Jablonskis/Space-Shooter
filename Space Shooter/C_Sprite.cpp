@@ -51,7 +51,7 @@ void C_Sprite::draw(const Renderer& renderer) const
 
 bool C_Sprite::continueToDraw() const
 {
-	return !owner->isQueuedForRemoval();
+	return ! owner->isQueuedForRemoval();
 }
 
 

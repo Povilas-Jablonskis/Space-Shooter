@@ -1,6 +1,6 @@
 #include "C_KeyboardMovement.hpp"
 #include "Object.hpp"
-#include "BindableActions.hpp"
+#include "BindableAction.hpp"
 #include "InputManager.hpp"
 
 C_KeyboardMovement::C_KeyboardMovement(Object* initialOwner) : Component(initialOwner)
@@ -21,18 +21,21 @@ void C_KeyboardMovement::update(float)
 {
 	float xMove = 0.f;
 	const auto inputManager = owner->context->inputManager;
+	const auto moveLeftKey = owner->context->inputManager->getKeybind(BindableAction::MOVE_LEFT);
+	const auto moveRightKey = owner->context->inputManager->getKeybind(BindableAction::MOVE_RIGHT);
+	const auto moveBackKey = owner->context->inputManager->getKeybind(BindableAction::MOVE_BACK);
 
-	if (inputManager->isKeyActive(BindableActions::MOVE_LEFT))
-	{
-		xMove = -m_moveSpeed;
-	}
-	if (inputManager->isKeyActive(BindableActions::MOVE_RIGHT))
+	if (inputManager->isKeyActive(moveLeftKey))
 	{
 		xMove = m_moveSpeed;
 	}
+	if (inputManager->isKeyActive(moveRightKey))
+	{
+		xMove = -m_moveSpeed;
+	}
 
 	float yMove = m_moveSpeed / 2.0f;
-	if (inputManager->isKeyActive(BindableActions::MOVE_BACK))
+	if (inputManager->isKeyActive(moveBackKey))
 	{
 		yMove = -m_moveSpeed;
 	}

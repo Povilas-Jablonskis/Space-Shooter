@@ -10,7 +10,7 @@
 #include "GameWon.hpp"
 
 #include <fstream>
-#include "rapidxml/rapidxml_print.hpp"
+#include "rapidxml/rapidxml_ext.hpp"
 #include <iostream>
 #include <freeglut/freeglut.h>
 
@@ -25,7 +25,7 @@ Application::Application()
 	m_renderer.addShader("shader", std::make_shared<Shader>("shader.vert", "shader.frag"));
 	m_renderer.addShader("textshader", std::make_shared<Shader>("textshader.vert", "textshader.frag"));
 
-	loadPlayerConfig();
+	loadConfig();
 
 	m_sceneManager.add(ScenesEnum::MAIN, std::make_shared<MainMenu>(m_sceneManager, m_context));
 
@@ -45,9 +45,16 @@ Application::Application()
 	m_sceneManager.switchTo(ScenesEnum::MAIN);
 }
 
-void Application::loadPlayerConfig() const
+Application::~Application()
 {
-	const auto soundsFileDoc = new rapidxml::xml_document();
+	m_inputManager.saveKeybinds();
+}
+
+void Application::loadConfig()
+{
+	m_inputManager.loadKeybinds();
+
+	const auto soundsFileDoc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
 	std::ifstream soundsFile(FileConstants::SOUND_SETTINGS_PATH);
 	std::vector soundsFileBuffer((std::istreambuf_iterator(soundsFile)), std::istreambuf_iterator<char>());

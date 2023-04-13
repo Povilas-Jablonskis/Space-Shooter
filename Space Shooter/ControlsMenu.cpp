@@ -1,12 +1,11 @@
 #include "ControlsMenu.hpp"
-#include "InputManager.hpp"
-#include "KeyBinding.hpp"
-#include "FileConstants.hpp"
 
-#include "rapidxml/RapidXMLSTD.hpp"
-#include <fstream>
-#include <algorithm>
+#include "InputManager.hpp"
+
 #include <freeglut/freeglut.h>
+#include <magic_enum/magic_enum.hpp>
+
+#include "Colors.hpp"
 
 ControlsMenu::ControlsMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -15,56 +14,47 @@ ControlsMenu::ControlsMenu(SceneStateMachine& sceneStateMachine, SharedContext& 
 
 void ControlsMenu::onCreate()
 {
+	const auto bindableActionEntries = magic_enum::enum_entries<BindableAction>();
+
 	//Controls
 	auto index = 0.0f;
-	const auto keyBindingsFileDoc = new rapidxml::xml_document();
-	// Read the xml file into a vector
-	std::ifstream keyBindingsFile(FileConstants::KEYBINDINGS_SETTINGS_PATH);
-	std::vector keyBindingsFileBuffer((std::istreambuf_iterator(keyBindingsFile)), std::istreambuf_iterator<char>());
-	keyBindingsFileBuffer.push_back('\0');
-	// Parse the buffer using the xml file parsing library into doc 
-	keyBindingsFileDoc->parse<0>(keyBindingsFileBuffer.data());
-
-	for (auto keyBindingsNode = keyBindingsFileDoc->first_node("KeyBindings"); keyBindingsNode; keyBindingsNode =
-	     keyBindingsNode->
-	     next_sibling("KeyBindings"))
+	for (const auto& [value, key] : bindableActionEntries)
 	{
-		for (auto keyBindingNode = keyBindingsNode->first_node("KeyBinding"); keyBindingNode; keyBindingNode =
-		     keyBindingNode->
-		     next_sibling("KeyBinding"))
+		const auto keybind = m_context.inputManager->getKeybind(value);
+
+		const auto positionY = 60.0f - 5.0f * static_cast<float>(index);
+
+		auto keybindKey = std::make_shared<Text>(std::string(key) + " :",
+			Colors::DEFAULT_TEXT,
+			glm::vec2(20.0f, positionY),
+			*m_context.font);
+		keybindKey->disable();
+		m_texts.push_back(keybindKey);
+
+		auto keybindText = keybind ? m_context.inputManager->virtualKeyCodeToString(keybind) : "Press any key";
+
+		auto keybindValue = std::make_shared<Text>(keybindText,
+			Colors::DEFAULT_TEXT,
+			glm::vec2(35.0f, positionY),
+			*m_context.font);
+		keybindValue->onMouseReleaseFunc = [=, this]
 		{
-			std::string keyNode = keyBindingNode->first_attribute("key")->value();
-			auto valueNode = std::stoi(keyBindingNode->first_attribute("value")->value());
-
-			auto keyBindingKey = std::make_shared<Text>(keyNode + " :", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-			                                            glm::vec2(20.0f, 60.0f - 5.0f * index), *m_context.font);
-			keyBindingKey->disable();
-			m_texts.push_back(keyBindingKey);
-			auto keyBindingValue = std::make_shared<Text>(sVirtualKeyCodeToString(valueNode),
-			                                              glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
-			                                              glm::vec2(35.0f, 60.0f - 5.0f * index), *m_context.font);
-			auto keyBinding = std::make_shared<KeyBinding>(keyNode, valueNode, keyBindingValue);
-			keyBindingValue->onMouseReleaseFunc = [=, this]
+			if (m_currentlyEditedKeybind == nullptr)
 			{
-				if (m_context.inputManager->getCurrentlyEditedKeyBinding() == nullptr)
-				{
-					m_context.soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
+				m_context.soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
 
-					keyBinding->setCurrentlyEdited(true);
+				m_currentlyEditedKeybind = std::make_unique<BindableAction>(value);
 
-					keyBindingValue->disable();
-					keyBindingValue->onHoverEnterFuncDefaults();
-				}
-			};
-			m_texts.push_back(keyBindingValue);
-
-			m_context.inputManager->addKeyBinding(keyBinding);
-
-			index += 1.0f;
-		}
+				keybindValue->disable();
+				keybindValue->onHoverEnterFuncDefaults();
+			}
+		};
+		m_texts.push_back(keybindValue);
+		m_keybindsTexts.insert_or_assign(value, keybindValue);
+		index += 1.0f;
 	}
 
-	const auto backOption = std::make_shared<Text>("Back", glm::vec4(255.0f, 160.0f, 122.0f, 1.0f),
+	const auto backOption = std::make_shared<Text>("Back", Colors::DEFAULT_TEXT,
 	                                               glm::vec2(48.0f, 20.0f),
 	                                               *m_context.font);
 	backOption->onMouseReleaseFunc = [=, this]
@@ -74,10 +64,6 @@ void ControlsMenu::onCreate()
 		m_sceneStateMachine.switchTo(ScenesEnum::OPTIONS);
 	};
 	m_texts.push_back(backOption);
-
-	keyBindingsFile.close();
-	keyBindingsFileDoc->clear();
-	delete keyBindingsFileDoc;
 }
 
 void ControlsMenu::onActivate()
@@ -91,11 +77,9 @@ void ControlsMenu::onDestroy()
 
 void ControlsMenu::processInput()
 {
-	const auto currentlyEditedKeyBinding = m_context.inputManager->getCurrentlyEditedKeyBinding();
-
-	if (currentlyEditedKeyBinding == nullptr)
+	if (m_currentlyEditedKeybind == nullptr)
 	{
-		if (m_context.inputManager->isKeyActive(27))
+		if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 		{
 			m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 
@@ -104,40 +88,35 @@ void ControlsMenu::processInput()
 	}
 	else
 	{
-		if (m_context.inputManager->isKeyActive(27)) // escape
+		if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 		{
-			currentlyEditedKeyBinding->getText()->enable();
-			currentlyEditedKeyBinding->getText()->onHoverExitFuncDefaults();
+			const auto& currentlyEditedKeyBindingText = m_keybindsTexts.at(*m_currentlyEditedKeybind);
 
-			currentlyEditedKeyBinding->setCurrentlyEdited(false);
+			currentlyEditedKeyBindingText->enable();
+			currentlyEditedKeyBindingText->onHoverExitFuncDefaults();
+
+			m_currentlyEditedKeybind = nullptr;
 			m_context.inputManager->clearEverything();
 			return;
 		}
 
-		const auto& keys = m_context.inputManager->getKeys();
-		auto& keyBindings = m_context.inputManager->getKeyBindings();
+		const auto& keys = m_context.inputManager->getKeysStates();
 
 		for (const auto& [key, isActive] : keys)
 		{
-			if (m_context.inputManager->isKeyActive(key) && isActive)
+			if (isActive)
 			{
-				if (key >= 32 && key < 127 && !std::ranges::any_of(keyBindings,
-				                                                   [=](const std::shared_ptr<KeyBinding>&
-				                                                   pair)
-				                                                   {
-					                                                   return pair->getKeyBindingCharacter()
-						                                                   == key;
-				                                                   }))
+				if (key >= 32 && key < 127 && !m_context.inputManager->keybindingsContainKey(key))
 				{
-					auto& currentlyEditedKeyBindingText = currentlyEditedKeyBinding->getText();
+					const auto& currentlyEditedKeyBindingText = m_keybindsTexts.at(*m_currentlyEditedKeybind);
+
 					currentlyEditedKeyBindingText->enable();
 					currentlyEditedKeyBindingText->onHoverExitFuncDefaults();
-					currentlyEditedKeyBindingText->setText(sVirtualKeyCodeToString(key));
+					currentlyEditedKeyBindingText->setText(m_context.inputManager->virtualKeyCodeToString(key));
 
-					currentlyEditedKeyBinding->setKeyBindingCharacter(key);
-					currentlyEditedKeyBinding->setCurrentlyEdited(false);
+					m_context.inputManager->setKeybindCharacter(*m_currentlyEditedKeybind, key);
+					m_currentlyEditedKeybind = nullptr;
 
-					savePlayerConfig();
 					m_context.inputManager->clearEverything();
 					break;
 				}
@@ -159,72 +138,4 @@ void ControlsMenu::draw(float)
 	}
 
 	m_context.renderer->draw(m_texts);
-}
-
-void ControlsMenu::savePlayerConfig() const
-{
-	const auto& keyBindings = m_context.inputManager->getKeyBindings();
-	const auto keyBindingsFileDoc = new rapidxml::xml_document();
-
-	const auto keyBindingsNode = keyBindingsFileDoc->allocate_node(rapidxml::node_type::node_element, "KeyBindings");
-
-	for (const auto& keyBinding : keyBindings)
-	{
-		const auto keyBindingNode = keyBindingsFileDoc->allocate_node(rapidxml::node_type::node_element, "KeyBinding");
-		auto keyBindingNodeAttributeValue = keyBindingsFileDoc->allocate_string(keyBinding->getKeyBinding().c_str());
-		keyBindingNode->append_attribute(keyBindingsFileDoc->allocate_attribute("key", keyBindingNodeAttributeValue));
-		keyBindingNodeAttributeValue = keyBindingsFileDoc->allocate_string(
-			std::to_string(keyBinding->getKeyBindingCharacter()).c_str());
-		keyBindingNode->append_attribute(keyBindingsFileDoc->allocate_attribute("value", keyBindingNodeAttributeValue));
-		keyBindingsNode->append_node(keyBindingNode);
-	}
-
-	keyBindingsFileDoc->append_node(keyBindingsNode);
-
-	std::ofstream keyBindingsFileStream(FileConstants::KEYBINDINGS_SETTINGS_PATH);
-	keyBindingsFileStream << *keyBindingsFileDoc;
-	keyBindingsFileStream.close();
-	keyBindingsFileDoc->clear();
-	delete keyBindingsFileDoc;
-}
-
-
-std::string ControlsMenu::sVirtualKeyCodeToString(const int virtualKey)
-{
-	const LONG scanCode = MapVirtualKey(virtualKey, MAPVK_VK_TO_VSC);
-
-	TCHAR szName[128];
-	int result = 0;
-	switch (virtualKey)
-	{
-	case VK_LEFT:
-	case VK_UP:
-	case VK_RIGHT:
-	case VK_DOWN:
-	case VK_RCONTROL:
-	case VK_RMENU:
-	case VK_LWIN:
-	case VK_RWIN:
-	case VK_APPS:
-	case VK_PRIOR:
-	case VK_NEXT:
-	case VK_END:
-	case VK_HOME:
-	case VK_INSERT:
-	case VK_DELETE:
-	case VK_DIVIDE:
-	case VK_NUMLOCK:
-		KF_EXTENDED;
-		break;
-	default:
-		result = GetKeyNameText(scanCode << 16, szName, 128);
-		break;
-	}
-	if (result == 0)
-	{
-		const auto dwErrVal = static_cast<int>(GetLastError());
-		throw std::system_error(std::error_code(dwErrVal, std::system_category()),
-		                        "WinAPI Error occurred.");
-	}
-	return szName;
 }

@@ -16,22 +16,18 @@ C_PlayerLivesAndScore::C_PlayerLivesAndScore(Object* initialOwner) : Component(i
 
 void C_PlayerLivesAndScore::update(float)
 {
-	if (m_needToUpdateScoreAndHealth)
-		updatePlayerLivesAndScore();
-}
+	if (! m_needToUpdateScoreAndHealth) return;
 
-void C_PlayerLivesAndScore::updatePlayerLivesAndScore()
-{
 	owner->context->objects->removeObjectsWithTag(Tag::PLAYER_USER_INTERFACE);
 
 	auto scoreString = std::to_string(m_playerScore);
 
 	auto scoreTextureSize = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	for (auto scoreStringIterator = scoreString.begin(); scoreStringIterator != scoreString.end(); ++
+	for (auto scoreStringIterator = scoreString.begin(); scoreStringIterator < scoreString.end(); ++
 	     scoreStringIterator)
 	{
-		const auto distanceFromStartToIterator = std::distance(scoreString.begin(), scoreStringIterator);
+		const auto distanceFromStartToIterator = distance(scoreString.begin(), scoreStringIterator);
 		std::string scoreStringNumber(1, scoreString[distanceFromStartToIterator]);
 
 		auto scoreNumber = std::make_shared<Object>(nullptr);
@@ -96,10 +92,10 @@ void C_PlayerLivesAndScore::updatePlayerLivesAndScore()
 
 	auto livesString = std::to_string(m_playerLives);
 
-	for (auto livesStringIterator = livesString.begin(); livesStringIterator != livesString.end(); ++
+	for (auto livesStringIterator = livesString.begin(); livesStringIterator < livesString.end(); ++
 	     livesStringIterator)
 	{
-		const auto distanceFromStartToIterator = std::distance(livesString.begin(), livesStringIterator);
+		const auto distanceFromStartToIterator = distance(livesString.begin(), livesStringIterator);
 		std::string livesStringNumber(1, livesString[distanceFromStartToIterator]);
 
 		auto liveNumber = std::make_shared<Object>(nullptr);

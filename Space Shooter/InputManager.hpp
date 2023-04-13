@@ -3,10 +3,10 @@
 
 #include "glm/vec2.hpp"
 #include <memory>
-#include <string>
 #include <unordered_map>
 
-#include "KeyBinding.hpp"
+#include "BindableAction.hpp"
+#include "Text.hpp"
 
 class InputManager
 {
@@ -22,17 +22,13 @@ public:
 	[[nodiscard]] const glm::vec2& getLastMousePosition() const;
 	void setLastMousePosition(const glm::vec2&);
 	[[nodiscard]] bool isKeyActive(short) const;
-	[[nodiscard]] bool isKeyActive(const std::string&) const;
-	void setKeyState(short, bool);
-	std::unordered_map<short, bool>& getKeys();
-	std::vector<std::shared_ptr<KeyBinding>>& getKeyBindings();
-	void addKeyBinding(const std::shared_ptr<KeyBinding>&);
-	[[nodiscard]] std::shared_ptr<KeyBinding> getCurrentlyEditedKeyBinding() const;
+	void changeKeyState(short, bool);
+	std::unordered_map<short, bool>& getKeysStates();
 
-	void keyboardInput(char);
+	void keyboardInput(unsigned char);
 	void motionFunc(int, int);
 	void processMouseClick(int, int, int, int);
-	void keyboardInputUp(char, int, int);
+	void keyboardInputUp(unsigned char, int, int);
 	void specialKeyInput(int, int, int);
 	void specialKeyInputUp(int, int, int);
 
@@ -40,23 +36,20 @@ public:
 
 	void checkInteraction(const std::shared_ptr<Text>&) const;
 
-private:
-	template <typename Iterator, typename Predicate, typename Op>
-	static void sFor_each_if(Iterator first, Iterator last, Predicate p, Op op)
-	{
-		while (first != last)
-		{
-			if (p(*first)) op(*first);
-			++first;
-		}
-	}
+	[[nodiscard]] short getKeybind(BindableAction) const;
+	void setKeybindCharacter(BindableAction, short);
+	[[nodiscard]] bool keybindingsContainKey(const short) const;
+	void loadKeybinds();
+	void saveKeybinds() const;
+	[[nodiscard]] std::string virtualKeyCodeToString(int) const;
 
+private:
 	glm::vec2 m_lastMousePosition{};
 	bool m_lastLeftMouseClick{};
 	bool m_leftMouseClick{};
 	bool m_lastRightMouseClick{};
 	bool m_rightMouseClick{};
-	std::unordered_map<short, bool> m_keyStates;
-	std::vector<std::shared_ptr<KeyBinding>> m_keyBindings;
+	std::unordered_map<short, bool> m_keysStates;
+	std::unordered_map<BindableAction, short> m_keybinds;
 };
 #endif

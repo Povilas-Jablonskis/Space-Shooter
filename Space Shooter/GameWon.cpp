@@ -1,5 +1,8 @@
 #include "GameWon.hpp"
 #include "InputManager.hpp"
+#include "Colors.hpp"
+
+#include <Windows.h>
 
 GameWon::GameWon(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -10,7 +13,7 @@ void GameWon::onCreate()
 {
 	//Game over
 	const auto gameWonText = std::make_shared<Text>("You finished all waves! Congratulations!!!",
-	                                                glm::vec4(255.0f, 160.0f, 122.0f, 1.0f), glm::vec2(45.0f, 50.0f),
+	                                                Colors::DEFAULT_TEXT, glm::vec2(45.0f, 50.0f),
 	                                                *m_context.font);
 	gameWonText->disable();
 	m_texts.push_back(gameWonText);
@@ -27,7 +30,7 @@ void GameWon::onActivate()
 
 void GameWon::processInput()
 {
-	if (m_context.inputManager->isKeyActive(27))
+	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
 		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
 	}

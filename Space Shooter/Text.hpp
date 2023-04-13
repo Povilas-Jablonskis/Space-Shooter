@@ -39,7 +39,6 @@ public:
 	void setMousedClicked(bool);
 	[[nodiscard]] bool isClickedByMouse() const;
 	[[nodiscard]] const glm::vec2& getPositionPercents() const;
-	void changeColor(float, int);
 	void changeColor(const glm::vec4&);
 	[[nodiscard]] const glm::vec4& getColor() const;
 	[[nodiscard]] const glm::vec2& getPosition() const;

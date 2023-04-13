@@ -1,7 +1,15 @@
 #include "InputManager.hpp"
 
+#include <system_error>
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
+#include <magic_enum/magic_enum.hpp>
+#include <fstream>
+#include "rapidxml/rapidxml_ext.hpp"
+#include <sstream>
+#include <algorithm>
+
+#include "FileConstants.hpp"
 
 bool InputManager::isLeftMouseClicked() const
 {
@@ -57,7 +65,7 @@ bool InputManager::isKeyActive(const short key) const
 {
 	try
 	{
-		return m_keyStates.at(key);
+		return m_keysStates.at(key);
 	}
 	catch (const std::exception&)
 	{
@@ -65,50 +73,21 @@ bool InputManager::isKeyActive(const short key) const
 	}
 }
 
-bool InputManager::isKeyActive(const std::string& key) const
+void InputManager::changeKeyState(const short key, bool boolean)
 {
-	const auto foundKb = std::ranges::find_if(m_keyBindings, [=](const std::shared_ptr<KeyBinding>& kb)
-	{
-		return kb->getKeyBinding() == key;
-	});
-
-	return foundKb != m_keyBindings.end() ? isKeyActive((*foundKb)->getKeyBindingCharacter()) : false;
+	m_keysStates.insert_or_assign(key, boolean);
 }
 
-void InputManager::setKeyState(const short key, bool boolean)
+std::unordered_map<short, bool>& InputManager::getKeysStates()
 {
-	m_keyStates.insert_or_assign(key, boolean);
-}
-
-std::unordered_map<short, bool>& InputManager::getKeys()
-{
-	return m_keyStates;
-}
-
-std::vector<std::shared_ptr<KeyBinding>>& InputManager::getKeyBindings()
-{
-	return m_keyBindings;
-}
-
-void InputManager::addKeyBinding(const std::shared_ptr<KeyBinding>& keyBinding)
-{
-	m_keyBindings.push_back(keyBinding);
-}
-
-std::shared_ptr<KeyBinding> InputManager::getCurrentlyEditedKeyBinding() const
-{
-	const auto foundKb = std::ranges::find_if(m_keyBindings, [=](const std::shared_ptr<KeyBinding>& kb)
-	{
-		return kb->isCurrentlyEdited();
-	});
-	return foundKb != m_keyBindings.end() ? *foundKb : nullptr;
+	return m_keysStates;
 }
 
 void InputManager::motionFunc(const int x, const int y)
 {
 	auto lastMousePosition = glm::vec2(x, y);
 	lastMousePosition.y -= static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
-	lastMousePosition.y = std::abs(lastMousePosition.y);
+	lastMousePosition.y = abs(lastMousePosition.y);
 	setLastMousePosition(lastMousePosition);
 }
 
@@ -116,37 +95,37 @@ void InputManager::processMouseClick(const int button, const int state, const in
 {
 	auto lastMousePosition = glm::vec2(x, y);
 	lastMousePosition.y -= static_cast<float>(glutGet(GLUT_WINDOW_HEIGHT));
-	lastMousePosition.y = std::abs(lastMousePosition.y);
+	lastMousePosition.y = abs(lastMousePosition.y);
 
 	if (button == GLUT_LEFT_BUTTON)
 	{
 		setLastLeftMouseClicked(isLeftMouseClicked());
-		setLeftMouseClicked(state == GLUT_DOWN ? true : false);
+		setLeftMouseClicked(state == GLUT_DOWN);
 		setLastMousePosition(lastMousePosition);
 	}
 	else if (button == GLUT_RIGHT_BUTTON)
 	{
 		setLastRightMouseClicked(isRightMouseClicked());
-		setRightMouseClicked(state == GLUT_DOWN ? true : false);
+		setRightMouseClicked(state == GLUT_DOWN);
 		setLastMousePosition(lastMousePosition);
 	}
 }
 
-void InputManager::keyboardInput(const char c)
+void InputManager::keyboardInput(const unsigned char c)
 {
-	const auto key = VkKeyScan(c);
-	if (!isKeyActive(key))
+	const auto key = VkKeyScan(static_cast<char>(c));
+	if (! isKeyActive(key))
 	{
-		setKeyState(key, true);
+		changeKeyState(key, true);
 	}
 }
 
-void InputManager::keyboardInputUp(const char c, int, int)
+void InputManager::keyboardInputUp(const unsigned char c, int, int)
 {
-	const auto key = VkKeyScan(c);
+	const auto key = VkKeyScan(static_cast<char>(c));
 	if (isKeyActive(key))
 	{
-		setKeyState(key, false);
+		changeKeyState(key, false);
 	}
 }
 
@@ -158,7 +137,7 @@ void InputManager::specialKeyInput(const int key, int, int)
 		{
 			if (isKeyActive(VK_UP))
 			{
-				setKeyState(VK_UP, false);
+				changeKeyState(VK_UP, false);
 			}
 			break;
 		}
@@ -166,7 +145,7 @@ void InputManager::specialKeyInput(const int key, int, int)
 		{
 			if (isKeyActive(VK_DOWN))
 			{
-				setKeyState(VK_DOWN, false);
+				changeKeyState(VK_DOWN, false);
 			}
 			break;
 		}
@@ -174,7 +153,7 @@ void InputManager::specialKeyInput(const int key, int, int)
 		{
 			if (isKeyActive(VK_LEFT))
 			{
-				setKeyState(VK_LEFT, false);
+				changeKeyState(VK_LEFT, false);
 			}
 			break;
 		}
@@ -182,7 +161,7 @@ void InputManager::specialKeyInput(const int key, int, int)
 		{
 			if (isKeyActive(VK_RIGHT))
 			{
-				setKeyState(VK_RIGHT, false);
+				changeKeyState(VK_RIGHT, false);
 			}
 			break;
 		}
@@ -196,33 +175,33 @@ void InputManager::specialKeyInputUp(const int key, int, int)
 	{
 	case GLUT_KEY_UP:
 		{
-			if (!isKeyActive(VK_UP))
+			if (! isKeyActive(VK_UP))
 			{
-				setKeyState(VK_UP, true);
+				changeKeyState(VK_UP, true);
 			}
 			break;
 		}
 	case GLUT_KEY_DOWN:
 		{
-			if (!isKeyActive(VK_DOWN))
+			if (! isKeyActive(VK_DOWN))
 			{
-				setKeyState(VK_DOWN, true);
+				changeKeyState(VK_DOWN, true);
 			}
 			break;
 		}
 	case GLUT_KEY_LEFT:
 		{
-			if (!isKeyActive(VK_LEFT))
+			if (! isKeyActive(VK_LEFT))
 			{
-				setKeyState(VK_LEFT, true);
+				changeKeyState(VK_LEFT, true);
 			}
 			break;
 		}
 	case GLUT_KEY_RIGHT:
 		{
-			if (!isKeyActive(VK_RIGHT))
+			if (! isKeyActive(VK_RIGHT))
 			{
-				setKeyState(VK_RIGHT, true);
+				changeKeyState(VK_RIGHT, true);
 			}
 			break;
 		}
@@ -237,12 +216,12 @@ void InputManager::clearEverything()
 	m_leftMouseClick = false;
 	m_lastRightMouseClick = false;
 	m_rightMouseClick = false;
-	m_keyStates.clear();
+	m_keysStates.clear();
 }
 
 void InputManager::checkInteraction(const std::shared_ptr<Text>& text) const
 {
-	if (!text->isActive())
+	if (! text->isActive())
 	{
 		return;
 	}
@@ -251,9 +230,9 @@ void InputManager::checkInteraction(const std::shared_ptr<Text>& text) const
 		text->getBoundingBox().y && getLastMousePosition().y <= text->getBoundingBox().z &&
 		getLastMousePosition().y >= text->getBoundingBox().a)
 	{
-		if (!text->isClickedByMouse())
+		if (! text->isClickedByMouse())
 		{
-			if (!isLastLeftMouseStateClicked() && isLeftMouseClicked())
+			if (! isLastLeftMouseStateClicked() && isLeftMouseClicked())
 			{
 				text->onMouseClickFunc();
 				text->setMousedClicked(true);
@@ -261,14 +240,14 @@ void InputManager::checkInteraction(const std::shared_ptr<Text>& text) const
 		}
 		else
 		{
-			if (isLastLeftMouseStateClicked() && !isLeftMouseClicked())
+			if (isLastLeftMouseStateClicked() && ! isLeftMouseClicked())
 			{
 				text->onMouseReleaseFunc();
 				text->setMousedClicked(false);
 			}
 		}
 
-		if (!text->isHoveredByMouse())
+		if (! text->isHoveredByMouse())
 		{
 			text->onHoverEnterFuncDefaults();
 			text->onHoverEnterFunc();
@@ -284,4 +263,137 @@ void InputManager::checkInteraction(const std::shared_ptr<Text>& text) const
 			text->setMousedHovered(false);
 		}
 	}
+}
+
+short InputManager::getKeybind(const BindableAction bindableAction) const
+{
+	try
+	{
+		return m_keybinds.at(bindableAction);
+	}
+	catch (const std::exception&)
+	{
+		return 0;
+	}
+}
+
+void InputManager::setKeybindCharacter(BindableAction key, short value)
+{
+	m_keybinds[key] = value;
+}
+
+bool InputManager::keybindingsContainKey(const short keyBind) const
+{
+	return std::any_of(m_keybinds.begin(), m_keybinds.end(), [=](auto& pair)
+		{
+			return pair.second == keyBind;
+		});
+}
+
+void InputManager::loadKeybinds()
+{
+	const auto keybindsFileDoc = new rapidxml::xml_document<>();
+	// Read the xml file into a vector
+	std::ifstream keybindsFile(FileConstants::KEYBINDS_SETTINGS_PATH);
+	std::vector keybindsFileBuffer((std::istreambuf_iterator(keybindsFile)), std::istreambuf_iterator<char>());
+	keybindsFileBuffer.push_back('\0');
+	// Parse the buffer using the xml file parsing library into doc 
+	keybindsFileDoc->parse<0>(keybindsFileBuffer.data());
+
+	for (auto keybindsNode = keybindsFileDoc->first_node("Keybinds"); keybindsNode; keybindsNode =
+	     keybindsNode->
+	     next_sibling("Keybinds"))
+	{
+		for (auto keybindNode = keybindsNode->first_node("Keybind"); keybindNode; keybindNode =
+		     keybindNode->
+		     next_sibling("Keybind"))
+		{
+			const auto keyNode = magic_enum::enum_cast<BindableAction>(keybindNode->first_attribute("key")->value());
+
+			if (!keyNode.has_value()) continue;
+
+			short valueNode;
+
+			std::stringstream ss(keybindNode->first_attribute("value")->value());
+			ss >> valueNode;
+
+			m_keybinds[keyNode.value()] = valueNode;
+		}
+	}
+
+	keybindsFile.close();
+	keybindsFileDoc->clear();
+	delete keybindsFileDoc;
+}
+
+void InputManager::saveKeybinds() const
+{
+	const auto keybindsFileDoc = new rapidxml::xml_document<>();
+
+	const auto keybindsNode = keybindsFileDoc->allocate_node(rapidxml::node_type::node_element, "Keybinds");
+
+	for (const auto& keybind : m_keybinds)
+	{
+		const auto& [key, value] = keybind;
+
+		const auto keybindNode = keybindsFileDoc->allocate_node(rapidxml::node_type::node_element, "Keybind");
+
+		const auto bindableActionValue = std::string(magic_enum::enum_name(key));
+		const auto keybindNodeAttributeKey = keybindsFileDoc->allocate_string(bindableActionValue.c_str());
+		keybindNode->append_attribute(keybindsFileDoc->allocate_attribute("key", keybindNodeAttributeKey));
+
+		const auto keybindNodeAttributeValue = keybindsFileDoc->allocate_string(
+			std::to_string(value).c_str());
+		keybindNode->append_attribute(keybindsFileDoc->allocate_attribute("value", keybindNodeAttributeValue));
+
+		keybindsNode->append_node(keybindNode);
+	}
+
+	keybindsFileDoc->append_node(keybindsNode);
+
+	std::ofstream keybindsFileStream(FileConstants::KEYBINDS_SETTINGS_PATH);
+	keybindsFileStream << *keybindsFileDoc;
+	keybindsFileStream.close();
+	keybindsFileDoc->clear();
+	delete keybindsFileDoc;
+}
+
+std::string InputManager::virtualKeyCodeToString(const int virtualKey) const
+{
+	const LONG scanCode = MapVirtualKey(virtualKey, MAPVK_VK_TO_VSC);
+
+	TCHAR szName[128];
+	int result = 0;
+	switch (virtualKey)
+	{
+	case VK_LEFT:
+	case VK_UP:
+	case VK_RIGHT:
+	case VK_DOWN:
+	case VK_RCONTROL:
+	case VK_RMENU:
+	case VK_LWIN:
+	case VK_RWIN:
+	case VK_APPS:
+	case VK_PRIOR:
+	case VK_NEXT:
+	case VK_END:
+	case VK_HOME:
+	case VK_INSERT:
+	case VK_DELETE:
+	case VK_DIVIDE:
+	case VK_NUMLOCK:
+		KF_EXTENDED;
+		break;
+	default:
+		result = GetKeyNameText(scanCode << 16, szName, 128);
+		break;
+	}
+	if (result == 0)
+	{
+		const auto dwErrVal = static_cast<int>(GetLastError());
+		throw std::system_error(std::error_code(dwErrVal, std::system_category()),
+			"WinAPI Error occurred.");
+	}
+	return szName;
 }

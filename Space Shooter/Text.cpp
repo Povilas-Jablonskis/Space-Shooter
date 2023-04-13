@@ -5,6 +5,8 @@
 #include <iostream>
 #include <freeglut/freeglut.h>
 
+#include "Colors.hpp"
+
 Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPercents, Font& font) :
 	m_font(font), m_text(std::move(text)), m_positionPercents(positionPercents), m_color(color)
 {
@@ -27,7 +29,7 @@ Text::Text(std::string text, const glm::vec4& color, const glm::vec2& positionPe
 
 void Text::update()
 {
-	if (!doesNeedUpdate()) return;
+	if (! doesNeedUpdate()) return;
 
 	m_cachedCharacters.clear();
 	setNeedUpdate(false);
@@ -51,9 +53,7 @@ void Text::update()
 
 		const auto w = size.x;
 		const auto h = size.y;
-		// Update VBO for each character
 
-		std::vector<CachedCharacter> textVector;
 		std::vector<GLfloat> vertices;
 		vertices.push_back(positionX);
 		vertices.push_back(positionY + h);
@@ -114,12 +114,12 @@ void Text::updatePosition()
 
 void Text::onHoverEnterFuncDefaults()
 {
-	changeColor(glm::vec4(0.0f, 0.0f, 0.0f, getColor().a));
+	changeColor(Colors::BLACK);
 }
 
 void Text::onHoverExitFuncDefaults()
 {
-	changeColor(glm::vec4(255.0f, 160.0f, 122.0f, getColor().a));
+	changeColor(Colors::DEFAULT_TEXT);
 }
 
 const std::vector<CachedCharacter>& Text::getCachedCharacters() const
@@ -203,11 +203,6 @@ bool Text::isClickedByMouse() const
 const glm::vec2& Text::getPositionPercents() const
 {
 	return m_positionPercents;
-}
-
-void Text::changeColor(const float color, const int index)
-{
-	m_color[index] = color;
 }
 
 void Text::changeColor(const glm::vec4& color)

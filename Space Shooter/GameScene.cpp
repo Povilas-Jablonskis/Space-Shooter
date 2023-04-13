@@ -8,8 +8,7 @@
 #include "InputManager.hpp"
 
 #include <fstream>
-
-#include "rapidxml/rapidxml_print.hpp"
+#include "rapidxml/rapidxml_ext.hpp"
 
 GameScene::GameScene(SceneStateMachine& sceneStateMachine, SharedContext& context, const int characterSelectionIndex)
 	: m_characterSelectionIndex(characterSelectionIndex), m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -20,7 +19,7 @@ GameScene::GameScene(SceneStateMachine& sceneStateMachine, SharedContext& contex
 void GameScene::loadLevel()
 {
 	int index = 0;
-	const auto levelsFileDoc = new rapidxml::xml_document();
+	const auto levelsFileDoc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
 	std::ifstream levelsFile(FileConstants::LEVELS_PATH);
 	std::vector levelsFileBuffer((std::istreambuf_iterator(levelsFile)), std::istreambuf_iterator<char>());
@@ -129,7 +128,7 @@ void GameScene::loadLevel()
 void GameScene::onCreate()
 {
 	{
-		auto levelsFileDoc = new rapidxml::xml_document();
+		auto levelsFileDoc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
 		std::ifstream levelsFile(FileConstants::LEVELS_PATH);
 		std::vector levelsFileStream((std::istreambuf_iterator(levelsFile)), std::istreambuf_iterator<char>());
@@ -147,7 +146,7 @@ void GameScene::onCreate()
 	}
 
 	{
-		auto playersFileDoc = new rapidxml::xml_document();
+		auto playersFileDoc = new rapidxml::xml_document<>();
 		int index = 0;
 		// Read the xml file into a vector
 		std::ifstream playersFile(FileConstants::PLAYERS_PATH);
@@ -219,7 +218,7 @@ void GameScene::onDestroy()
 
 void GameScene::processInput()
 {
-	if (m_context.inputManager->isKeyActive(27))
+	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
 		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
 

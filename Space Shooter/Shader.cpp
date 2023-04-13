@@ -8,10 +8,10 @@
 
 Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	loadShader(vertexPath, fragmentPath);
+	load(vertexPath, fragmentPath);
 }
 
-std::string Shader::sReadShaderFile(const std::string& path)
+std::string Shader::loadFromFile(const std::string& path)
 {
 	std::string content;
 	std::ifstream fs("assets/Shaders/" + path);
@@ -36,15 +36,15 @@ std::string Shader::sReadShaderFile(const std::string& path)
 	return content;
 }
 
-GLuint Shader::getShader() const
+GLuint Shader::get() const
 {
 	return m_program;
 }
 
-void Shader::loadShader(const std::string& vertexPath, const std::string& fragmentPath)
+void Shader::load(const std::string& vertexPath, const std::string& fragmentPath)
 {
-	const auto vertShaderStr = sReadShaderFile(vertexPath);
-	const auto fragShaderStr = sReadShaderFile(fragmentPath);
+	const auto vertShaderStr = loadFromFile(vertexPath);
+	const auto fragShaderStr = loadFromFile(fragmentPath);
 	const auto vertexShaderSource = vertShaderStr.c_str();
 	const auto fragmentShaderSource = fragShaderStr.c_str();
 	auto isCompiled = 0;
