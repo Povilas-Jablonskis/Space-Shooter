@@ -1,5 +1,5 @@
 #include "SoundsMenu.hpp"
-#include "FileConstants.hpp"
+#include "Configs.hpp"
 #include "InputManager.hpp"
 
 #include <Windows.h>
@@ -7,6 +7,7 @@
 
 #include "Colors.hpp"
 #include "rapidxml/rapidxml_ext.hpp"
+#include "Sounds.hpp"
 
 SoundsMenu::SoundsMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -26,7 +27,7 @@ void SoundsMenu::savePlayerConfig() const
 	soundSettingsNode->append_node(volumeNode);
 	soundFileDoc->append_node(soundSettingsNode);
 
-	std::ofstream soundFileStream(FileConstants::SOUND_SETTINGS_PATH);
+	std::ofstream soundFileStream(Configs::SOUND_SETTINGS_PATH);
 	soundFileStream << *soundFileDoc;
 	soundFileStream.close();
 	soundFileDoc->clear();
@@ -49,7 +50,7 @@ void SoundsMenu::onCreate()
 	                                                  *m_context.font);
 	arrowLeftText->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
 		const auto volume = m_context.soundEngine->getSoundVolume() - 0.01f;
 		if (volume >= 0.0f)
@@ -65,7 +66,7 @@ void SoundsMenu::onCreate()
 	                                                   *m_context.font);
 	arrowRightText->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_NEXT_OPTION, GL_FALSE);
 		const auto volume = m_context.soundEngine->getSoundVolume() + 0.01f;
 		if (volume <= 1.0f)
 		{
@@ -81,9 +82,9 @@ void SoundsMenu::onCreate()
 	                                               *m_context.font);
 	backOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::OPTIONS);
+		m_sceneStateMachine.switchTo(SceneName::OPTIONS);
 	};
 	m_texts.push_back(backOption);
 }
@@ -101,9 +102,9 @@ void SoundsMenu::processInput()
 {
 	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::OPTIONS);
+		m_sceneStateMachine.switchTo(SceneName::OPTIONS);
 	}
 }
 

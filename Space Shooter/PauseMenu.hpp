@@ -9,7 +9,7 @@
 class PauseMenu final : public Scene
 {
 public:
-	PauseMenu(SceneStateMachine&, SharedContext&);
+	PauseMenu(SceneStateMachine& sceneStateMachine, SharedContext& context);
 
 	void onCreate() override;
 	void onDestroy() override;
@@ -18,7 +18,7 @@ public:
 
 	void processInput() override;
 
-	void draw(float) override;
+	void draw(float dt) override;
 
 private:
 	std::vector<std::shared_ptr<Text>> m_texts;

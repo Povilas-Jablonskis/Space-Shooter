@@ -8,6 +8,7 @@
 #include <freeglut/freeglut.h>
 
 #include "Colors.hpp"
+#include "Sounds.hpp"
 
 PickYourCharacterMenu::PickYourCharacterMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -18,7 +19,7 @@ void PickYourCharacterMenu::loadPlayerModels()
 {
 	const auto playersFileDoc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
-	std::ifstream playersFile(FileConstants::PLAYERS_PATH);
+	std::ifstream playersFile(Configs::PLAYERS_PATH);
 	std::vector playersFileBuffer((std::istreambuf_iterator(playersFile)), std::istreambuf_iterator<char>());
 	playersFileBuffer.push_back('\0');
 	// Parse the buffer using the xml file parsing library into doc 
@@ -64,7 +65,7 @@ void PickYourCharacterMenu::onCreate()
 	                                              *m_context.font);
 	leftArrow->onMouseReleaseFunc = [=, this, &selectedShipComponentSprite]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
 		m_characterSelectionIndex -= 1;
 
@@ -81,13 +82,13 @@ void PickYourCharacterMenu::onCreate()
 	                                               *m_context.font);
 	rightArrow->onMouseReleaseFunc = [=, this, &selectedShipComponentSprite]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_NEXT_OPTION, GL_FALSE);
 
 		m_characterSelectionIndex += 1;
 
 		if (m_characterSelectionIndex > static_cast<int>(m_playerModels.size()) - 1)
 		{
-			m_characterSelectionIndex = static_cast<int>(m_playerModels.size()) - 1;
+			m_characterSelectionIndex = 0;
 		}
 
 		selectedShipComponentSprite.setTextureRect(m_playerModels[m_characterSelectionIndex]);
@@ -99,9 +100,9 @@ void PickYourCharacterMenu::onCreate()
 	                                               *m_context.font);
 	backOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(SceneName::MAIN);
 	};
 	m_texts.push_back(backOption);
 	const auto startOption = std::make_shared<Text>("Start", Colors::DEFAULT_TEXT,
@@ -109,14 +110,14 @@ void PickYourCharacterMenu::onCreate()
 	                                                *m_context.font);
 	startOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_START_GAME_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.remove(ScenesEnum::GAME_LIVE);
+		m_sceneStateMachine.remove(SceneName::GAME_LIVE);
 		m_sceneStateMachine.add(
-			ScenesEnum::GAME_LIVE,
+			SceneName::GAME_LIVE,
 			std::make_shared<GameScene>(m_sceneStateMachine, m_context, m_characterSelectionIndex));
 
-		m_sceneStateMachine.switchTo(ScenesEnum::GAME_LIVE);
+		m_sceneStateMachine.switchTo(SceneName::GAME_LIVE);
 	};
 	m_texts.push_back(startOption);
 }
@@ -134,9 +135,9 @@ void PickYourCharacterMenu::processInput()
 {
 	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(SceneName::MAIN);
 	}
 }
 

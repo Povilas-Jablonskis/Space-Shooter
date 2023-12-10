@@ -11,13 +11,13 @@
 class ObjectCollection
 {
 public:
-	void add(const std::shared_ptr<Object>&);
-	void add(std::vector<std::shared_ptr<Object>>&);
+	void add(const std::shared_ptr<Object>& object);
+	void add(std::vector<std::shared_ptr<Object>>& otherObjects);
 
-	void update(float);
-	void draw(const Renderer&) const;
+	void update(const float deltaTime);
+	void draw(const Renderer& renderer) const;
 
-	void removeObjectsWithTag(Tag);
+	void removeObjectsWithTag(const Tag tag);
 
 	void processNewObjects();
 	void processRemovals();

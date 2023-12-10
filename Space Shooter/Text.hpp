@@ -14,7 +14,7 @@ using CachedCharacter = std::pair<GLuint, std::vector<GLfloat>>;
 class Text
 {
 public:
-	Text(std::string, const glm::vec4&, const glm::vec2&, Font&);
+	Text(std::string text, const glm::vec4& color, const glm::vec2& positionPercents, Font& font);
 	void update();
 	void updatePosition();
 	void onHoverEnterFuncDefaults();
@@ -27,32 +27,32 @@ public:
 	[[nodiscard]] const std::string& getText() const;
 	[[nodiscard]] const glm::vec4& getBoundingBox() const;
 	[[nodiscard]] bool doesNeedUpdate() const;
-	void setNeedUpdate(bool);
-	void setText(const std::string&);
-	void setPosition(const glm::vec2&);
-	void setPosition(int, float);
+	void setNeedUpdate(bool needUpdate);
+	void setText(const std::string& text);
+	void setPosition(const glm::vec2& position);
+	void setPosition(const int index, const float position);
 	void disable();
 	void enable();
 	[[nodiscard]] bool isActive() const;
-	void setMousedHovered(bool);
+	void setMousedHovered(const bool gotMousedHovered);
 	[[nodiscard]] bool isHoveredByMouse() const;
-	void setMousedClicked(bool);
+	void setMousedClicked(const bool gotMousedClicked);
 	[[nodiscard]] bool isClickedByMouse() const;
 	[[nodiscard]] const glm::vec2& getPositionPercents() const;
-	void changeColor(const glm::vec4&);
+	void changeColor(const glm::vec4& color);
 	[[nodiscard]] const glm::vec4& getColor() const;
 	[[nodiscard]] const glm::vec2& getPosition() const;
 	[[nodiscard]] float getRotationAngle() const;
-	void setScale(float);
-	void setRotationAngle(float);
+	void setScale(const float scale);
+	void setRotationAngle(const float rotation);
 	[[nodiscard]] float getWidth() const;
 	[[nodiscard]] float getHeight() const;
-	void setWidth(float);
-	void setHeight(float);
+	void setWidth(const float width);
+	void setHeight(const float height);
 	[[nodiscard]] float getOriginalWidth() const;
 	[[nodiscard]] float getOriginalHeight() const;
-	void setOriginalWidth(float);
-	void setOriginalHeight(float);
+	void setOriginalWidth(const float width);
+	void setOriginalHeight(const float height);
 
 private:
 	bool m_active{true};

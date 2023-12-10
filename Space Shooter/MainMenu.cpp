@@ -5,6 +5,7 @@
 #include <freeglut/freeglut.h>
 
 #include "Colors.hpp"
+#include "Sounds.hpp"
 
 MainMenu::MainMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -15,11 +16,11 @@ void MainMenu::onCreate()
 {
 	const auto startGameOption = std::make_shared<Text>("Start Game", Colors::DEFAULT_TEXT,
 	                                                    glm::vec2(48.0f, 60.0f), *m_context.font);
-	startGameOption->onMouseReleaseFunc = [=, this]
+	startGameOption->onMouseClickFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_NEXT_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::PICK_YOUR_CHARACTER);
+		m_sceneStateMachine.switchTo(SceneName::PICK_YOUR_CHARACTER);
 	};
 	m_texts.push_back(startGameOption);
 
@@ -27,9 +28,9 @@ void MainMenu::onCreate()
 	                                                  glm::vec2(48.0f, 55.0f), *m_context.font);
 	optionsOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_NEXT_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::OPTIONS);
+		m_sceneStateMachine.switchTo(SceneName::OPTIONS);
 	};
 	m_texts.push_back(optionsOption);
 
@@ -37,7 +38,7 @@ void MainMenu::onCreate()
 	                                                  glm::vec2(48.0f, 50.0f), *m_context.font);
 	endGameOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/1.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_NEXT_OPTION, GL_FALSE);
 
 #if _DEBUG
 		std::cout << "exiting\n";

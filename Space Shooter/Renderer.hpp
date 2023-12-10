@@ -14,12 +14,12 @@ class Renderer
 {
 public:
 	Renderer();
-	void addShader(const std::string&, const std::shared_ptr<Shader>&);
+	void addShader(const std::string& name, const std::shared_ptr<Shader>& shader);
 
-	void draw(const std::vector<std::shared_ptr<Text>>&) const;
-	void draw(const Text&) const;
+	void draw(const std::vector<std::shared_ptr<Text>>& texts) const;
+	void draw(const Text& text) const;
 
-	void draw(const Sprite&) const;
+	void draw(const Sprite& sprite) const;
 
 private:
 	GLuint m_vbo{}, m_vao{}, m_ebo{};

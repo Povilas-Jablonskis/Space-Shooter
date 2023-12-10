@@ -13,15 +13,15 @@ public:
 	C_Collidable& operator=(C_Collidable&&) = default;
 	virtual ~C_Collidable() = default;
 
-	virtual void onCollisionEnter(C_BoxCollider&)
+	virtual void onCollisionEnter(C_BoxCollider& other)
 	{
 	}
 
-	virtual void onCollisionStay(C_BoxCollider&)
+	virtual void onCollisionStay(C_BoxCollider& other)
 	{
 	}
 
-	virtual void onCollisionExit(C_BoxCollider&)
+	virtual void onCollisionExit(C_BoxCollider& other)
 	{
 	}
 };

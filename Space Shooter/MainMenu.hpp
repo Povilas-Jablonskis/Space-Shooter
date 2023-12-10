@@ -9,14 +9,14 @@
 class MainMenu final : public Scene
 {
 public:
-	MainMenu(SceneStateMachine&, SharedContext&);
+	MainMenu(SceneStateMachine& sceneStateMachine, SharedContext& context);
 
 	void onCreate() override;
 	void onDestroy() override;
 
 	void onActivate() override;
 
-	void draw(float) override;
+	void draw(float dt) override;
 
 private:
 	std::vector<std::shared_ptr<Text>> m_texts;

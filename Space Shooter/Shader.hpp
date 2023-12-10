@@ -7,12 +7,12 @@
 class Shader
 {
 public:
-	Shader(const std::string&, const std::string&);
-	void load(const std::string&, const std::string&);
+	Shader(const std::string& vertexPath, const std::string& fragmentPath);
+	void load(const std::string& vertexPath, const std::string& fragmentPath);
 	[[nodiscard]] GLuint get() const;
 
 private:
-	[[nodiscard]] std::string loadFromFile(const std::string&);
+	[[nodiscard]] std::string loadFromFile(const std::string& path);
 	GLuint m_program{};
 };
 #endif

@@ -9,6 +9,7 @@
 
 #include <fstream>
 #include "rapidxml/rapidxml_ext.hpp"
+#include "Sounds.hpp"
 
 GameScene::GameScene(SceneStateMachine& sceneStateMachine, SharedContext& context, const int characterSelectionIndex)
 	: m_characterSelectionIndex(characterSelectionIndex), m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -21,7 +22,7 @@ void GameScene::loadLevel()
 	int index = 0;
 	const auto levelsFileDoc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
-	std::ifstream levelsFile(FileConstants::LEVELS_PATH);
+	std::ifstream levelsFile(Configs::LEVELS_PATH);
 	std::vector levelsFileBuffer((std::istreambuf_iterator(levelsFile)), std::istreambuf_iterator<char>());
 	levelsFileBuffer.push_back('\0');
 	// Parse the buffer using the xml file parsing library into doc 
@@ -64,8 +65,8 @@ void GameScene::loadLevel()
 				enemyComponentSprite.setTextureRect(enemyNode->first_attribute("spriteName")->value());
 				enemyComponentSprite.setScale(0.5f, 0.5f);
 
-				const auto enemyComponentSpriteRect = enemyComponentSprite.getTextureRect();
-				const auto enemyComponentSpriteScale = enemyComponentSprite.getScale();
+				const auto& enemyComponentSpriteRect = enemyComponentSprite.getTextureRect();
+				const auto& enemyComponentSpriteScale = enemyComponentSprite.getScale();
 
 				const auto collider = enemy->addComponent<C_BoxCollider>();
 				collider->setSize(enemyComponentSpriteRect.z * enemyComponentSpriteScale.x,
@@ -130,7 +131,7 @@ void GameScene::onCreate()
 	{
 		auto levelsFileDoc = new rapidxml::xml_document<>();
 		// Read the xml file into a vector
-		std::ifstream levelsFile(FileConstants::LEVELS_PATH);
+		std::ifstream levelsFile(Configs::LEVELS_PATH);
 		std::vector levelsFileStream((std::istreambuf_iterator(levelsFile)), std::istreambuf_iterator<char>());
 		levelsFileStream.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
@@ -149,7 +150,7 @@ void GameScene::onCreate()
 		auto playersFileDoc = new rapidxml::xml_document<>();
 		int index = 0;
 		// Read the xml file into a vector
-		std::ifstream playersFile(FileConstants::PLAYERS_PATH);
+		std::ifstream playersFile(Configs::PLAYERS_PATH);
 		std::vector playersFileStream((std::istreambuf_iterator(playersFile)), std::istreambuf_iterator<char>());
 		playersFileStream.push_back('\0');
 		// Parse the buffer using the xml file parsing library into doc 
@@ -220,9 +221,9 @@ void GameScene::processInput()
 {
 	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::PAUSED);
+		m_sceneStateMachine.switchTo(SceneName::PAUSED);
 	}
 }
 

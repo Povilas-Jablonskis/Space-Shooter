@@ -7,9 +7,9 @@
 class C_RemoveObjectOnCollisionEnter final : public Component, public C_Collidable
 {
 public:
-	explicit C_RemoveObjectOnCollisionEnter(Object*);
+	explicit C_RemoveObjectOnCollisionEnter(Object* initialOwner);
 
-	void onCollisionEnter(C_BoxCollider&) override;
+	void onCollisionEnter(C_BoxCollider& other) override;
 };
 
 #endif /* C_RemoveObjectOnCollisionEnter_hpp */

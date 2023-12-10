@@ -6,7 +6,7 @@
 #include "SharedContext.hpp"
 #include "ObjectCollection.hpp"
 #include "SpriteSheet.hpp"
-#include "FileConstants.hpp"
+#include "Configs.hpp"
 
 #include <glew/glew.h>
 #include <freeglut/freeglut.h>
@@ -14,7 +14,7 @@
 class GameScene final : public Scene
 {
 public:
-	GameScene(SceneStateMachine&, SharedContext&, int);
+	GameScene(SceneStateMachine& sceneStateMachine, SharedContext& context, const int characterSelectionIndex);
 
 	void onCreate() override;
 	void onDestroy() override;
@@ -22,7 +22,7 @@ public:
 	void onActivate() override;
 
 	void processInput() override;
-	void draw(float) override;
+	void draw(float dt) override;
 
 private:
 	void loadLevel();
@@ -33,7 +33,7 @@ private:
 	int m_currentLevel{};
 	int m_characterSelectionIndex{};
 
-	SpriteSheet m_spriteSheet{FileConstants::BACKGROUND_PATH};
+	SpriteSheet m_spriteSheet{Configs::BACKGROUND_PATH};
 	ObjectCollection m_objects;
 	SharedContext& m_context;
 	SceneStateMachine& m_sceneStateMachine;

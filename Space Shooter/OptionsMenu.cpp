@@ -4,6 +4,7 @@
 #include <Windows.h>
 
 #include "Colors.hpp"
+#include "Sounds.hpp"
 
 OptionsMenu::OptionsMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -17,18 +18,18 @@ void OptionsMenu::onCreate()
 	                                                   glm::vec2(48.0f, 60.0f), *m_context.font);
 	controlsOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_NEXT_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::CONTROLS);
+		m_sceneStateMachine.switchTo(SceneName::CONTROLS);
 	};
 	m_texts.push_back(controlsOption);
 	const auto soundsOption = std::make_shared<Text>("Sounds", Colors::DEFAULT_TEXT,
 	                                                 glm::vec2(48.0f, 55.0f), *m_context.font);
 	soundsOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/2.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_NEXT_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::SOUNDS);
+		m_sceneStateMachine.switchTo(SceneName::SOUNDS);
 	};
 	m_texts.push_back(soundsOption);
 	const auto backOption = std::make_shared<Text>("Back", Colors::DEFAULT_TEXT,
@@ -36,9 +37,9 @@ void OptionsMenu::onCreate()
 	                                               *m_context.font);
 	backOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(SceneName::MAIN);
 	};
 	m_texts.push_back(backOption);
 }
@@ -56,9 +57,9 @@ void OptionsMenu::processInput()
 {
 	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(SceneName::MAIN);
 	}
 }
 

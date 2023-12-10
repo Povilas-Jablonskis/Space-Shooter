@@ -14,13 +14,13 @@ enum class Tag
 class C_Tag final : public Component
 {
 public:
-	explicit C_Tag(Object*);
+	explicit C_Tag(Object* initialOwner);
 
 	[[nodiscard]] Tag get() const;
 	void set(Tag);
 
-	[[nodiscard]] bool compare(const C_Tag&) const;
-	[[nodiscard]] bool compare(Tag) const;
+	[[nodiscard]] bool compare(const C_Tag& tag) const;
+	[[nodiscard]] bool compare(Tag tag) const;
 
 private:
 	Tag m_tag;

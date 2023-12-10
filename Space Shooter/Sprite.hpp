@@ -12,21 +12,21 @@
 class Sprite
 {
 public:
-	void changeColor(float, int);
-	void changeColor(const glm::vec4&);
+	void changeColor(const float color, const int index);
+	void changeColor(const glm::vec4& color);
 	[[nodiscard]] const glm::vec4& getColor() const;
-	void setSpriteSheet(SpriteSheet*);
+	void setSpriteSheet(SpriteSheet* spriteSheet);
 	[[nodiscard]] const SpriteSheet& getSpriteSheet() const;
 	[[nodiscard]] const glm::vec2& getScale() const;
-	void setScale(float, float);
-	void setRotationAngle(float);
+	void setScale(const float scaleX, const float scaleY);
+	void setRotationAngle(const float rotation);
 	[[nodiscard]] float getRotationAngle() const;
-	void setRotationAxis(const glm::vec3&);
-	void setRotationAxis(int, float);
+	void setRotationAxis(const glm::vec3& rotation);
+	void setRotationAxis(const int index, const float rotation);
 	[[nodiscard]] const glm::vec3& getRotationAxis() const;
-	void setTransform(const glm::mat4&);
+	void setTransform(const glm::mat4& transform);
 	[[nodiscard]] const glm::mat4& getTransform() const;
-	void setTextureRect(const std::string&);
+	void setTextureRect(const std::string& name);
 	[[nodiscard]] const glm::vec4& getTextureRect() const;
 
 private:

@@ -171,10 +171,11 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     <ClInclude Include="C_KeyboardMovement.hpp" />
     <ClInclude Include="C_Sprite.hpp" />
     <ClInclude Include="C_Transform.hpp" />
+    <ClInclude Include="Sounds.hpp" />
     <ClInclude Include="Sprite.hpp" />
     <ClInclude Include="S_Drawable.hpp" />
     <ClInclude Include="EnumClassHash.hpp" />
-    <ClInclude Include="FileConstants.hpp" />
+    <ClInclude Include="Configs.hpp" />
     <ClInclude Include="GameOver.hpp" />
     <ClInclude Include="GameScene.hpp" />
     <ClInclude Include="GameWon.hpp" />
@@ -188,7 +189,7 @@ XCOPY "$(SolutionDir)Space Shooter\dlls\" "$(TargetDir)\"  /s /i /y</Command>
     <ClInclude Include="PickYourCharacterMenu.hpp" />
     <ClInclude Include="Renderer.hpp" />
     <ClInclude Include="Scene.hpp" />
-    <ClInclude Include="ScenesEnum.hpp" />
+    <ClInclude Include="SceneName.hpp" />
     <ClInclude Include="SceneStateMachine.hpp" />
     <ClInclude Include="Shader.hpp" />
     <ClInclude Include="SharedContext.hpp" />

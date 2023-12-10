@@ -9,7 +9,7 @@
 class PickYourCharacterMenu final : public Scene
 {
 public:
-	PickYourCharacterMenu(SceneStateMachine&, SharedContext&);
+	PickYourCharacterMenu(SceneStateMachine& sceneStateMachine, SharedContext& context);
 
 	void loadPlayerModels();
 
@@ -20,7 +20,7 @@ public:
 
 	void processInput() override;
 
-	void draw(float) override;
+	void draw(float dt) override;
 
 private:
 	std::vector<std::shared_ptr<Text>> m_texts;

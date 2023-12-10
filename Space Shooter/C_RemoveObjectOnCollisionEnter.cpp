@@ -5,7 +5,7 @@ C_RemoveObjectOnCollisionEnter::C_RemoveObjectOnCollisionEnter(Object* initialOw
 {
 }
 
-void C_RemoveObjectOnCollisionEnter::onCollisionEnter(C_BoxCollider&)
+void C_RemoveObjectOnCollisionEnter::onCollisionEnter(C_BoxCollider& other)
 {
 	owner->queueForRemoval();
 }

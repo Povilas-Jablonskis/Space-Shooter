@@ -9,7 +9,7 @@
 #include <sstream>
 #include <algorithm>
 
-#include "FileConstants.hpp"
+#include "Configs.hpp"
 
 bool InputManager::isLeftMouseClicked() const
 {
@@ -226,37 +226,49 @@ void InputManager::checkInteraction(const std::shared_ptr<Text>& text) const
 		return;
 	}
 
-	if (getLastMousePosition().x >= text->getBoundingBox().x && getLastMousePosition().x <=
+	auto mouseIntersectsText = getLastMousePosition().x >= text->getBoundingBox().x && getLastMousePosition().x <=
 		text->getBoundingBox().y && getLastMousePosition().y <= text->getBoundingBox().z &&
-		getLastMousePosition().y >= text->getBoundingBox().a)
+		getLastMousePosition().y >= text->getBoundingBox().a;
+
+	if (!isLastLeftMouseStateClicked() && isLeftMouseClicked())
 	{
-		if (! text->isClickedByMouse())
+		if (mouseIntersectsText)
 		{
-			if (! isLastLeftMouseStateClicked() && isLeftMouseClicked())
-			{
+			if (!text->isClickedByMouse()) {
 				text->onMouseClickFunc();
 				text->setMousedClicked(true);
 			}
 		}
-		else
+		else {
+			text->setMousedClicked(false);
+		}
+	} 
+	else
+	{
+		if (mouseIntersectsText)
 		{
-			if (isLastLeftMouseStateClicked() && ! isLeftMouseClicked())
-			{
+			if (text->isClickedByMouse()) {
 				text->onMouseReleaseFunc();
-				text->setMousedClicked(false);
 			}
 		}
+		text->setMousedClicked(false);
+	}
 
-		if (! text->isHoveredByMouse())
+	if (!text->isHoveredByMouse())
+	{
+		if (mouseIntersectsText)
 		{
 			text->onHoverEnterFuncDefaults();
 			text->onHoverEnterFunc();
 			text->setMousedHovered(true);
 		}
+		else {
+			text->setMousedHovered(false);
+		}
 	}
 	else
 	{
-		if (text->isHoveredByMouse())
+		if (!mouseIntersectsText)
 		{
 			text->onHoverExitFuncDefaults();
 			text->onHoverExitFunc();
@@ -294,7 +306,7 @@ void InputManager::loadKeybinds()
 {
 	const auto keybindsFileDoc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
-	std::ifstream keybindsFile(FileConstants::KEYBINDS_SETTINGS_PATH);
+	std::ifstream keybindsFile(Configs::KEYBINDS_SETTINGS_PATH);
 	std::vector keybindsFileBuffer((std::istreambuf_iterator(keybindsFile)), std::istreambuf_iterator<char>());
 	keybindsFileBuffer.push_back('\0');
 	// Parse the buffer using the xml file parsing library into doc 
@@ -351,7 +363,7 @@ void InputManager::saveKeybinds() const
 
 	keybindsFileDoc->append_node(keybindsNode);
 
-	std::ofstream keybindsFileStream(FileConstants::KEYBINDS_SETTINGS_PATH);
+	std::ofstream keybindsFileStream(Configs::KEYBINDS_SETTINGS_PATH);
 	keybindsFileStream << *keybindsFileDoc;
 	keybindsFileStream.close();
 	keybindsFileDoc->clear();

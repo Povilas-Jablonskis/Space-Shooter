@@ -8,16 +8,16 @@ class Bitmask
 public:
 	Bitmask();
 
-	explicit Bitmask(uint32_t);
+	explicit Bitmask(uint32_t bits);
 
-	void setMask(const Bitmask&);
+	void setMask(const Bitmask& bitMask);
 	[[nodiscard]] uint32_t getMask() const;
 
-	[[nodiscard]] bool getBit(int) const;
-	void setBit(int, bool);
+	[[nodiscard]] bool getBit(const int pos) const;
+	void setBit(const int pos, const bool on);
 
-	void setBit(int);
-	void clearBit(int);
+	void setBit(const int pos);
+	void clearBit(const int pos);
 
 	void clear();
 

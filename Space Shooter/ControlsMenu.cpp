@@ -6,6 +6,7 @@
 #include <magic_enum/magic_enum.hpp>
 
 #include "Colors.hpp"
+#include "Sounds.hpp"
 
 ControlsMenu::ControlsMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -41,8 +42,6 @@ void ControlsMenu::onCreate()
 		{
 			if (m_currentlyEditedKeybind == nullptr)
 			{
-				m_context.soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
-
 				m_currentlyEditedKeybind = std::make_unique<BindableAction>(value);
 
 				keybindValue->disable();
@@ -59,9 +58,9 @@ void ControlsMenu::onCreate()
 	                                               *m_context.font);
 	backOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::OPTIONS);
+		m_sceneStateMachine.switchTo(SceneName::OPTIONS);
 	};
 	m_texts.push_back(backOption);
 }
@@ -81,9 +80,9 @@ void ControlsMenu::processInput()
 	{
 		if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 		{
-			m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+			m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-			m_sceneStateMachine.switchTo(ScenesEnum::OPTIONS);
+			m_sceneStateMachine.switchTo(SceneName::OPTIONS);
 		}
 	}
 	else

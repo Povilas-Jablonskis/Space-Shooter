@@ -10,17 +10,17 @@ class C_Transform final : public Component
 public:
 	explicit C_Transform(Object*);
 
-	void setPosition(float, float);
-	void setPosition(const glm::vec2&);
+	void setPosition(float positionX, float positionY);
+	void setPosition(const glm::vec2& position);
 
-	void addPosition(float, float);
-	void addPosition(glm::vec2);
+	void addPosition(const float positionX, const float positionY);
+	void addPosition(const glm::vec2 position);
 
-	void setX(float);
-	void setY(float);
+	void setX(const float positionX);
+	void setY(const float positionY);
 
-	void addX(float);
-	void addY(float);
+	void addX(const float positionX);
+	void addY(const float positionY);
 
 	[[nodiscard]] glm::vec2 getPosition() const;
 

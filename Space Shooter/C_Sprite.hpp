@@ -16,16 +16,16 @@ enum class DrawLayer
 class C_Sprite final : public Component
 {
 public:
-	explicit C_Sprite(Object*);
+	explicit C_Sprite(Object* initialOwner);
 
-	void update(float) override;
-	void draw(const Renderer&) const;
+	void update(float dt) override;
+	void draw(const Renderer& renderer) const;
 	[[nodiscard]] bool continueToDraw() const;
 
-	void setSortOrder(int);
+	void setSortOrder(const int order);
 	[[nodiscard]] int getSortOrder() const;
 
-	void setDrawLayer(DrawLayer);
+	void setDrawLayer(const DrawLayer drawLayer);
 	[[nodiscard]] DrawLayer getDrawLayer() const;
 
 	Sprite& getSprite();

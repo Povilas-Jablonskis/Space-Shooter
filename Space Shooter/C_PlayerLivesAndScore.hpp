@@ -8,11 +8,11 @@
 class C_PlayerLivesAndScore final : public Component
 {
 public:
-	explicit C_PlayerLivesAndScore(Object*);
+	explicit C_PlayerLivesAndScore(Object* initialOwner);
 
-	void update(float) override;
+	void update(float dt) override;
 
-	void setLivesIcon(const std::string&);
+	void setLivesIcon(const std::string& icon);
 
 private:
 	bool m_needToUpdateScoreAndHealth{true};

@@ -10,13 +10,13 @@
 class C_KeyboardMovement final : public Component
 {
 public:
-	explicit C_KeyboardMovement(Object*);
+	explicit C_KeyboardMovement(Object* initialOwner);
 
 	void awake() override;
 
-	void setMovementSpeed(float);
+	void setMovementSpeed(float moveSpeed);
 
-	void update(float) override;
+	void update(float dt) override;
 
 private:
 	float m_moveSpeed{100.0f};

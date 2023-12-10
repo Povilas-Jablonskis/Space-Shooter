@@ -12,36 +12,36 @@ class InputManager
 {
 public:
 	[[nodiscard]] bool isLeftMouseClicked() const;
-	void setLeftMouseClicked(bool);
-	void setRightMouseClicked(bool);
+	void setLeftMouseClicked(const bool leftMouseClick);
+	void setRightMouseClicked(const bool rightMouseClick);
 	[[nodiscard]] bool isRightMouseClicked() const;
 	[[nodiscard]] bool isLastLeftMouseStateClicked() const;
-	void setLastLeftMouseClicked(bool);
+	void setLastLeftMouseClicked(const bool lastLeftMouseClick);
 	[[nodiscard]] bool isLastRightMouseStateClicked() const;
-	void setLastRightMouseClicked(bool);
+	void setLastRightMouseClicked(const bool lastRightMouseClick);
 	[[nodiscard]] const glm::vec2& getLastMousePosition() const;
-	void setLastMousePosition(const glm::vec2&);
-	[[nodiscard]] bool isKeyActive(short) const;
-	void changeKeyState(short, bool);
+	void setLastMousePosition(const glm::vec2& lastMousePosition);
+	[[nodiscard]] bool isKeyActive(const short key) const;
+	void changeKeyState(const short key, bool boolean);
 	std::unordered_map<short, bool>& getKeysStates();
 
-	void keyboardInput(unsigned char);
-	void motionFunc(int, int);
-	void processMouseClick(int, int, int, int);
-	void keyboardInputUp(unsigned char, int, int);
-	void specialKeyInput(int, int, int);
-	void specialKeyInputUp(int, int, int);
+	void keyboardInput(const unsigned char c);
+	void motionFunc(const int x, const int y);
+	void processMouseClick(const int button, const int state, const int x, const int y);
+	void keyboardInputUp(const unsigned char c, int, int);
+	void specialKeyInput(const int key, int, int);
+	void specialKeyInputUp(const int key, int, int);
 
 	void clearEverything();
 
-	void checkInteraction(const std::shared_ptr<Text>&) const;
+	void checkInteraction(const std::shared_ptr<Text>& text) const;
 
-	[[nodiscard]] short getKeybind(BindableAction) const;
-	void setKeybindCharacter(BindableAction, short);
-	[[nodiscard]] bool keybindingsContainKey(const short) const;
+	[[nodiscard]] short getKeybind(const BindableAction bindableAction) const;
+	void setKeybindCharacter(BindableAction key, short value);
+	[[nodiscard]] bool keybindingsContainKey(const short keyBind) const;
 	void loadKeybinds();
 	void saveKeybinds() const;
-	[[nodiscard]] std::string virtualKeyCodeToString(int) const;
+	[[nodiscard]] std::string virtualKeyCodeToString(const int virtualKey) const;
 
 private:
 	glm::vec2 m_lastMousePosition{};

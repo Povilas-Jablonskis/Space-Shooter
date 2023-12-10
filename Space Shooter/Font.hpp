@@ -19,8 +19,8 @@ struct Character
 class Font
 {
 public:
-	explicit Font(const std::string&);
-	[[nodiscard]] Character getCharacter(FT_ULong) const;
+	explicit Font(const std::string& path);
+	[[nodiscard]] Character getCharacter(const FT_ULong index) const;
 
 private:
 	std::unordered_map<FT_ULong, Character> m_characters;

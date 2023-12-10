@@ -17,7 +17,7 @@ void C_KeyboardMovement::setMovementSpeed(const float moveSpeed)
 	m_moveSpeed = moveSpeed;
 }
 
-void C_KeyboardMovement::update(float)
+void C_KeyboardMovement::update(float dt)
 {
 	float xMove = 0.f;
 	const auto inputManager = owner->context->inputManager;
@@ -27,11 +27,11 @@ void C_KeyboardMovement::update(float)
 
 	if (inputManager->isKeyActive(moveLeftKey))
 	{
-		xMove = m_moveSpeed;
+		xMove = -m_moveSpeed;
 	}
 	if (inputManager->isKeyActive(moveRightKey))
 	{
-		xMove = -m_moveSpeed;
+		xMove = m_moveSpeed;
 	}
 
 	float yMove = m_moveSpeed / 2.0f;

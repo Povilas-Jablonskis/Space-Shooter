@@ -20,12 +20,12 @@ public:
 	void awake() const; // Called when object created. Use to ensure required components are present.
 	void start() const; // Called after Awake method. Use to initialise variables.
 
-	void update(float) const;
-	void draw(const Renderer&) const;
+	void update(float dt) const;
+	void draw(const Renderer& renderer) const;
 
-	void onCollisionEnter(C_BoxCollider&) const;
-	void onCollisionStay(C_BoxCollider&) const;
-	void onCollisionExit(C_BoxCollider&) const;
+	void onCollisionEnter(C_BoxCollider& other) const;
+	void onCollisionStay(C_BoxCollider& other) const;
+	void onCollisionExit(C_BoxCollider& other) const;
 
 	template <typename T>
 	std::shared_ptr<T> addComponent()

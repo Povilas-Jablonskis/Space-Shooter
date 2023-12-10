@@ -8,7 +8,7 @@
 class SoundsMenu final : public Scene
 {
 public:
-	SoundsMenu(SceneStateMachine&, SharedContext&);
+	SoundsMenu(SceneStateMachine& sceneStateMachine, SharedContext& context);
 
 	void savePlayerConfig() const;
 
@@ -19,7 +19,7 @@ public:
 
 	void processInput() override;
 
-	void draw(float) override;
+	void draw(float dt) override;
 
 private:
 	std::vector<std::shared_ptr<Text>> m_texts;

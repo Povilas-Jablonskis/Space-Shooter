@@ -27,22 +27,22 @@ Application::Application()
 
 	loadConfig();
 
-	m_sceneManager.add(ScenesEnum::MAIN, std::make_shared<MainMenu>(m_sceneManager, m_context));
+	m_sceneManager.add(SceneName::MAIN, std::make_shared<MainMenu>(m_sceneManager, m_context));
 
 	const auto pickYourCharacterMenu = std::make_shared<PickYourCharacterMenu>(m_sceneManager, m_context);
 	pickYourCharacterMenu->loadPlayerModels();
 
-	m_sceneManager.add(ScenesEnum::PICK_YOUR_CHARACTER, pickYourCharacterMenu);
+	m_sceneManager.add(SceneName::PICK_YOUR_CHARACTER, pickYourCharacterMenu);
 
-	m_sceneManager.add(ScenesEnum::PAUSED, std::make_shared<PauseMenu>(m_sceneManager, m_context));
-	m_sceneManager.add(ScenesEnum::GAME_OVER, std::make_shared<GameOver>(m_sceneManager, m_context));
-	m_sceneManager.add(ScenesEnum::GAME_WON, std::make_shared<GameWon>(m_sceneManager, m_context));
+	m_sceneManager.add(SceneName::PAUSED, std::make_shared<PauseMenu>(m_sceneManager, m_context));
+	m_sceneManager.add(SceneName::GAME_OVER, std::make_shared<GameOver>(m_sceneManager, m_context));
+	m_sceneManager.add(SceneName::GAME_WON, std::make_shared<GameWon>(m_sceneManager, m_context));
 
-	m_sceneManager.add(ScenesEnum::OPTIONS, std::make_shared<OptionsMenu>(m_sceneManager, m_context));
-	m_sceneManager.add(ScenesEnum::SOUNDS, std::make_shared<SoundsMenu>(m_sceneManager, m_context));
-	m_sceneManager.add(ScenesEnum::CONTROLS, std::make_shared<ControlsMenu>(m_sceneManager, m_context));
+	m_sceneManager.add(SceneName::OPTIONS, std::make_shared<OptionsMenu>(m_sceneManager, m_context));
+	m_sceneManager.add(SceneName::SOUNDS, std::make_shared<SoundsMenu>(m_sceneManager, m_context));
+	m_sceneManager.add(SceneName::CONTROLS, std::make_shared<ControlsMenu>(m_sceneManager, m_context));
 
-	m_sceneManager.switchTo(ScenesEnum::MAIN);
+	m_sceneManager.switchTo(SceneName::MAIN);
 }
 
 Application::~Application()
@@ -56,7 +56,7 @@ void Application::loadConfig()
 
 	const auto soundsFileDoc = new rapidxml::xml_document<>();
 	// Read the xml file into a vector
-	std::ifstream soundsFile(FileConstants::SOUND_SETTINGS_PATH);
+	std::ifstream soundsFile(Configs::SOUND_SETTINGS_PATH);
 	std::vector soundsFileBuffer((std::istreambuf_iterator(soundsFile)), std::istreambuf_iterator<char>());
 	soundsFileBuffer.push_back('\0');
 	// Parse the buffer using the xml file parsing library into doc 

@@ -5,6 +5,7 @@
 #include <freeglut/freeglut.h>
 
 #include "Colors.hpp"
+#include "Sounds.hpp"
 
 PauseMenu::PauseMenu(SceneStateMachine& sceneStateMachine, SharedContext& context)
 	: m_context(context), m_sceneStateMachine(sceneStateMachine)
@@ -18,9 +19,9 @@ void PauseMenu::onCreate()
 	                                                       glm::vec2(48.0f, 60.0f), *m_context.font);
 	gotoMainMenuOption->onMouseReleaseFunc = [=, this]
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/3.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_NEXT_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(SceneName::MAIN);
 	};
 	m_texts.push_back(gotoMainMenuOption);
 
@@ -50,9 +51,9 @@ void PauseMenu::processInput()
 {
 	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
-		m_context.soundEngine->play2D("assets/Sounds/buttonselect/5.wav", GL_FALSE);
+		m_context.soundEngine->play2D(Sounds::MENU_SELECT_GO_BACK_OPTION, GL_FALSE);
 
-		m_sceneStateMachine.switchTo(ScenesEnum::GAME_LIVE);
+		m_sceneStateMachine.switchTo(SceneName::GAME_LIVE);
 	}
 }
 

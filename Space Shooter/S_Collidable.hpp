@@ -18,7 +18,7 @@ class S_Collidable
 {
 public:
 	S_Collidable();
-	void add(const std::vector<std::shared_ptr<Object>>&);
+	void add(const std::vector<std::shared_ptr<Object>>& objects);
 	void processRemovals();
 	void resolve();
 	void processCollidingObjects();

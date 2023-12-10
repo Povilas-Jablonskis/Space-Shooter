@@ -16,14 +16,14 @@ void SceneStateMachine::draw(const float deltaTime) const
 	}
 }
 
-void SceneStateMachine::add(ScenesEnum sceneName, const std::shared_ptr<Scene>& scene)
+void SceneStateMachine::add(SceneName sceneName, const std::shared_ptr<Scene>& scene)
 {
 	const auto [iterator, success] = m_scenes.insert(make_pair(sceneName, scene));
 
 	iterator->second->onCreate();
 }
 
-void SceneStateMachine::remove(const ScenesEnum sceneId)
+void SceneStateMachine::remove(const SceneName sceneId)
 {
 	const auto sceneIterator = m_scenes.find(sceneId);
 
@@ -40,7 +40,7 @@ void SceneStateMachine::remove(const ScenesEnum sceneId)
 	}
 }
 
-void SceneStateMachine::switchTo(const ScenesEnum sceneId)
+void SceneStateMachine::switchTo(const SceneName sceneId)
 {
 	const auto sceneIterator = m_scenes.find(sceneId);
 

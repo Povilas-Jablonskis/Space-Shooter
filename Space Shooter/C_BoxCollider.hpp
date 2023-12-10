@@ -10,18 +10,18 @@
 class C_BoxCollider final : public C_Collider
 {
 public:
-	explicit C_BoxCollider(Object*);
+	explicit C_BoxCollider(Object* initialOwner);
 
-	Manifold intersects(const std::shared_ptr<C_Collider>&) override;
+	Manifold intersects(const std::shared_ptr<C_Collider>& other) override;
 
-	void setCollidable(const glm::vec4&);
+	void setCollidable(const glm::vec4& AABB);
 	const glm::vec4& getCollidable();
 
-	void setOffset(const glm::vec2&);
-	void setOffset(float, float);
+	void setOffset(const glm::vec2& offset);
+	void setOffset(float offsetX, float offsetY);
 
-	void setSize(const glm::vec2&);
-	void setSize(float, float);
+	void setSize(const glm::vec2& AABB);
+	void setSize(float width, float height);
 
 private:
 	void setPosition();

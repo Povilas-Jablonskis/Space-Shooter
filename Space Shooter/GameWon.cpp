@@ -32,7 +32,7 @@ void GameWon::processInput()
 {
 	if (m_context.inputManager->isKeyActive(VK_ESCAPE))
 	{
-		m_sceneStateMachine.switchTo(ScenesEnum::MAIN);
+		m_sceneStateMachine.switchTo(SceneName::MAIN);
 	}
 }
 

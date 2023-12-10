@@ -2,7 +2,7 @@
 #define applicationH
 
 #include "SpriteSheet.hpp"
-#include "FileConstants.hpp"
+#include "Configs.hpp"
 #include "InputManager.hpp"
 #include "SceneStateMachine.hpp"
 #include "SharedContext.hpp"
@@ -27,7 +27,7 @@ public:
 
 private:
 	SharedContext m_context;
-	SpriteSheet m_spriteSheet{FileConstants::SPRITE_SHEETS_PATH};
+	SpriteSheet m_spriteSheet{Configs::SPRITE_SHEETS_PATH};
 	SceneStateMachine m_sceneManager;
 	InputManager m_inputManager;
 	Font m_font{"assets/Fonts/kenvector_future_thin.ttf"};

@@ -13,17 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Managers">
-      <UniqueIdentifier>{9fcb3d2e-604b-48f4-a54b-71e3c0a4700f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Managers">
       <UniqueIdentifier>{3a7d7458-7351-42d9-a855-ac9eb90c763d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Constants">
       <UniqueIdentifier>{026c227d-e250-40dd-be8e-a8f112fccb8c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Managers\Scene">
-      <UniqueIdentifier>{b10fdab2-5012-457c-84d0-07f0c255f3df}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Scenes">
       <UniqueIdentifier>{904c6d28-772c-4f73-ac2d-7dfc4e08a317}</UniqueIdentifier>
@@ -51,6 +45,12 @@
     </Filter>
     <Filter Include="Source Files\Systems">
       <UniqueIdentifier>{5bd633d9-a5f9-4099-a2f7-2bbdb20eb411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers">
+      <UniqueIdentifier>{9fcb3d2e-604b-48f4-a54b-71e3c0a4700f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Managers\Scene">
+      <UniqueIdentifier>{b10fdab2-5012-457c-84d0-07f0c255f3df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -159,9 +159,6 @@
     <ClCompile Include="C_RemoveObjectOnCollisionEnter.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Keybind.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputManager.hpp">
@@ -185,10 +182,7 @@
     <ClInclude Include="Text.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Keybind.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FileConstants.hpp">
+    <ClInclude Include="Configs.hpp">
       <Filter>Header Files\Constants</Filter>
     </ClInclude>
     <ClInclude Include="BindableAction.hpp">
@@ -198,9 +192,6 @@
       <Filter>Header Files\Managers\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene.hpp">
-      <Filter>Header Files\Managers\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="ScenesEnum.hpp">
       <Filter>Header Files\Managers\Scene</Filter>
     </ClInclude>
     <ClInclude Include="MainMenu.hpp">
@@ -292,6 +283,15 @@
     </ClInclude>
     <ClInclude Include="C_RemoveObjectOnCollisionEnter.hpp">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Colors.hpp">
+      <Filter>Header Files\Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneName.hpp">
+      <Filter>Header Files\Constants</Filter>
+    </ClInclude>
+    <ClInclude Include="Sounds.hpp">
+      <Filter>Header Files\Constants</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

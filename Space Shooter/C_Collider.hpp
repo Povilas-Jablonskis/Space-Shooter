@@ -27,12 +27,12 @@ struct Manifold
 class C_Collider : public Component
 {
 public:
-	explicit C_Collider(Object*);
+	explicit C_Collider(Object* initialOwner);
 
-	virtual Manifold intersects(const std::shared_ptr<C_Collider>&) = 0;
+	virtual Manifold intersects(const std::shared_ptr<C_Collider>& other) = 0;
 
 	[[nodiscard]] CollisionLayer getLayer() const;
-	void setLayer(CollisionLayer);
+	void setLayer(CollisionLayer layer);
 
 private:
 	CollisionLayer m_layer;

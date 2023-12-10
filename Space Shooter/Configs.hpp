@@ -1,7 +1,7 @@
-#ifndef fileConstants_H
-#define fileConstants_H
+#ifndef configs_H
+#define configs_H
 
-namespace FileConstants
+namespace Configs
 {
 	inline const char* SOUND_SETTINGS_PATH{"cfg/sounds.xml"};
 	inline const char* PLAYERS_PATH{"assets/Config/players.xml"};
